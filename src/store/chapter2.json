@@ -1,0 +1,118 @@
+{
+    "cards": [
+        {
+            "id": "01",
+            "heading": "Supremacy of the Constitution",
+            "content": "All legislation issued by the Federal Government and the Local Governments is subject to the provisions and principles of the Constitution."
+        },
+        {
+            "id": "02",
+            "heading": "Distribution of Legislative Competences:",
+            "content": "All legislation issued by the Federal Government and the Local Governments is subject to the provisions and principles of the Constitution."
+        },
+        {
+            "id": "03",
+            "heading": "Participation, Coordination, and Integration in the Legislative Process:",
+            "content": "In a manner that ensures coherence of legislation and stability of the legal system."
+        },
+        {
+            "id": "04",
+            "heading": "Achieving Balance Between Federal and Local Interests:",
+            "content": "By considering the reciprocal ef- fects at both the federal and emirate levels."
+        }
+    ],
+    "description": "The Constitution allows the Member Emirates to exercise the powers not delegated to the Federal Govern- ment.17 Each Emirate may legislate to develop and administrate local social, cultural, and public utilities, in- cluding regulation of economic activities carried out within its territory, while contributing to social welfare and economic development within the parameters set by federal legislation.18 The framework of cooperation between the Federal Government and the Member Emirates is also set out by the Constitution, whether in the distribution of legislative, executive, or international competences. The Emirates shall have full jurisdiction over all matters not explicitly and exclusively conferred to the Federal Authorities,19 and are entitled to conclude limited agreements of a local or administrative nature with neighbouring States, provided that such agreements do not conflict with the interests or laws of the Federation.20 Conversely, the competent Federal Authorities are required to consult the concerned Emirate, in advance, before concluding any international treaty or agreement in case such treaty or agreement may affect the status of the Emirate.21 Any dispute arising in this regard shall be referred to the Federal Supreme Court for adjudication.The legislative process in the UAE is managed through an integrated system at both the federal and local levels and relies on an organised sequence of legal instruments and drafting methods that require precise coordination among the concerned entities. Within the adopted legislative cycles, legislation is reviewed periodically and care- fully updated to reflect national priorities and real-world developments. With the rapid advancements in the field of artificial intelligence, the UAE is strengthening the efficiency of its legislative review and development process- es to harness the opportunities presented by these technologies and to ensure greater accuracy and timelier leg- islative updates.",
+    "uaePerformance": {
+        "heading": "The UAE’s performance across major global indices",
+        "cards": [
+            {
+                "rank": "5",
+                "region": "Globally",
+                "heading": "Overall Competitiveness",
+                "subHeading": "",
+                "content": "The World Competitiveness Yearbook (2025) - International Institute for Management Development (IMD)22"
+            },
+            {
+                "rank": "5",
+                "region": "Globally",
+                "heading": "Funding for technological development",
+                "subHeading": "",
+                "content": "The World Competitiveness Yearbook (2025) - International Institute for Management Development (IMD)22"
+            },
+            {
+                "rank": "1",
+                "region": "Globally",
+                "heading": "Digital transformation in companies",
+                "subHeading": "",
+                "content": "The World Competitiveness Yearbook (2025) - International Institute for Management Development (IMD)22"
+            },
+            {
+                "rank": "6",
+                "region": "Globally",
+                "heading": "Cyber security",
+                "subHeading": "(Cyber security is being ade- quately addressed by corporations)",
+                "content": "The World Competitiveness Yearbook (2025) - International Institute for Management Development (IMD)22"
+            },
+            {
+                "rank": "1",
+                "region": "Globally",
+                "heading": "Digital/Technological skills",
+                "subHeading": "",
+                "content": "The World Competitiveness Yearbook (2025) - International Institute for Management Development (IMD)22"
+            },
+            {
+                "rank": "3",
+                "region": "Globally",
+                "heading": "Cyber security",
+                "subHeading": "(Net AI talent migration per 10,000 LinkedIn members by geographic area)",
+                "content": "The World Competitiveness Yearbook (2025) - International Institute for Management Development (IMD)22"
+            },
+            {
+                "rank": "1",
+                "region": "Globally",
+                "heading": "Public-private partnerships",
+                "subHeading": "",
+                "content": "The World Competitiveness Yearbook (2025) - International Institute for Management Development (IMD)22"
+            },
+            {
+                "rank": "8",
+                "region": "Globally",
+                "heading": "AI research impact",
+                "subHeading": "(Number of highly cited pub- lications in top 100 by select geographic areas)",
+                "content": "The World Competitiveness Yearbook (2025) - International Institute for Management Development (IMD)22"
+            },
+            {
+                "rank": "3",
+                "region": "Globally",
+                "heading": "Use of digital tools and technologies",
+                "subHeading": "",
+                "content": "The World Competitiveness Yearbook (2025) - International Institute for Management Development (IMD)22"
+            },
+            {
+                "rank": "9",
+                "region": "Globally",
+                "heading": "Governance quality",
+                "subHeading": "",
+                "content": "Chandler Good Government Index Report (2025)24 - Chandler Institute of Governance"
+            },
+            {
+                "rank": "3",
+                "region": "Globally",
+                "heading": "Development and application of Technology",
+                "subHeading": "(Development and application of technol- ogy are supported by the legal environment)",
+                "content": "The World Competitiveness Yearbook (2025) - International Institute for Management Development (IMD)22"
+            },
+            {
+                "rank": "9",
+                "region": "Globally",
+                "heading": "World Digital Competitiveness Ranking 2025Ranking 2025",
+                "subHeading": "",
+                "content": "IMD World Digital Competitiveness Ranking (2025)25 - International Institute for Management Development (IMD)"
+            }
+        ]
+    },
+    "summary": {
+        "heading": "Chapter Summary",
+        "summary": "In summary, the UAE has a clear mandate for high-quality lawmaking, a demonstrable record of reform, and the institutional, digital, and human capital to sustain first-mover execution. Having established the mandate and readiness, the next chapter defines Regulatory Intelligence in detail and sets out how the UAE will operate it."
+    }
+}

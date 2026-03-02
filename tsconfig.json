@@ -1,0 +1,28 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+        "@/*": ["src/*"],
+        "@assets/*": ["src/assets/*"],
+        "@images/*": ["src/assets/images/*"],
+        "@styles/*": ["src/assets/scss/*"],
+        "@animations/*": ["src/assets/animations/*"],
+        "@components/*": ["src/components/*"],
+        "@hooks/*": ["src/hooks/*"],
+        "@context/*": ["src/context/*"],
+        "@providers/*": ["src/providers/*"],
+        "@store/*": ["src/store/*"],
+        "@routes/*": ["src/routes/*"],
+        "@utils/*": ["src/utils/*"],
+        "@lang/*": ["src/lang/*"],
+        "@public/*": ["public/*"],
+        "@auth/*": ["src/auth/*"],
+        "@api/*": ["src/api/*"]
+      }
+  }
+}
