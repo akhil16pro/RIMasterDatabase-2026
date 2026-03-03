@@ -27,8 +27,10 @@ export const Route = createFileRoute("/$lang/_lang")({
 function RouteComponent() {
   const { href } = useLocation();
 
+  const isRoot = href === "/en" || href === "/ar";
+
   const componentsAnimationDelay = () => {
-    const isRoot = href === "/en" || href === "/ar";
+
     return {
       header: isRoot ? 2.4 : 0.4,
       shareFeedback: isRoot ? 2.6 : 0.3,
@@ -39,8 +41,9 @@ function RouteComponent() {
 
   return (
     <div className="flex flex-col min-h-screen relative">
-      <AppHeader delay={componentsAnimationDelay().header} />
-      <main className="flex-1 relative w-full flex flex-col overflow-hidden min-h-screen">
+
+      {isRoot && <AppHeader delay={componentsAnimationDelay().header} />}
+      <main className="flex-1 relative w-full flex flex-col overflow-clip min-h-screen">
         <Outlet />
       </main>
     </div>

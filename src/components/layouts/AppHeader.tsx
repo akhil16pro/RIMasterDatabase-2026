@@ -2,7 +2,7 @@ import { saveAs } from "file-saver";
 import { Link, useLocation, useRouter } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { DefaultButton } from "../ui/buttons";
-import { Download } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import {
   Dialog,
   DialogClose,
@@ -24,6 +24,8 @@ import { apiClient } from "@/api";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
+
+
 
 export default function AppHeader({ delay }: { delay: number }) {
   const { t, i18n } = useTranslation();
@@ -57,7 +59,7 @@ export default function AppHeader({ delay }: { delay: number }) {
       {
         id: 5,
         title: t("ri_unified_master_database"),
-        href: "/" + i18n.language + "/ri-unified-master-database",
+        href: "/" + i18n.language + "/login",
       },
     ],
     [i18n.language],
@@ -75,6 +77,10 @@ export default function AppHeader({ delay }: { delay: number }) {
     const newUrl = "/" + lang + "/" + ur.join("/");
     router.navigate({ to: newUrl });
   };
+
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  console.log(isMobile, "isMobile")
 
   return (
     <motion.header
@@ -96,8 +102,8 @@ export default function AppHeader({ delay }: { delay: number }) {
         transition={{ duration: 0.3, type: "tween", delay: 0 }}
         className="container mx-auto px-3 md:px-0 relative z-10"
       >
-        <div className="flex items-center justify-between">
-          <div className="inline-flex items-center relative">
+        <div className="flex items-center justify-between ">
+          <div className="inline-flex items-center relative z-10">
             <Link
               to={"/" + i18n.language}
               className="inline-block h-17 w-auto outline-none border-none"
@@ -110,19 +116,34 @@ export default function AppHeader({ delay }: { delay: number }) {
             </Link>
           </div>
 
-          <div className="inline-flex items-center relative gap-7">
-            <nav className="relative block pointer-events-auto w-full h-full">
-              <ul className="flex w-full h-full gap-7">
+          <div className="inline-flex items-center relative gap-3 lg:gap-7">
+            <motion.nav className="fixed top-0 left-0 w-full h-full bg-black/70 px-20 lg:px-0 lg:bg-transparent lg:relative"
+              style={{
+                clipPath: isMobile
+                  ? (isMenuOpen ? "polygon(0 0, 100% 0, 100% 100%, 0% 100%)" : "polygon(0 0, 100% 0, 100% 0, 0 0)")
+                  : "none" // or a default path for desktop
+              }}
+              transition={{ duration: 1, delay: 0 }}
+            >
+              <ul className="flex w-full h-full md:gap-7 gap-3 flex-col items-center justify-center lg:items-end lg:flex-row">
                 {mainNavItems.map((item, index) => (
                   <MenuItem key={"chapter-nav-item-" + item.id} item={item} />
                 ))}
               </ul>
-            </nav>
+            </motion.nav>
             <DefaultButton
               title={i18n?.language === "en" ? "AR" : "EN"}
               size="icon"
               onClick={onChangeLanguage}
             />
+            {isMobile ? (
+              <DefaultButton
+                size="icon"
+                icon={isMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+              />
+            ) : null}
+
           </div>
         </div>
       </motion.div>
@@ -144,7 +165,7 @@ function MenuItem({ item }: { item: any }) {
         to={item.href}
         activeOptions={{ exact: true }}
         className={cn(
-          "text-xs md:text-lg inline-flex items-center justify-center w-full h-full  overflow-hidden relative text-secondary [&.active]:text-text",
+          "text-[1.8rem] md:text-[2.5rem] lg:text-lg inline-flex items-center justify-center w-full h-full  overflow-hidden relative text-secondary [&.active]:text-text",
           isHover ? "text-text" : "text-secondary",
         )}
       >

@@ -6,6 +6,16 @@
     "ri_white_paper": "RI White Paper",
     "ri_unified_master_database": "RI Unified Master Database",
     "about": "About",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "read_more": "Read More",
+    "scroll": "Scroll",
+    "login": "Login",
+    "email": "Email",
+    "password": "Password",
+    "forgot_password": "Forgot Password?",
+    "reset": "Reset",
+    "page-not-found": "Page Not Found",
+    "page-not-found-description": "Sorry, the page you are looking for does not exist. Please try again later.",
+    "back-to-home": "Back to Home"
   }
 }

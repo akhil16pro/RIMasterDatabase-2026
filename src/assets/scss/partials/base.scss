@@ -23,11 +23,9 @@ body {
   scroll-snap-align: start;
   scroll-behavior: smooth;
 
-  background: linear-gradient(
-    181deg,
-    var(--color-bg) 10.82%,
-    var(--color-primary) 58.14%
-  );
+  background: linear-gradient(181deg,
+      var(--color-bg) 10.82%,
+      var(--color-primary) 58.14%);
 
   &::-webkit-scrollbar {
     display: none;
@@ -76,6 +74,7 @@ html[dir="rtl"] {
 
   ul {
     margin-top: 1rem;
+
     li {
       position: relative;
       display: block;
@@ -98,7 +97,7 @@ html[dir="rtl"] {
     }
   }
 
-  > * {
+  >* {
     margin-block: 1rem;
 
     &:first-child {
@@ -278,4 +277,15 @@ html[dir="rtl"] {
   @media (width >=96rem) {
     max-width: 88rem;
   }
+
+  @media (width >=75rem) {
+    max-width: 75rem;
+  }
+}
+
+.inputStyle {
+  border-bottom: 1px solid hsl(from var(--color-bg) h s l / .2);
+  color: var(--color-bg);
+  font-size: 1.3rem;
+
 }

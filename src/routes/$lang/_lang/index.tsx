@@ -64,6 +64,7 @@ function RouteComponent() {
 }
 
 function HomeBanner({ data }: { data: any }) {
+  const { t } = useTranslation();
   const { scrollY } = useScroll();
   const opacity = useTransform(scrollY, [0, 380], [1, 0]);
   const translateY = useTransform(scrollY, [0, 380], [0, -180]);
@@ -75,9 +76,11 @@ function HomeBanner({ data }: { data: any }) {
   const heroScale = useTransform(scrollY, [0, 380], [1, 0.8]);
   const heroOpacity = useTransform(scrollY, [0, 380], [1, 0]);
 
+
+  const moreCircle = useTransform(scrollY, [0, 480], [0, 360], { clamp: false });
   return (
     <section
-      className="w-full h-auto relative pt-[30vh] pb-10"
+      className="w-full h-auto relative xl:pt-[30vh] lg:pt-[25vh] md:pt-[20vh] pt-[25vh] "
       id="home-banner"
     >
       <motion.div
@@ -86,7 +89,7 @@ function HomeBanner({ data }: { data: any }) {
         exit={{ opacity: 0, y: 120, scale: 1.15 }}
         transition={{ duration: 1.2, type: "tween", delay: 1.5 }}
         // style={{ y: cityTranslateY, scale: cityScale, opacity: cityOpacity }}
-        className="absolute top-0 left-0 w-full h-screen mask-t-from-50%"
+        className="fixed top-0 left-0 w-full h-screen mask-t-from-50% [&:after]:content-[''] [&:after]:absolute [&:after]:inset-0 [&:after]:bg-black/10"
       >
         {/* [&:after]:content-[''] [&:after]:absolute [&:after]:bottom-[-2px] [&:after]:left-0 [&:after]:w-full [&:after]:h-[50%] [&:after]:bg-gradient-to-b [&:after]:from-transparent [&:after]:to-primary  [&:before]:content-[''] [&:before]:absolute [&:before]:top-[-2px] [&:before]:left-0 [&:before]:w-full [&:before]:h-[50%] [&:before]:bg-gradient-to-t [&:before]:from-transparent [&:before]:to-bg  */}
 
@@ -101,7 +104,7 @@ function HomeBanner({ data }: { data: any }) {
           // style={{ y: heroTranslateY, scale: heroScale, opacity: heroOpacity }}
           className="container mx-auto relative z-10 "
         >
-          <div className="block md:min-w-[68%] md:max-w-[68%] min-w-[90%] max-w-[90%] relative m-auto">
+          <div className="block xl:min-w-[68%] xl:max-w-[68%] lg:min-w-[75%] lg:max-w-[75%] md:min-w-[85%] md:max-w-[85%] min-w-[90%] max-w-[90%] relative m-auto">
             <motion.div
               layout
               initial={{
@@ -125,7 +128,7 @@ function HomeBanner({ data }: { data: any }) {
                     ease: "easeOut",
                     delay: 0.8,
                   }}
-                  className="md:text-[8rem] xl:text-[9rem] text-5xl font-bold relative flex flex-wrap items-center justify-center gap-4 leading-[95%]"
+                  className="md:text-[6rem] lg:text-[8rem] xl:text-[9rem] text-6xl font-bold relative flex flex-wrap items-center justify-center gap-4 leading-[95%]"
                 >
                   <span className="inline-block relative">{data?.title}</span>
                 </motion.h1>
@@ -137,21 +140,44 @@ function HomeBanner({ data }: { data: any }) {
                   animate={{ opacity: 1, y: 0, scaleY: 1, skewY: 0 }}
                   exit={{ opacity: 0, y: 50, scaleY: 1.1, skewY: 2 }}
                   transition={{ duration: 1.2, delay: 1.5 }}
-                  className="text-[2.45rem] xl:text-[2.7rem] font-regular mt-[3rem] text-text/80 relative block bg-gradient-to-r from-white to-secondary bg-clip-text text-transparent px-[15%] leading-[100%]"
+                  className="text-[1.8rem] md:text-[2.2rem] lg:text-[2.45rem] xl:text-[2.7rem] font-regular mt-[1rem] md:mt-[2rem] lg:mt-[3rem] text-text/80 relative block bg-gradient-to-r from-white to-secondary bg-clip-text text-transparent md:px-[15%] leading-[100%]"
                 >
                   {data?.subtitle}
                 </motion.h3>
               ) : null}
             </motion.div>
             {data?.description ? (
-              <motion.div
-                initial={{ opacity: 0, y: 50, scaleY: 1.1, skewY: 2 }}
-                animate={{ opacity: 1, y: 0, scaleY: 1, skewY: 0 }}
-                exit={{ opacity: 0, y: 50, scaleY: 1.1, skewY: 2 }}
-                transition={{ duration: 1.2, delay: 1.8 }}
-                className="text-content-area text-center mt-[3rem] [&>p]:text-2xl"
-                dangerouslySetInnerHTML={{ __html: data?.description }}
-              ></motion.div>
+              <div className="flex flex-col relative ">
+                <motion.div
+                  initial={{ opacity: 0, y: 50, scaleY: 1.1, skewY: 2 }}
+                  animate={{ opacity: 1, y: 0, scaleY: 1, skewY: 0 }}
+                  exit={{ opacity: 0, y: 50, scaleY: 1.1, skewY: 2 }}
+                  transition={{ duration: 1.2, delay: 1.8 }}
+                  className="text-content-area text-center mt-[2rem] lg:mt-[3rem] [&>p]:text-2xl"
+                  dangerouslySetInnerHTML={{ __html: data?.description }}
+                ></motion.div>
+                <motion.div
+                  initial={{ opacity: 0, y: 150 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 1, delay: 2 }}
+                  className="moreWrap flex items-center justify-center py-5 sticky bottom-0 [&:after]:content-[''] [&:after]:absolute [&:after]:bottom-[-2px] [&:after]:left-[50%] [&:after]:translate-x-[-50%] [&:after]:w-[100vw] [&:after]:h-[100%] [&:after]:bg-gradient-to-b [&:after]:from-transparent [&:after]:to-primary [&:after]:z-[-1] ">
+                  <a href="#" className="more relative text-[1.3rem] font-regular">
+                    <span className="absolute top-[50%] left-0 translate-y-[-50%] bg-gradient-to-r from-white to-secondary bg-clip-text text-transparent">{t('scroll')}</span>
+                    <motion.div className="iconBox w-[4rem] aspect-square" style={{ rotate: moreCircle }}>
+                      <svg className="w-full h-auto" width="74" height="74" viewBox="0 0 74 74" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="37" cy="37" r="33" stroke="url(#paint0_linear_133_77)" strokeWidth="8" strokeDasharray="2 4" />
+                        <defs>
+                          <linearGradient id="paint0_linear_133_77" x1="67.7639" y1="44.7234" x2="4" y2="44.7234" gradientUnits="userSpaceOnUse">
+                            <stop stopColor="#03CBFF" />
+                            <stop offset="1" stopColor="white" stopOpacity="0" />
+                          </linearGradient>
+                        </defs>
+                      </svg>
+
+                    </motion.div>
+                  </a>
+                </motion.div>
+              </div>
             ) : null}
           </div>
         </motion.div>

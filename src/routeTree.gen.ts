@@ -12,16 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as LangLangRouteImport } from './routes/$lang/_lang'
 import { Route as LangLangIndexRouteImport } from './routes/$lang/_lang/index'
-import { Route as LangLangReferencesRouteImport } from './routes/$lang/_lang/references'
-import { Route as LangLangGlossaryRouteImport } from './routes/$lang/_lang/glossary'
-import { Route as LangLangDisclaimerRouteImport } from './routes/$lang/_lang/disclaimer'
-import { Route as LangLangAboutOldRouteImport } from './routes/$lang/_lang/about-old'
-import { Route as LangLangChapters6RouteImport } from './routes/$lang/_lang/chapters/6'
-import { Route as LangLangChapters5RouteImport } from './routes/$lang/_lang/chapters/5'
-import { Route as LangLangChapters4RouteImport } from './routes/$lang/_lang/chapters/4'
-import { Route as LangLangChapters3RouteImport } from './routes/$lang/_lang/chapters/3'
-import { Route as LangLangChapters2RouteImport } from './routes/$lang/_lang/chapters/2'
-import { Route as LangLangChapters1RouteImport } from './routes/$lang/_lang/chapters/1'
+import { Route as LangLangLoginRouteImport } from './routes/$lang/_lang/login'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -38,147 +29,36 @@ const LangLangIndexRoute = LangLangIndexRouteImport.update({
   path: '/',
   getParentRoute: () => LangLangRoute,
 } as any)
-const LangLangReferencesRoute = LangLangReferencesRouteImport.update({
-  id: '/references',
-  path: '/references',
-  getParentRoute: () => LangLangRoute,
-} as any)
-const LangLangGlossaryRoute = LangLangGlossaryRouteImport.update({
-  id: '/glossary',
-  path: '/glossary',
-  getParentRoute: () => LangLangRoute,
-} as any)
-const LangLangDisclaimerRoute = LangLangDisclaimerRouteImport.update({
-  id: '/disclaimer',
-  path: '/disclaimer',
-  getParentRoute: () => LangLangRoute,
-} as any)
-const LangLangAboutOldRoute = LangLangAboutOldRouteImport.update({
-  id: '/about-old',
-  path: '/about-old',
-  getParentRoute: () => LangLangRoute,
-} as any)
-const LangLangChapters6Route = LangLangChapters6RouteImport.update({
-  id: '/chapters/6',
-  path: '/chapters/6',
-  getParentRoute: () => LangLangRoute,
-} as any)
-const LangLangChapters5Route = LangLangChapters5RouteImport.update({
-  id: '/chapters/5',
-  path: '/chapters/5',
-  getParentRoute: () => LangLangRoute,
-} as any)
-const LangLangChapters4Route = LangLangChapters4RouteImport.update({
-  id: '/chapters/4',
-  path: '/chapters/4',
-  getParentRoute: () => LangLangRoute,
-} as any)
-const LangLangChapters3Route = LangLangChapters3RouteImport.update({
-  id: '/chapters/3',
-  path: '/chapters/3',
-  getParentRoute: () => LangLangRoute,
-} as any)
-const LangLangChapters2Route = LangLangChapters2RouteImport.update({
-  id: '/chapters/2',
-  path: '/chapters/2',
-  getParentRoute: () => LangLangRoute,
-} as any)
-const LangLangChapters1Route = LangLangChapters1RouteImport.update({
-  id: '/chapters/1',
-  path: '/chapters/1',
+const LangLangLoginRoute = LangLangLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => LangLangRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$lang': typeof LangLangRouteWithChildren
-  '/$lang/about-old': typeof LangLangAboutOldRoute
-  '/$lang/disclaimer': typeof LangLangDisclaimerRoute
-  '/$lang/glossary': typeof LangLangGlossaryRoute
-  '/$lang/references': typeof LangLangReferencesRoute
+  '/$lang/login': typeof LangLangLoginRoute
   '/$lang/': typeof LangLangIndexRoute
-  '/$lang/chapters/1': typeof LangLangChapters1Route
-  '/$lang/chapters/2': typeof LangLangChapters2Route
-  '/$lang/chapters/3': typeof LangLangChapters3Route
-  '/$lang/chapters/4': typeof LangLangChapters4Route
-  '/$lang/chapters/5': typeof LangLangChapters5Route
-  '/$lang/chapters/6': typeof LangLangChapters6Route
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/$lang/about-old': typeof LangLangAboutOldRoute
-  '/$lang/disclaimer': typeof LangLangDisclaimerRoute
-  '/$lang/glossary': typeof LangLangGlossaryRoute
-  '/$lang/references': typeof LangLangReferencesRoute
+  '/$lang/login': typeof LangLangLoginRoute
   '/$lang': typeof LangLangIndexRoute
-  '/$lang/chapters/1': typeof LangLangChapters1Route
-  '/$lang/chapters/2': typeof LangLangChapters2Route
-  '/$lang/chapters/3': typeof LangLangChapters3Route
-  '/$lang/chapters/4': typeof LangLangChapters4Route
-  '/$lang/chapters/5': typeof LangLangChapters5Route
-  '/$lang/chapters/6': typeof LangLangChapters6Route
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/$lang/_lang': typeof LangLangRouteWithChildren
-  '/$lang/_lang/about-old': typeof LangLangAboutOldRoute
-  '/$lang/_lang/disclaimer': typeof LangLangDisclaimerRoute
-  '/$lang/_lang/glossary': typeof LangLangGlossaryRoute
-  '/$lang/_lang/references': typeof LangLangReferencesRoute
+  '/$lang/_lang/login': typeof LangLangLoginRoute
   '/$lang/_lang/': typeof LangLangIndexRoute
-  '/$lang/_lang/chapters/1': typeof LangLangChapters1Route
-  '/$lang/_lang/chapters/2': typeof LangLangChapters2Route
-  '/$lang/_lang/chapters/3': typeof LangLangChapters3Route
-  '/$lang/_lang/chapters/4': typeof LangLangChapters4Route
-  '/$lang/_lang/chapters/5': typeof LangLangChapters5Route
-  '/$lang/_lang/chapters/6': typeof LangLangChapters6Route
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/$lang'
-    | '/$lang/about-old'
-    | '/$lang/disclaimer'
-    | '/$lang/glossary'
-    | '/$lang/references'
-    | '/$lang/'
-    | '/$lang/chapters/1'
-    | '/$lang/chapters/2'
-    | '/$lang/chapters/3'
-    | '/$lang/chapters/4'
-    | '/$lang/chapters/5'
-    | '/$lang/chapters/6'
+  fullPaths: '/' | '/$lang' | '/$lang/login' | '/$lang/'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/$lang/about-old'
-    | '/$lang/disclaimer'
-    | '/$lang/glossary'
-    | '/$lang/references'
-    | '/$lang'
-    | '/$lang/chapters/1'
-    | '/$lang/chapters/2'
-    | '/$lang/chapters/3'
-    | '/$lang/chapters/4'
-    | '/$lang/chapters/5'
-    | '/$lang/chapters/6'
-  id:
-    | '__root__'
-    | '/'
-    | '/$lang/_lang'
-    | '/$lang/_lang/about-old'
-    | '/$lang/_lang/disclaimer'
-    | '/$lang/_lang/glossary'
-    | '/$lang/_lang/references'
-    | '/$lang/_lang/'
-    | '/$lang/_lang/chapters/1'
-    | '/$lang/_lang/chapters/2'
-    | '/$lang/_lang/chapters/3'
-    | '/$lang/_lang/chapters/4'
-    | '/$lang/_lang/chapters/5'
-    | '/$lang/_lang/chapters/6'
+  to: '/' | '/$lang/login' | '/$lang'
+  id: '__root__' | '/' | '/$lang/_lang' | '/$lang/_lang/login' | '/$lang/_lang/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -209,105 +89,24 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LangLangIndexRouteImport
       parentRoute: typeof LangLangRoute
     }
-    '/$lang/_lang/references': {
-      id: '/$lang/_lang/references'
-      path: '/references'
-      fullPath: '/$lang/references'
-      preLoaderRoute: typeof LangLangReferencesRouteImport
-      parentRoute: typeof LangLangRoute
-    }
-    '/$lang/_lang/glossary': {
-      id: '/$lang/_lang/glossary'
-      path: '/glossary'
-      fullPath: '/$lang/glossary'
-      preLoaderRoute: typeof LangLangGlossaryRouteImport
-      parentRoute: typeof LangLangRoute
-    }
-    '/$lang/_lang/disclaimer': {
-      id: '/$lang/_lang/disclaimer'
-      path: '/disclaimer'
-      fullPath: '/$lang/disclaimer'
-      preLoaderRoute: typeof LangLangDisclaimerRouteImport
-      parentRoute: typeof LangLangRoute
-    }
-    '/$lang/_lang/about-old': {
-      id: '/$lang/_lang/about-old'
-      path: '/about-old'
-      fullPath: '/$lang/about-old'
-      preLoaderRoute: typeof LangLangAboutOldRouteImport
-      parentRoute: typeof LangLangRoute
-    }
-    '/$lang/_lang/chapters/6': {
-      id: '/$lang/_lang/chapters/6'
-      path: '/chapters/6'
-      fullPath: '/$lang/chapters/6'
-      preLoaderRoute: typeof LangLangChapters6RouteImport
-      parentRoute: typeof LangLangRoute
-    }
-    '/$lang/_lang/chapters/5': {
-      id: '/$lang/_lang/chapters/5'
-      path: '/chapters/5'
-      fullPath: '/$lang/chapters/5'
-      preLoaderRoute: typeof LangLangChapters5RouteImport
-      parentRoute: typeof LangLangRoute
-    }
-    '/$lang/_lang/chapters/4': {
-      id: '/$lang/_lang/chapters/4'
-      path: '/chapters/4'
-      fullPath: '/$lang/chapters/4'
-      preLoaderRoute: typeof LangLangChapters4RouteImport
-      parentRoute: typeof LangLangRoute
-    }
-    '/$lang/_lang/chapters/3': {
-      id: '/$lang/_lang/chapters/3'
-      path: '/chapters/3'
-      fullPath: '/$lang/chapters/3'
-      preLoaderRoute: typeof LangLangChapters3RouteImport
-      parentRoute: typeof LangLangRoute
-    }
-    '/$lang/_lang/chapters/2': {
-      id: '/$lang/_lang/chapters/2'
-      path: '/chapters/2'
-      fullPath: '/$lang/chapters/2'
-      preLoaderRoute: typeof LangLangChapters2RouteImport
-      parentRoute: typeof LangLangRoute
-    }
-    '/$lang/_lang/chapters/1': {
-      id: '/$lang/_lang/chapters/1'
-      path: '/chapters/1'
-      fullPath: '/$lang/chapters/1'
-      preLoaderRoute: typeof LangLangChapters1RouteImport
+    '/$lang/_lang/login': {
+      id: '/$lang/_lang/login'
+      path: '/login'
+      fullPath: '/$lang/login'
+      preLoaderRoute: typeof LangLangLoginRouteImport
       parentRoute: typeof LangLangRoute
     }
   }
 }
 
 interface LangLangRouteChildren {
-  LangLangAboutOldRoute: typeof LangLangAboutOldRoute
-  LangLangDisclaimerRoute: typeof LangLangDisclaimerRoute
-  LangLangGlossaryRoute: typeof LangLangGlossaryRoute
-  LangLangReferencesRoute: typeof LangLangReferencesRoute
+  LangLangLoginRoute: typeof LangLangLoginRoute
   LangLangIndexRoute: typeof LangLangIndexRoute
-  LangLangChapters1Route: typeof LangLangChapters1Route
-  LangLangChapters2Route: typeof LangLangChapters2Route
-  LangLangChapters3Route: typeof LangLangChapters3Route
-  LangLangChapters4Route: typeof LangLangChapters4Route
-  LangLangChapters5Route: typeof LangLangChapters5Route
-  LangLangChapters6Route: typeof LangLangChapters6Route
 }
 
 const LangLangRouteChildren: LangLangRouteChildren = {
-  LangLangAboutOldRoute: LangLangAboutOldRoute,
-  LangLangDisclaimerRoute: LangLangDisclaimerRoute,
-  LangLangGlossaryRoute: LangLangGlossaryRoute,
-  LangLangReferencesRoute: LangLangReferencesRoute,
+  LangLangLoginRoute: LangLangLoginRoute,
   LangLangIndexRoute: LangLangIndexRoute,
-  LangLangChapters1Route: LangLangChapters1Route,
-  LangLangChapters2Route: LangLangChapters2Route,
-  LangLangChapters3Route: LangLangChapters3Route,
-  LangLangChapters4Route: LangLangChapters4Route,
-  LangLangChapters5Route: LangLangChapters5Route,
-  LangLangChapters6Route: LangLangChapters6Route,
 }
 
 const LangLangRouteWithChildren = LangLangRoute._addFileChildren(
