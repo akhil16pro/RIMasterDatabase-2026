@@ -1,3 +1,5 @@
+@use "./mixin" as *;
+
 html {
   font-size: 16px;
   scroll-snap-type: y mandatory;
@@ -288,4 +290,144 @@ html[dir="rtl"] {
   color: var(--color-bg);
   font-size: 1.3rem;
 
+}
+
+.mainWrapper {
+  --sideBar: 21rem;
+
+  --sidePadd: 1.5rem;
+  display: grid;
+  grid-template-columns: var(--sideBar) 1fr;
+  background: var(--color-white);
+  border-radius: 20px;
+  overflow: clip;
+
+  transition: grid-template-columns .3s ease-in-out;
+
+  &:has(.sideBar.open) {
+    --sideBar: calc(24px + 2rem + (var(--sidePadd) * 2));
+  }
+}
+
+.sideBar {
+  position: relative;
+  padding: var(--sidePadd);
+
+
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    background: linear-gradient(202deg, #020355 -51.73%, #3C60F4 102.31%);
+  }
+
+  .inner {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: 2rem;
+  }
+
+  nav li {
+    border-bottom: 1px solid hsl(from var(--color-white) h s l / .1);
+  }
+
+
+  .topBox {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .toggleMenu {
+      cursor: pointer;
+      position: relative;
+    }
+  }
+
+  // .navLink {
+  //   display: flex;
+  //   align-items: center;
+  //   gap: .5rem;
+  //   position: relative;
+  //   color: var(--color-white);
+  //   font-size: 1.3rem;
+  //   font-weight: 500;
+
+  //   width: 100%;
+  //   z-index: 5;
+  //   padding-block: .8rem;
+  //   padding-inline-start: 1rem;
+
+  //   &::before {
+  //     content: '';
+  //     position: absolute;
+  //     inset: 0;
+  //     background: var(--color-white);
+  //     inset-inline-end: calc(var(--sidePadd) * -1);
+  //     z-index: -1;
+  //     border-start-start-radius: 10px;
+  //     border-end-start-radius: 10px;
+  //     transform: scaleX(0);
+
+  //     transition: transform .3s ease-in-out;
+  //     @include rtl(transform-origin, right, left);
+  //   }
+
+  //   &.active {
+
+  //     .iconBox {
+  //       color: var(--color-primary);
+  //     }
+
+  //     &::before {
+  //       transform: scaleX(1);
+  //     }
+
+  //     span {
+  //       background: linear-gradient(270deg, #022EE4 0%, #03CBFF 100%);
+  //       background-clip: text;
+  //       -webkit-background-clip: text;
+  //       -webkit-text-fill-color: transparent;
+  //     }
+
+  //   }
+
+  //   @include hover {
+  //     &:hover {
+  //       &::before {
+  //         transform: scaleX(1);
+  //       }
+
+  //       .iconBox {
+  //         color: var(--color-primary);
+  //       }
+
+  //       span {
+  //         background: linear-gradient(270deg, #022EE4 0%, #03CBFF 100%);
+  //         background-clip: text;
+  //         -webkit-background-clip: text;
+  //         -webkit-text-fill-color: transparent;
+
+  //       }
+  //     }
+  //   }
+
+  //   .iconBox {
+
+  //     transition: all .4s ease-in-out;
+  //   }
+
+  //   span {
+  //     display: flex;
+  //     position: relative;
+  //     z-index: 2;
+  //     transition: all .3s ease-in-out;
+
+  //   }
+  // }
 }

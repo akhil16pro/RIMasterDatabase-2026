@@ -16,6 +16,13 @@
     "reset": "Reset",
     "page-not-found": "Page Not Found",
     "page-not-found-description": "Sorry, the page you are looking for does not exist. Please try again later.",
-    "back-to-home": "Back to Home"
+    "back-to-home": "Back to Home",
+    "dashboard": "Dashboard",
+    "glossary": "Glossary",
+    "federal-legislations": "Federal Legislations",
+    "federal-courts-decisions": "Federal Courts Decisions",
+    "international-treaties": "International Treaties",
+    "local-governments-legislations": "Local Governments Legislations",
+    "local-governments-courts-decisions": "Local Governments Courts Decisions"
   }
 }

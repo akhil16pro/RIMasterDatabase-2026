@@ -1,5 +1,5 @@
 // import RoutesBanner from '@/components/layouts/RoutesBanner'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from '@tanstack/react-query'
 import { apiClient } from '@/api'
@@ -8,7 +8,7 @@ import RoteError from '@/components/layouts/RoteError'
 import { DefaultButton } from "@/components/ui/buttons";
 import { Input } from "@/components/ui/input";
 import { AnimatePresence, motion } from 'motion/react'
-import SectionSubtitle from '@/components/ui/SectionSubtitle'
+
 import { Link } from "@tanstack/react-router";
 export const Route = createFileRoute('/$lang/_lang/login')({
   component: RouteComponent,
@@ -18,6 +18,8 @@ export const Route = createFileRoute('/$lang/_lang/login')({
 function RouteComponent() {
 
   const { t, i18n } = useTranslation()
+
+  const navigate = useNavigate()
 
   // const { data, isLoading, error, isRefetching } = useQuery({
   //   queryKey: ['about', i18n.language],
@@ -66,8 +68,6 @@ function RouteComponent() {
                 >
                   <div className="flex flex-col lg:flex-row rounded-lg overflow-hidden  min-h-[75vh] px-5 md:px-0">
                     <div className="flex-2/4 bg-[linear-gradient(190deg,#020355_-50.47%,#304FD0_100%)] p-10 px-[10%] flex flex-col items-center justify-center gap-5">
-
-
                       <img
                         src={"/logoShape.png"}
                         alt="Regulatory Intelligence Logo"
@@ -81,7 +81,7 @@ function RouteComponent() {
                       <div className="font-medium text-[1.8rem] md:text-[2.4rem] lg:text-[2.25rem] relative text-black ">
                         {data.loginTitle}
                       </div>
-                      <form action="" className='flex flex-col gap-7'>
+                      <form action="#" className='flex flex-col gap-7'>
                         <Input type='email' placeholder={t("email")} />
                         <Input type='password' placeholder={t("password")} />
 
@@ -95,6 +95,11 @@ function RouteComponent() {
                           title={t("login")}
                           size="lg"
                           variant="dark"
+                          onClick={() => {
+                            navigate({
+                              to: `/${i18n.language}/dashboard`,
+                            })
+                          }}
                         />
                       </form>
                     </div>
@@ -105,6 +110,5 @@ function RouteComponent() {
             </div>
       }
     </AnimatePresence>
-
   )
 }

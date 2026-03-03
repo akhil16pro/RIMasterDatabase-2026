@@ -33,9 +33,7 @@ function RouteComponent() {
 
     return {
       header: isRoot ? 2.4 : 0.4,
-      shareFeedback: isRoot ? 2.6 : 0.3,
-      aiChatbot: isRoot ? 2.7 : 0.6,
-      chapterNav: isRoot ? 2.8 : 0.5,
+
     };
   };
 

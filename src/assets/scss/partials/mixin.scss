@@ -1,0 +1,82 @@
+@use "sass:math";
+
+@function randomNum($min, $max, $nvalue) {
+    $rand: random();
+    $randomNum: $min + floor($rand * (($max - $min) + 1));
+    $randomNum: $randomNum * $nvalue;
+    @return $randomNum;
+}
+
+@mixin hover {
+    @media (hover: hover) and (pointer: fine) {
+        @content;
+    }
+}
+
+@function rem($pixel) {
+    @if math.is-unitless($pixel) {
+        @return math.div($pixel, 16)+rem;
+    }
+
+    @else {
+        @error 'Dont use units when using the rem() function; only numbers.';
+    }
+}
+
+@function fontSize($s) {
+    @return calc(($s / var(--gfs)) * 1rem);
+}
+
+
+@mixin rtl($property, $ltr-value, $rtl-value) {
+    #{$property}: $ltr-value;
+
+    [dir="rtl"] & {
+        #{$property}: $rtl-value;
+    }
+}
+
+@mixin rtlProperty($value,
+    $ltr-property,
+    $rtl-property,
+    $responsive: false,
+    $responsiveValue: 0) {
+    #{$ltr-property}: $value;
+
+    [dir="rtl"] & {
+        @if $responsive ==false {
+            #{$ltr-property}: auto;
+        }
+
+        @if $responsive ==true {
+            @if $responsiveValue !=0 {
+                #{$ltr-property}: $responsiveValue;
+            }
+        }
+
+        #{$rtl-property}: $value;
+    }
+}
+
+@mixin bgGlas {
+    &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        height: 100%;
+        border-radius: 2.5rem;
+        background: var(--white);
+        opacity: 0.1;
+        transition: all 0.8s var(--elastic);
+        backdrop-filter: blur(10px);
+        transform: scaleX(1);
+        transform-origin: center !important;
+    }
+
+    &.active,
+    &:hover {
+        &::before {
+            transform: scale(1.05);
+        }
+    }
+}
