@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
       target: production
-    container_name: vite-react-app
+    container_name: RIMasterDatabase
     ports:
       - "7000:7000"
     environment:
