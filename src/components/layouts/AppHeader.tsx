@@ -25,8 +25,6 @@ import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
 
-
-
 export default function AppHeader({ delay }: { delay: number }) {
   const { t, i18n } = useTranslation();
   const { scrollY } = useScroll();
@@ -44,17 +42,17 @@ export default function AppHeader({ delay }: { delay: number }) {
       {
         id: 2,
         title: t("about_regulatory_intelligence"),
-        href: "/" + i18n.language + "/about-regulatory-intelligence",
+        href: "/" + i18n.language,
       },
       {
         id: 3,
         title: t("strategy"),
-        href: "/" + i18n.language + "/strategy",
+        href: "/" + i18n.language,
       },
       {
         id: 4,
         title: t("ri_white_paper"),
-        href: "/" + i18n.language + "/ri-white-paper",
+        href: "/" + i18n.language,
       },
       {
         id: 5,
@@ -79,8 +77,6 @@ export default function AppHeader({ delay }: { delay: number }) {
   };
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  console.log(isMobile, "isMobile")
 
   return (
     <motion.header
@@ -117,11 +113,14 @@ export default function AppHeader({ delay }: { delay: number }) {
           </div>
 
           <div className="inline-flex items-center relative gap-3 lg:gap-7">
-            <motion.nav className="fixed top-0 left-0 w-full h-full bg-black/70 px-20 lg:px-0 lg:bg-transparent lg:relative"
+            <motion.nav
+              className="fixed top-0 left-0 w-full h-full bg-black/70 px-20 lg:px-0 lg:bg-transparent lg:relative"
               style={{
                 clipPath: isMobile
-                  ? (isMenuOpen ? "polygon(0 0, 100% 0, 100% 100%, 0% 100%)" : "polygon(0 0, 100% 0, 100% 0, 0 0)")
-                  : "none" // or a default path for desktop
+                  ? isMenuOpen
+                    ? "polygon(0 0, 100% 0, 100% 100%, 0% 100%)"
+                    : "polygon(0 0, 100% 0, 100% 0, 0 0)"
+                  : "none", // or a default path for desktop
               }}
               transition={{ duration: 1, delay: 0 }}
             >
@@ -139,11 +138,16 @@ export default function AppHeader({ delay }: { delay: number }) {
             {isMobile ? (
               <DefaultButton
                 size="icon"
-                icon={isMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+                icon={
+                  isMenuOpen ? (
+                    <X className="w-4 h-4" />
+                  ) : (
+                    <Menu className="w-4 h-4" />
+                  )
+                }
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
               />
             ) : null}
-
           </div>
         </div>
       </motion.div>

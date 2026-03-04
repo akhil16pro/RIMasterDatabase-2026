@@ -69,11 +69,11 @@ export default defineConfig({
     },
   },
   server: {
-    port: 6140,
+    port: 7000,
     host: true,
   },
   preview: {
-    port: Number(process.env.PORT) || 6140,
+    port: Number(process.env.PORT) || 7000,
     host: true,
   }
 })
