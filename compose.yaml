@@ -1,17 +1,15 @@
-version: "3.8"
-
 services:
-  RIMasterDatabase:
+  ri-master-database:
     build:
       context: .
       dockerfile: Dockerfile
       target: production
-    container_name: RIMasterDatabase
+    container_name: ri-master-database
     ports:
       - "7000:7000"
     environment:
       - NODE_ENV=production
-      - VITE_PORT=${VITE_PORT}
+      - VITE_PORT=${VITE_PORT:-7000}
       - VITE_APP_NAME=${VITE_APP_NAME}
       - VITE_API_URL=${VITE_API_URL}
     restart: unless-stopped
