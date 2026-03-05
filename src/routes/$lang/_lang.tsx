@@ -30,20 +30,17 @@ function RouteComponent() {
   const isRoot = href === "/en" || href === "/ar";
 
   const componentsAnimationDelay = () => {
-
     return {
       header: isRoot ? 2.4 : 0.4,
-
     };
   };
 
   return (
-    <div className="flex flex-col min-h-screen relative">
-
+    <>
       {isRoot && <AppHeader delay={componentsAnimationDelay().header} />}
-      <main className="flex-1 relative w-full flex flex-col overflow-clip min-h-screen">
+      <main className="flex flex-col min-h-screen rlative relative w-full flex flex-col overflow-clip min-h-screen">
         <Outlet />
       </main>
-    </div>
+    </>
   );
 }

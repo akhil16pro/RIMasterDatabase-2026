@@ -23,6 +23,7 @@ import DashboardTopbar from "@/components/layouts/DashboardTopbar";
 import { ArrowUp } from "lucide-react";
 import { useEffect } from "react";
 import { SectionTitle } from "@/components/ui/sectionTitle";
+import BarChart from "@/components/ui/BarChart";
 export const Route = createFileRoute("/$lang/_lang/dashboard")({
   component: RouteComponent,
 });
@@ -53,7 +54,6 @@ function RouteComponent() {
 
             <div className="contentBox">
               <DashboardTopbar delay={0} title={data.title} />
-
               <MinistryCard delay={0.2} />
               <PerformingEntitiesCard delay={0.4} />
             </div>
@@ -99,16 +99,16 @@ function MinistryCard({ delay }: { delay: number }) {
           className="xl:h-27 2xl:h-33 w-auto"
         />
       </div>
-      <div className="flex-1 flex gap-5">
+      <div className="flex-1 flex gap-1">
         {data.map((item, index) =>
           item.link ? (
             <Link
               to={"/"}
               key={index}
-              className="flex flex-1 items-center justify-between flex-col text-center justify-center   aspect-square p-2 relative [&:before]:content-[''] [&:before]:absolute [&:before]:inset-0 [&:before]:bg-white/10  hover:[&:before]:scale-105 [&:before]:transition-all [&:before]:duration-300 [&:before]:overflow-hidden [&:before]:rounded-[calc(0.75rem-1px)]"
+              className="flex flex-1 items-center justify-between flex-col text-center justify-center px-2 py-8 relative [&:before]:content-[''] [&:before]:absolute [&:before]:inset-0 [&:before]:bg-white/10  hover:[&:before]:scale-105 [&:before]:transition-all [&:before]:duration-300 [&:before]:overflow-hidden [&:before]:rounded-[calc(0.75rem-1px)]"
             >
               <NumberCard title={item.title} count={item.count} />
-              <ArrowUp size={19} className="absolute top-2 right-2 rotate-45" />
+              <ArrowUp className="absolute top-2 right-2 rotate-45 xl:size-5 2xl:size-7" />
             </Link>
           ) : (
             <div
@@ -143,10 +143,12 @@ function NumberCard({ title, count }: { title: string; count: number }) {
   }, [count, countValue]);
   return (
     <>
-      <motion.span className=" font-semibold text-6xl leading-[90%]">
+      <motion.span className=" font-semibold xl:text-6xl 2xl:text-8xl leading-[90%]">
         {rounded}
       </motion.span>
-      <span className=" font-regular text-[1rem] leading-[100%]">{title}</span>
+      <span className=" font-regular  2xl:text-[1.3rem] text-[1rem] leading-[100%]">
+        {title}
+      </span>
     </>
   );
 }
@@ -154,7 +156,7 @@ function NumberCard({ title, count }: { title: string; count: number }) {
 function PerformingEntitiesCard({ delay }: { delay: number }) {
   return (
     <motion.div
-      className="w-full flex flex-col gap-5"
+      className="w-full flex flex-col gap-3 flex-1"
       initial={{ opacity: 0, y: -20, scale: 0.9 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: -20, scale: 0.9 }}
@@ -163,6 +165,7 @@ function PerformingEntitiesCard({ delay }: { delay: number }) {
       <SectionTitle size="small">
         <span>Top 10 Performing Entities (by contribution) </span>
       </SectionTitle>
+      <BarChart />
     </motion.div>
   );
 }

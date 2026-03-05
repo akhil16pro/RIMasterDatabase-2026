@@ -71,6 +71,8 @@
     "Beiruti", "ui-sans-serif", "system-ui", "sans-serif";
 
   --textColor: #111435;
+
+  --mainGap: 1.5rem;
 }
 
 body {

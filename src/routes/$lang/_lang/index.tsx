@@ -104,15 +104,23 @@ function HomeBanner({ data }: { data: any }) {
         exit={{ opacity: 0, y: 0, scale: 1.4 }}
         transition={{ duration: 1, type: "linear", delay: 0.2 }}
         // style={{ y: cityTranslateY, scale: cityScale, opacity: cityOpacity }}
-        className="fixed top-0 left-0 w-full h-screen mask-t-from-50% [&:after]:content-[''] [&:after]:absolute [&:after]:inset-0 [&:after]:bg-black/10"
+        className="fixed top-0 left-0 w-full h-screen mask-t-from-50% [&:after]:content-[''] [&:after]:absolute [&:after]:inset-0 [&:after]:bg-black/10 pointer-events-none"
       >
         {/* [&:after]:content-[''] [&:after]:absolute [&:after]:bottom-[-2px] [&:after]:left-0 [&:after]:w-full [&:after]:h-[50%] [&:after]:bg-gradient-to-b [&:after]:from-transparent [&:after]:to-primary  [&:before]:content-[''] [&:before]:absolute [&:before]:top-[-2px] [&:before]:left-0 [&:before]:w-full [&:before]:h-[50%] [&:before]:bg-gradient-to-t [&:before]:from-transparent [&:before]:to-bg  */}
-
-        <img
+        <picture className="w-full h-full">
+          <source srcSet={"/homeBg.webp"} type="image/webp" />
+          <source srcSet={"/homeBg.png"} type="image/png" />
+          <img
+            src={"/homeBg.png"}
+            alt="Home Banner City"
+            className="w-full h-full object-cover mask-b-from-50%"
+          />
+        </picture>
+        {/* <img
           src={"/homeBg.png"}
           alt="Home Banner City"
           className="w-full h-full object-cover mask-b-from-50%"
-        />
+        /> */}
       </motion.div>
       <div className="relative w-full  flex items-center justify-center">
         <motion.div

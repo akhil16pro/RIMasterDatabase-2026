@@ -21,11 +21,11 @@ function SectionTitle({
   return (
     <Tag
       className={cn(
-        "font-bold  text-[var(--textColor)] leading-[100%]",
+        "font-bold  text-[var(--textColor)] ",
         size === "small" &&
-          "lg:text-[1.4rem] xl:text-[1.6rem] 2xl:text-[1.8rem]",
+          "lg:text-[1.4rem] xl:text-[1.6rem] 2xl:text-[1.8rem] leading-[100%]",
         size === "large" &&
-          "lg:text-[2rem] xl:text-[2.3rem] 2xl:text-[2.5rem] text-[1.5rem]",
+          "lg:text-[2rem] xl:text-[2.3rem] 2xl:text-[2.5rem] text-[1.5rem] leading-[100%]",
         gradient &&
           "bg-[linear-gradient(270deg,#022EE4_0%,#FFC99D_100%)] bg-clip-text text-transparent",
         className,

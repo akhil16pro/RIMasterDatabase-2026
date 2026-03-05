@@ -25,7 +25,7 @@ export default function DashboardTopbar({
       exit={{ opacity: 0, y: -20 }}
       transition={{ delay: delay, duration: 0.5, ease: "easeInOut" }}
     >
-      <div className="flex flex-1">
+      <div className="flex flex-1 self-end">
         <SectionTitle gradient={true}>
           <span>{title}</span>
         </SectionTitle>

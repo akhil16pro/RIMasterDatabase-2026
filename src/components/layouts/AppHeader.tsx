@@ -42,17 +42,18 @@ export default function AppHeader({ delay }: { delay: number }) {
       {
         id: 2,
         title: t("about_regulatory_intelligence"),
-        href: "/" + i18n.language,
+        href: "/" + i18n.language + "/about",
       },
       {
         id: 3,
         title: t("strategy"),
-        href: "/" + i18n.language,
+        href: "/" + i18n.language + "/strategy",
       },
       {
         id: 4,
         title: t("ri_white_paper"),
-        href: "/" + i18n.language,
+        target: "_blank",
+        href: "https://regulatoryintelligence.ae/en",
       },
       {
         id: 5,
@@ -166,6 +167,7 @@ function MenuItem({ item }: { item: any }) {
       className="w-auto relative block"
     >
       <Link
+        target={item.href.startsWith("http") ? "_blank" : "_self"}
         to={item.href}
         activeOptions={{ exact: true }}
         className={cn(

@@ -9,7 +9,7 @@ import {
   CircleChevronRight,
 } from "lucide-react";
 import { useScroll, useMotionValueEvent, motion } from "motion/react";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useAtom, useAtomValue } from "jotai";
 import { scrollDirectionAtom } from "@/store/atoms";
 import { apiClient } from "@/api";
@@ -46,32 +46,44 @@ export default function DashboardSidebar({ delay }: { delay: number }) {
         id: 3,
         title: t("federal-legislations"),
         href: "/" + i18n.language + "/federal-legislations",
+        preventClick: true,
       },
       {
         id: 4,
         title: t("federal-courts-decisions"),
         href: "/" + i18n.language + "/federal-courts-decisions",
+        preventClick: true,
       },
       {
         id: 5,
         title: t("international-treaties"),
         href: "/" + i18n.language + "/international-treaties",
+        preventClick: true,
       },
       {
         id: 6,
         title: t("local-governments-legislations"),
         href: "/" + i18n.language + "/local-governments-legislations",
+        preventClick: true,
       },
       {
         id: 7,
         title: t("local-governments-courts-decisions"),
         href: "/" + i18n.language + "/local-governments-courts-decisions",
+        preventClick: true,
       },
     ],
     [i18n.language],
   );
 
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(() => {
+    const savedState = localStorage.getItem("isMenuOpen");
+    return savedState !== null ? JSON.parse(savedState) : false;
+  });
+
+  useEffect(() => {
+    localStorage.setItem("isMenuOpen", JSON.stringify(isMenuOpen));
+  }, [isMenuOpen]);
 
   return (
     <motion.div className={cn("sideBar", isMenuOpen ? "open" : "")}>
@@ -156,7 +168,7 @@ export default function DashboardSidebar({ delay }: { delay: number }) {
                       visualDuration: 0.2,
                       bounce: 0.2,
                     }}
-                    className="w-full relative flex"
+                    className={cn("w-full relative flex")}
                     key={"navItem-" + item.id}
                   >
                     {!isMenuOpen ? (
@@ -182,7 +194,10 @@ function MenuItem({ item }: { item: any }) {
     <Link
       to={item.href}
       activeOptions={{ exact: true }}
-      className="group relative flex justify-content-start w-full items-center gap-4 py-[1rem] pl-4 text-[1.3rem] font-medium text-white transition-all duration-300 z-10 [&:before]:content-[''] [&:before]:absolute [&:before]:inset-0 [&:before]:-right-[var(--sidePadd)] [&:before]:z-[11] [&:before]:origin-right [&:before]:scale-x-0 [&:before]:rounded-l-[10px] [&:before]:bg-white [&:before]:transition-transform [&:before]:duration-300 hover:[&:before]:scale-x-100 [&:not(.active)]:before:opacity-[.2]"
+      className={cn(
+        "group relative flex justify-content-start w-full items-center gap-4 py-[1rem] pl-4 text-[1.3rem] font-medium text-white transition-all duration-300 z-10 [&:before]:content-[''] [&:before]:absolute [&:before]:inset-0 [&:before]:-right-[var(--sidePadd)] [&:before]:z-[11] [&:before]:origin-right [&:before]:scale-x-0 [&:before]:rounded-l-[10px] [&:before]:bg-white [&:before]:transition-transform [&:before]:duration-300 hover:[&:before]:scale-x-100 [&:not(.active)]:before:opacity-[.2]",
+        item.preventClick ? "blur-[5px] pointer-events-none" : "",
+      )}
       activeProps={{
         className: "active [&:before]:scale-x-100",
       }}
@@ -226,7 +241,10 @@ function MenuItemWithTooltip({ item }: { item: any }) {
           <Link
             to={item.href}
             activeOptions={{ exact: true }}
-            className="group relative flex justify-content-start w-full items-center gap-4 py-[1rem] pl-4 text-[1.3rem] font-medium text-white transition-all duration-300 z-10 [&:before]:content-[''] [&:before]:absolute [&:before]:inset-0 [&:before]:-right-[var(--sidePadd)] [&:before]:z-[11] [&:before]:origin-right [&:before]:scale-x-0 [&:before]:rounded-l-[10px] [&:before]:bg-white [&:before]:transition-transform [&:before]:duration-300 hover:[&:before]:scale-x-100 [&:not(.active)]:before:opacity-[.2]"
+            className={cn(
+              "group relative flex justify-content-start w-full items-center gap-4 py-[1rem] pl-4 text-[1.3rem] font-medium text-white transition-all duration-300 z-10 [&:before]:content-[''] [&:before]:absolute [&:before]:inset-0 [&:before]:-right-[var(--sidePadd)] [&:before]:z-[11] [&:before]:origin-right [&:before]:scale-x-0 [&:before]:rounded-l-[10px] [&:before]:bg-white [&:before]:transition-transform [&:before]:duration-300 hover:[&:before]:scale-x-100 [&:not(.active)]:before:opacity-[.2]",
+              item.preventClick ? "blur-[5px] pointer-events-none" : "",
+            )}
             activeProps={{
               className: "active [&:before]:scale-x-100",
             }}
