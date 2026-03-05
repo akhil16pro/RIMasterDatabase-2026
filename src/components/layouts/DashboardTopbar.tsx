@@ -1,16 +1,21 @@
 import { useTranslation } from "react-i18next";
-import { Clock, ChevronDown } from "lucide-react";
+import { Clock, ChevronDown, ClockFading } from "lucide-react";
 import { motion } from "motion/react";
 
 import { cn } from "@/lib/utils";
 import { SectionTitle } from "@/components/ui/sectionTitle";
+import { useEffect, useState } from "react";
 
 export default function DashboardTopbar({
   delay,
   title,
+  lastLogin,
+  timeCounter,
 }: {
   delay: number;
   title: string;
+  lastLogin?: boolean;
+  timeCounter?: boolean;
 }) {
   return (
     <motion.div
@@ -25,11 +30,113 @@ export default function DashboardTopbar({
           <span>{title}</span>
         </SectionTitle>
       </div>
-      <div className="flex gap-2 order-1 md:order-2 justify-end ">
-        <LastLoginInfo />
+      <div className="flex md:gap-2 gap-1 order-1 md:order-2 justify-end flex-wrap ">
+        {lastLogin && <LastLoginInfo />}
+        {timeCounter && <TimeLeftInfo />}
         <LoginAvatar />
       </div>
     </motion.div>
+  );
+}
+
+function TimeLeftInfo() {
+  const { t } = useTranslation();
+
+  const targetDate = new Date("2026-03-25T13:56:21+04:00");
+
+  const [timeLeft, setTimeLeft] = useState({
+    days: "00",
+    hours: "00",
+    minutes: "00",
+    seconds: "00",
+  });
+
+  useEffect(() => {
+    const calculateTimeLeft = () => {
+      const now = new Date();
+      const difference = targetDate.getTime() - now.getTime();
+
+      if (difference > 0) {
+        const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((difference / 1000 / 60) % 60);
+        const seconds = Math.floor((difference / 1000) % 60);
+
+        setTimeLeft({
+          days: days.toString().padStart(2, "0"),
+          hours: hours.toString().padStart(2, "0"),
+          minutes: minutes.toString().padStart(2, "0"),
+          seconds: seconds.toString().padStart(2, "0"),
+        });
+      } else {
+        setTimeLeft({ days: "00", hours: "00", minutes: "00", seconds: "00" });
+      }
+    };
+
+    calculateTimeLeft();
+
+    const timer = setInterval(calculateTimeLeft, 1000);
+
+    return () => clearInterval(timer);
+  }, [targetDate.getTime()]);
+
+  return (
+    <div className="flex p-[1px] rounded-lg bg-[var(--brandRed)]/30  w-full md:w-auto ">
+      <div className="flex gap-2 items-center px-2 lg:px-4 py-2 lg:py-2 rounded-lg  bg-[var(--brandRed)]">
+        <ClockFading
+          // size={34}
+          className={`iconBox size-[22px] md:size-[25px] lg:size-[30px]  relative z-12 transition-all duration-400 `}
+        />
+        <div className="text-[.7rem] md:text-[.85rem] font-medium leading-[100%] uppercase flex flex-col">
+          <span> {t("time")}</span>
+          <span> {t("left")}</span>
+        </div>
+      </div>
+
+      <div className="flex-1 flex items-center gap-1 lg:gap-2 lg:px-5 px-3 justify-between">
+        <div className="flex flex-col text-center gap-[2px] w-[2rem]">
+          <span className="text-[1.6rem] lg:text-[1.9rem] leading-[80%] font-medium text-[var(--textColor)]">
+            {timeLeft.days}
+          </span>
+          <span className="text-[var(--brandRed)] text-[.7rem] md:text-[.85rem] font-medium leading-[90%] uppercase">
+            {t("days")}
+          </span>
+        </div>
+        <span className="text-[1.5rem] leading-[100%] font-bold text-[var(--textColor)]">
+          :
+        </span>
+        <div className="flex flex-col text-center gap-[2px] w-[2rem]">
+          <span className="text-[1.6rem] lg:text-[1.9rem] leading-[80%] font-medium text-[var(--textColor)]">
+            {timeLeft.hours}
+          </span>
+          <span className="text-[var(--brandRed)] text-[.7rem] md:text-[.85rem] font-medium leading-[90%] uppercase">
+            {t("hours")}
+          </span>
+        </div>
+        <span className="text-[1.5rem] leading-[100%] font-bold text-[var(--textColor)]">
+          :
+        </span>
+        <div className="flex flex-col text-center gap-[2px] w-[2rem]">
+          <span className="text-[1.6rem] lg:text-[1.9rem] leading-[80%] font-medium text-[var(--textColor)]">
+            {timeLeft.minutes}
+          </span>
+          <span className="text-[var(--brandRed)] text-[.7rem] md:text-[.85rem] font-medium leading-[90%] uppercase">
+            {t("mins")}
+          </span>
+        </div>
+        <span className="text-[1.5rem] leading-[100%] font-bold text-[var(--textColor)]  ">
+          :
+        </span>
+        <div className="flex flex-col text-center gap-[2px] w-[2rem]  ">
+          <span className="text-[1.6rem] lg:text-[1.9rem] leading-[80%] font-medium text-[var(--textColor)]">
+            {timeLeft.seconds}
+          </span>
+          <span className="text-[var(--brandRed)] text-[.7rem] md:text-[.85rem] font-medium leading-[90%] uppercase">
+            {t("secs")}
+          </span>
+        </div>
+      </div>
+    </div>
   );
 }
 

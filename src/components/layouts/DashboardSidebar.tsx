@@ -13,6 +13,7 @@ import { useState, useMemo, useEffect } from "react";
 import { apiClient } from "@/api";
 import { useQueryClient } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
+import { isMobile, isTablet } from "react-device-detect";
 import {
   Tooltip,
   TooltipContent,
@@ -79,6 +80,13 @@ export default function DashboardSidebar({ delay }: { delay: number }) {
   useEffect(() => {
     localStorage.setItem("isMenuOpen", JSON.stringify(isMenuOpen));
   }, [isMenuOpen]);
+
+  useEffect(() => {
+    if (isMobile) {
+      setIsMenuOpen(true);
+    }
+    console.log(isMobile, "sdfsf");
+  }, []);
 
   return (
     <motion.div className={cn("sideBar", isMenuOpen ? "open" : "")}>
@@ -203,6 +211,7 @@ function MenuItem({
 }: {
   item: any;
   isMenuOpen: boolean;
+  index: number;
 }) {
   const [isHover, setIsHover] = useState(false);
 
@@ -222,13 +231,11 @@ function MenuItem({
     >
       {item.icon ? (
         <item.icon
-          // size={24}
           strokeWidth={2}
           className={`iconBox size-6 md:size-7 relative z-12 transition-all duration-400 stroke-white  group-[.active]:stroke-[url(#dashboard_linear)] transition-stroke duration-300`}
         />
       ) : (
         <ShieldCheck
-          // size={24}
           strokeWidth={2}
           className="iconBox size-6 md:size-7 relative z-12 transition-all duration-400 stroke-white group-[.active]:stroke-[url(#dashboard_linear)] transition-stroke duration-300"
         />

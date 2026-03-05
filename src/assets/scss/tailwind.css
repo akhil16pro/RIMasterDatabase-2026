@@ -72,6 +72,8 @@
 
   --textColor: #111435;
 
+  --brandRed: #f07067;
+
   --mainGap: 1.5rem;
 
   @media only screen and (max-width: 767px) {

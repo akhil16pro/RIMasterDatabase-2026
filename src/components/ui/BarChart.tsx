@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/tooltip";
 import { motion } from "motion/react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { isMobile } from "react-device-detect";
+
 export default function BarChart({ data }: { data: any[] }) {
   const [maxLabelHeight, setMaxLabelHeight] = useState(0);
   const labelRefs = useRef<(HTMLSpanElement | null)[]>([]);
@@ -129,7 +129,7 @@ function Bar({ item, index, maxLabelHeight, labelRefs, isMobile }: any) {
             <Tooltip>
               <TooltipTrigger asChild>
                 <motion.div
-                  className="barValue bg-[linear-gradient(-90deg,#FFC99D_0%,#022EE4_100%)] md:bg-[linear-gradient(180deg,#FFC99D_0%,#022EE4_100%)]  rounded-lg "
+                  className="barValue bg-[linear-gradient(-90deg,#FFC99D_0%,#022EE4_100%)] md:bg-[linear-gradient(180deg,#FFC99D_0%,#022EE4_100%)]  rounded-lg cursor-pointer "
                   initial={
                     isMobile
                       ? { width: 0, height: "7px" }

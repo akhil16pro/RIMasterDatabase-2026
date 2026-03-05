@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as LangLangRouteImport } from './routes/$lang/_lang'
 import { Route as LangLangIndexRouteImport } from './routes/$lang/_lang/index'
 import { Route as LangLangLoginRouteImport } from './routes/$lang/_lang/login'
+import { Route as LangLangGlossaryRouteImport } from './routes/$lang/_lang/glossary'
 import { Route as LangLangDashboardRouteImport } from './routes/$lang/_lang/dashboard'
 
 const IndexRoute = IndexRouteImport.update({
@@ -35,6 +36,11 @@ const LangLangLoginRoute = LangLangLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => LangLangRoute,
 } as any)
+const LangLangGlossaryRoute = LangLangGlossaryRouteImport.update({
+  id: '/glossary',
+  path: '/glossary',
+  getParentRoute: () => LangLangRoute,
+} as any)
 const LangLangDashboardRoute = LangLangDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -45,12 +51,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$lang': typeof LangLangRouteWithChildren
   '/$lang/dashboard': typeof LangLangDashboardRoute
+  '/$lang/glossary': typeof LangLangGlossaryRoute
   '/$lang/login': typeof LangLangLoginRoute
   '/$lang/': typeof LangLangIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$lang/dashboard': typeof LangLangDashboardRoute
+  '/$lang/glossary': typeof LangLangGlossaryRoute
   '/$lang/login': typeof LangLangLoginRoute
   '/$lang': typeof LangLangIndexRoute
 }
@@ -59,19 +67,27 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/$lang/_lang': typeof LangLangRouteWithChildren
   '/$lang/_lang/dashboard': typeof LangLangDashboardRoute
+  '/$lang/_lang/glossary': typeof LangLangGlossaryRoute
   '/$lang/_lang/login': typeof LangLangLoginRoute
   '/$lang/_lang/': typeof LangLangIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/$lang' | '/$lang/dashboard' | '/$lang/login' | '/$lang/'
+  fullPaths:
+    | '/'
+    | '/$lang'
+    | '/$lang/dashboard'
+    | '/$lang/glossary'
+    | '/$lang/login'
+    | '/$lang/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/$lang/dashboard' | '/$lang/login' | '/$lang'
+  to: '/' | '/$lang/dashboard' | '/$lang/glossary' | '/$lang/login' | '/$lang'
   id:
     | '__root__'
     | '/'
     | '/$lang/_lang'
     | '/$lang/_lang/dashboard'
+    | '/$lang/_lang/glossary'
     | '/$lang/_lang/login'
     | '/$lang/_lang/'
   fileRoutesById: FileRoutesById
@@ -111,6 +127,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LangLangLoginRouteImport
       parentRoute: typeof LangLangRoute
     }
+    '/$lang/_lang/glossary': {
+      id: '/$lang/_lang/glossary'
+      path: '/glossary'
+      fullPath: '/$lang/glossary'
+      preLoaderRoute: typeof LangLangGlossaryRouteImport
+      parentRoute: typeof LangLangRoute
+    }
     '/$lang/_lang/dashboard': {
       id: '/$lang/_lang/dashboard'
       path: '/dashboard'
@@ -123,12 +146,14 @@ declare module '@tanstack/react-router' {
 
 interface LangLangRouteChildren {
   LangLangDashboardRoute: typeof LangLangDashboardRoute
+  LangLangGlossaryRoute: typeof LangLangGlossaryRoute
   LangLangLoginRoute: typeof LangLangLoginRoute
   LangLangIndexRoute: typeof LangLangIndexRoute
 }
 
 const LangLangRouteChildren: LangLangRouteChildren = {
   LangLangDashboardRoute: LangLangDashboardRoute,
+  LangLangGlossaryRoute: LangLangGlossaryRoute,
   LangLangLoginRoute: LangLangLoginRoute,
   LangLangIndexRoute: LangLangIndexRoute,
 }

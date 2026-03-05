@@ -53,7 +53,7 @@ function RouteComponent() {
             <DashboardSidebar delay={0} />
 
             <div className="contentBox">
-              <DashboardTopbar delay={0} title={data.title} />
+              <DashboardTopbar delay={0} title={data.title} lastLogin={true} />
               <MinistryCard delay={0.2} />
               <PerformingEntitiesCard delay={0.4} />
             </div>

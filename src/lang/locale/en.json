@@ -24,6 +24,11 @@
     "international-treaties": "International Treaties",
     "local-governments-legislations": "Local Governments Legislations",
     "local-governments-courts-decisions": "Local Governments Courts Decisions",
-    "last-login": "Last login"
+    "last-login": "Last login",
+    "left": "Left",
+    "time": "Time",
+    "days": "Days",
+    "hours": "Hours",
+    "mins": "Mins"
   }
 }
