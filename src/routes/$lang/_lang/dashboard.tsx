@@ -47,7 +47,7 @@ function RouteComponent() {
       ) : (
         <div
           key="dashboard-content"
-          className="flex flex-col items-center justify-center w-full h-full flex-1 p-5"
+          className="flex flex-col items-center justify-center w-full h-full flex-1 md:p-5 p-2"
         >
           <section className="w-full flex-1 relative mainWrapper ">
             <DashboardSidebar delay={0} />
@@ -86,7 +86,7 @@ function MinistryCard({ delay }: { delay: number }) {
   ];
   return (
     <motion.div
-      className="w-full flex   justify-center w-full rounded-lg overflow-hidden bg-[linear-gradient(50deg,#022EE4_0%,#FFC99D_50%,#022EE4_108%)] p-[1px] [&>div]:p-5"
+      className="w-full flex   justify-center w-full rounded-lg overflow-hidden lg:bg-[linear-gradient(50deg,#022EE4_0%,#FFC99D_50%,#022EE4_108%)] bg-[linear-gradient(50deg,#FFC99D_0%,#022EE4_108%)] p-[1px] [&>div]:p-5 lg:flex-row flex-col"
       initial={{ opacity: 0, y: -20, scale: 0.9 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: -20, scale: 0.9 }}
@@ -96,10 +96,10 @@ function MinistryCard({ delay }: { delay: number }) {
         <img
           src="/ministryImg.jpg"
           alt=""
-          className="xl:h-27 2xl:h-33 w-auto"
+          className=" h-20 md:h-24 xl:h-27 2xl:h-33 w-auto"
         />
       </div>
-      <div className="flex-1 flex gap-1">
+      <div className="flex-1 grid grid-cols-2 md:flex gap-2 md:gap-1">
         {data.map((item, index) =>
           item.link ? (
             <Link
@@ -108,7 +108,7 @@ function MinistryCard({ delay }: { delay: number }) {
               className="flex flex-1 items-center justify-between flex-col text-center justify-center px-2 py-8 relative [&:before]:content-[''] [&:before]:absolute [&:before]:inset-0 [&:before]:bg-white/10  hover:[&:before]:scale-105 [&:before]:transition-all [&:before]:duration-300 [&:before]:overflow-hidden [&:before]:rounded-[calc(0.75rem-1px)]"
             >
               <NumberCard title={item.title} count={item.count} />
-              <ArrowUp className="absolute top-2 right-2 rotate-45 xl:size-5 2xl:size-7" />
+              <ArrowUp className="absolute top-2 right-2 rotate-45 xl:size-5 2xl:size-7 size-6" />
             </Link>
           ) : (
             <div
@@ -143,7 +143,7 @@ function NumberCard({ title, count }: { title: string; count: number }) {
   }, [count, countValue]);
   return (
     <>
-      <motion.span className=" font-semibold xl:text-6xl 2xl:text-8xl leading-[90%]">
+      <motion.span className=" font-semibold text-[3rem] md:text-6xl  2xl:text-8xl leading-[90%]">
         {rounded}
       </motion.span>
       <span className=" font-regular  2xl:text-[1.3rem] text-[1rem] leading-[100%]">
@@ -154,18 +154,62 @@ function NumberCard({ title, count }: { title: string; count: number }) {
 }
 
 function PerformingEntitiesCard({ delay }: { delay: number }) {
+  const data = [
+    {
+      name: "Ministry of Health",
+      value: 80,
+    },
+    {
+      name: "Ministry of Health",
+      value: 75,
+    },
+    {
+      name: "Ministry of Health Ministry of Health",
+      value: 60,
+    },
+    {
+      name: "Ministry of Health",
+      value: 62,
+      visibility: true,
+    },
+    {
+      name: "Ministry of Health",
+      value: 45,
+    },
+    {
+      name: "Ministry of Health",
+      value: 35,
+    },
+    {
+      name: "Ministry of Health",
+      value: 25,
+    },
+    {
+      name: "Ministry of Health",
+      value: 20,
+    },
+    {
+      name: "Ministry of Health",
+      value: 15,
+    },
+    {
+      name: "Ministry of Health",
+      value: 9,
+    },
+  ];
   return (
-    <motion.div
-      className="w-full flex flex-col gap-3 flex-1"
-      initial={{ opacity: 0, y: -20, scale: 0.9 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: -20, scale: 0.9 }}
-      transition={{ delay: delay, duration: 0.5, ease: "easeInOut" }}
-    >
-      <SectionTitle size="small">
-        <span>Top 10 Performing Entities (by contribution) </span>
-      </SectionTitle>
-      <BarChart />
-    </motion.div>
+    <div className="w-full flex flex-col gap-4 lg:gap-3 flex-1">
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -20 }}
+        transition={{ delay: delay, duration: 0.5, ease: "easeInOut" }}
+      >
+        <SectionTitle size="small">
+          <span>Top 10 Performing Entities (by contribution) </span>
+        </SectionTitle>
+      </motion.div>
+      <BarChart data={data} />
+    </div>
   );
 }

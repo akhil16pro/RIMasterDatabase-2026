@@ -165,8 +165,30 @@ html[dir="rtl"] {
   @media only screen and (min-width: rem(1025)) and (max-width: rem(1370)) and (min-height: rem(500)) and (max-height: rem(670)) {
     --sideBar: 17rem;
   }
+
+  @media only screen and (max-width: rem(767)) {
+    --sideBar: 17rem;
+  }
+
   &:has(.sideBar.open) {
     --sideBar: calc(24px + 2rem + (var(--sidePadd) * 2));
+    --off: 0.5rem;
+
+    @media only screen and (max-width: rem(1024)) {
+      --sideBar: 6rem;
+    }
+    @media only screen and (max-width: rem(767)) {
+      --sideBar: 4rem;
+    }
+  }
+  @media only screen and (max-width: rem(1024)) {
+    grid-template-columns: 100%;
+    padding-inline-start: 6rem;
+  }
+  @media only screen and (max-width: rem(767)) {
+    border-radius: 10px;
+    --sidePadd: 0.8rem;
+    padding-inline-start: 4rem;
   }
 }
 
@@ -176,11 +198,26 @@ html[dir="rtl"] {
   display: flex;
   flex-direction: column;
   gap: var(--mainGap);
+  padding-inline-start: calc(var(--sidePadd) + var(--off, 0px));
+
+  @media only screen and (max-width: rem(767)) {
+    --off: 0rem;
+  }
 }
 
 .sideBar {
   position: relative;
   padding: var(--sidePadd);
+  @media only screen and (max-width: rem(1024)) {
+    position: absolute;
+    @include rtl(0, right, left);
+    top: 0;
+    z-index: 50;
+    height: 100%;
+    transition: all 0.3s ease-in-out;
+
+    width: var(--sideBar);
+  }
 
   &::before {
     content: "";
@@ -214,6 +251,10 @@ html[dir="rtl"] {
     flex-direction: column;
     height: 100%;
     gap: 4rem;
+    @media only screen and (max-width: rem(767)) {
+      gap: 2rem;
+      padding-top: 1rem;
+    }
   }
 
   nav li {
@@ -269,6 +310,10 @@ html[dir="rtl"] {
       @include rtlProperty(0, right, left);
       transition: all 0.4s ease-in-out;
 
+      @media only screen and (max-width: rem(767)) {
+        top: 0;
+      }
+
       &::before {
         content: "";
         position: absolute;
@@ -281,88 +326,6 @@ html[dir="rtl"] {
       }
     }
   }
-
-  // .navLink {
-  //   display: flex;
-  //   align-items: center;
-  //   gap: .5rem;
-  //   position: relative;
-  //   color: var(--color-white);
-  //   font-size: 1.3rem;
-  //   font-weight: 500;
-
-  //   width: 100%;
-  //   z-index: 5;
-  //   padding-block: .8rem;
-  //   padding-inline-start: 1rem;
-
-  //   &::before {
-  //     content: '';
-  //     position: absolute;
-  //     inset: 0;
-  //     background: var(--color-white);
-  //     inset-inline-end: calc(var(--sidePadd) * -1);
-  //     z-index: -1;
-  //     border-start-start-radius: 10px;
-  //     border-end-start-radius: 10px;
-  //     transform: scaleX(0);
-
-  //     transition: transform .3s ease-in-out;
-  //     @include rtl(transform-origin, right, left);
-  //   }
-
-  //   &.active {
-
-  //     .iconBox {
-  //       color: var(--color-primary);
-  //     }
-
-  //     &::before {
-  //       transform: scaleX(1);
-  //     }
-
-  //     span {
-  //       background: linear-gradient(270deg, #022EE4 0%, #03CBFF 100%);
-  //       background-clip: text;
-  //       -webkit-background-clip: text;
-  //       -webkit-text-fill-color: transparent;
-  //     }
-
-  //   }
-
-  //   @include hover {
-  //     &:hover {
-  //       &::before {
-  //         transform: scaleX(1);
-  //       }
-
-  //       .iconBox {
-  //         color: var(--color-primary);
-  //       }
-
-  //       span {
-  //         background: linear-gradient(270deg, #022EE4 0%, #03CBFF 100%);
-  //         background-clip: text;
-  //         -webkit-background-clip: text;
-  //         -webkit-text-fill-color: transparent;
-
-  //       }
-  //     }
-  //   }
-
-  //   .iconBox {
-
-  //     transition: all .4s ease-in-out;
-  //   }
-
-  //   span {
-  //     display: flex;
-  //     position: relative;
-  //     z-index: 2;
-  //     transition: all .3s ease-in-out;
-
-  //   }
-  // }
 }
 
 [data-radix-popper-content-wrapper] {

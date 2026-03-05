@@ -1,4 +1,3 @@
-import { saveAs } from "file-saver";
 import { Link, useLocation, useRouter } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { DefaultButton } from "../ui/buttons";

@@ -23,9 +23,9 @@ function SectionTitle({
       className={cn(
         "font-bold  text-[var(--textColor)] ",
         size === "small" &&
-          "lg:text-[1.4rem] xl:text-[1.6rem] 2xl:text-[1.8rem] leading-[100%]",
+          "lg:text-[1.6rem]  2xl:text-[1.8rem] md:text-[1.7rem] text-[1.4rem] leading-[100%]",
         size === "large" &&
-          "lg:text-[2rem] xl:text-[2.3rem] 2xl:text-[2.5rem] text-[1.5rem] leading-[100%]",
+          "lg:text-[2.2rem] xl:text-[2.3rem] 2xl:text-[2.5rem] text-[2rem] leading-[100%]",
         gradient &&
           "bg-[linear-gradient(270deg,#022EE4_0%,#FFC99D_100%)] bg-clip-text text-transparent",
         className,
