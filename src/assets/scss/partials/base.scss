@@ -147,6 +147,12 @@ html[dir="rtl"] {
   font-size: 1.2rem;
 }
 
+.mainBody {
+  @media only screen and (min-width: rem(1025)) {
+    padding: 1.25rem;
+  }
+}
+
 .mainWrapper {
   --sideBar: 20rem;
 
@@ -158,21 +164,14 @@ html[dir="rtl"] {
   overflow: clip;
 
   transition: grid-template-columns 0.3s ease-in-out;
-
   @media (width >= 96rem) {
     --sidePadd: 2rem;
   }
   @media only screen and (min-width: rem(1025)) and (max-width: rem(1370)) and (min-height: rem(500)) and (max-height: rem(670)) {
     --sideBar: 17rem;
   }
-
-  @media only screen and (max-width: rem(767)) {
-    --sideBar: 17rem;
-  }
-
   &:has(.sideBar.open) {
     --sideBar: calc(24px + 2rem + (var(--sidePadd) * 2));
-    --off: 0.5rem;
 
     @media only screen and (max-width: rem(1024)) {
       --sideBar: 6rem;
@@ -181,13 +180,17 @@ html[dir="rtl"] {
       --sideBar: 4rem;
     }
   }
+
   @media only screen and (max-width: rem(1024)) {
     grid-template-columns: 100%;
     padding-inline-start: 6rem;
+    border-radius: 0px;
+    --off: 0.5rem;
   }
   @media only screen and (max-width: rem(767)) {
-    border-radius: 10px;
+    // border-radius: 10px;
     --sidePadd: 0.8rem;
+    --sideBar: 17rem;
     padding-inline-start: 4rem;
   }
 }
@@ -209,11 +212,11 @@ html[dir="rtl"] {
   position: relative;
   padding: var(--sidePadd);
   @media only screen and (max-width: rem(1024)) {
-    position: absolute;
+    position: fixed;
     @include rtl(0, right, left);
     top: 0;
     z-index: 50;
-    height: 100%;
+    height: 100vh;
     transition: all 0.3s ease-in-out;
 
     width: var(--sideBar);
@@ -228,6 +231,16 @@ html[dir="rtl"] {
     height: 100%;
 
     background: linear-gradient(202deg, #020355 -51.73%, #3c60f4 102.31%);
+
+    // @media only screen and (max-width: rem(1024)) {
+    //   border-top-left-radius: 20px;
+    //   border-bottom-left-radius: 20px;
+    //   overflow: hidden;
+    // }
+    // @media only screen and (max-width: rem(767)) {
+    //   border-top-left-radius: 10px;
+    //   border-bottom-left-radius: 10px;
+    // }
   }
 
   &.open {

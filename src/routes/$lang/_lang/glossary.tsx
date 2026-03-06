@@ -34,7 +34,7 @@ import { useEffect, useState } from "react";
 import { SectionTitle } from "@/components/ui/sectionTitle";
 import BarChart from "@/components/ui/BarChart";
 import { cn } from "@/lib/utils";
-import { ToggleButton } from "@/components/ui/ToggleButton";
+
 import { isMobile } from "react-device-detect";
 import { useForm } from "@tanstack/react-form";
 import {
@@ -47,6 +47,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Table } from "@/components/ui/Table";
 
 export const Route = createFileRoute("/$lang/_lang/glossary")({
   component: RouteComponent,
@@ -71,7 +72,7 @@ function RouteComponent() {
       ) : (
         <div
           key="dashboard-content"
-          className="flex flex-col items-center justify-center w-full h-full flex-1 md:p-5 p-2"
+          className="flex flex-col items-center justify-center w-full h-full flex-1 mainBody "
         >
           <section className="w-full flex-1 relative mainWrapper ">
             <DashboardSidebar delay={0} />
@@ -119,11 +120,11 @@ function GlossaryTable() {
   const { t } = useTranslation();
 
   const tableHead = [
-    { title: t("no"), no: true },
-    { title: t("title"), titleL: true },
-    { title: t("description") },
-    { title: t("status"), status: true },
-    { title: t("actions"), action: true },
+    { title: t("no"), key: "no" },
+    { title: t("title"), key: "title" },
+    { title: t("description"), key: "description" },
+    { title: t("status"), key: "status" },
+    { title: t("actions"), key: "action" },
   ];
 
   const tableData = [
@@ -286,110 +287,7 @@ function GlossaryTable() {
     },
   ] as const;
 
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.3, duration: 0.5, ease: "easeInOut" }}
-      className="flex-1 w-full overflow-hidden"
-    >
-      {/* Added border-separate and spacing to allow rounded corners to show */}
-      <table className="w-full text-[var(--textColor)] border-separate border-spacing-y-2">
-        <thead className={cn(isMobile && "hidden")}>
-          <tr className="bg-[linear-gradient(100deg,#FFC99D_-20%,#022EE4_120%)] text-white">
-            {tableHead.map((head, index) => (
-              <th
-                key={`th-${index}`}
-                className={cn(
-                  "px-4 py-4 font-medium text-lg text-start first:rounded-l-lg last:rounded-r-lg",
-
-                  head?.no === true && "w-[3rem]",
-                  head?.titleL === true && "w-[20%]",
-                  head?.action === true && "w-[10rem]",
-                  head?.status === true && "w-[6rem]",
-                )}
-              >
-                {head.title}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody className="flex flex-col gap-2 md:table-row-group">
-          {tableData.map((data, index) => (
-            <tr
-              key={`tableData-${index}`}
-              className={cn(
-                "group transition-all duration-300 bg-[linear-gradient(240deg,rgba(2,46,228,0.1)_0%,rgba(3,203,255,0.1)_100%)]",
-                isMobile && "rounded-lg",
-              )}
-            >
-              <TD
-                className={cn(
-                  " rounded-l-lg font-semibold text-lg bg-[linear-gradient(270deg,#022EE4_0%,#03CBFF_100%)]   bg-clip-text   text-transparent",
-                  isMobile && "rounded-l-none",
-                )}
-                data-label={tableHead[0].title}
-              >
-                {(index + 1).toString().padStart(2, "0")}
-              </TD>
-              <TD
-                className="font-semibold text-lg"
-                data-label={tableHead[1].title}
-              >
-                {data.title}
-              </TD>
-              <TD className="" data-label={tableHead[2].title}>
-                {data.description}
-              </TD>
-              <TD className="" data-label={tableHead[3].title}>
-                <div className="inline-flex">
-                  <ToggleButton status={data.status} />
-                </div>
-              </TD>
-              <TD className="rounded-r-lg " data-label={tableHead[4].title}>
-                <div className="flex gap-2">
-                  {data.actions.map((action, aIndex) => (
-                    <DefaultButton
-                      key={`tableAction-${aIndex}`}
-                      icon={action.icon}
-                      onClick={action.onClick}
-                      rounded={true}
-                      iconGradient={action?.type}
-                    />
-                  ))}
-                </div>
-              </TD>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </motion.div>
-  );
-}
-
-function TD({
-  children,
-  className,
-  "data-label": dataLabel,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  "data-label": string;
-}) {
-  return (
-    <td
-      data-label={dataLabel}
-      className={cn(
-        "px-4 py-4 text-base font-secondary",
-        isMobile &&
-          "py-3 grid grid-cols-[35%_1fr] [&:before]:content-[attr(data-label)] [&:before]:text-[var(--textColor)] [&:before]:font-medium [&:before]:text-lg [&:before]:text-start [&:before]:opacity-40  border-b border-black/10 last:border-b-0 ",
-        !isMobile && "table-cell ",
-        className,
-      )}
-    >
-      {children}
-    </td>
-  );
+  return <Table tableHead={tableHead} tableData={tableData} />;
 }
 
 function AddGlossaryModal() {

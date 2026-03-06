@@ -47,7 +47,7 @@ function RouteComponent() {
       ) : (
         <div
           key="dashboard-content"
-          className="flex flex-col items-center justify-center w-full h-full flex-1 md:p-5 p-2"
+          className="flex flex-col items-center justify-center w-full h-full flex-1 mainBody "
         >
           <section className="w-full flex-1 relative mainWrapper ">
             <DashboardSidebar delay={0} />
