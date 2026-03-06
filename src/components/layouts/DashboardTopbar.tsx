@@ -146,19 +146,6 @@ function LastLoginInfo() {
   return (
     <div className="flex gap-2  p-[1px] rounded-lg bg-[linear-gradient(195deg,rgba(2,46,228,0.4)_0%,rgba(255,201,157,0.4)_100%)] ">
       <div className="flex lg:gap-3 gap-2 items-center px-2 lg:px-4 py-2 lg:py-2 rounded-lg bg-white">
-        <svg width="0" height="0" style={{ position: "absolute" }}>
-          <linearGradient
-            id="LastLoginLine"
-            x1="34.5"
-            y1="3"
-            x2="-5"
-            y2="23.5"
-            gradientUnits="userSpaceOnUse"
-          >
-            <stop stopColor="#022EE4" />
-            <stop offset="1" stopColor="#FFC99D" />
-          </linearGradient>
-        </svg>
         <Clock
           // size={34}
           className={`iconBox size-[20px] md:size-[27px] lg:size-[34px] relative z-12 transition-all duration-400 stroke-[url(#LastLoginLine)] transition-stroke duration-300`}

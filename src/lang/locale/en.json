@@ -29,6 +29,24 @@
     "time": "Time",
     "days": "Days",
     "hours": "Hours",
-    "mins": "Mins"
+    "mins": "Mins",
+    "download-excel-template": "Download Excel Template",
+    "add-glossary": "Add Glossary",
+    "guideline": "Guideline",
+    "upload-excel": "Upload Excel",
+    "actions": "Actions",
+    "no": "No",
+    "title": "Title",
+    "description": "Description",
+    "status": "Status",
+    "on": "On",
+    "off": "Off",
+    "add-item": "Add Item",
+    "title-english": "Title English",
+    "title-arabic": "Title Arabic",
+    "description-english": "Description English",
+    "description-arabic": "Description Arabic",
+    "draft": "Draft",
+    "published": "Published"
   }
 }

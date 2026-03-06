@@ -14,8 +14,10 @@ export const DefaultButton = ({
   onClick,
   isLoading = false,
   isDisabled = false,
+  rounded = false,
+  iconGradient = "default",
 }: {
-  title: string;
+  title?: string;
   icon: React.ReactNode;
   type?: "button" | "submit" | "reset";
   size?: "sm" | "md" | "lg" | "icon";
@@ -26,6 +28,8 @@ export const DefaultButton = ({
   onClick?: () => void;
   isLoading?: boolean;
   isDisabled?: boolean;
+  rounded?: boolean;
+  iconGradient?: "default" | "edit" | "delete";
 }) => {
   return (
     <motion.button
@@ -33,9 +37,10 @@ export const DefaultButton = ({
       whileTap={{ scale: 0.95 }}
       type={type}
       onClick={onClick && onClick}
+      transition={{ duration: 0.2, ease: "easeInOut" }}
       layout
       className={cn(
-        "inline-flex h-10 px-4 rounded-lg items-center justify-center gap-2 text-secondary font-regular font-secondary border border-secondary/10 cursor-pointer group overflow-hidden relative transition-all duration-300 hover:text-text",
+        "inline-flex h-10 px-4 rounded-lg items-center justify-center gap-2 text-secondary font-regular font-secondary border border-secondary/10 cursor-pointer group overflow-hidden relative ",
         size === "sm" && "h-8 px-3 text-sm",
         size === "md" && "h-10 px-4 text-lg",
         size === "lg" && "h-13 px-5 text-xl",
@@ -44,19 +49,39 @@ export const DefaultButton = ({
           "bg-text/15 border border-text/8 text-text hover:bg-text/30 hover:border-text/15",
         variant === "dark" &&
           "border-[#022EE4] bg-[linear-gradient(26deg,#022EE4_-24.52%,#03CBFF_147%)] font-medium font-secondary text-white",
+        variant === "default" &&
+          "bg-[linear-gradient(100deg,#03CBFF_0%,#022EE4_120%)] border-none text-[var(--textColor)] font-medium",
+        rounded === true && " px-0 aspect-square rounded-full",
+
+        iconGradient === "delete" &&
+          "bg-[linear-gradient(60deg,#FFC99D_-0%,#F07067_100%)]",
         className,
       )}
       {...props}
     >
-      {variant === "default" ? (
-        <span className="absolute left-0 top-0 w-full h-full bg-linear-to-r from-secondary to-primary z-0 opacity-33 transition-all duration-200 group-hover:opacity-75"></span>
-      ) : null}
+      {variant === "default" && (
+        <span
+          className={cn(
+            "absolute md:inset-[2px] inset-[1px]  bg-white z-0  rounded-[calc(.7rem-2px)] ",
+            rounded === true && " rounded-full",
+          )}
+        ></span>
+      )}
 
       {isLoading ? (
         <Spinner />
       ) : (
         <>
-          {icon ? <span className="relative inline-block">{icon}</span> : null}
+          {icon ? (
+            <span
+              className={cn(
+                "relative inline-block",
+                variant === "default" && "text-secondary",
+              )}
+            >
+              {icon}
+            </span>
+          ) : null}
           {title ? (
             <span
               className={cn(

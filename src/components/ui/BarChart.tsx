@@ -27,7 +27,6 @@ export default function BarChart({ data }: { data: any[] }) {
       }
     };
 
-    // 1. Initial calculation
     handleResize();
 
     const observer = new ResizeObserver(() => {

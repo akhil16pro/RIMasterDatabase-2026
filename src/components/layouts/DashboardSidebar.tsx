@@ -85,7 +85,6 @@ export default function DashboardSidebar({ delay }: { delay: number }) {
     if (isMobile) {
       setIsMenuOpen(true);
     }
-    console.log(isMobile, "sdfsf");
   }, []);
 
   return (
@@ -125,30 +124,17 @@ export default function DashboardSidebar({ delay }: { delay: number }) {
             className="toggleMenu"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
-            <svg width="0" height="0" style={{ position: "absolute" }}>
-              <linearGradient
-                id="dashboard_toggle_linear"
-                x1="23.1869"
-                y1="14.8085"
-                x2="-2.48181e-07"
-                y2="14.8085"
-                gradientUnits="userSpaceOnUse"
-              >
-                <stop stopColor="#022EE4" />
-                <stop offset="1" stopColor="#03CBFF" />
-              </linearGradient>
-            </svg>
             {!isMenuOpen ? (
               <CircleMinus
                 className="text-secondary md:size-9 lg:size-10"
                 strokeWidth={1}
-                stroke="url(#dashboard_toggle_linear)"
+                stroke="url(#dashboard_linear)"
               />
             ) : (
               <CircleChevronRight
                 className="text-secondary md:size-9 lg:size-10"
                 strokeWidth={1}
-                stroke="url(#dashboard_toggle_linear)"
+                stroke="url(#dashboard_linear)"
               />
             )}
           </div>
@@ -156,19 +142,6 @@ export default function DashboardSidebar({ delay }: { delay: number }) {
         <div className="bottomBox">
           <div className="w-full flex items-center relative gap-3 lg:gap-7">
             <motion.nav className=" w-full flex">
-              <svg width="0" height="0" style={{ position: "absolute" }}>
-                <linearGradient
-                  id="dashboard_linear"
-                  x1="23.1869"
-                  y1="14.8085"
-                  x2="-2.48181e-07"
-                  y2="14.8085"
-                  gradientUnits="userSpaceOnUse"
-                >
-                  <stop stopColor="#022EE4" />
-                  <stop offset="1" stopColor="#03CBFF" />
-                </linearGradient>
-              </svg>
               <ul className="flex w-full h-full flex-col  ">
                 {mainNavItems.map((item, index) => (
                   <motion.li
