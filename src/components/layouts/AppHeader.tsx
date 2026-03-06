@@ -134,10 +134,12 @@ export default function AppHeader({ delay }: { delay: number }) {
               title={i18n?.language === "en" ? "AR" : "EN"}
               size="icon"
               onClick={onChangeLanguage}
+              variant="shade"
             />
             {isMobile ? (
               <DefaultButton
                 size="icon"
+                variant="shade"
                 icon={
                   isMenuOpen ? (
                     <X className="w-4 h-4" />
@@ -170,11 +172,11 @@ function MenuItem({ item }: { item: any }) {
         to={item.href}
         activeOptions={{ exact: true }}
         className={cn(
-          "text-[1.8rem] md:text-[2.5rem] lg:text-lg inline-flex items-center justify-center w-full h-full  overflow-hidden relative text-secondary [&.active]:text-text",
+          "text-[1.8rem] md:text-[2.5rem] lg:text-lg inline-flex items-center justify-center w-full h-full  overflow-hidden relative text-secondary [&.active]:text-text rtl:leading-[1.2]",
           isHover ? "text-text" : "text-secondary",
         )}
       >
-        <span className="relative inline-bloct overflow-hidden whitespace-nowrap">
+        <span className="relative text-center inline-block overflow-hidden md:whitespace-nowrap">
           {item.title}
         </span>
       </Link>

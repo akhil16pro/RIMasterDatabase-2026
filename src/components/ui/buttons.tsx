@@ -46,7 +46,7 @@ export const DefaultButton = ({
         size === "lg" && "h-13 px-5 text-xl",
         size === "icon" && " w-12  p-0 ",
         variant === "shade" &&
-          "bg-text/15 border border-text/8 text-text hover:bg-text/30 hover:border-text/15",
+          "border-none text-secondary  bg-[linear-gradient(26deg,rgba(2,46,228,.3)_-5%,rgba(3,203,255,.3)_101%)]",
         variant === "dark" &&
           "border-[#022EE4] bg-[linear-gradient(26deg,#022EE4_-24.52%,#03CBFF_147%)] font-medium font-secondary text-white",
         variant === "default" &&
