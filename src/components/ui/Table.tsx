@@ -35,7 +35,7 @@ export const Table = ({
               <th
                 key={`th-${index}`}
                 className={cn(
-                  "px-4 py-4 font-medium text-lg text-start first:rounded-l-lg last:rounded-r-lg",
+                  "px-4 py-4 font-medium text-lg text-start ltr:first:rounded-l-lg ltr:last:rounded-r-lg rtl:first:rounded-r-lg rtl:last:rounded-l-lg",
                   head.key === "no" && "w-[3rem]",
                   head.key === "title" && "w-[20%]",
                   head.key === "action" && "w-[10rem]",
@@ -63,10 +63,12 @@ export const Table = ({
                   key={`cell-${rowIndex}-${colIndex}`}
                   data-label={head.title}
                   className={cn(
-                    !isMobile && colIndex === 0 && "rounded-l-lg",
+                    !isMobile &&
+                      colIndex === 0 &&
+                      "ltr:rounded-l-lg rtl:rounded-r-lg",
                     !isMobile &&
                       colIndex === tableHead.length - 1 &&
-                      "rounded-r-lg",
+                      "ltr:rounded-r-lg rtl:rounded-l-lg ",
 
                     head.key === "no" &&
                       "font-semibold text-lg bg-[linear-gradient(270deg,#022EE4_0%,#03CBFF_100%)] bg-clip-text text-transparent",
@@ -82,11 +84,13 @@ export const Table = ({
                     <div className="flex gap-2">
                       {row.actions?.map((action: any, aIndex: number) => (
                         <DefaultButton
-                          key={`act-${aIndex}`}
+                          key={`action-${rowIndex}-${aIndex}`}
                           icon={action.icon}
                           onClick={action.onClick}
                           rounded={true}
                           iconGradient={action.type}
+                          toolTip={action.toolTip}
+                          toolTipClass={action.toolTipClass}
                         />
                       ))}
                     </div>

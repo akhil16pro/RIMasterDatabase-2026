@@ -30,6 +30,7 @@
     "days": "Days",
     "hours": "Hours",
     "mins": "Mins",
+    "secs": "Secs",
     "download-excel-template": "Download Excel Template",
     "add-glossary": "Add Glossary",
     "guideline": "Guideline",
@@ -47,6 +48,18 @@
     "description-english": "Description English",
     "description-arabic": "Description Arabic",
     "draft": "Draft",
-    "published": "Published"
+    "published": "Published",
+    "profile": "Profile",
+    "switch_language": "Switch Language",
+    "logout": "Logout",
+    "settings": "Settings",
+    "submitted": "Submitted",
+    "approved": "Approved",
+    "total-entries": "Total entries",
+    "ministry-of-health": "Ministry of Health",
+    "performing-entities-title": "Top 10 Performing Entities (by contribution)",
+    "edit": "Edit",
+    "delete": "delete",
+    "avname": "Ahmed Sharif Chaudhry"
   }
 }

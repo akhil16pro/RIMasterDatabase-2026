@@ -20,10 +20,11 @@ import { Link } from "@tanstack/react-router";
 import DashboardSidebar from "@/components/layouts/DashboardSidebar";
 import DashboardTopbar from "@/components/layouts/DashboardTopbar";
 
-import { ArrowUp } from "lucide-react";
+import { ArrowUp, ArrowUpLeft } from "lucide-react";
 import { useEffect } from "react";
 import { SectionTitle } from "@/components/ui/sectionTitle";
 import BarChart from "@/components/ui/BarChart";
+import { Title } from "@radix-ui/react-dialog";
 export const Route = createFileRoute("/$lang/_lang/dashboard")({
   component: RouteComponent,
 });
@@ -35,7 +36,7 @@ function RouteComponent() {
   let error = false;
   let isRefetching = false;
   const data = {
-    title: "Ministry of Health",
+    title: t("ministry-of-health"),
   };
 
   return (
@@ -55,7 +56,10 @@ function RouteComponent() {
             <div className="contentBox">
               <DashboardTopbar delay={0} title={data.title} lastLogin={true} />
               <MinistryCard delay={0.2} />
-              <PerformingEntitiesCard delay={0.4} />
+              <PerformingEntitiesCard
+                title={t("performing-entities-title")}
+                delay={0.4}
+              />
             </div>
           </section>
         </div>
@@ -65,21 +69,22 @@ function RouteComponent() {
 }
 
 function MinistryCard({ delay }: { delay: number }) {
+  const { t, i18n } = useTranslation();
   let data = [
     {
-      title: "Submitted",
+      title: t("submitted"),
       count: 50,
     },
     {
-      title: "Draft",
+      title: t("draft"),
       count: 12,
     },
     {
-      title: "Approved",
+      title: t("approved"),
       count: 38,
     },
     {
-      title: "Total entries",
+      title: t("total-entries"),
       count: 50,
       link: true,
     },
@@ -108,7 +113,11 @@ function MinistryCard({ delay }: { delay: number }) {
               className="flex flex-1 items-center justify-between flex-col text-center justify-center px-2 py-8 relative [&:before]:content-[''] [&:before]:absolute [&:before]:inset-0 [&:before]:bg-white/10  hover:[&:before]:scale-105 [&:before]:transition-all [&:before]:duration-300 [&:before]:overflow-hidden [&:before]:rounded-[calc(0.75rem-1px)]"
             >
               <NumberCard title={item.title} count={item.count} />
-              <ArrowUp className="absolute top-2 right-2 rotate-45 xl:size-5 2xl:size-7 size-6" />
+              {i18n.language === "en" ? (
+                <ArrowUp className="absolute top-2 right-2  rotate-45 xl:size-5 2xl:size-7 size-6" />
+              ) : (
+                <ArrowUpLeft className="absolute top-2 left-2 rotate--45 xl:size-5 2xl:size-7 size-6" />
+              )}
             </Link>
           ) : (
             <div
@@ -153,47 +162,55 @@ function NumberCard({ title, count }: { title: string; count: number }) {
   );
 }
 
-function PerformingEntitiesCard({ delay }: { delay: number }) {
+function PerformingEntitiesCard({
+  delay,
+  title,
+}: {
+  delay: number;
+  title: string;
+}) {
+  const { t, i18n } = useTranslation();
+
   const data = [
     {
-      name: "Ministry of Health",
+      name: t("ministry-of-health"),
       value: 80,
     },
     {
-      name: "Ministry of Health",
+      name: t("ministry-of-health"),
       value: 75,
     },
     {
-      name: "Ministry of Health Ministry of Health",
+      name: t("ministry-of-health"),
       value: 60,
     },
     {
-      name: "Ministry of Health",
+      name: t("ministry-of-health"),
       value: 62,
       visibility: true,
     },
     {
-      name: "Ministry of Health",
+      name: t("ministry-of-health"),
       value: 45,
     },
     {
-      name: "Ministry of Health",
+      name: t("ministry-of-health"),
       value: 35,
     },
     {
-      name: "Ministry of Health",
+      name: t("ministry-of-health"),
       value: 25,
     },
     {
-      name: "Ministry of Health",
+      name: t("ministry-of-health"),
       value: 20,
     },
     {
-      name: "Ministry of Health",
+      name: t("ministry-of-health"),
       value: 15,
     },
     {
-      name: "Ministry of Health",
+      name: t("ministry-of-health"),
       value: 9,
     },
   ];
@@ -206,7 +223,7 @@ function PerformingEntitiesCard({ delay }: { delay: number }) {
         transition={{ delay: delay, duration: 0.5, ease: "easeInOut" }}
       >
         <SectionTitle size="small">
-          <span>Top 10 Performing Entities (by contribution) </span>
+          <span>{title} </span>
         </SectionTitle>
       </motion.div>
       <BarChart data={data} />

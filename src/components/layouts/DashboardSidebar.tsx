@@ -6,6 +6,7 @@ import {
   BookText,
   ShieldCheck,
   CircleChevronRight,
+  CircleChevronLeft,
 } from "lucide-react";
 import { motion } from "motion/react";
 import { useState, useMemo, useEffect } from "react";
@@ -130,8 +131,14 @@ export default function DashboardSidebar({ delay }: { delay: number }) {
                 strokeWidth={1}
                 stroke="url(#dashboard_linear)"
               />
-            ) : (
+            ) : i18n.language === "en" ? (
               <CircleChevronRight
+                className="text-secondary md:size-9 lg:size-10"
+                strokeWidth={1}
+                stroke="url(#dashboard_linear)"
+              />
+            ) : (
+              <CircleChevronLeft
                 className="text-secondary md:size-9 lg:size-10"
                 strokeWidth={1}
                 stroke="url(#dashboard_linear)"
@@ -186,6 +193,9 @@ function MenuItem({
   isMenuOpen: boolean;
   index: number;
 }) {
+  const { t, i18n } = useTranslation();
+
+  const currentLang = i18n.language;
   const [isHover, setIsHover] = useState(false);
 
   return (
@@ -193,7 +203,7 @@ function MenuItem({
       to={item.href}
       activeOptions={{ exact: true }}
       className={cn(
-        "group relative flex justify-content-start w-full items-center gap-2 md:gap-4 py-[.8rem] md:py-[1rem] pl-2 md:pl-4 text-[1.2rem] md:text-[1.3rem] font-medium text-white transition-all duration-300 z-10 [&:before]:content-[''] [&:before]:absolute [&:before]:inset-0 [&:before]:-right-[var(--sidePadd)] [&:before]:z-[11] [&:before]:origin-right [&:before]:scale-x-0 [&:before]:rounded-l-[8px] md:[&:before]:rounded-l-[10px] [&:before]:bg-white [&:before]:transition-transform [&:before]:duration-300 hover:[&:before]:scale-x-100 [&:not(.active)]:before:opacity-[.2]",
+        "group relative flex justify-content-start w-full items-center gap-2 md:gap-4 py-[.8rem] md:py-[1rem] ps-2 md:ps-4 text-[1.2rem] md:text-[1.3rem] font-medium text-white transition-all duration-300 z-10 [&:before]:content-[''] [&:before]:absolute [&:before]:inset-0 rtl:[&:before]:-left-[var(--sidePadd)] ltr:[&:before]:-right-[var(--sidePadd)] [&:before]:z-[11] ltr:[&:before]:origin-right rtl:[&:before]:origin-left [&:before]:scale-x-0 rtl:[&:before]:rounded-r-[8px] rtl:md:[&:before]:rounded-r-[10px] ltr:[&:before]:rounded-l-[8px] ltr:md:[&:before]:rounded-l-[10px] [&:before]:bg-white [&:before]:transition-transform [&:before]:duration-300 hover:[&:before]:scale-x-100 [&:not(.active)]:before:opacity-[.2]",
         item.preventClick ? "blur-[5px] pointer-events-none" : "",
       )}
       activeProps={{
@@ -216,9 +226,9 @@ function MenuItem({
 
       {!isMenuOpen && (
         <motion.div
-          initial={{ opacity: 0, x: 20 }}
+          initial={{ opacity: 0, x: currentLang === "en" ? 20 : -20 }}
           animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: 20 }}
+          exit={{ opacity: 0, x: currentLang === "en" ? 20 : -20 }}
           transition={{
             duration: 0.25,
             ease: "easeInOut",
@@ -227,10 +237,12 @@ function MenuItem({
           className="flex-1 whitespace-nowrap overflow-hidden text-ellipsis leading-[100%]"
         >
           <span
-            className="relative z-[12] transition-all duration-300 
-  group-[.active]:bg-[linear-gradient(270deg,#022EE4_0%,#03CBFF_100%)] 
-  group-[.active]:bg-clip-text 
-  group-[.active]:text-transparent  "
+            className={cn(
+              "relative z-[12] transition-all duration-300  group-[.active]:bg-clip-text group-[.active]:text-transparent",
+              currentLang === "en"
+                ? "group-[.active]:bg-[linear-gradient(270deg,#022EE4_0%,#03CBFF_100%)]"
+                : "group-[.active]:bg-[linear-gradient(45deg,#022EE4_0%,#03CBFF_100%)]",
+            )}
           >
             {item.title}
           </span>

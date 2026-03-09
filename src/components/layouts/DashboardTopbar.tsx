@@ -1,11 +1,28 @@
-import { useTranslation } from "react-i18next";
-import { Clock, ChevronDown, ClockFading } from "lucide-react";
+import {
+  Clock,
+  ChevronDown,
+  ClockFading,
+  User,
+  LogOut,
+  Languages,
+} from "lucide-react";
 import { motion } from "motion/react";
 
 import { cn } from "@/lib/utils";
 import { SectionTitle } from "@/components/ui/sectionTitle";
 import { useEffect, useState } from "react";
 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+import { useLocation, useRouter } from "@tanstack/react-router";
+import { useTranslation } from "react-i18next";
 export default function DashboardTopbar({
   delay,
   title,
@@ -164,20 +181,73 @@ function LastLoginInfo() {
 }
 
 function LoginAvatar() {
+  const { t, i18n } = useTranslation();
+  const { href } = useLocation();
+  const router = useRouter();
+  const currentLang = i18n.language;
+  const isRtl = currentLang === "ar";
+
+  const handleLanguageChange = () => {
+    const newLang = i18n.language === "en" ? "ar" : "en";
+
+    i18n.changeLanguage(newLang);
+
+    const pathSegments = href.split("/").filter(Boolean);
+    pathSegments[0] = newLang;
+
+    const newUrl = `/${pathSegments.join("/")}`;
+
+    router.navigate({ to: newUrl });
+  };
+
   return (
-    <div className="flex  items-center lg:p-2 p-[5px]  rounded-lg bg-[linear-gradient(195deg,rgba(2,46,228,0.4)_0%,rgba(255,201,157,0.4)_100%)] cursor-pointer group ">
-      <img
-        src="/avImg.jpg"
-        alt=""
-        className="w-8 h-8 md:w-10 md:h-10 lg:w-11 lg:h-11 rounded-[5px] md:rounded-lg me-2 group-hover:scale-105 transition-all duration-300"
-      />
-      <span className="text-[var(--textColor)] font-semibold md:text-[1.2rem] text-[1rem] leading-[100%] max-w-[7rem] overflow-hidden text-ellipsis whitespace-nowrap">
-        Ahmed Sharif Chaudhry
-      </span>
-      <ChevronDown
-        // size={24}
-        className="size-[18px] md:size-[20px] lg:size-[24px] text-[var(--textColor)]"
-      />
-    </div>
+    <DropdownMenu dir={isRtl ? "rtl" : "ltr"}>
+      <DropdownMenuTrigger asChild>
+        <div className="flex  items-center lg:p-2 p-[5px]  rounded-lg bg-[linear-gradient(195deg,rgba(2,46,228,0.4)_0%,rgba(255,201,157,0.4)_100%)] cursor-pointer group ">
+          <img
+            src="/avImg.jpg"
+            alt=""
+            className="w-8 h-8 md:w-10 md:h-10 lg:w-11 lg:h-11 rounded-[5px] md:rounded-lg me-2 group-hover:scale-105 transition-all duration-300"
+          />
+          <span className="text-[var(--textColor)] font-semibold md:text-[1.2rem] text-[1rem] leading-[100%] max-w-[7rem] overflow-hidden text-ellipsis whitespace-nowrap">
+            {t("avname")}
+          </span>
+          <ChevronDown
+            // size={24}
+            className="size-[18px] md:size-[20px] lg:size-[24px] text-[var(--textColor)]"
+          />
+        </div>
+      </DropdownMenuTrigger>
+
+      <DropdownMenuContent
+        className="w-[11.5rem] md:w-[12.1rem] lg:w-[12.7rem] bg-[linear-gradient(195deg,rgba(2,46,228,0.4)_0%,rgba(255,201,157,0.4)_100%)] rounded-[8px]  lg:rounded-lg border-none"
+        align="end"
+      >
+        <DropdownMenuLabel className="text-[var(--textColor)] font-semibold md:text-[1.2rem] text-[1rem] leading-[100%]  overflow-hidden text-ellipsis whitespace-nowrap md:opacity-50 opacity-60">
+          {t("settings")}
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator className="bg-white/30" />
+        <DropdownMenuItem className="w-full text-[var(--textColor)] font-semibold md:text-[1rem] text-[.9rem] leading-[100%]  overflow-hidden text-ellipsis whitespace-nowrap hover:text-[var(--textColor)] flex gap-2">
+          <User className=" h-4 w-4" />
+          <span>{t("profile")}</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          className="w-full text-[var(--textColor)] font-semibold md:text-[1rem] text-[.9rem] leading-[100%]  overflow-hidden text-ellipsis whitespace-nowrap hover:text-[var(--textColor)] flex gap-2"
+          onClick={handleLanguageChange}
+        >
+          <Languages className=" h-4 w-4" />
+          <span>{t("switch_language")}</span>
+        </DropdownMenuItem>
+
+        {/* <DropdownMenuSeparator className="bg-white/30" /> */}
+        <DropdownMenuItem
+          color="red"
+          className="w-full text-[var(--textColor)] font-semibold md:text-[1rem] text-[.9rem] leading-[100%]  overflow-hidden text-ellipsis whitespace-nowrap flex gap-2"
+        >
+          <LogOut className=" h-4 w-4" />
+          <span>{t("logout")}</span>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
