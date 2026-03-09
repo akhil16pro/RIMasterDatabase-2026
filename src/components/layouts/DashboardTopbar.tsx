@@ -21,6 +21,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+import clock from "@/assets/animations/clock.json";
+import Lottie from "lottie-react";
 import { useLocation, useRouter } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 export default function DashboardTopbar({
@@ -100,9 +102,15 @@ function TimeLeftInfo() {
   return (
     <div className="flex p-[1px] rounded-lg bg-[var(--brandRed)]/30  w-full md:w-auto ">
       <div className="flex gap-2 items-center px-2 lg:px-4 py-2 lg:py-2 rounded-lg  bg-[var(--brandRed)]">
-        <ClockFading
+        {/* <ClockFading
           // size={34}
           className={`iconBox size-[22px] md:size-[25px] lg:size-[30px]  relative z-12 transition-all duration-400 `}
+        /> */}
+
+        <Lottie
+          animationData={clock}
+          loop={true}
+          className="w-[22px] h-[22px] md:w-[25px] md:h-[25px] lg:w-[30px] lg:h-[30px] scale-130"
         />
         <div className="text-[.7rem] md:text-[.85rem] font-medium leading-[100%] uppercase flex flex-col">
           <span> {t("time")}</span>
