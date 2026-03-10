@@ -7,8 +7,10 @@ import {
 } from "@/components/ui/tooltip";
 import { motion } from "motion/react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useMobile } from "@/hooks/use-mobile";
 
 export default function BarChart({ data }: { data: any[] }) {
+  const isMobile = useMobile();
   const [maxLabelHeight, setMaxLabelHeight] = useState(0);
   const labelRefs = useRef<(HTMLSpanElement | null)[]>([]);
 
@@ -42,14 +44,14 @@ export default function BarChart({ data }: { data: any[] }) {
     return () => observer.disconnect();
   }, [data]);
 
-  const [isMobile, setIsMobile] = useState(false);
+  // const [isMobile, setIsMobile] = useState(false);
 
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
+  // useEffect(() => {
+  //   const checkMobile = () => setIsMobile(window.innerWidth < 768);
+  //   checkMobile();
+  //   window.addEventListener("resize", checkMobile);
+  //   return () => window.removeEventListener("resize", checkMobile);
+  // }, []);
 
   return (
     <div className="barChart w-full h-full grid grid-flow-row md:grid-flow-col  gap-4 relative ps-0 md:ps-10">

@@ -14,7 +14,7 @@ import { useState, useMemo, useEffect } from "react";
 import { apiClient } from "@/api";
 import { useQueryClient } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
-import { isMobile, isTablet } from "react-device-detect";
+
 import {
   Tooltip,
   TooltipContent,
@@ -22,8 +22,11 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
+import { useMobile } from "@/hooks/use-mobile";
+
 export default function DashboardSidebar({ delay }: { delay: number }) {
   const { t, i18n } = useTranslation();
+  const isMobile = useMobile();
 
   const mainNavItems = useMemo(
     () => [

@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-
 import { useTranslation } from "react-i18next";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "@/api";
@@ -8,19 +7,9 @@ import RoteError from "@/components/layouts/RoteError";
 import { DefaultButton } from "@/components/ui/buttons";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  animate,
-  AnimatePresence,
-  motion,
-  useMotionValue,
-  useSpring,
-  useTransform,
-} from "motion/react";
-
-import { Link } from "@tanstack/react-router";
+import { AnimatePresence, motion } from "motion/react";
 import DashboardSidebar from "@/components/layouts/DashboardSidebar";
 import DashboardTopbar from "@/components/layouts/DashboardTopbar";
-
 import {
   BookOpenText,
   Download,
@@ -30,12 +19,8 @@ import {
   Upload,
   CircleCheck,
 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { SectionTitle } from "@/components/ui/sectionTitle";
-import BarChart from "@/components/ui/BarChart";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
-
-import { isMobile } from "react-device-detect";
 import { useForm } from "@tanstack/react-form";
 import {
   Dialog,

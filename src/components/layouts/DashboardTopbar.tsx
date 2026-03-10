@@ -101,7 +101,7 @@ function TimeLeftInfo() {
 
   return (
     <div className="flex p-[1px] rounded-lg bg-[var(--brandRed)]/30  w-full md:w-auto ">
-      <div className="flex gap-2 items-center px-2 lg:px-4 py-2 lg:py-2 rounded-lg  bg-[var(--brandRed)]">
+      <div className="flex md:gap-1 items-center px-2 lg:px-4 py-2 lg:py-2 rounded-lg  bg-[var(--brandRed)] lg:ps-[.5rem] ps-[.25rem]">
         {/* <ClockFading
           // size={34}
           className={`iconBox size-[22px] md:size-[25px] lg:size-[30px]  relative z-12 transition-all duration-400 `}
@@ -110,7 +110,7 @@ function TimeLeftInfo() {
         <Lottie
           animationData={clock}
           loop={true}
-          className="w-[22px] h-[22px] md:w-[25px] md:h-[25px] lg:w-[30px] lg:h-[30px] scale-130"
+          className="w-[32px] h-[32px] md:w-[34px] md:h-[34px] lg:w-[40px] lg:h-[40px] "
         />
         <div className="text-[.7rem] md:text-[.85rem] font-medium leading-[100%] uppercase flex flex-col">
           <span> {t("time")}</span>

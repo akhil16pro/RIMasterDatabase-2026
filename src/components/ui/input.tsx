@@ -21,7 +21,7 @@ function Input({ className, type, ...props }: React.ComponentProps<"input">) {
       {type === "password" && (
         <div
           onClick={() => setShowPassword(!showPassword)}
-          className="absolute right-0 top-[50%] translate-y-[-50%] cursor-pointer"
+          className="absolute ltr:right-0 rtl:left-0 top-[50%] translate-y-[-50%] cursor-pointer"
         >
           {showPassword ? (
             <Eye className=" text-black/50 w-5 h-5" />

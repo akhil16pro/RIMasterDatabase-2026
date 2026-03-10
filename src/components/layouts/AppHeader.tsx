@@ -2,8 +2,6 @@ import { Link, useLocation, useRouter } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { DefaultButton } from "../ui/buttons";
 import { Menu, X } from "lucide-react";
-
-import { isMobile } from "react-device-detect";
 import { useScroll, useMotionValueEvent, motion } from "motion/react";
 import { useState, useMemo } from "react";
 import { useAtom, useAtomValue } from "jotai";
@@ -12,6 +10,8 @@ import { apiClient } from "@/api";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
+
+import { useMobile } from "@/hooks/use-mobile";
 
 export default function AppHeader({ delay }: { delay: number }) {
   const { t, i18n } = useTranslation();
@@ -67,6 +67,8 @@ export default function AppHeader({ delay }: { delay: number }) {
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  const isLargeTablet = useMobile(1024);
+
   return (
     <motion.header
       className="fixed top-0 left-0 w-full z-50 block py-5"
@@ -105,7 +107,7 @@ export default function AppHeader({ delay }: { delay: number }) {
             <motion.nav
               className="fixed top-0 left-0 w-full h-full bg-black/70 px-20 lg:px-0 lg:bg-transparent lg:relative"
               style={{
-                clipPath: isMobile
+                clipPath: isLargeTablet
                   ? isMenuOpen
                     ? "polygon(0 0, 100% 0, 100% 100%, 0% 100%)"
                     : "polygon(0 0, 100% 0, 100% 0, 0 0)"
@@ -125,7 +127,7 @@ export default function AppHeader({ delay }: { delay: number }) {
               onClick={onChangeLanguage}
               variant="shade"
             />
-            {isMobile ? (
+            {isLargeTablet ? (
               <DefaultButton
                 size="icon"
                 variant="shade"

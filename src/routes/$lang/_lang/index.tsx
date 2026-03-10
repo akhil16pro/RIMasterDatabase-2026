@@ -1,19 +1,12 @@
 import { apiClient } from "@/api";
 import RoteError from "@/components/layouts/RoteError";
 import RouteLoader from "@/components/layouts/RouteLoader";
-import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { AnimatePresence, motion, useScroll, useTransform } from "motion/react";
-import { useEffect, useMemo, useRef, useState } from "react";
-import parse from "html-react-parser";
-import { Circle } from "lucide-react";
-
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { isMobile } from "react-device-detect";
-
-import HomeData from "@/store/home.json";
-
+import { cn } from "@/lib/utils";
+import i18n from "@/lang";
 export const Route = createFileRoute("/$lang/_lang/")({
   component: RouteComponent,
 });
@@ -151,7 +144,9 @@ function HomeBanner({ data }: { data: any }) {
                     ease: "easeOut",
                     delay: 0.8,
                   }}
-                  className="md:text-[6rem] lg:text-[8rem] xl:text-[9rem] text-6xl font-bold relative flex flex-wrap items-center justify-center gap-4 leading-[95%]"
+                  className={cn(
+                    "md:text-[6rem] lg:text-[8rem] xl:text-[9rem] text-6xl font-bold relative flex flex-wrap items-center justify-center gap-4 leading-[95%]",
+                  )}
                 >
                   <span className="inline-block relative">{data?.title}</span>
                 </motion.h1>
@@ -163,7 +158,12 @@ function HomeBanner({ data }: { data: any }) {
                   animate={{ opacity: 1, y: 0, scaleY: 1, skewY: 0 }}
                   exit={{ opacity: 0, y: 50, scaleY: 1.1, skewY: 2 }}
                   transition={{ duration: 1.2, delay: 1.5 }}
-                  className="text-[1.8rem] md:text-[2.2rem] lg:text-[2.45rem] xl:text-[2.7rem] font-regular mt-[1rem] md:mt-[2rem] lg:mt-[3rem] text-text/80 relative block bg-gradient-to-r from-white to-secondary bg-clip-text text-transparent md:px-[15%] leading-[100%]"
+                  className={cn(
+                    "text-[1.8rem] md:text-[2.2rem] lg:text-[2.45rem] xl:text-[2.7rem] font-regular mt-[1rem] md:mt-[2rem] lg:mt-[3rem] text-text/80 relative block bg-gradient-to-r from-white to-secondary bg-clip-text text-transparent md:px-[15%]",
+                    i18n.language === "ar"
+                      ? "rtl:leading-[130%]"
+                      : "ltr:leading-[100%]",
+                  )}
                 >
                   {data?.subtitle}
                 </motion.h3>
@@ -189,7 +189,7 @@ function HomeBanner({ data }: { data: any }) {
                     href="#"
                     className="more relative text-[1.3rem] font-regular"
                   >
-                    <span className="absolute top-[50%] left-0 translate-y-[-50%] bg-gradient-to-r from-white to-secondary bg-clip-text text-transparent">
+                    <span className="absolute top-[50%] ltr:left-0 rtl:right-0 translate-y-[-50%] bg-gradient-to-r from-white to-secondary bg-clip-text text-transparent">
                       {t("scroll")}
                     </span>
                     <motion.div

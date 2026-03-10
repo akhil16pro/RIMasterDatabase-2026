@@ -1,8 +1,9 @@
 import { cn } from "@/lib/utils";
 import { motion } from "motion/react";
-import { isMobile } from "react-device-detect";
+
 import { DefaultButton } from "@/components/ui/buttons";
 import { ToggleButton } from "@/components/ui/ToggleButton";
+import { useMobile } from "@/hooks/use-mobile";
 
 interface TableProps extends React.ComponentPropsWithoutRef<typeof motion.div> {
   tableHead: any[];
@@ -15,6 +16,7 @@ export const Table = ({
   className = "",
   ...rest
 }: TableProps) => {
+  const isMobile = useMobile();
   return (
     <motion.div
       {...rest}
@@ -112,6 +114,7 @@ export const Table = ({
 };
 
 function TD({ children, className, "data-label": dataLabel }: any) {
+  const isMobile = useMobile();
   return (
     <td
       data-label={dataLabel}
