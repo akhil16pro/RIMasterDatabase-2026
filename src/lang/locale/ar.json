@@ -60,6 +60,10 @@
     "performing-entities-title": "أفضل 10 كيانات أداءً (حسب المساهمة)",
     "edit": "يحرر",
     "delete": "يمسح",
-    "avname": "أحمد شريف شودري"
+    "avname": "أحمد شريف شودري",
+    "submit": "إرسال",
+    "already_have_an_account": "هل لديك حساب بالفعل؟",
+    "enter-email": "أدخل البريد الإلكتروني",
+    "invalid-field": "حقل غير صالح"
   }
 }

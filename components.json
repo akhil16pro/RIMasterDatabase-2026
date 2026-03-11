@@ -18,5 +18,9 @@
     "lib": "@/lib",
     "hooks": "@/hooks"
   },
-  "registries": {}
+  "registries": {
+    "sonner": {
+      "position": "bottom-center"
+    }
+  }
 }

@@ -25,7 +25,7 @@ import { useEffect } from "react";
 import { SectionTitle } from "@/components/ui/sectionTitle";
 import BarChart from "@/components/ui/BarChart";
 import { Title } from "@radix-ui/react-dialog";
-export const Route = createFileRoute("/$lang/_lang/dashboard")({
+export const Route = createFileRoute("/$lang/_lang/_auth/dashboard")({
   component: RouteComponent,
 });
 

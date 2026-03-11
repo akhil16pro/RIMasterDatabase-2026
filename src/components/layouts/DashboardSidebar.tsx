@@ -26,6 +26,7 @@ import { useMobile } from "@/hooks/use-mobile";
 
 export default function DashboardSidebar({ delay }: { delay: number }) {
   const { t, i18n } = useTranslation();
+  const currentLang = i18n.language;
   const isMobile = useMobile();
 
   const mainNavItems = useMemo(
@@ -95,12 +96,40 @@ export default function DashboardSidebar({ delay }: { delay: number }) {
     <motion.div className={cn("sideBar", isMenuOpen ? "open" : "")}>
       <motion.div className="inner">
         <div className="topBox ">
-          <div className="inline-flex items-center relative z-10">
+          <div className="inline-flex items-center justify-start relative z-10">
             <Link
               to={"/" + i18n.language}
-              className="inline-block outline-none border-none"
+              className="inline-flex items-center md:gap-4 gap-2 outline-none border-none "
             >
-              {!isMenuOpen ? (
+              <motion.img
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.5 }}
+                transition={{ duration: 0.25, ease: "easeInOut" }}
+                src="/logoShape.svg"
+                alt=""
+                className=" object-contain lg:h-[5rem] md:h-[4rem] h-[3rem] w-auto"
+              />
+              {!isMenuOpen && (
+                <motion.span
+                  initial={{ opacity: 0, x: currentLang === "en" ? 20 : -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: currentLang === "en" ? 20 : -20 }}
+                  transition={{
+                    duration: 0.25,
+                    ease: "easeInOut",
+                    delay: 0.1,
+                  }}
+                  className={cn(
+                    "inline-block font-bold lg:text-[1.25rem] md:text-[1.1rem] text-[1.1rem] leading-none md:max-w-[5rem] pe-5 md:pe-0 tracking-[0.03em] bg-clip-text text-transparent",
+                    "bg-[linear-gradient(90deg,#FFF_0%,#03CBFF_80%)]",
+                  )}
+                >
+                  RI Unified Master Database
+                </motion.span>
+              )}
+
+              {/* {!isMenuOpen ? (
                 <motion.img
                   initial={{ opacity: 0, scale: 0.5 }}
                   animate={{ opacity: 1, scale: 1 }}
@@ -120,7 +149,7 @@ export default function DashboardSidebar({ delay }: { delay: number }) {
                   alt=""
                   className=" object-contain lg:h-[5rem] md:h-[4rem] h-[3rem] w-auto"
                 />
-              )}
+              )} */}
             </Link>
           </div>
 
@@ -267,9 +296,14 @@ function MenuItemWithTooltip({
   return (
     <TooltipProvider>
       <Tooltip>
-        <TooltipTrigger className="flex w-full">
+        {item.preventClick ? (
           <MenuItem item={item} isMenuOpen={isMenuOpen} index={index} />
-        </TooltipTrigger>
+        ) : (
+          <TooltipTrigger className="flex w-full">
+            <MenuItem item={item} isMenuOpen={isMenuOpen} index={index} />
+          </TooltipTrigger>
+        )}
+
         <TooltipContent side="right">{item.title}</TooltipContent>
       </Tooltip>
     </TooltipProvider>

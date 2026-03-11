@@ -80,7 +80,10 @@ export const Table = ({
                     (rowIndex + 1).toString().padStart(2, "0")
                   ) : head.key === "status" ? (
                     <div className="inline-flex">
-                      <ToggleButton status={row[head.key || "status"]} />
+                      <ToggleButton
+                        status={row[head.key || "status"]}
+                        readonly={true}
+                      />
                     </div>
                   ) : head.key === "action" ? (
                     <div className="flex gap-2">

@@ -34,7 +34,7 @@ import {
 } from "@/components/ui/dialog";
 import { Table } from "@/components/ui/Table";
 
-export const Route = createFileRoute("/$lang/_lang/glossary")({
+export const Route = createFileRoute("/$lang/_lang/_auth/glossary")({
   component: RouteComponent,
 });
 

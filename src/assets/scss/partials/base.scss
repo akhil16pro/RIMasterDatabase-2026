@@ -290,7 +290,7 @@ html[dir="rtl"] {
       @include rtlProperty(calc((var(--sidePadd)) * -1), right, left);
       opacity: 0;
       transition: all 0.3s ease-in-out;
-      z-index: 55;
+      z-index: 15;
     }
     &::before {
       top: calc((var(--sq)) * -1);
@@ -323,6 +323,7 @@ html[dir="rtl"] {
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
+      z-index: 15;
       @include rtlProperty(0, right, left);
       transition: all 0.4s ease-in-out;
 
@@ -388,4 +389,21 @@ html[dir="rtl"] {
   svg {
     fill: var(--color-secondary);
   }
+}
+
+[data-sonner-toast][data-styled="true"] {
+  --normal-bg: linear-gradient(
+    45deg,
+    var(--color-primary) 15%,
+    var(--color-secondary) 120%
+  );
+  --normal-border: hsl(from var(--color-white) h s l / 0.5);
+}
+[data-sonner-toast][data-styled="true"][data-type="error"] {
+  --normal-bg: var(--brandRed);
+  --normal-border: var(--brandRed);
+}
+[data-sonner-toast][data-styled="true"][data-type="warning"] {
+  --normal-bg: var(--brandYellow);
+  --normal-border: var(--brandYellow);
 }

@@ -1,6 +1,3 @@
-import { useEffect, useRef, type FormEvent } from "react";
-import ReCAPTCHA from "react-google-recaptcha";
-// import RoutesBanner from '@/components/layouts/RoutesBanner'
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
@@ -12,10 +9,8 @@ import { Input } from "@/components/ui/input";
 import { AnimatePresence, motion } from "motion/react";
 
 import { Link } from "@tanstack/react-router";
-import { toast } from "sonner";
 
-const RECAPTCHA_SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
-export const Route = createFileRoute("/$lang/_lang/login")({
+export const Route = createFileRoute("/$lang/_lang/reset")({
   component: RouteComponent,
 });
 
@@ -23,8 +18,6 @@ function RouteComponent() {
   const { t, i18n } = useTranslation();
 
   const navigate = useNavigate();
-
-  const recaptchaRef = useRef<ReCAPTCHA>(null);
 
   // const { data, isLoading, error, isRefetching } = useQuery({
   //   queryKey: ['about', i18n.language],
@@ -50,41 +43,7 @@ function RouteComponent() {
 
   const data = {
     title: "RI Unified Master Database",
-    loginTitle: "Login/Sign up",
   };
-
-  const handleSubmit = async (e?: FormEvent | React.MouseEvent) => {
-    e?.preventDefault();
-
-    try {
-      // Execute the invisible recaptcha to get the token
-      const currentCaptchaToken = await recaptchaRef.current?.executeAsync();
-
-      if (!currentCaptchaToken) {
-        toast.error("Failed to verify reCAPTCHA. Please try again.", {
-          position: "bottom-center",
-        });
-
-        return;
-      }
-
-      // Typically, you would send `currentCaptchaToken` to your backend here to verify it
-      // Example: await apiClient.post('/login', { email, password, token: currentCaptchaToken });
-
-      const token = "dummy-token-for-now";
-      localStorage.setItem("auth_token", token);
-
-      // Navigate to the protected route
-      navigate({
-        to: `/${i18n.language}/dashboard`,
-      });
-    } catch (error) {
-      console.log("ERROR", error);
-
-      recaptchaRef.current?.reset();
-    }
-  };
-
   return (
     <AnimatePresence mode={"wait"}>
       {isLoading || isRefetching ? (
@@ -117,42 +76,32 @@ function RouteComponent() {
                 </div>
                 <div className="flex-2/3 bg-white p-5 md:p-10 flex flex-col justify-center gap-5">
                   <div className="font-medium text-[1.8rem] md:text-[2.4rem] lg:text-[2.25rem] relative text-black ">
-                    {data.loginTitle}
+                    {t("forgot_password")}
                   </div>
                   <form action="#" className="flex flex-col gap-7">
-                    <Input type="email" placeholder={t("email")} error={true} />
                     <Input
-                      type="password"
-                      placeholder={t("password")}
+                      type="email"
+                      placeholder={t("enter-email")}
                       error={true}
-                      errorMessage="Invalid password"
+                      errorMessage="Invalid email"
                     />
 
                     <div className="relative flex items-center gap-2">
                       <label className="text-[1.2rem] text-black font-secondary">
-                        {t("forgot_password")}
+                        {t("already_have_an_account")}
                       </label>
                       <Link
-                        to={"/" + i18n.language + "/reset"}
+                        to={"/" + i18n.language + "/login"}
                         className="text-[1.2rem] text-black font-secondary underline text-secondary hover:text-primary transition-colors duration-300"
                       >
-                        <span>{t("reset")}</span>
+                        <span>{t("login")}</span>
                       </Link>
                     </div>
-
-                    <div className="flex justify-center w-full">
-                      <ReCAPTCHA
-                        ref={recaptchaRef}
-                        sitekey={RECAPTCHA_SITE_KEY} // Replace with your actual Invisible Site Key
-                        size="invisible"
-                      />
-                    </div>
-
                     <DefaultButton
-                      title={t("login")}
+                      title={t("submit")}
                       size="lg"
                       variant="dark"
-                      onClick={handleSubmit}
+                      onClick={() => {}}
                     />
                   </form>
                 </div>

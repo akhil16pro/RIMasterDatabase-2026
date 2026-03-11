@@ -27,7 +27,7 @@ function SectionTitle({
         size === "large" &&
           "md:text-[2.5rem] lg:text-[2.6rem] xl:text-[2.8rem] 2xl:text-[3.1rem] text-[2.3rem] leading-[100%]",
         gradient &&
-          "bg-[linear-gradient(270deg,#022EE4_0%,#FFC99D_100%)] bg-clip-text text-transparent",
+          "ltr:bg-[linear-gradient(270deg,#022EE4_0%,#FFC99D_100%)] rtl:bg-[linear-gradient(90deg,#022EE4_0%,#FFC99D_100%)] bg-clip-text text-transparent",
         className,
       )}
       {...props}

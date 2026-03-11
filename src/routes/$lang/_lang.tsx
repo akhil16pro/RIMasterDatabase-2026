@@ -1,13 +1,7 @@
-import AppHeader from "@/components/layouts/AppHeader";
 import GlobalError from "@/components/layouts/GlobalError";
 import NotFoundLayout from "@/components/layouts/NotFoundLayout";
 import i18n from "@/lang";
-import {
-  createFileRoute,
-  Outlet,
-  redirect,
-  useLocation,
-} from "@tanstack/react-router";
+import { createFileRoute, Outlet } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/$lang/_lang")({
   component: RouteComponent,
@@ -25,19 +19,8 @@ export const Route = createFileRoute("/$lang/_lang")({
 });
 
 function RouteComponent() {
-  const { href } = useLocation();
-
-  const isRoot = href === "/en" || href === "/ar";
-
-  const componentsAnimationDelay = () => {
-    return {
-      header: isRoot ? 2.4 : 0.4,
-    };
-  };
-
   return (
     <>
-      {isRoot && <AppHeader delay={componentsAnimationDelay().header} />}
       <main className="flex flex-col min-h-screen rlative relative w-full flex flex-col overflow-clip min-h-screen">
         <Outlet />
       </main>

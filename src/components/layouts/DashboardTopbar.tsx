@@ -208,6 +208,13 @@ function LoginAvatar() {
     router.navigate({ to: newUrl });
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("auth_token");
+    router.navigate({
+      to: "/$lang/login",
+      params: { lang: i18n.language },
+    });
+  };
   return (
     <DropdownMenu dir={isRtl ? "rtl" : "ltr"}>
       <DropdownMenuTrigger asChild>
@@ -251,6 +258,7 @@ function LoginAvatar() {
         <DropdownMenuItem
           color="red"
           className="w-full text-[var(--textColor)] font-semibold md:text-[1rem] text-[.9rem] leading-[100%]  overflow-hidden text-ellipsis whitespace-nowrap flex gap-2"
+          onClick={handleLogout}
         >
           <LogOut className=" h-4 w-4" />
           <span>{t("logout")}</span>

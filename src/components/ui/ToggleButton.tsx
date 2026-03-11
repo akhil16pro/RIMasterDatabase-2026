@@ -8,12 +8,14 @@ export const ToggleButton = ({
   className = "",
   status: initialStatus = false,
   onChange,
+  readonly,
 }: {
   yesLable?: string;
   noLable?: string;
   className?: string;
   status: boolean;
   onChange?: (newStatus: boolean) => void;
+  readonly?: boolean;
 }) => {
   const { t } = useTranslation();
 
@@ -37,13 +39,16 @@ export const ToggleButton = ({
         currentStatus
           ? "bg-[linear-gradient(80deg,#022EE4_0%,#03CBFF_100%)]"
           : "bg-[linear-gradient(80deg,#FFC99D_0%,#F07067_100%)]",
+        readonly && "pointer-events-none",
         className,
       )}
     >
       <span
         className={cn(
           "absolute h-[70%] w-[calc(50%-6px)] z-0 bg-white rounded-[4px] top-1/2 -translate-y-1/2 transition-all duration-300 ease-in-out shadow-sm",
-          currentStatus ? "left-[calc(50%+2px)]" : "left-[4px]",
+          currentStatus
+            ? "ltr:left-[calc(50%+2px)] rtl:right-[calc(50%+2px)]"
+            : "ltr:left-[4px] rtl:right-[4px]",
         )}
       ></span>
 

@@ -60,6 +60,10 @@
     "performing-entities-title": "Top 10 Performing Entities (by contribution)",
     "edit": "Edit",
     "delete": "Delete",
-    "avname": "Ahmed Sharif Chaudhry"
+    "avname": "Ahmed Sharif Chaudhry",
+    "submit": "Submit",
+    "already_have_an_account": "Already have an account?",
+    "enter-email": "Enter email",
+    "invalid-field": "Invalid field"
   }
 }

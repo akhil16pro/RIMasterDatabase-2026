@@ -2,9 +2,20 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 import { Eye, EyeOff } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
-function Input({ className, type, ...props }: React.ComponentProps<"input">) {
+function Input({
+  className,
+  type,
+  error,
+  errorMessage,
+  ...props
+}: React.ComponentProps<"input"> & {
+  error?: boolean;
+  errorMessage?: string;
+}) {
   const [showPassword, setShowPassword] = React.useState(false);
+  const { t } = useTranslation();
   return (
     <div className="relative">
       <input
@@ -29,6 +40,12 @@ function Input({ className, type, ...props }: React.ComponentProps<"input">) {
             <EyeOff className=" text-black/50 w-5 h-5" />
           )}
         </div>
+      )}
+
+      {error && (
+        <span className="absolute bottom-[-1px] ltr:right-0 rtl:left-0 bg-[var(--brandRed)] text-[.85rem] inline-flex leading-[100%] px-2 py-[2px] rounded-[3px] font-secondary translate-y-full">
+          {errorMessage ? errorMessage : t("invalid-field")}
+        </span>
       )}
     </div>
   );

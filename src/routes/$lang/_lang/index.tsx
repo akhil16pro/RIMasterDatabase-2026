@@ -1,3 +1,4 @@
+import AppHeader from "@/components/layouts/AppHeader";
 import { apiClient } from "@/api";
 import RoteError from "@/components/layouts/RoteError";
 import RouteLoader from "@/components/layouts/RouteLoader";
@@ -57,6 +58,7 @@ function RouteComponent() {
         ? "<p>أنشأت حكومة دولة الإمارات العربية المتحدة مكتب الاستخبارات التنظيمية لتصميم وإدارة نظام تشريعي ذكي ومتكامل يُعيد تعريف آلية سنّ القوانين في الدولة. ويعتمد هذا النظام على نهجٍ يرتكز على الذكاء الاصطناعي، مُمثلاً نموذجاً مُستقبلياً للحوكمة، يجمع بين الذكاء البشري وكفاءة الذكاء الاصطناعي لإنتاج تشريعات تُسهم في تحسين جودة الحياة في جميع أنحاء الإمارات.</p><p>سيعتمد المكتب على تقنيات مُتقدمة لتحليل القوانين القائمة، والكشف عن الثغرات التشريعية، واقتراح تعديلات قائمة على البيانات استناداً إلى أفضل الممارسات العالمية، وصياغة وتحديث اللوائح. كما سيُحاكي المكتب أثر القوانين قبل إصدارها، لضمان فعاليتها وكفاءتها واستجابتها للتغيرات المجتمعية والتكنولوجية.</p><p>ومن خلال هذه المبادرات، يضمن المكتب أن تصبح التشريعات أكثر مرونة واستجابة، مع تقليل التعقيد والتناقضات القانونية. كما يُعزز التوازن الأمثل بين التنظيم والابتكار، بما يتماشى مع متطلبات العصر الرقمي.</p><p>سيحظى مكتب الاستخبارات التنظيمية بدعم فريق من مصممي الأنظمة التشريعية - خبراء في البيانات التشريعية، ومتخصصين في الذكاء الاصطناعي، ومحللين، ومجتمع الاستخبارات التنظيمية الأوسع - الذين يعملون معًا على هندسة النظام التشريعي بأكمله. وسيوجهون عمل وكلاء الذكاء الاصطناعي المتخصصين المسؤولين عن المهام التشغيلية.</p>"
         : "<p>The Regulatory Intelligence Office was established by the UAE Government to design and manage a smart and integrated legislative system that redefines how laws are created in the country. This system is based on an AI-first approach, representing the next-generation model of governance—merging human intelligence with the efficiency of artificial intelligence to produce legislation that enables a better quality of life across the UAE.</p><p>The office will rely on advanced technologies to analyze existing laws, detect legislative gaps, propose data-driven amendments based on global best practices, and draft and update regulations. It will also simulate the impact of laws before they are issued, ensuring they are effective, efficient, and responsive to societal and technological changes.</p><p>Through these initiatives, the office ensures that legislation becomes more agile and responsive while reducing complexity and legal inconsistencies. It also promotes a healthy balance between regulation and innovation, aligned with the demands of the digital age.</p><p>The Regulatory Intelligence Office will be supported by a team of “Legislative System Designers”—experts in legislative data, AI specialists, analysts, and the broader regulatory intelligence community—who collaboratively engineer the entire legislative ecosystem. They will guide the work of specialized AI agents responsible for operational tasks.</p>",
   };
+
   return (
     <AnimatePresence mode={"wait"}>
       {isLoading || isRefetching ? (
@@ -68,6 +70,7 @@ function RouteComponent() {
           key="home-content"
           className="flex flex-col items-center justify-center w-full min-h-screen flex-1"
         >
+          <AppHeader delay={2.4} />
           <HomeBanner data={data} />
         </div>
       )}
