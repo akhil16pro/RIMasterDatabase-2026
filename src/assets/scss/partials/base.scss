@@ -145,6 +145,11 @@ html[dir="rtl"] {
   border-bottom: 1px solid hsl(from var(--color-bg) h s l / 0.2);
   color: var(--color-bg);
   font-size: 1.2rem;
+  padding-inline: 0;
+  &:focus {
+    box-shadow: none;
+    outline: none;
+  }
 }
 
 .mainBody {

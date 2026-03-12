@@ -25,6 +25,9 @@ import clock from "@/assets/animations/clock.json";
 import Lottie from "lottie-react";
 import { useLocation, useRouter } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
+import { useSetAtom } from "jotai";
+import { userSessionAtom } from "@/store/atoms";
+
 export default function DashboardTopbar({
   delay,
   title,
@@ -192,6 +195,7 @@ function LoginAvatar() {
   const { t, i18n } = useTranslation();
   const { href } = useLocation();
   const router = useRouter();
+  const setUserSession = useSetAtom(userSessionAtom);
   const currentLang = i18n.language;
   const isRtl = currentLang === "ar";
 
@@ -209,6 +213,7 @@ function LoginAvatar() {
   };
 
   const handleLogout = () => {
+    setUserSession(null);
     localStorage.removeItem("auth_token");
     router.navigate({
       to: "/$lang/login",

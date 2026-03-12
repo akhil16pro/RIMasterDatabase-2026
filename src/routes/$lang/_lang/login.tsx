@@ -1,4 +1,4 @@
-import { useEffect, useRef, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 // import RoutesBanner from '@/components/layouts/RoutesBanner'
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
@@ -14,17 +14,23 @@ import { AnimatePresence, motion } from "motion/react";
 import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
 
+import { useSetAtom } from "jotai";
+import { userSessionAtom } from "@/store/atoms";
 const RECAPTCHA_SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
+
 export const Route = createFileRoute("/$lang/_lang/login")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
   const { t, i18n } = useTranslation();
-
   const navigate = useNavigate();
-
   const recaptchaRef = useRef<ReCAPTCHA>(null);
+
+  const setUserSession = useSetAtom(userSessionAtom);
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   // const { data, isLoading, error, isRefetching } = useQuery({
   //   queryKey: ['about', i18n.language],
@@ -74,6 +80,15 @@ function RouteComponent() {
       const token = "dummy-token-for-now";
       localStorage.setItem("auth_token", token);
 
+      setUserSession({
+        token: token,
+        user: {
+          id: "1",
+          email: email,
+          name: "Admin",
+          role: email.includes("admin") ? "admin" : "user",
+        },
+      });
       // Navigate to the protected route
       navigate({
         to: `/${i18n.language}/dashboard`,
@@ -120,8 +135,16 @@ function RouteComponent() {
                     {data.loginTitle}
                   </div>
                   <form action="#" className="flex flex-col gap-7">
-                    <Input type="email" placeholder={t("email")} error={true} />
                     <Input
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      type="email"
+                      placeholder={t("email")}
+                      error={true}
+                    />
+                    <Input
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
                       type="password"
                       placeholder={t("password")}
                       error={true}

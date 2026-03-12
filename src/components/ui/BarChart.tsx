@@ -8,6 +8,8 @@ import {
 import { motion } from "motion/react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useMobile } from "@/hooks/use-mobile";
+import { useAtomValue } from "jotai";
+import { userSessionAtom } from "@/store/atoms";
 
 export default function BarChart({ data }: { data: any[] }) {
   const isMobile = useMobile();
@@ -117,6 +119,7 @@ export default function BarChart({ data }: { data: any[] }) {
 }
 
 function Bar({ item, index, maxLabelHeight, labelRefs, isMobile }: any) {
+  const userSession = useAtomValue(userSessionAtom);
   return (
     <div
       className={cn(
@@ -180,20 +183,47 @@ function Bar({ item, index, maxLabelHeight, labelRefs, isMobile }: any) {
             !isMobile && maxLabelHeight > 0 ? `${maxLabelHeight}px` : "auto",
         }}
       >
-        <motion.span
+        <div
+          className="flex flex-col gap-2 justify-center items-center"
           ref={(el) => (labelRefs.current[index] = el)}
-          initial={{ y: 10, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: 10, opacity: 0 }}
-          transition={{
-            delay: index * 0.1,
-            duration: 0.5,
-            ease: "easeInOut",
-          }}
-          className="barLabel text-base text-[var(--textColor)] font-medium leading-[100%]"
         >
-          {item.name}
-        </motion.span>
+          {userSession?.user.role === "admin" && (
+            <motion.div
+              initial={{ y: 10, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 10, opacity: 0 }}
+              transition={{
+                delay: index * 0.1,
+                duration: 0.4,
+                ease: "easeInOut",
+              }}
+              className="flex bg-[linear-gradient(90deg,#FFC99D_0%,#022EE4_100%)] p-[1px] rounded-full max-w-[38px] md:max-w-[40px] lg:max-w-[45px] "
+            >
+              <div className="flex justify-center items-center bg-white rounded-full aspect-square overflow-hidden">
+                <img
+                  src="/chartLogo.png"
+                  width={80}
+                  height={80}
+                  alt=" w-full h-auto"
+                />
+              </div>
+            </motion.div>
+          )}
+
+          <motion.span
+            initial={{ y: 10, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 10, opacity: 0 }}
+            transition={{
+              delay: index * 0.1,
+              duration: 0.5,
+              ease: "easeInOut",
+            }}
+            className="barLabel text-base text-[var(--textColor)] font-medium leading-[100%]"
+          >
+            {item.name}
+          </motion.span>
+        </div>
       </div>
       {isMobile && (
         <div
