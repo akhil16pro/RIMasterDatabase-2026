@@ -26,6 +26,7 @@ export const Table = ({
   ...rest
 }: TableProps) => {
   const isMobile = useMobile();
+  const { t } = useTranslation();
 
   return (
     <motion.div
@@ -130,16 +131,35 @@ export const Table = ({
               ))}
             </tr>
           ))}
+
+          {tableData.length === 0 && (
+            <tr
+              className={cn(
+                "group transition-all duration-300 bg-[linear-gradient(240deg,rgba(2,46,228,0.1)_0%,rgba(3,203,255,0.1)_100%)]",
+                isMobile ? "flex flex-col rounded-lg p-2" : "table-row",
+              )}
+            >
+              <td
+                colSpan={tableHead.length}
+                className={cn(
+                  "px-4 py-4 text-base font-secondary text-center rounded-lg",
+                )}
+              >
+                {t("no-data-available")}
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
     </motion.div>
   );
 };
 
-function TD({ children, className, "data-label": dataLabel }: any) {
+function TD({ children, className, "data-label": dataLabel, ...props }: any) {
   const isMobile = useMobile();
   return (
     <td
+      {...props}
       data-label={dataLabel}
       className={cn(
         "px-4 py-4 text-base font-secondary",
