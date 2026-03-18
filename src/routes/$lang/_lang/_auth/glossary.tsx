@@ -17,6 +17,7 @@ import {
   Trash2,
   Upload,
   CircleCheck,
+  Pencil,
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -30,6 +31,10 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Table } from "@/components/ui/Table";
+import { toast } from "sonner";
+
+import { useAtomValue } from "jotai";
+import { userSessionAtom } from "@/store/atoms";
 
 export const Route = createFileRoute("/$lang/_lang/_auth/glossary")({
   component: RouteComponent,
@@ -38,308 +43,176 @@ export const Route = createFileRoute("/$lang/_lang/_auth/glossary")({
 function RouteComponent() {
   const { t, i18n } = useTranslation();
 
-  let isLoading = false;
-  let error = false;
-  let isRefetching = false;
-  const data = {
-    title: t("glossary"),
-  };
+  const userSession = useAtomValue(userSessionAtom);
+
+  const { data, isLoading, error, isRefetching } = useQuery({
+    queryKey: ["glossary", i18n.language, userSession?.accessToken],
+    enabled: !!userSession?.accessToken,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+    staleTime: 1000 * 60 * 60 * 24,
+    queryFn: async () => {
+      try {
+        const res = await apiClient
+          .get(i18n.language + "/glossary/list", {
+            headers: {
+              Authorization: `Bearer ${userSession?.accessToken}`,
+            },
+          })
+          .json();
+        // console.log("GLOSSARY_DATA", res?.data);
+        return res?.data;
+      } catch (error) {
+        console.log("GLOSSARY_DATA_ERROR", error);
+        return null;
+      }
+    },
+  });
+
+  const campaignStartDate = new Date(data?.campaign?.from_date);
+  const campaignEndDate = new Date(data?.campaign?.to_date);
+
+  const isCampaignActive =
+    campaignStartDate <= new Date() && campaignEndDate >= new Date();
 
   return (
-    <AnimatePresence mode={"wait"}>
-      {isLoading || isRefetching ? (
+    <>
+      {isLoading ? (
         <RouteLoader key="dashboard-loader" />
       ) : error ? (
         <RoteError key="dashboard-error" />
       ) : (
-        <div
-          key="dashboard-content"
-          className="flex flex-col items-center justify-center w-full h-full flex-1 mainBody "
-        >
-          <section className="w-full flex-1 relative mainWrapper ">
-            <DashboardSidebar delay={0} />
+        <AnimatePresence mode={"wait"}>
+          <div
+            key="dashboard-content"
+            className="flex flex-col items-center justify-center w-full h-full flex-1 mainBody "
+          >
+            <section className="w-full flex-1 relative mainWrapper ">
+              <DashboardSidebar delay={0} />
 
-            <div className="contentBox">
-              <DashboardTopbar
-                delay={0}
-                title={data.title}
-                timeCounter={true}
-              />
-              <motion.div
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1, duration: 0.5, ease: "easeInOut" }}
-                className="flex flex-wrap md:justify-end gap-2"
-              >
-                <div className="md:flex-1">
-                  <AddGlossaryModal />
-                </div>
+              <div className="contentBox">
+                <DashboardTopbar
+                  delay={0}
+                  title={data?.translator?.glossary || t("glossary")}
+                  campaign={data?.campaign}
+                  translator={data?.translator}
+                />
+                <motion.div
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1, duration: 0.5, ease: "easeInOut" }}
+                  className="flex flex-wrap md:justify-end gap-2"
+                >
+                  {isCampaignActive && (
+                    <>
+                      <div className="md:flex-1">
+                        <AddGlossaryModal translator={data?.translator} />
+                      </div>
 
-                <DefaultButton
-                  title={t("download-excel-template")}
-                  icon={<Download className="size-5" />}
-                />
-                <DefaultButton
-                  title={t("upload-excel")}
-                  icon={<Upload className="size-5" />}
-                />
-                <DefaultButton
-                  title={t("guideline")}
-                  icon={<BookOpenText className="size-5" />}
-                />
-              </motion.div>
+                      <DefaultButton
+                        title={
+                          data?.translator?.download_excel_template ||
+                          t("download-excel-template")
+                        }
+                        icon={<Download className="size-5" />}
+                      />
+                      <DefaultButton
+                        title={
+                          data?.translator?.upload_excel || t("upload-excel")
+                        }
+                        icon={<Upload className="size-5" />}
+                      />
+                    </>
+                  )}
+                  <DefaultButton
+                    title={data?.translator?.guideline || t("guideline")}
+                    icon={<BookOpenText className="size-5" />}
+                  />
+                </motion.div>
 
-              <GlossaryTable />
-            </div>
-          </section>
-        </div>
+                {data?.glossary_headers && <GlossaryTable data={data} />}
+              </div>
+            </section>
+          </div>
+        </AnimatePresence>
       )}
-    </AnimatePresence>
+    </>
   );
 }
 
-function GlossaryTable() {
+function GlossaryTable({ data }: { data: any }) {
   const { t } = useTranslation();
 
-  const tableHead = [
-    { title: t("no"), key: "no" },
-    { title: t("title"), key: "title" },
-    { title: t("description"), key: "description" },
-    { title: t("status"), key: "status" },
-    { title: t("actions"), key: "action" },
-  ];
-
-  const tableData = [
-    {
-      title: "State",
-      description: "United Arab Emirates.",
-      status: true,
-      actions: [
-        {
-          title: "Edit",
-          type: "edit",
-          icon: <PenLine className="size-4" stroke="url(#button_linear)" />,
-          onClick: () => {},
-          toolTip: t("edit"),
-          toolTipClass: "editTip",
-        },
-        {
-          title: "Delete",
-          type: "delete",
-          icon: <Trash2 className="size-4" stroke="url(#button_linear_red)" />,
-          onClick: () => {},
-          toolTip: t("delete"),
-          toolTipClass: "deleteTip",
-        },
-      ],
-    },
-    {
-      title: "Ministry",
-      description: "Ministry of Health & Prevention",
-      status: false,
-      actions: [
-        {
-          title: t("edit"),
-          type: "edit",
-          icon: <PenLine className="size-4" stroke="url(#button_linear)" />,
-          onClick: () => {},
-          toolTip: t("edit"),
-          toolTipClass: "editTip",
-        },
-        {
-          title: t("delete"),
-          type: "delete",
-          icon: <Trash2 className="size-4" stroke="url(#button_linear_red)" />,
-          onClick: () => {},
-          toolTip: t("delete"),
-          toolTipClass: "deleteTip",
-        },
-      ],
-    },
-    {
-      title: "Minister",
-      description: "Minister of Health & Prevention",
-      status: true,
-      actions: [
-        {
-          title: "Edit",
-          type: "edit",
-          icon: <PenLine className="size-4" stroke="url(#button_linear)" />,
-          onClick: () => {},
-          toolTip: t("edit"),
-          toolTipClass: "editTip",
-        },
-        {
-          title: "Delete",
-          type: "delete",
-          icon: <Trash2 className="size-4" stroke="url(#button_linear_red)" />,
-          onClick: () => {},
-          toolTip: t("delete"),
-          toolTipClass: "deleteTip",
-        },
-      ],
-    },
-    {
-      title: "Health Authority",
-      description:
-        "Any federal or local government authority concerned with health affairs in the State.",
-      status: true,
-      actions: [
-        {
-          title: "Edit",
-          type: "edit",
-          icon: <PenLine className="size-4" stroke="url(#button_linear)" />,
-          onClick: () => {},
-          toolTip: t("edit"),
-          toolTipClass: "editTip",
-        },
-        {
-          title: "Delete",
-          type: "delete",
-          icon: <Trash2 className="size-4" stroke="url(#button_linear_red)" />,
-          onClick: () => {},
-          toolTip: t("delete"),
-          toolTipClass: "deleteTip",
-        },
-      ],
-    },
-    {
-      title: "Mental Health",
-      description:
-        "A state of psychological and social stability, through which individuals can attain their goals in accordance with their personal capabilities, deal with life pressures, work, be productive, and contribute to society.",
-      status: true,
-      actions: [
-        {
-          title: "Edit",
-          type: "edit",
-          icon: <PenLine className="size-4" stroke="url(#button_linear)" />,
-          onClick: () => {},
-          toolTip: t("edit"),
-          toolTipClass: "editTip",
-        },
-        {
-          title: "Delete",
-          type: "delete",
-          icon: <Trash2 className="size-4" stroke="url(#button_linear_red)" />,
-          onClick: () => {},
-          toolTip: t("delete"),
-          toolTipClass: "deleteTip",
-        },
-      ],
-    },
-    {
-      title: "Concerned Entities",
-      description:
-        "Any federal or local government body related to the protection of mental health in the State, or directly or indirectly related to implementing the provisions hereof.",
-      status: true,
-      actions: [
-        {
-          title: "Edit",
-          type: "edit",
-          icon: <PenLine className="size-4" stroke="url(#button_linear)" />,
-          onClick: () => {},
-          toolTip: t("edit"),
-          toolTipClass: "editTip",
-        },
-        {
-          title: "Delete",
-          type: "delete",
-          icon: <Trash2 className="size-4" stroke="url(#button_linear_red)" />,
-          onClick: () => {},
-          toolTip: t("delete"),
-          toolTipClass: "deleteTip",
-        },
-      ],
-    },
-    {
-      title: "Mental health facility",
-      description:
-        "A health institution licensed to provide mental health services, whether independent or attached to other health institutions.",
-      status: true,
-      actions: [
-        {
-          title: "Edit",
-          type: "edit",
-          icon: <PenLine className="size-4" stroke="url(#button_linear)" />,
-          onClick: () => {},
-          toolTip: t("edit"),
-        },
-        {
-          title: "Delete",
-          type: "delete",
-          icon: <Trash2 className="size-4" stroke="url(#button_linear_red)" />,
-          onClick: () => {},
-          toolTip: t("delete"),
-          toolTipClass: "deleteTip",
-        },
-      ],
-    },
-    {
-      title: "Mental Health Services",
-      description:
-        "Preventive, therapeutic, and rehabilitative services for mental health.",
-      status: true,
-      actions: [
-        {
-          title: "Edit",
-          type: "edit",
-          icon: <PenLine className="size-4" stroke="url(#button_linear)" />,
-          onClick: () => {},
-          toolTip: t("edit"),
-          toolTipClass: "editTip",
-        },
-        {
-          title: "Delete",
-          type: "delete",
-          icon: <Trash2 className="size-4" stroke="url(#button_linear_red)" />,
-          onClick: () => {},
-          toolTip: t("delete"),
-          toolTipClass: "deleteTip",
-        },
-      ],
-    },
-  ] as const;
-
-  return <Table tableHead={tableHead} tableData={tableData} />;
+  return (
+    <Table
+      tableHead={data?.glossary_headers}
+      tableData={data?.glossaries}
+      EditAction={EditAction}
+      DeleteAction={DeleteAction}
+      translator={data?.translator}
+    />
+  );
 }
 
-function AddGlossaryModal() {
+function EditAction({ slug, translator }: { slug: string; translator?: any }) {
   const { t, i18n } = useTranslation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
-  const data = queryClient.getQueryData(["settings"]);
+  const userSession = useAtomValue(userSessionAtom);
+  // console.log(slug, "edit slug");
+
+  const { data } = useQuery({
+    queryKey: ["glossaryEdit", slug],
+    queryFn: async () => {
+      const res = await apiClient
+        .get(i18n.language + "/glossary/edit/" + slug, {
+          headers: {
+            Authorization: `Bearer ${userSession?.accessToken}`,
+          },
+        })
+        .json();
+      return res?.data;
+    },
+  });
 
   const form = useForm({
     defaultValues: {
-      title: "",
-      description: "",
-      titleAr: "",
-      descriptionAr: "",
+      title: data?.glossaryData?.title || "",
+      title_arabic: data?.glossaryData?.title_arabic || "",
+      description: data?.glossaryData?.description || "",
+      description_arabic: data?.glossaryData?.description_arabic || "",
     },
     onSubmit: async ({ value }) => {
       setIsSubmitting(true);
-      // try {
-      //   console.log(value);
-      //   const res = await apiClient
-      //     .post(i18n.language + "/pdf-subscribers-submit", {
-      //       json: {
-      //         email: value.email,
-      //       },
-      //     })
-      //     .json();
-      //   console.log(res);
-      //   if (res?.pdf_url) {
-      //     window.open(res?.pdf_url, "_blank");
-      //   }
-      //   form.reset();
-      //   setOpen(false);
-      // } catch (error) {
-      //   console.log(error);
-      //   toast.error(error?.response?.message || t("error-occurred"));
-      // } finally {
-      //   setIsSubmitting(false);
-      // }
+      try {
+        const res = await apiClient
+          .post(i18n.language + "/glossary/update/" + slug, {
+            headers: {
+              Authorization: `Bearer ${userSession?.accessToken}`,
+            },
+            json: {
+              title: value.title,
+              title_arabic: value.title_arabic,
+              description: value.description,
+              description_arabic: value.description_arabic,
+            },
+          })
+          .json();
+
+        if (res?.status) {
+          toast.success(res?.message || t("success"));
+          queryClient.invalidateQueries({ queryKey: ["glossary"] });
+          setOpen(false);
+        } else {
+          toast.error(res?.message || t("error-occurred"));
+        }
+      } catch (error) {
+        console.log(error);
+        toast.error(error?.response?.message || t("error-occurred"));
+      } finally {
+        setIsSubmitting(false);
+      }
     },
   });
 
@@ -354,19 +227,23 @@ function AddGlossaryModal() {
       >
         <DialogTrigger asChild>
           <DefaultButton
-            title={t("add-glossary")}
-            variant="dark"
-            icon={<Plus className="size-5" />}
-            className=""
+            icon={<PenLine className="size-4" stroke="url(#button_linear)" />}
+            rounded={true}
+            iconGradient={"edit"}
+            toolTip={t("edit")}
+            toolTipClass="editTip"
           />
         </DialogTrigger>
         <DialogContent className="lg:max-w-4xl">
           <DialogHeader>
-            <DialogTitle>{t("add-glossary")}</DialogTitle>
+            <DialogTitle>{t("edit-glossary")}</DialogTitle>
           </DialogHeader>
           <div className="grid md:grid-cols-2 gap-x-8 gap-y-7 items-start">
             <form.Field
               name="title"
+              validators={{
+                onSubmit: ({ value }) => (!value ? t("title-required") : null),
+              }}
               children={(field) => (
                 <Input
                   id="title"
@@ -376,25 +253,36 @@ function AddGlossaryModal() {
                   label={t("title-english")}
                   className=""
                   dir="ltr"
+                  error={field.state.meta.errors.length > 0 ? true : false}
+                  errorMessage={field.state.meta.errors[0]}
                 />
               )}
             />
             <form.Field
-              name="titleAr"
+              name="title_arabic"
+              validators={{
+                onSubmit: ({ value }) => (!value ? t("title-required") : null),
+              }}
               children={(field) => (
                 <Input
-                  id="titleAr"
-                  name="titleAr"
+                  id="title_arabic"
+                  name="title_arabic"
                   value={field.state.value}
                   onChange={(e) => field.handleChange(e.target.value)}
                   label={t("title-arabic")}
                   className=""
                   dir="rtl"
+                  error={field.state.meta.errors.length > 0 ? true : false}
+                  errorMessage={t(field.state.meta.errors[0])}
                 />
               )}
             />
             <form.Field
               name="description"
+              validators={{
+                onSubmit: ({ value }) =>
+                  !value ? t("description-required") : null,
+              }}
               children={(field) => (
                 <Input
                   id="description"
@@ -404,20 +292,304 @@ function AddGlossaryModal() {
                   label={t("description-english")}
                   dir="ltr"
                   type="textarea"
+                  error={field.state.meta.errors.length > 0 ? true : false}
+                  errorMessage={t(field.state.meta.errors[0])}
                 />
               )}
             />
             <form.Field
-              name="descriptionAr"
+              name="description_arabic"
+              validators={{
+                onSubmit: ({ value }) =>
+                  !value ? t("description-required") : null,
+              }}
               children={(field) => (
                 <Input
-                  id="descriptionAr"
-                  name="descriptionAr"
+                  id="description_arabic"
+                  name="description_arabic"
                   value={field.state.value}
                   onChange={(e) => field.handleChange(e.target.value)}
                   label={t("description-arabic")}
                   dir="rtl"
                   type="textarea"
+                  error={field.state.meta.errors.length > 0 ? true : false}
+                  errorMessage={t(field.state.meta.errors[0])}
+                />
+              )}
+            />
+            <div className="inline-flex gap-2 text-[var(--textColor)] text-[1.2rem]">
+              <label className="text-muted-foreground">{t("status")}</label>
+              <div className="flex gap-1 items-center">
+                <label className="font-bold">{t("draft")}</label>
+                <CircleCheck className="size-[14px]" strokeWidth={1} />
+              </div>
+            </div>
+          </div>
+          <DialogFooter className="sm:justify-start mt-2">
+            <DefaultButton
+              type="submit"
+              variant="dark"
+              title={t("update")}
+              onClick={form.handleSubmit}
+              icon={<Pencil className="size-5" />}
+              disabled={isSubmitting}
+              isLoading={isSubmitting}
+            />
+          </DialogFooter>
+        </DialogContent>
+      </form>
+    </Dialog>
+  );
+}
+
+function DeleteAction({
+  slug,
+  translator,
+}: {
+  slug: string;
+  translator?: any;
+}) {
+  const { t, i18n } = useTranslation();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [open, setOpen] = useState(false);
+  const queryClient = useQueryClient();
+  const data = queryClient.getQueryData(["settings"]);
+  const userSession = useAtomValue(userSessionAtom);
+  // console.log(slug, "delete slug");
+  const form = useForm({
+    defaultValues: {
+      slug: slug,
+    },
+    onSubmit: async ({ value }) => {
+      setIsSubmitting(true);
+      try {
+        const res = await apiClient
+          .get(i18n.language + "/glossary/delete/" + value.slug, {
+            headers: {
+              Authorization: `Bearer ${userSession?.accessToken}`,
+            },
+          })
+          .json();
+        console.log(res);
+
+        form.reset();
+
+        if (res?.status) {
+          toast.success(res?.message || t("success"));
+          queryClient.invalidateQueries({ queryKey: ["glossary"] });
+          // setOpen(false);
+        } else {
+          toast.error(res?.message || t("error-occurred"));
+        }
+      } catch (error) {
+        console.log(error);
+        toast.error(error?.response?.message || t("error-occurred"));
+      } finally {
+        setIsSubmitting(false);
+      }
+    },
+  });
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          form.handleSubmit();
+        }}
+      >
+        <DialogTrigger asChild>
+          <DefaultButton
+            icon={
+              <Trash2 className="size-4" stroke="url(#button_linear_red)" />
+            }
+            rounded={true}
+            iconGradient={"delete"}
+            toolTip={t("delete")}
+            toolTipClass="deleteTip"
+          />
+        </DialogTrigger>
+        <DialogContent className="lg:max-w-xl">
+          <DialogHeader>
+            <DialogTitle>
+              {translator?.delete_glossary || t("delete-glossary")}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="flex">
+            <p className=" text-lg font-secondary text-[var(--textColor)]">
+              {translator?.are_you_sure ||
+                t("are-you-sure-you-want-to-delete-this-glossary")}
+            </p>
+          </div>
+          <DialogFooter className="sm:justify-end mt-2">
+            <DefaultButton
+              type="submit"
+              variant="dark"
+              title={translator?.delete || t("delete")}
+              onClick={form.handleSubmit}
+              icon={<Trash2 className="size-5" />}
+              disabled={isSubmitting}
+              isLoading={isSubmitting}
+              iconGradient="delete"
+            />
+          </DialogFooter>
+        </DialogContent>
+      </form>
+    </Dialog>
+  );
+}
+
+function AddGlossaryModal({ translator }: { translator?: any }) {
+  const { t, i18n } = useTranslation();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [open, setOpen] = useState(false);
+  const queryClient = useQueryClient();
+  const data = queryClient.getQueryData(["settings"]);
+  const userSession = useAtomValue(userSessionAtom);
+
+  const form = useForm({
+    defaultValues: {
+      title: "",
+      title_arabic: "",
+      description: "",
+      description_arabic: "",
+    },
+    onSubmit: async ({ value }) => {
+      setIsSubmitting(true);
+      try {
+        const res = await apiClient
+          .post(i18n.language + "/glossary/create", {
+            headers: {
+              Authorization: `Bearer ${userSession?.accessToken}`,
+            },
+            json: {
+              title: value.title,
+              title_arabic: value.title_arabic,
+              description: value.description,
+              description_arabic: value.description_arabic,
+            },
+          })
+          .json();
+        console.log(res);
+
+        form.reset();
+
+        if (res?.status) {
+          toast.success(res?.message || t("success"));
+          queryClient.invalidateQueries({ queryKey: ["glossary"] });
+          // setOpen(false);
+        } else {
+          toast.error(res?.message || t("error-occurred"));
+        }
+      } catch (error) {
+        console.log(error);
+        toast.error(error?.response?.message || t("error-occurred"));
+      } finally {
+        setIsSubmitting(false);
+      }
+    },
+  });
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          form.handleSubmit();
+        }}
+      >
+        <DialogTrigger asChild>
+          <DefaultButton
+            title={translator?.add_glossary || t("add-glossary")}
+            variant="dark"
+            icon={<Plus className="size-5" />}
+            className=""
+          />
+        </DialogTrigger>
+        <DialogContent className="lg:max-w-4xl">
+          <DialogHeader>
+            <DialogTitle>
+              {translator?.add_glossary || t("add-glossary")}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="grid md:grid-cols-2 gap-x-8 gap-y-7 items-start">
+            <form.Field
+              name="title"
+              validators={{
+                onSubmit: ({ value }) => (!value ? t("title-required") : null),
+              }}
+              children={(field) => (
+                <Input
+                  id="title"
+                  name="title"
+                  value={field.state.value}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  label={t("title-english")}
+                  className=""
+                  dir="ltr"
+                  error={field.state.meta.errors.length > 0 ? true : false}
+                  errorMessage={field.state.meta.errors[0]}
+                />
+              )}
+            />
+            <form.Field
+              name="title_arabic"
+              validators={{
+                onSubmit: ({ value }) => (!value ? t("title-required") : null),
+              }}
+              children={(field) => (
+                <Input
+                  id="title_arabic"
+                  name="title_arabic"
+                  value={field.state.value}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  label={t("title-arabic")}
+                  className=""
+                  dir="rtl"
+                  error={field.state.meta.errors.length > 0 ? true : false}
+                  errorMessage={t(field.state.meta.errors[0])}
+                />
+              )}
+            />
+            <form.Field
+              name="description"
+              validators={{
+                onSubmit: ({ value }) =>
+                  !value ? t("description-required") : null,
+              }}
+              children={(field) => (
+                <Input
+                  id="description"
+                  name="description"
+                  value={field.state.value}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  label={t("description-english")}
+                  dir="ltr"
+                  type="textarea"
+                  error={field.state.meta.errors.length > 0 ? true : false}
+                  errorMessage={t(field.state.meta.errors[0])}
+                />
+              )}
+            />
+            <form.Field
+              name="description_arabic"
+              validators={{
+                onSubmit: ({ value }) =>
+                  !value ? t("description-required") : null,
+              }}
+              children={(field) => (
+                <Input
+                  id="description_arabic"
+                  name="description_arabic"
+                  value={field.state.value}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  label={t("description-arabic")}
+                  dir="rtl"
+                  type="textarea"
+                  error={field.state.meta.errors.length > 0 ? true : false}
+                  errorMessage={t(field.state.meta.errors[0])}
                 />
               )}
             />

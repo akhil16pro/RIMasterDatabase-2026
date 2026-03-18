@@ -33,13 +33,20 @@ export default function DashboardTopbar({
   delay,
   title,
   lastLogin,
-  timeCounter,
+  campaign,
+  translator,
 }: {
   delay: number;
   title: string;
   lastLogin?: boolean;
-  timeCounter?: boolean;
+  campaign?: any;
+  translator?: any;
 }) {
+  const campaignStartDate = new Date(campaign?.from_date);
+  const campaignEndDate = new Date(campaign?.to_date);
+
+  const isCampaignActive =
+    campaignStartDate <= new Date() && campaignEndDate >= new Date();
   return (
     <motion.div
       className="topBar flex md:flex-row flex-col gap-2 md:items-center"
@@ -55,17 +62,25 @@ export default function DashboardTopbar({
       </div>
       <div className="flex md:gap-2 gap-1 order-1 md:order-2 justify-end flex-wrap ">
         {lastLogin && <LastLoginInfo />}
-        {timeCounter && <TimeLeftInfo />}
+        {isCampaignActive && (
+          <CampaignInfo campaign={campaign} translator={translator} />
+        )}
         <LoginAvatar />
       </div>
     </motion.div>
   );
 }
 
-function TimeLeftInfo() {
+function CampaignInfo({
+  campaign,
+  translator,
+}: {
+  campaign: any;
+  translator?: any;
+}) {
   const { t } = useTranslation();
 
-  const targetDate = new Date("2026-03-25T13:56:21+04:00");
+  const targetDate = new Date(campaign?.to_date);
 
   const [timeLeft, setTimeLeft] = useState({
     days: "00",
@@ -116,10 +131,12 @@ function TimeLeftInfo() {
           loop={true}
           className="w-[32px] h-[32px] md:w-[34px] md:h-[34px] lg:w-[40px] lg:h-[40px] "
         />
-        <div className="text-[.7rem] md:text-[.85rem] font-medium leading-[100%] uppercase flex flex-col">
-          <span> {t("time")}</span>
-          <span> {t("left")}</span>
-        </div>
+        <div
+          className="text-[.7rem] md:text-[.85rem] font-medium leading-[100%] uppercase flex flex-col"
+          dangerouslySetInnerHTML={{
+            __html: translator?.time_left || t("time-left"),
+          }}
+        />
       </div>
 
       <div className="flex-1 flex items-center gap-1 lg:gap-2 lg:px-5 px-3 justify-between">
@@ -128,7 +145,7 @@ function TimeLeftInfo() {
             {timeLeft.days}
           </span>
           <span className="text-[var(--brandRed)] text-[.7rem] md:text-[.85rem] font-medium leading-[90%] uppercase">
-            {t("days")}
+            {translator?.days || t("days")}
           </span>
         </div>
         <span className="text-[1.5rem] leading-[100%] font-bold text-[var(--textColor)]">
@@ -139,7 +156,7 @@ function TimeLeftInfo() {
             {timeLeft.hours}
           </span>
           <span className="text-[var(--brandRed)] text-[.7rem] md:text-[.85rem] font-medium leading-[90%] uppercase">
-            {t("hours")}
+            {translator?.hours || t("hours")}
           </span>
         </div>
         <span className="text-[1.5rem] leading-[100%] font-bold text-[var(--textColor)]">
@@ -150,7 +167,7 @@ function TimeLeftInfo() {
             {timeLeft.minutes}
           </span>
           <span className="text-[var(--brandRed)] text-[.7rem] md:text-[.85rem] font-medium leading-[90%] uppercase">
-            {t("mins")}
+            {translator?.mins || t("mins")}
           </span>
         </div>
         <span className="text-[1.5rem] leading-[100%] font-bold text-[var(--textColor)]  ">
@@ -161,7 +178,7 @@ function TimeLeftInfo() {
             {timeLeft.seconds}
           </span>
           <span className="text-[var(--brandRed)] text-[.7rem] md:text-[.85rem] font-medium leading-[90%] uppercase">
-            {t("secs")}
+            {translator?.secs || t("secs")}
           </span>
         </div>
       </div>

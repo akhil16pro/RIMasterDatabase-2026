@@ -14,6 +14,16 @@
     "email-must-be-less-than-100-characters": "Email must be less than 100 characters",
     "password-required": "Password is required",
     "password-must-be-at-least-8-characters": "Password must be at least 8 characters",
+    "title-required": "Title is required",
+    "description-required": "Description is required",
+
+    "add-glossary": "Add Glossary",
+    "edit-glossary": "Edit Glossary",
+    "update": "Update",
+
+    "time-left": "<span>Time</span><span>Left</span>",
+    "delete-glossary": "Delete Glossary",
+    "are-you-sure-you-want-to-delete-this-glossary": "Are you sure you want to delete this glossary?",
 
     "home": "Home",
     "about_regulatory_intelligence": "About Regulatory Intelligence (RI)",
@@ -36,14 +46,13 @@
     "local-governments-legislations": "Local Governments Legislations",
     "local-governments-courts-decisions": "Local Governments Courts Decisions",
     "last-login": "Last login",
-    "left": "Left",
-    "time": "Time",
+
     "days": "Days",
     "hours": "Hours",
     "mins": "Mins",
     "secs": "Secs",
     "download-excel-template": "Download Excel Template",
-    "add-glossary": "Add Glossary",
+
     "guideline": "Guideline",
     "upload-excel": "Upload Excel",
     "actions": "Actions",

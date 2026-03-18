@@ -7,14 +7,14 @@ export const ToggleButton = ({
   noLable,
   className = "",
   status: initialStatus = false,
-  onChange,
+  onToggle,
   readonly,
 }: {
   yesLable?: string;
   noLable?: string;
   className?: string;
   status: boolean;
-  onChange?: (newStatus: boolean) => void;
+  onToggle?: (newStatus: boolean) => void;
   readonly?: boolean;
 }) => {
   const { t } = useTranslation();
@@ -24,7 +24,7 @@ export const ToggleButton = ({
   const handleToggle = () => {
     const newStatus = !currentStatus;
     setCurrentStatus(newStatus);
-    if (onChange) onChange(newStatus);
+    if (onToggle) onToggle(newStatus);
   };
 
   const displayYes = yesLable || t("on");

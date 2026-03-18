@@ -1,22 +1,32 @@
+import React from "react";
 import { cn } from "@/lib/utils";
 import { motion } from "motion/react";
 
 import { DefaultButton } from "@/components/ui/buttons";
 import { ToggleButton } from "@/components/ui/ToggleButton";
 import { useMobile } from "@/hooks/use-mobile";
-
+import { PenLine, Trash2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 interface TableProps extends React.ComponentPropsWithoutRef<typeof motion.div> {
   tableHead: any[];
   tableData: any[];
+  EditAction?: React.ReactNode;
+  DeleteAction?: React.ReactNode;
+  translator?: any;
 }
 
 export const Table = ({
   tableHead,
   tableData,
+  EditAction,
+  DeleteAction,
   className = "",
+  translator,
+
   ...rest
 }: TableProps) => {
   const isMobile = useMobile();
+
   return (
     <motion.div
       {...rest}
@@ -40,11 +50,12 @@ export const Table = ({
                   "px-4 py-4 font-medium text-lg text-start ltr:first:rounded-l-lg ltr:last:rounded-r-lg rtl:first:rounded-r-lg rtl:last:rounded-l-lg",
                   head.key === "no" && "w-[3rem]",
                   head.key === "title" && "w-[20%]",
-                  head.key === "action" && "w-[10rem]",
+                  (head.key === "action" || head.key === "actions") &&
+                    "w-[10rem]",
                   head.key === "status" && "w-[6rem]",
                 )}
               >
-                {head.title}
+                {head?.title}
               </th>
             ))}
           </tr>
@@ -83,20 +94,29 @@ export const Table = ({
                       <ToggleButton
                         status={row[head.key || "status"]}
                         readonly={true}
+                        key={`toggle-${row.id}`}
+                        // onToggle={() => {
+                        //   console.log(row[head.key || "status"], "status");
+                        // }}
                       />
                     </div>
-                  ) : head.key === "action" ? (
+                  ) : head.key === "action" || head.key === "actions" ? (
                     <div className="flex gap-2">
                       {row.actions?.map((action: any, aIndex: number) => (
-                        <DefaultButton
-                          key={`action-${rowIndex}-${aIndex}`}
-                          icon={action.icon}
-                          onClick={action.onClick}
-                          rounded={true}
-                          iconGradient={action.type}
-                          toolTip={action.toolTip}
-                          toolTipClass={action.toolTipClass}
-                        />
+                        <React.Fragment key={`action-${aIndex}-${row.id}`}>
+                          {action.type === "edit" && (
+                            <EditAction
+                              slug={action.slug}
+                              translator={translator}
+                            />
+                          )}
+                          {action.type === "delete" && (
+                            <DeleteAction
+                              slug={action.slug}
+                              translator={translator}
+                            />
+                          )}
+                        </React.Fragment>
                       ))}
                     </div>
                   ) : head.key === "title" ? (

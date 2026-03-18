@@ -99,7 +99,7 @@ export const DefaultButton = ({
           "bg-[linear-gradient(100deg,#03CBFF_0%,#022EE4_120%)] border-none text-[var(--textColor)] font-medium",
         rounded && "px-0 aspect-square rounded-full",
         iconGradient === "delete" &&
-          "bg-[linear-gradient(60deg,#FFC99D_-0%,#F07067_100%)]",
+          "bg-[linear-gradient(60deg,#FFC99D_-0%,#F07067_100%)] border-none",
         className,
       )}
     >

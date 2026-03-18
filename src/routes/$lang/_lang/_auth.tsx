@@ -21,7 +21,7 @@ export const Route = createFileRoute("/$lang/_lang/_auth")({
       }
     }
 
-    console.log(userSession);
+    // console.log(userSession, "userSession");
 
     if (!userSession?.accessToken) {
       throw redirect({
