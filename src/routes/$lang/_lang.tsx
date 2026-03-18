@@ -1,4 +1,4 @@
-import GlobalError from "@/components/layouts/GlobalError";
+// import GlobalError from "@/components/layouts/GlobalError";
 import NotFoundLayout from "@/components/layouts/NotFoundLayout";
 import i18n from "@/lang";
 import { createFileRoute, Outlet } from "@tanstack/react-router";
@@ -6,7 +6,7 @@ import { createFileRoute, Outlet } from "@tanstack/react-router";
 export const Route = createFileRoute("/$lang/_lang")({
   component: RouteComponent,
   notFoundComponent: NotFoundLayout,
-  errorComponent: GlobalError,
+  // errorComponent: GlobalError,
   beforeLoad: async ({ params }) => {
     const lang = params.lang;
     i18n.changeLanguage(lang);

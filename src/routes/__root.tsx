@@ -5,7 +5,7 @@ import { apiClient } from "@/api";
 import { Toaster } from "@/components/ui/sonner";
 import "lenis/dist/lenis.css";
 import { useTranslation } from "react-i18next";
-import GlobalError from "@/components/layouts/GlobalError";
+// import GlobalError from "@/components/layouts/GlobalError";
 import { atom, useSetAtom } from "jotai";
 import { useQuery } from "@tanstack/react-query";
 
@@ -14,7 +14,7 @@ export const settingsAtom = atom(null);
 export const Route = createRootRoute({
   component: RootComponent,
   notFoundComponent: NotFoundLayout,
-  errorComponent: GlobalError,
+  // errorComponent: GlobalError,
 });
 
 function RootComponent() {

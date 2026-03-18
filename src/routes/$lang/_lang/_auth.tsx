@@ -1,11 +1,29 @@
 import { createFileRoute, redirect, Outlet } from "@tanstack/react-router";
+import { getDefaultStore } from "jotai";
+import { userSessionAtom } from "@/store/atoms";
+// Get the store instance
+const store = getDefaultStore();
 
 export const Route = createFileRoute("/$lang/_lang/_auth")({
   // The Auth Guard logic goes here ONE TIME
   beforeLoad: async ({ location, params }) => {
-    const token = localStorage.getItem("auth_token"); // Adjust appropriately
+    let userSession = store.get(userSessionAtom);
 
-    if (!token) {
+    // Initial hydration fallback for Jotai + TanStack Router
+    if (!userSession && typeof window !== "undefined") {
+      const stored = localStorage.getItem("auth-session");
+      if (stored) {
+        try {
+          userSession = JSON.parse(stored);
+        } catch (e) {
+          // parse error
+        }
+      }
+    }
+
+    console.log(userSession);
+
+    if (!userSession?.accessToken) {
       throw redirect({
         to: "/$lang/login",
         params: {

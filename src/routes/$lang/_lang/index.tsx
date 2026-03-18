@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
 import i18n from "@/lang";
+import { useQuery } from "@tanstack/react-query";
 export const Route = createFileRoute("/$lang/_lang/")({
   component: RouteComponent,
 });
@@ -15,49 +16,23 @@ export const Route = createFileRoute("/$lang/_lang/")({
 function RouteComponent() {
   const { i18n } = useTranslation();
 
-  // const { data, isLoading, error, isRefetching } = useQuery({
-  //   queryKey: ['home', i18n.language],
-  //   refetchOnMount: true,
-  //   refetchOnWindowFocus: true,
-  //   staleTime: 1000 * 60 * 60 * 24,
-  //   enabled: true,
-  //   queryFn: async () => {
-  //     try {
-  //       const res = await apiClient.get(i18n.language + '/home').json()
-  //       console.log('HOME_DATA', res?.data)
-  //       return res?.data
-  //     } catch (error) {
-  //       console.log('HOME_DATA_ERROR', error)
-  //       return null
-  //     }
-  //   },
-  // })
-
-  const [isLoading, setIsLoading] = useState(true);
-  let error = false;
-  const [isRefetching, setIsRefetching] = useState(false);
-
-  useEffect(() => {
-    setTimeout(() => {
-      setIsLoading(false);
-      setIsRefetching(false);
-    }, 800);
-  }, []);
-
-  const data = {
-    title:
-      i18n.language === "ar"
-        ? "مكتب الاستخبارات التنظيمية"
-        : "Regulatory Intelligence Office",
-    subtitle:
-      i18n.language === "ar"
-        ? "المعلومات التنظيمية في حكومة دولة الإمارات العربية المتحدة"
-        : "Regulatory Intelligence in the Government of the United Arab Emirates",
-    description:
-      i18n.language === "ar"
-        ? "<p>أنشأت حكومة دولة الإمارات العربية المتحدة مكتب الاستخبارات التنظيمية لتصميم وإدارة نظام تشريعي ذكي ومتكامل يُعيد تعريف آلية سنّ القوانين في الدولة. ويعتمد هذا النظام على نهجٍ يرتكز على الذكاء الاصطناعي، مُمثلاً نموذجاً مُستقبلياً للحوكمة، يجمع بين الذكاء البشري وكفاءة الذكاء الاصطناعي لإنتاج تشريعات تُسهم في تحسين جودة الحياة في جميع أنحاء الإمارات.</p><p>سيعتمد المكتب على تقنيات مُتقدمة لتحليل القوانين القائمة، والكشف عن الثغرات التشريعية، واقتراح تعديلات قائمة على البيانات استناداً إلى أفضل الممارسات العالمية، وصياغة وتحديث اللوائح. كما سيُحاكي المكتب أثر القوانين قبل إصدارها، لضمان فعاليتها وكفاءتها واستجابتها للتغيرات المجتمعية والتكنولوجية.</p><p>ومن خلال هذه المبادرات، يضمن المكتب أن تصبح التشريعات أكثر مرونة واستجابة، مع تقليل التعقيد والتناقضات القانونية. كما يُعزز التوازن الأمثل بين التنظيم والابتكار، بما يتماشى مع متطلبات العصر الرقمي.</p><p>سيحظى مكتب الاستخبارات التنظيمية بدعم فريق من مصممي الأنظمة التشريعية - خبراء في البيانات التشريعية، ومتخصصين في الذكاء الاصطناعي، ومحللين، ومجتمع الاستخبارات التنظيمية الأوسع - الذين يعملون معًا على هندسة النظام التشريعي بأكمله. وسيوجهون عمل وكلاء الذكاء الاصطناعي المتخصصين المسؤولين عن المهام التشغيلية.</p>"
-        : "<p>The Regulatory Intelligence Office was established by the UAE Government to design and manage a smart and integrated legislative system that redefines how laws are created in the country. This system is based on an AI-first approach, representing the next-generation model of governance—merging human intelligence with the efficiency of artificial intelligence to produce legislation that enables a better quality of life across the UAE.</p><p>The office will rely on advanced technologies to analyze existing laws, detect legislative gaps, propose data-driven amendments based on global best practices, and draft and update regulations. It will also simulate the impact of laws before they are issued, ensuring they are effective, efficient, and responsive to societal and technological changes.</p><p>Through these initiatives, the office ensures that legislation becomes more agile and responsive while reducing complexity and legal inconsistencies. It also promotes a healthy balance between regulation and innovation, aligned with the demands of the digital age.</p><p>The Regulatory Intelligence Office will be supported by a team of “Legislative System Designers”—experts in legislative data, AI specialists, analysts, and the broader regulatory intelligence community—who collaboratively engineer the entire legislative ecosystem. They will guide the work of specialized AI agents responsible for operational tasks.</p>",
-  };
+  const { data, isLoading, error, isRefetching } = useQuery({
+    queryKey: ["home", i18n.language],
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+    staleTime: 1000 * 60 * 60 * 24,
+    enabled: true,
+    queryFn: async () => {
+      try {
+        const res = await apiClient.get(i18n.language + "/home").json();
+        // console.log("HOME_DATA", res?.data);
+        return res?.data;
+      } catch (error) {
+        console.log("HOME_DATA_ERROR", error);
+        return null;
+      }
+    },
+  });
 
   return (
     <AnimatePresence mode={"wait"}>
@@ -70,7 +45,7 @@ function RouteComponent() {
           key="home-content"
           className="flex flex-col items-center justify-center w-full min-h-screen flex-1"
         >
-          <AppHeader delay={2.4} />
+          <AppHeader delay={1} />
           <HomeBanner data={data} />
         </div>
       )}
@@ -134,7 +109,7 @@ function HomeBanner({ data }: { data: any }) {
               transition={{ duration: 1, delay: 1.2 }}
               className="flex flex-col items-center justify-center text-center"
             >
-              {data?.title ? (
+              {data?.introduction?.title ? (
                 <motion.h1
                   style={{
                     y: heroTranslateY,
@@ -151,10 +126,12 @@ function HomeBanner({ data }: { data: any }) {
                     "md:text-[6rem] lg:text-[8rem] xl:text-[9rem] text-6xl font-bold relative flex flex-wrap items-center justify-center gap-4 leading-[95%]",
                   )}
                 >
-                  <span className="inline-block relative">{data?.title}</span>
+                  <span className="inline-block relative">
+                    {data?.introduction?.title}
+                  </span>
                 </motion.h1>
               ) : null}
-              {data?.subtitle ? (
+              {data?.introduction?.subtitle ? (
                 <motion.h3
                   layout
                   initial={{ opacity: 0, y: 50, scaleY: 1.1, skewY: 2 }}
@@ -168,11 +145,11 @@ function HomeBanner({ data }: { data: any }) {
                       : "ltr:leading-[100%]",
                   )}
                 >
-                  {data?.subtitle}
+                  {data?.introduction?.subtitle}
                 </motion.h3>
               ) : null}
             </motion.div>
-            {data?.description ? (
+            {data?.introduction?.description ? (
               <div className="flex flex-col relative ">
                 <motion.div
                   initial={{ opacity: 0, y: 50, scaleY: 1.1, skewY: 2 }}
@@ -180,7 +157,9 @@ function HomeBanner({ data }: { data: any }) {
                   exit={{ opacity: 0, y: 50, scaleY: 1.1, skewY: 2 }}
                   transition={{ duration: 1.2, delay: 1.8 }}
                   className="text-content-area text-center mt-[2rem] lg:mt-[3rem] [&>p]:text-2xl"
-                  dangerouslySetInnerHTML={{ __html: data?.description }}
+                  dangerouslySetInnerHTML={{
+                    __html: data?.introduction?.description,
+                  }}
                 ></motion.div>
                 <motion.div
                   initial={{ opacity: 0, y: 150 }}
@@ -193,7 +172,7 @@ function HomeBanner({ data }: { data: any }) {
                     className="more relative text-[1.3rem] font-regular"
                   >
                     <span className="absolute top-[50%] ltr:left-0 rtl:right-0 translate-y-[-50%] bg-gradient-to-r from-white to-secondary bg-clip-text text-transparent">
-                      {t("scroll")}
+                      {data?.translator?.scroll || t("scroll")}
                     </span>
                     <motion.div
                       className="iconBox w-[4rem] aspect-square"

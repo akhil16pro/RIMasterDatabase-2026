@@ -6,7 +6,9 @@ const apiClient = ky.create({
     timeout: 10000,
     headers: {
         'Content-Type': 'application/json',
+      'X-App-Platform': 'Maintex-Web',
         'Accept': 'application/json',
+        'accept-language': i18n.language,
     },
     retry: {
         limit: 3,

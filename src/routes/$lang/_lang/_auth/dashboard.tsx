@@ -44,39 +44,60 @@ export const Route = createFileRoute("/$lang/_lang/_auth/dashboard")({
 function RouteComponent() {
   const { t, i18n } = useTranslation();
 
-  let isLoading = false;
-  let error = false;
-  let isRefetching = false;
-  const data = {
-    title: t("ministry-of-health"),
-  };
+  const userSession = useAtomValue(userSessionAtom);
+
+  const { data, isLoading, error, isRefetching } = useQuery({
+    queryKey: ["dashboard", i18n.language, userSession?.accessToken],
+    enabled: !!userSession?.accessToken,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+    staleTime: 1000 * 60 * 60 * 24,
+    queryFn: async () => {
+      try {
+        const res = await apiClient
+          .get(i18n.language + "/dashboard", {
+            headers: {
+              Authorization: `Bearer ${userSession?.accessToken}`,
+            },
+          })
+          .json();
+        console.log("DASHBOARD_DATA", res?.data);
+        return res?.data;
+      } catch (error) {
+        console.log("DASHBOARD_DATA_ERROR", error);
+        return null;
+      }
+    },
+  });
 
   return (
-    <AnimatePresence mode={"wait"}>
+    <>
       {isLoading || isRefetching ? (
         <RouteLoader key="dashboard-loader" />
       ) : error ? (
         <RoteError key="dashboard-error" />
       ) : (
-        <div
-          key="dashboard-content"
-          className="flex flex-col items-center justify-center w-full h-full flex-1 mainBody "
-        >
-          <section className="w-full flex-1 relative mainWrapper ">
-            <DashboardSidebar delay={0} />
+        <AnimatePresence mode={"wait"}>
+          <div
+            key="dashboard-content"
+            className="flex flex-col items-center justify-center w-full h-full flex-1 mainBody "
+          >
+            <section className="w-full flex-1 relative mainWrapper ">
+              <DashboardSidebar delay={0} />
 
-            <div className="contentBox">
-              <DashboardTopbar delay={0} title={data.title} lastLogin={true} />
-              <MinistryCard delay={0.2} />
-              <PerformingEntitiesCard
-                title={t("performing-entities-title")}
-                delay={0.4}
-              />
-            </div>
-          </section>
-        </div>
+              <div className="contentBox">
+                <DashboardTopbar delay={0} title={"dd"} lastLogin={true} />
+                <MinistryCard delay={0.2} />
+                <PerformingEntitiesCard
+                  title={t("performing-entities-title")}
+                  delay={0.4}
+                />
+              </div>
+            </section>
+          </div>
+        </AnimatePresence>
       )}
-    </AnimatePresence>
+    </>
   );
 }
 

@@ -12,45 +12,32 @@ import { useQueryClient } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
 
 import { useMobile } from "@/hooks/use-mobile";
+import { useQuery } from "@tanstack/react-query";
 
 export default function AppHeader({ delay }: { delay: number }) {
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
   const { scrollY } = useScroll();
   const [scrollDirection, setScrollDirection] = useAtom(scrollDirectionAtom);
   const { href } = useLocation();
   const router = useRouter();
 
-  const mainNavItems = useMemo(
-    () => [
-      {
-        id: 1,
-        title: t("home"),
-        href: "/" + i18n.language,
-      },
-      {
-        id: 2,
-        title: t("about_regulatory_intelligence"),
-        href: "/" + i18n.language + "/about",
-      },
-      {
-        id: 3,
-        title: t("strategy"),
-        href: "/" + i18n.language + "/strategy",
-      },
-      {
-        id: 4,
-        title: t("ri_white_paper"),
-        target: "_blank",
-        href: "https://regulatoryintelligence.ae/en",
-      },
-      {
-        id: 5,
-        title: t("ri_unified_master_database"),
-        href: "/" + i18n.language + "/login",
-      },
-    ],
-    [i18n.language],
-  );
+  const { data, isLoading, error, isRefetching } = useQuery({
+    queryKey: ["menu", i18n.language],
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+    staleTime: 1000 * 60 * 60 * 24,
+    enabled: true,
+    queryFn: async () => {
+      try {
+        const res = await apiClient.get(i18n.language + "/menu").json();
+        // console.log("MENU_DATA", res?.data?.menu);
+        return res?.data?.menu;
+      } catch (error) {
+        console.log("MENU_DATA_ERROR", error);
+        return null;
+      }
+    },
+  });
 
   useMotionValueEvent(scrollY, "change", (current) => {
     const diff = current - scrollY.getPrevious();
@@ -70,85 +57,95 @@ export default function AppHeader({ delay }: { delay: number }) {
   const isLargeTablet = useMobile(1024);
 
   return (
-    <motion.header
-      className="fixed top-0 left-0 w-full z-50 block py-5"
-      initial={{ y: -150, opacity: 0 }}
-      animate={{
-        y: 0,
-        opacity: 1,
-        transition: { duration: 0.6, type: "tween", delay: delay },
-      }}
-      transition={{ duration: 0.6, type: "tween", delay: delay }}
-    >
-      <motion.div
-        initial={{ y: 0, opacity: 1 }}
-        animate={{
-          y: scrollDirection === "up" ? 0 : -100,
-          opacity: scrollDirection === "up" ? 1 : 0,
-        }}
-        transition={{ duration: 0.3, type: "tween", delay: 0 }}
-        className="container mx-auto px-3 md:px-0 relative z-10"
-      >
-        <div className="flex items-center justify-between ">
-          <div className="inline-flex items-center relative z-10">
-            <Link
-              to={"/" + i18n.language}
-              className="inline-block h-17 w-auto outline-none border-none"
-            >
-              <img
-                src={i18n.language === "en" ? "/logo-en.png" : "/logo-ar.png"}
-                alt="Regulatory Intelligence Logo"
-                className="h-full object-contain w-auto"
-              />
-            </Link>
-          </div>
+    <>
+      {data && (
+        <motion.header
+          className="fixed top-0 left-0 w-full z-50 block py-5"
+          initial={{ y: -150, opacity: 0 }}
+          animate={{
+            y: 0,
+            opacity: 1,
+            transition: { duration: 0.6, type: "tween", delay: delay },
+          }}
+          transition={{ duration: 0.6, type: "tween", delay: delay }}
+        >
+          <motion.div
+            initial={{ y: 0, opacity: 1 }}
+            animate={{
+              y: scrollDirection === "up" ? 0 : -100,
+              opacity: scrollDirection === "up" ? 1 : 0,
+            }}
+            transition={{ duration: 0.3, type: "tween", delay: 0 }}
+            className="container mx-auto px-3 md:px-0 relative z-10"
+          >
+            <div className="flex items-center justify-between ">
+              <div className="inline-flex items-center relative z-10">
+                <Link
+                  to={"/" + i18n.language}
+                  className="inline-block h-17 w-auto outline-none border-none"
+                >
+                  <img
+                    src={
+                      i18n.language === "en" ? "/logo-en.png" : "/logo-ar.png"
+                    }
+                    alt="Regulatory Intelligence Logo"
+                    className="h-full object-contain w-auto"
+                  />
+                </Link>
+              </div>
 
-          <div className="inline-flex items-center relative gap-3 lg:gap-7">
-            <motion.nav
-              className="fixed top-0 left-0 w-full h-full bg-black/70 px-20 lg:px-0 lg:bg-transparent lg:relative"
-              style={{
-                clipPath: isLargeTablet
-                  ? isMenuOpen
-                    ? "polygon(0 0, 100% 0, 100% 100%, 0% 100%)"
-                    : "polygon(0 0, 100% 0, 100% 0, 0 0)"
-                  : "none", // or a default path for desktop
-              }}
-              transition={{ duration: 1, delay: 0 }}
-            >
-              <ul className="flex w-full h-full md:gap-7 gap-3 flex-col items-center justify-center lg:items-end lg:flex-row">
-                {mainNavItems.map((item, index) => (
-                  <MenuItem key={"chapter-nav-item-" + item.id} item={item} />
-                ))}
-              </ul>
-            </motion.nav>
-            <DefaultButton
-              title={i18n?.language === "en" ? "AR" : "EN"}
-              size="icon"
-              onClick={onChangeLanguage}
-              variant="shade"
-            />
-            {isLargeTablet ? (
-              <DefaultButton
-                size="icon"
-                variant="shade"
-                icon={
-                  isMenuOpen ? (
-                    <X className="w-4 h-4" />
-                  ) : (
-                    <Menu className="w-4 h-4" />
-                  )
-                }
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-              />
-            ) : null}
-          </div>
-        </div>
-      </motion.div>
-    </motion.header>
+              <div className="inline-flex items-center relative gap-3 lg:gap-7">
+                <motion.nav
+                  className="fixed top-0 left-0 w-full h-full bg-black/70 px-20 lg:px-0 lg:bg-transparent lg:relative"
+                  style={{
+                    clipPath: isLargeTablet
+                      ? isMenuOpen
+                        ? "polygon(0 0, 100% 0, 100% 100%, 0% 100%)"
+                        : "polygon(0 0, 100% 0, 100% 0, 0 0)"
+                      : "none", // or a default path for desktop
+                  }}
+                  transition={{ duration: 1, delay: 0 }}
+                >
+                  <ul className="flex w-full h-full md:gap-7 gap-3 flex-col items-center justify-center lg:items-end lg:flex-row">
+                    {data?.map((item, index) => (
+                      <MenuItem
+                        key={"chapter-nav-item-" + item.id}
+                        item={item}
+                      />
+                    ))}
+                  </ul>
+                </motion.nav>
+                <DefaultButton
+                  title={i18n?.language === "en" ? "AR" : "EN"}
+                  size="icon"
+                  onClick={onChangeLanguage}
+                  variant="shade"
+                />
+                {isLargeTablet ? (
+                  <DefaultButton
+                    size="icon"
+                    variant="shade"
+                    icon={
+                      isMenuOpen ? (
+                        <X className="w-4 h-4" />
+                      ) : (
+                        <Menu className="w-4 h-4" />
+                      )
+                    }
+                    onClick={() => setIsMenuOpen(!isMenuOpen)}
+                  />
+                ) : null}
+              </div>
+            </div>
+          </motion.div>
+        </motion.header>
+      )}
+    </>
   );
 }
 
 function MenuItem({ item }: { item: any }) {
+  const { i18n } = useTranslation();
   const [isHover, setIsHover] = useState(false);
 
   return (
@@ -159,8 +156,15 @@ function MenuItem({ item }: { item: any }) {
       className="w-auto relative block"
     >
       <Link
-        target={item.href.startsWith("http") ? "_blank" : "_self"}
-        to={item.href}
+        target={item.external_url && "_blank"}
+        to={
+          item.external_url
+            ? item.external_url
+            : "/" +
+              i18n.language +
+              "/" +
+              (item.slug === "home" ? "" : item.slug)
+        }
         activeOptions={{ exact: true }}
         className={cn(
           "text-[1.8rem] md:text-[2.5rem] lg:text-lg inline-flex items-center justify-center w-full h-full  overflow-hidden relative text-secondary [&.active]:text-text rtl:leading-[1.2]",

@@ -6,7 +6,6 @@ import RouteLoader from "@/components/layouts/RouteLoader";
 import RoteError from "@/components/layouts/RoteError";
 import { DefaultButton } from "@/components/ui/buttons";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { AnimatePresence, motion } from "motion/react";
 import DashboardSidebar from "@/components/layouts/DashboardSidebar";
 import DashboardTopbar from "@/components/layouts/DashboardTopbar";
@@ -24,9 +23,7 @@ import { cn } from "@/lib/utils";
 import { useForm } from "@tanstack/react-form";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -367,65 +364,61 @@ function AddGlossaryModal() {
           <DialogHeader>
             <DialogTitle>{t("add-glossary")}</DialogTitle>
           </DialogHeader>
-          <div className="grid md:grid-cols-2  gap-x-8 gap-y-4">
+          <div className="grid md:grid-cols-2 gap-x-8 gap-y-7 items-start">
             <form.Field
               name="title"
               children={(field) => (
-                <div className="grid gap-1">
-                  <Input
-                    id="title"
-                    name="title"
-                    value={field.state.value}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                    placeholder={t("title-english")}
-                    className="h-12 md:text-lg"
-                  />
-                </div>
+                <Input
+                  id="title"
+                  name="title"
+                  value={field.state.value}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  label={t("title-english")}
+                  className=""
+                  dir="ltr"
+                />
               )}
             />
             <form.Field
               name="titleAr"
               children={(field) => (
-                <div className="grid gap-1">
-                  <Input
-                    id="titleAr"
-                    name="titleAr"
-                    value={field.state.value}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                    placeholder={t("title-arabic")}
-                    className="h-12 md:text-lg"
-                    dir="rtl"
-                  />
-                </div>
+                <Input
+                  id="titleAr"
+                  name="titleAr"
+                  value={field.state.value}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  label={t("title-arabic")}
+                  className=""
+                  dir="rtl"
+                />
               )}
             />
             <form.Field
               name="description"
               children={(field) => (
-                <div className="grid gap-1">
-                  <Textarea
-                    id="description"
-                    name="description"
-                    value={field.state.value}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                    placeholder={t("description-english")}
-                  />
-                </div>
+                <Input
+                  id="description"
+                  name="description"
+                  value={field.state.value}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  label={t("description-english")}
+                  dir="ltr"
+                  type="textarea"
+                />
               )}
             />
             <form.Field
               name="descriptionAr"
               children={(field) => (
-                <div className="grid gap-1">
-                  <Textarea
-                    id="descriptionAr"
-                    name="descriptionAr"
-                    value={field.state.value}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                    placeholder={t("description-arabic")}
-                    dir="rtl"
-                  />
-                </div>
+                <Input
+                  id="descriptionAr"
+                  name="descriptionAr"
+                  value={field.state.value}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  label={t("description-arabic")}
+                  dir="rtl"
+                  type="textarea"
+                />
               )}
             />
             <div className="inline-flex gap-2 text-[var(--textColor)] text-[1.2rem]">

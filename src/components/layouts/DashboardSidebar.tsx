@@ -23,11 +23,13 @@ import {
 } from "@/components/ui/tooltip";
 
 import { useMobile } from "@/hooks/use-mobile";
-
+import { settingsAtom } from "@/routes/__root";
+import { useAtomValue } from "jotai";
 export default function DashboardSidebar({ delay }: { delay: number }) {
   const { t, i18n } = useTranslation();
   const currentLang = i18n.language;
   const isMobile = useMobile();
+  const settings = useAtomValue(settingsAtom);
 
   const mainNavItems = useMemo(
     () => [
@@ -125,7 +127,7 @@ export default function DashboardSidebar({ delay }: { delay: number }) {
                     "bg-[linear-gradient(90deg,#FFF_0%,#03CBFF_80%)]",
                   )}
                 >
-                  RI Unified Master Database
+                  {settings?.settings?.title || t("logo-text")}
                 </motion.span>
               )}
 

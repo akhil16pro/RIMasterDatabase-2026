@@ -27,6 +27,7 @@ import { useLocation, useRouter } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { useSetAtom } from "jotai";
 import { userSessionAtom } from "@/store/atoms";
+import { useAtomValue } from "jotai";
 
 export default function DashboardTopbar({
   delay,
@@ -199,6 +200,8 @@ function LoginAvatar() {
   const currentLang = i18n.language;
   const isRtl = currentLang === "ar";
 
+  const userSession = useAtomValue(userSessionAtom);
+
   const handleLanguageChange = () => {
     const newLang = i18n.language === "en" ? "ar" : "en";
 
@@ -214,7 +217,7 @@ function LoginAvatar() {
 
   const handleLogout = () => {
     setUserSession(null);
-    localStorage.removeItem("auth_token");
+    localStorage.removeItem("auth-session");
     router.navigate({
       to: "/$lang/login",
       params: { lang: i18n.language },
@@ -225,12 +228,12 @@ function LoginAvatar() {
       <DropdownMenuTrigger asChild>
         <div className="flex  items-center lg:p-2 p-[5px]  rounded-lg bg-[linear-gradient(195deg,rgba(2,46,228,0.4)_0%,rgba(255,201,157,0.4)_100%)] cursor-pointer group ">
           <img
-            src="/avImg.jpg"
+            src={userSession?.user?.photo || userSession?.user?.avatar}
             alt=""
-            className="w-8 h-8 md:w-10 md:h-10 lg:w-11 lg:h-11 rounded-[5px] md:rounded-lg me-2 group-hover:scale-105 transition-all duration-300"
+            className="w-8 h-8 md:w-10 md:h-10 lg:w-11 lg:h-11 rounded-[5px] md:rounded-lg me-2 group-hover:scale-105 transition-all duration-300 bg-white object-cover"
           />
           <span className="text-[var(--textColor)] font-semibold md:text-[1.2rem] text-[1rem] leading-[100%] max-w-[7rem] overflow-hidden text-ellipsis whitespace-nowrap">
-            {t("avname")}
+            {userSession?.user?.name}
           </span>
           <ChevronDown
             // size={24}

@@ -64,7 +64,10 @@ function RouteComponent() {
               transition={{ duration: 0.8, delay: 0.5 }}
             >
               <div className="flex flex-col lg:flex-row rounded-[20px] overflow-hidden  min-h-[75vh] px-5 md:px-0">
-                <div className="flex-2/4 bg-[linear-gradient(190deg,#020355_-20.47%,#304FD0_90%)] p-10 px-[10%] flex flex-col items-center justify-center md:gap-8 gap-5">
+                <Link
+                  to={"/" + i18n.language}
+                  className="flex-2/4 bg-[linear-gradient(190deg,#020355_-20.47%,#304FD0_90%)] p-10 px-[10%] flex flex-col items-center justify-center md:gap-8 gap-5"
+                >
                   <img
                     src={"/logoShape.svg"}
                     alt="Regulatory Intelligence Logo"
@@ -73,15 +76,16 @@ function RouteComponent() {
                   <div className="font-medium text-[2.2rem] md:text-[2.7rem] lg:text-[2.45rem]    text-text/80 relative block bg-gradient-to-r from-white to-secondary bg-clip-text text-transparent  leading-[100%] text-center tracking-[.42px]">
                     {data.title}
                   </div>
-                </div>
+                </Link>
                 <div className="flex-2/3 bg-white p-5 md:p-10 flex flex-col justify-center gap-5">
-                  <div className="font-medium text-[1.8rem] md:text-[2.4rem] lg:text-[2.25rem] relative text-black ">
+                  <div className="font-medium text-[1.8rem] md:text-[2.4rem] lg:text-[2.25rem] relative text-black ltr:leading-[100%] rtl:leading-[120%]">
                     {t("forgot_password")}
                   </div>
                   <form action="#" className="flex flex-col gap-7">
                     <Input
                       type="email"
-                      placeholder={t("enter-email")}
+                      label={t("email")}
+                      // placeholder={t("enter-email")}
                       error={true}
                       errorMessage="Invalid email"
                     />
