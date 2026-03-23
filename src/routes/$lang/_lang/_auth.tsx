@@ -33,7 +33,7 @@ export const Route = createFileRoute("/$lang/_lang/_auth")({
           });
 
           userSession = { ...userSession, ...data };
-          console.log(userSession, "Updated user data");
+          // console.log(userSession, "Updated user data");
         } catch (e) {
           console.error("Auth hydration error", e);
         }

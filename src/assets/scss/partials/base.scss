@@ -412,3 +412,7 @@ html[dir="rtl"] {
   --normal-bg: var(--brandYellow);
   --normal-border: var(--brandYellow);
 }
+
+[data-radix-popper-content-wrapper] svg {
+  fill: transparent;
+}

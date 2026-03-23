@@ -6,7 +6,13 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { motion } from "motion/react";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  useCallback,
+} from "react";
 import { useMobile } from "@/hooks/use-mobile";
 import { useAtomValue } from "jotai";
 import { userSessionAtom } from "@/store/atoms";
@@ -20,29 +26,31 @@ export default function BarChart({
 }) {
   const isMobile = useMobile();
   const [maxLabelHeight, setMaxLabelHeight] = useState(0);
-  const labelRefs = useRef<(HTMLSpanElement | null)[]>([]);
+  const labelRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   const gridValues = Array.from({ length: 11 }, (_, i) => 100 - i * 10);
 
+  const updateHeights = useCallback(() => {
+    const heights = labelRefs.current
+      .filter((el): el is HTMLDivElement => el !== null)
+      .map((el) => el.offsetHeight); // offsetHeight is generally more reliable for layout spacing
+
+    if (heights.length > 0) {
+      const max = Math.max(...heights);
+      setMaxLabelHeight(max);
+    } else {
+      setMaxLabelHeight(0);
+    }
+  }, []);
+
   useLayoutEffect(() => {
-    if (labelRefs.current.length === 0) return;
+    // Reset heights and re-measure when data changes
+    updateHeights();
 
-    const handleResize = () => {
-      const heights = labelRefs.current
-        .filter((el): el is HTMLSpanElement => el !== null)
-        .map((el) => el.getBoundingClientRect().height);
-
-      if (heights.length > 0) {
-        setMaxLabelHeight(Math.max(...heights));
-      }
-    };
-
-    handleResize();
-
+    // Setup ResizeObserver for any internal layout shifts (like text wrapping)
     const observer = new ResizeObserver(() => {
-      window.requestAnimationFrame(() => {
-        handleResize();
-      });
+      // Use requestAnimationFrame to avoid "ResizeObserver loop limit exceeded" errors
+      window.requestAnimationFrame(updateHeights);
     });
 
     labelRefs.current.forEach((ref) => {
@@ -50,16 +58,7 @@ export default function BarChart({
     });
 
     return () => observer.disconnect();
-  }, [data]);
-
-  // const [isMobile, setIsMobile] = useState(false);
-
-  // useEffect(() => {
-  //   const checkMobile = () => setIsMobile(window.innerWidth < 768);
-  //   checkMobile();
-  //   window.addEventListener("resize", checkMobile);
-  //   return () => window.removeEventListener("resize", checkMobile);
-  // }, []);
+  }, [data, updateHeights]);
 
   return (
     <div className="barChart w-full h-full grid grid-flow-row md:grid-flow-col  gap-4 relative ps-0 md:ps-10">
@@ -96,29 +95,12 @@ export default function BarChart({
               </motion.div>
               <motion.div
                 initial={{ scaleX: 0 }}
-                animate={
-                  isLoading
-                    ? {
-                        scaleX: [0, 1, 0],
-                      }
-                    : {
-                        scaleX: 1,
-                      }
-                }
-                transition={
-                  isLoading
-                    ? {
-                        delay: index * 0.05,
-                        duration: 1.8,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                      }
-                    : {
-                        delay: index * 0.05,
-                        duration: 0.8,
-                        ease: "easeInOut",
-                      }
-                }
+                animate={{ scaleX: 1 }}
+                transition={{
+                  delay: index * 0.05,
+                  duration: 0.8,
+                  ease: "easeInOut",
+                }}
                 className="line flex-1 h-[1px] bg-[var(--textColor)] opacity-[.1] origin-left "
               ></motion.div>
             </div>
@@ -256,7 +238,7 @@ function Bar({ item, index, maxLabelHeight, labelRefs, isMobile }: any) {
               duration: 0.5,
               ease: "easeInOut",
             }}
-            className="barLabel text-base text-[var(--textColor)] font-medium leading-[100%]"
+            className="barLabel text-[.95rem] text-[var(--textColor)] font-medium leading-[100%] flex-1 md:line-clamp-2 overflow-hidden text-center "
           >
             {item.visibility || userSession?.user?.roles?.includes("admin")
               ? item.title
@@ -266,7 +248,7 @@ function Bar({ item, index, maxLabelHeight, labelRefs, isMobile }: any) {
       </div>
       {isMobile && (
         <div
-          className="flex  md:justify-center md:text-center order-3  "
+          className="flex  md:justify-center md:text-center order-3   "
           style={{
             height:
               !isMobile && maxLabelHeight > 0 ? `${maxLabelHeight}px` : "auto",

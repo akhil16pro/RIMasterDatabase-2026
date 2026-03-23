@@ -1,12 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 import { useTranslation } from "react-i18next";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "@/api";
 import RouteLoader from "@/components/layouts/RouteLoader";
 import RoteError from "@/components/layouts/RoteError";
-import { DefaultButton } from "@/components/ui/buttons";
-import { Input } from "@/components/ui/input";
+// import { DefaultButton } from "@/components/ui/buttons";
+// import { Input } from "@/components/ui/input";
 import {
   animate,
   AnimatePresence,
@@ -25,17 +25,19 @@ import { useEffect, useState } from "react";
 import { SectionTitle } from "@/components/ui/sectionTitle";
 import BarChart from "@/components/ui/BarChart";
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/Select";
+// import {
+//   Select,
+//   SelectContent,
+//   SelectItem,
+//   SelectTrigger,
+//   SelectValue,
+// } from "@/components/ui/Select";
 import { cn } from "@/lib/utils";
 
 import { useAtomValue } from "jotai";
 import { userSessionAtom } from "@/store/atoms";
+
+import { MultiSelect } from "@/components/ui/multi-select";
 
 export const Route = createFileRoute("/$lang/_lang/_auth/dashboard")({
   component: RouteComponent,
@@ -72,7 +74,7 @@ function RouteComponent() {
 
   return (
     <>
-      {isLoading || isRefetching ? (
+      {isLoading || isRefetching || !userSession?.accessToken ? (
         <RouteLoader key="dashboard-loader" />
       ) : error ? (
         <RoteError key="dashboard-error" />
@@ -92,6 +94,7 @@ function RouteComponent() {
                   lastLogin={true}
                 />
                 <MinistryCard delay={0.2} data={data} />
+
                 <PerformingEntitiesCard
                   title={t("performing-entities-title")}
                   delay={0.4}
@@ -229,18 +232,25 @@ function PerformingEntitiesCard({
 }) {
   const { t, i18n } = useTranslation();
   const userSession = useAtomValue(userSessionAtom);
-  const [theme, setTheme] = useState("all");
+  // const [theme, setTheme] = useState("all");
+  const [selectedValues, setSelectedValues] = useState([]);
+  const queryClient = useQueryClient();
 
   const { data, isLoading, error, isRefetching } = useQuery({
-    queryKey: ["dashboardGraphData"],
+    queryKey: ["dashboardGraphData", selectedValues],
     queryFn: async () => {
       const res = await apiClient
-        .get(i18n.language + "/get_usergraph_data", {
+        .post(i18n.language + "/get_usergraph_data", {
           headers: {
             Authorization: `Bearer ${userSession?.accessToken}`,
           },
+          json: {
+            entity_id: selectedValues,
+          },
         })
         .json();
+
+      console.log(res?.data, "Graph Data");
       return res?.data;
     },
   });
@@ -254,31 +264,24 @@ function PerformingEntitiesCard({
         transition={{ delay: delay, duration: 0.5, ease: "easeInOut" }}
       >
         <div className="flex justify-between flex-wrap gap-2 md:gap-4 items-center">
-          <div className="md:flex-1 w-full">
+          <div className="flex">
             <SectionTitle size="small">
               <span>{title} </span>
             </SectionTitle>
           </div>
 
           {userSession?.user?.roles?.includes("admin") && (
-            <div className="flex gap-2 justify-end w-full md:w-auto">
-              <Select value={theme} onValueChange={setTheme}>
-                <SelectTrigger className=" w-auto text-[var(--textColor)] inputStyle border-none rounded-none focus:outline-none  gap-2 min-w-[150px] max-w-[300px] [&>span]:truncate">
-                  <SelectValue className="" placeholder="All Entities" />
-                </SelectTrigger>
-
-                <SelectContent position={"item-aligned"}>
-                  <SelectItem className="text-[1.1rem] " value="all">
-                    All Entities
-                  </SelectItem>
-
-                  {entities?.map((item, index) => (
-                    <SelectItem className="text-[1.1rem] " value={item.id}>
-                      {item.title}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <div className="flex gap-2 justify-end   md:flex-1 w-full md:w-auto">
+              <div className="flex w-full md:w-auto">
+                <MultiSelect
+                  options={entities}
+                  onValueChange={setSelectedValues}
+                  defaultValue={selectedValues}
+                  responsive={true}
+                  placeholder="All Entities"
+                  hideSelectAll={true}
+                />
+              </div>
             </div>
           )}
         </div>
