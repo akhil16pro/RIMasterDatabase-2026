@@ -47,6 +47,9 @@ export default function DashboardTopbar({
 
   const isCampaignActive =
     campaignStartDate <= new Date() && campaignEndDate >= new Date();
+
+  const userSession = useAtomValue(userSessionAtom);
+
   return (
     <motion.div
       className="topBar flex md:flex-row flex-col gap-2 md:items-center"
@@ -61,7 +64,9 @@ export default function DashboardTopbar({
         </SectionTitle>
       </div>
       <div className="flex md:gap-2 gap-1 order-1 md:order-2 justify-end flex-wrap ">
-        {lastLogin && <LastLoginInfo />}
+        {userSession?.user?.last_logged_in && !isCampaignActive && (
+          <LastLoginInfo />
+        )}
         {isCampaignActive && (
           <CampaignInfo campaign={campaign} translator={translator} />
         )}
@@ -188,6 +193,39 @@ function CampaignInfo({
 
 function LastLoginInfo() {
   const { t } = useTranslation();
+  const userSession = useAtomValue(userSessionAtom);
+
+  // const calculateLastLogin = () => {
+  //   const lastLogin = userSession?.user?.last_logged_in;
+  //   if (!lastLogin) return "Never";
+
+  //   // Convert to Date object if it's a string/timestamp
+  //   const lastLoginDate = new Date(lastLogin);
+  //   const now = new Date();
+  //   const diffInSeconds = Math.floor((now - lastLoginDate) / 1000);
+
+  //   // Time thresholds in seconds
+  //   const minute = 60;
+  //   const hour = 3600;
+  //   const day = 86400;
+  //   const month = 2592000;
+
+  //   if (diffInSeconds < minute) {
+  //     return "Just now";
+  //   } else if (diffInSeconds < hour) {
+  //     const mins = Math.floor(diffInSeconds / minute);
+  //     return `${mins} minute${mins > 1 ? "s" : ""} ago`;
+  //   } else if (diffInSeconds < day) {
+  //     const hours = Math.floor(diffInSeconds / hour);
+  //     return `${hours} hour${hours > 1 ? "s" : ""} ago`;
+  //   } else if (diffInSeconds < month) {
+  //     const days = Math.floor(diffInSeconds / day);
+  //     return `${days} day${days > 1 ? "s" : ""} ago`;
+  //   } else {
+  //     // Optional: handle months/years or just return the date
+  //     return lastLoginDate.toLocaleDateString();
+  //   }
+  // };
 
   return (
     <div className="flex gap-2  p-[1px] rounded-lg bg-[linear-gradient(195deg,rgba(2,46,228,0.4)_0%,rgba(255,201,157,0.4)_100%)] ">
@@ -200,8 +238,8 @@ function LastLoginInfo() {
           <span className="text-[.7rem] md:text-[.85rem] font-semibold text-[var(--textColor)] leading-[100%]">
             {t("last-login")}
           </span>
-          <span className="text-[.9rem] md:text-[1.1rem] font-semibold text-[var(--textColor)] leading-[100%]">
-            3 Days ago
+          <span className="text-[.9rem] md:text-[1.1rem] font-semibold text-[var(--textColor)] leading-[110%]">
+            {userSession?.user?.last_logged_in}
           </span>
         </div>
       </div>

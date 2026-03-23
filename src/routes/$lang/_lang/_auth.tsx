@@ -16,7 +16,7 @@ export const Route = createFileRoute("/$lang/_lang/_auth")({
       const stored = localStorage.getItem("auth-session");
       if (stored) {
         try {
-          userSession = JSON.parse(stored);
+          const parsedSession = JSON.parse(stored);
 
           const data = await queryClient.fetchQuery({
             queryKey: ["userInfo"],
@@ -24,7 +24,7 @@ export const Route = createFileRoute("/$lang/_lang/_auth")({
               const res = await apiClient
                 .get(params.lang + "/get_userinfo", {
                   headers: {
-                    Authorization: `Bearer ${userSession?.accessToken}`,
+                    Authorization: `Bearer ${parsedSession?.accessToken}`,
                   },
                 })
                 .json();
@@ -32,7 +32,10 @@ export const Route = createFileRoute("/$lang/_lang/_auth")({
             },
           });
 
-          userSession = { ...userSession, ...data };
+          const updatedSession = { ...parsedSession, ...data };
+          store.set(userSessionAtom, updatedSession);
+
+          userSession = updatedSession;
           // console.log(userSession, "Updated user data");
         } catch (e) {
           console.error("Auth hydration error", e);

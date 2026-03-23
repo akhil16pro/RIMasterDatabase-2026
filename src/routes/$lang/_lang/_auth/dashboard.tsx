@@ -63,7 +63,7 @@ function RouteComponent() {
             },
           })
           .json();
-        console.log("DASHBOARD_DATA", res?.data);
+        // console.log("DASHBOARD_DATA", res?.data);
         return res?.data;
       } catch (error) {
         console.log("DASHBOARD_DATA_ERROR", error);
@@ -90,13 +90,20 @@ function RouteComponent() {
               <div className="contentBox">
                 <DashboardTopbar
                   delay={0}
-                  title={userSession?.user?.entity_title}
+                  title={
+                    userSession?.user?.roles?.includes("admin")
+                      ? data?.translator?.overview || t("overview")
+                      : userSession?.user?.entity_title
+                  }
                   lastLogin={true}
                 />
                 <MinistryCard delay={0.2} data={data} />
 
                 <PerformingEntitiesCard
-                  title={t("performing-entities-title")}
+                  title={
+                    data?.translator?.top_performing_entities ||
+                    t("performing-entities-title")
+                  }
                   delay={0.4}
                   entities={data?.entities}
                 />
@@ -250,7 +257,7 @@ function PerformingEntitiesCard({
         })
         .json();
 
-      console.log(res?.data, "Graph Data");
+      // console.log(res?.data, "Graph Data");
       return res?.data;
     },
   });
@@ -279,6 +286,7 @@ function PerformingEntitiesCard({
                   defaultValue={selectedValues}
                   responsive={true}
                   placeholder="All Entities"
+                  searchPlaceholder="Search Entities"
                   hideSelectAll={true}
                 />
               </div>
