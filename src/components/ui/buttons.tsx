@@ -36,7 +36,7 @@ export const DefaultButton = ({
   isLoading?: boolean;
   isDisabled?: boolean;
   rounded?: boolean;
-  iconGradient?: "default" | "edit" | "delete";
+  iconGradient?: "default" | "edit" | "delete" | "gray";
   toolTip?: string;
   toolTipClass?: string;
 }) => {
@@ -100,6 +100,8 @@ export const DefaultButton = ({
         rounded && "px-0 aspect-square rounded-full",
         iconGradient === "delete" &&
           "bg-[linear-gradient(60deg,#FFC99D_-0%,#F07067_100%)] border-none",
+        iconGradient === "gray" &&
+          "bg-[linear-gradient(100deg,#a1a1a1_0%,#7a7a7a_100%)] border-none",
         className,
       )}
     >

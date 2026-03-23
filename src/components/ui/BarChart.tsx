@@ -11,7 +11,13 @@ import { useMobile } from "@/hooks/use-mobile";
 import { useAtomValue } from "jotai";
 import { userSessionAtom } from "@/store/atoms";
 
-export default function BarChart({ data }: { data: any[] }) {
+export default function BarChart({
+  data,
+  isLoading,
+}: {
+  data: any[];
+  isLoading: boolean;
+}) {
   const isMobile = useMobile();
   const [maxLabelHeight, setMaxLabelHeight] = useState(0);
   const labelRefs = useRef<(HTMLSpanElement | null)[]>([]);
@@ -90,13 +96,29 @@ export default function BarChart({ data }: { data: any[] }) {
               </motion.div>
               <motion.div
                 initial={{ scaleX: 0 }}
-                animate={{ scaleX: 1 }}
-                exit={{ scaleX: 0 }}
-                transition={{
-                  delay: index * 0.05,
-                  duration: 0.8,
-                  ease: "easeInOut",
-                }}
+                animate={
+                  isLoading
+                    ? {
+                        scaleX: [0, 1, 0],
+                      }
+                    : {
+                        scaleX: 1,
+                      }
+                }
+                transition={
+                  isLoading
+                    ? {
+                        delay: index * 0.05,
+                        duration: 1.8,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                      }
+                    : {
+                        delay: index * 0.05,
+                        duration: 0.8,
+                        ease: "easeInOut",
+                      }
+                }
                 className="line flex-1 h-[1px] bg-[var(--textColor)] opacity-[.1] origin-left "
               ></motion.div>
             </div>
@@ -104,7 +126,7 @@ export default function BarChart({ data }: { data: any[] }) {
         </div>
       )}
 
-      {data.map((item, index) => (
+      {data?.map((item, index) => (
         <Bar
           item={item}
           index={index}
@@ -120,15 +142,30 @@ export default function BarChart({ data }: { data: any[] }) {
 
 function Bar({ item, index, maxLabelHeight, labelRefs, isMobile }: any) {
   const userSession = useAtomValue(userSessionAtom);
+
+  function generateRandomString(length: number) {
+    const characters =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let result = "";
+    for (let i = 0; i < length; i++) {
+      result += characters.charAt(
+        Math.floor(Math.random() * characters.length),
+      );
+    }
+    return result;
+  }
+
   return (
     <div
       className={cn(
         "barItem z-10 grid grid-cols-[90px_1fr_auto] md:grid-cols-1 md:grid-rows-[1fr_auto] md:h-full md:items-end items-center gap-[5px] md:gap-[10px]",
-        !item.visibility && "lock blur-[3px] pointer-events-none",
+        !item.visibility &&
+          !userSession?.user?.roles?.includes("admin") &&
+          "lock blur-[3px] pointer-events-none",
       )}
     >
       <div className="flex md:justify-center md:items-end items-center md:h-full order-2 md:order-1">
-        {item.visibility ? (
+        {item.visibility || userSession?.user?.roles?.includes("admin") ? (
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -152,7 +189,7 @@ function Bar({ item, index, maxLabelHeight, labelRefs, isMobile }: any) {
                 ></motion.div>
               </TooltipTrigger>
 
-              <TooltipContent>{`${item.name} : ${item.value}%`}</TooltipContent>
+              <TooltipContent>{`${item.title} : ${item.value}`}</TooltipContent>
             </Tooltip>
           </TooltipProvider>
         ) : (
@@ -165,8 +202,8 @@ function Bar({ item, index, maxLabelHeight, labelRefs, isMobile }: any) {
             }
             animate={
               isMobile
-                ? { width: `${item.value}%`, height: "7px" }
-                : { height: `${item.value}%`, width: "10px" }
+                ? { width: `${item.percentage}%`, height: "7px" }
+                : { height: `${item.percentage}%`, width: "10px" }
             }
             transition={{
               delay: index * 0.1,
@@ -187,7 +224,7 @@ function Bar({ item, index, maxLabelHeight, labelRefs, isMobile }: any) {
           className="flex flex-col gap-2 justify-center items-center"
           ref={(el) => (labelRefs.current[index] = el)}
         >
-          {userSession?.user.role === "admin" && (
+          {userSession?.user?.roles?.includes("admin") && (
             <motion.div
               initial={{ y: 10, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
@@ -201,7 +238,7 @@ function Bar({ item, index, maxLabelHeight, labelRefs, isMobile }: any) {
             >
               <div className="flex justify-center items-center bg-white rounded-full aspect-square overflow-hidden">
                 <img
-                  src="/chartLogo.png"
+                  src={item?.image || "/entityPlaceholder.png"}
                   width={80}
                   height={80}
                   alt=" w-full h-auto"
@@ -221,7 +258,9 @@ function Bar({ item, index, maxLabelHeight, labelRefs, isMobile }: any) {
             }}
             className="barLabel text-base text-[var(--textColor)] font-medium leading-[100%]"
           >
-            {item.name}
+            {item.visibility || userSession?.user?.roles?.includes("admin")
+              ? item.title
+              : generateRandomString(15)}
           </motion.span>
         </div>
       </div>
@@ -244,7 +283,7 @@ function Bar({ item, index, maxLabelHeight, labelRefs, isMobile }: any) {
             }}
             className="barLabel text-base text-[var(--textColor)] font-medium leading-[100%]"
           >
-            {`${item.value}%`}
+            {`${item.percentage}%`}
           </motion.span>
         </div>
       )}

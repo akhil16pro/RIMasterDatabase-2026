@@ -1,37 +1,49 @@
 import { createFileRoute, redirect, Outlet } from "@tanstack/react-router";
 import { getDefaultStore } from "jotai";
 import { userSessionAtom } from "@/store/atoms";
-// Get the store instance
+import { apiClient } from "@/api"; // Ensure this is imported
+
 const store = getDefaultStore();
 
 export const Route = createFileRoute("/$lang/_lang/_auth")({
-  // The Auth Guard logic goes here ONE TIME
-  beforeLoad: async ({ location, params }) => {
+  beforeLoad: async ({ params, context }) => {
+    // 1. Get queryClient from context (passed during router creation)
+    const { queryClient } = context;
     let userSession = store.get(userSessionAtom);
 
-    // Initial hydration fallback for Jotai + TanStack Router
+    // Initial hydration fallback
     if (!userSession && typeof window !== "undefined") {
       const stored = localStorage.getItem("auth-session");
       if (stored) {
         try {
           userSession = JSON.parse(stored);
+
+          const data = await queryClient.fetchQuery({
+            queryKey: ["userInfo"],
+            queryFn: async () => {
+              const res = await apiClient
+                .get(params.lang + "/get_userinfo", {
+                  headers: {
+                    Authorization: `Bearer ${userSession?.accessToken}`,
+                  },
+                })
+                .json();
+              return res?.data;
+            },
+          });
+
+          userSession = { ...userSession, ...data };
+          console.log(userSession, "Updated user data");
         } catch (e) {
-          // parse error
+          console.error("Auth hydration error", e);
         }
       }
     }
 
-    // console.log(userSession, "userSession");
-
     if (!userSession?.accessToken) {
       throw redirect({
         to: "/$lang/login",
-        params: {
-          lang: params.lang,
-        },
-        // search: {
-        //   redirect: location.href,
-        // },
+        params: { lang: params.lang },
       });
     }
   },
@@ -39,9 +51,5 @@ export const Route = createFileRoute("/$lang/_lang/_auth")({
 });
 
 function AuthLayoutComponent() {
-  return (
-    <>
-      <Outlet />
-    </>
-  );
+  return <Outlet />;
 }

@@ -22,6 +22,7 @@ export const Table = ({
   DeleteAction,
   className = "",
   translator,
+  onStatusToggle,
 
   ...rest
 }: TableProps) => {
@@ -94,11 +95,11 @@ export const Table = ({
                     <div className="inline-flex">
                       <ToggleButton
                         status={row[head.key || "status"]}
-                        readonly={true}
+                        readonly={onStatusToggle === undefined ? true : false}
                         key={`toggle-${row.id}`}
-                        // onToggle={() => {
-                        //   console.log(row[head.key || "status"], "status");
-                        // }}
+                        onToggle={(value: boolean) => {
+                          onStatusToggle(row?.slug, value);
+                        }}
                       />
                     </div>
                   ) : head.key === "action" || head.key === "actions" ? (
@@ -107,13 +108,13 @@ export const Table = ({
                         <React.Fragment key={`action-${aIndex}-${row.id}`}>
                           {action.type === "edit" && (
                             <EditAction
-                              slug={action.slug}
+                              slug={row?.slug}
                               translator={translator}
                             />
                           )}
                           {action.type === "delete" && (
                             <DeleteAction
-                              slug={action.slug}
+                              slug={row?.slug}
                               translator={translator}
                             />
                           )}

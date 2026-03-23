@@ -21,7 +21,7 @@
     "edit-glossary": "Edit Glossary",
     "update": "Update",
     "no-data-available": "No Data Available",
-
+    "cancel": "Cancel",
     "time-left": "<span>Time</span><span>Left</span>",
     "delete-glossary": "Delete Glossary",
     "are-you-sure-you-want-to-delete-this-glossary": "Are you sure you want to delete this glossary?",
@@ -32,7 +32,7 @@
     "ri_white_paper": "RI White Paper",
     "ri_unified_master_database": "RI Unified Master Database",
     "about": "About",
-    "cancel": "Cancel",
+
     "read_more": "Read More",
     "scroll": "Scroll",
 

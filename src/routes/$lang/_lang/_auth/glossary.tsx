@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { apiClient } from "@/api";
 import RouteLoader from "@/components/layouts/RouteLoader";
 import RoteError from "@/components/layouts/RoteError";
@@ -18,6 +18,7 @@ import {
   Upload,
   CircleCheck,
   Pencil,
+  X,
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -141,7 +142,29 @@ function RouteComponent() {
 }
 
 function GlossaryTable({ data }: { data: any }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const queryClient = useQueryClient();
+  const userSession = useAtomValue(userSessionAtom);
+
+  const toggleStatusMutation = useMutation({
+    mutationFn: async ({ slug, status }: { slug: string; status: number }) => {
+      return await apiClient
+        .post(`${i18n.language}/glossary/status/${slug}/${status}`, {
+          headers: {
+            Authorization: `Bearer ${userSession?.accessToken}`,
+          },
+        })
+        .json();
+    },
+    onSuccess: (res: any) => {
+      toast.success(res?.message || t("success"));
+      queryClient.invalidateQueries({ queryKey: ["glossary"] });
+    },
+    onError: (error: any) => {
+      console.error(error);
+      toast.error(t("error-occurred"));
+    },
+  });
 
   return (
     <Table
@@ -150,6 +173,14 @@ function GlossaryTable({ data }: { data: any }) {
       EditAction={EditAction}
       DeleteAction={DeleteAction}
       translator={data?.translator}
+      onStatusToggle={
+        userSession?.user?.roles.includes("admin")
+          ? (slug: string, value: boolean) => {
+              const status = value === true ? 1 : 3;
+              toggleStatusMutation.mutate({ slug, status });
+            }
+          : undefined
+      }
     />
   );
 }
@@ -424,6 +455,15 @@ function DeleteAction({
           </div>
           <DialogFooter className="sm:justify-end mt-2">
             <DefaultButton
+              type="button"
+              variant="dark"
+              title={translator?.cancel || t("cancel")}
+              onClick={() => setOpen(false)}
+              icon={<X className="size-5" />}
+              disabled={isSubmitting}
+              iconGradient="gray"
+            />
+            <DefaultButton
               type="submit"
               variant="dark"
               title={translator?.delete || t("delete")}
@@ -471,7 +511,6 @@ function AddGlossaryModal({ translator }: { translator?: any }) {
             },
           })
           .json();
-        console.log(res);
 
         form.reset();
 

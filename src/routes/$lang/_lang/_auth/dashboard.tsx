@@ -86,11 +86,16 @@ function RouteComponent() {
               <DashboardSidebar delay={0} />
 
               <div className="contentBox">
-                <DashboardTopbar delay={0} title={"dd"} lastLogin={true} />
-                <MinistryCard delay={0.2} />
+                <DashboardTopbar
+                  delay={0}
+                  title={userSession?.user?.entity_title}
+                  lastLogin={true}
+                />
+                <MinistryCard delay={0.2} data={data} />
                 <PerformingEntitiesCard
                   title={t("performing-entities-title")}
                   delay={0.4}
+                  entities={data?.entities}
                 />
               </div>
             </section>
@@ -101,44 +106,18 @@ function RouteComponent() {
   );
 }
 
-function MinistryCard({ delay }: { delay: number }) {
+function MinistryCard({
+  delay,
+  data,
+  entityImg,
+}: {
+  delay: number;
+  data: any;
+  entityImg: string;
+}) {
   const { t, i18n } = useTranslation();
   const userSession = useAtomValue(userSessionAtom);
 
-  let data = [
-    {
-      title: t("submitted"),
-      count: 50,
-    },
-    {
-      title: t("draft"),
-      count: 12,
-    },
-    {
-      title: t("approved"),
-      count: 38,
-    },
-    {
-      title: t("total-entries"),
-      count: 50,
-      link: true,
-    },
-  ];
-
-  let adminData = [
-    {
-      title: t("federal-entities"),
-      count: 13,
-    },
-    {
-      title: t("local-firms"),
-      count: 20,
-    },
-    {
-      title: t("law-firms"),
-      count: 38,
-    },
-  ];
   return (
     // lg:bg-[linear-gradient(50deg,#022EE4_0%,#FFC99D_50%,#022EE4_108%)]
     <motion.div
@@ -148,9 +127,9 @@ function MinistryCard({ delay }: { delay: number }) {
       exit={{ opacity: 0, y: -20, scale: 0.9 }}
       transition={{ delay: delay, duration: 0.5, ease: "easeInOut" }}
     >
-      {userSession?.user.role === "admin" ? (
+      {userSession?.user?.roles?.includes("admin") ? (
         <div className="flex-1 grid grid-cols-1 md:flex gap-2 md:gap-3">
-          {adminData.map((item, index) => (
+          {data?.adminData?.map((item, index) => (
             <div
               key={index}
               className="flex flex-1 items-center justify-start md:flex-col flex-row gap-3 md:gap-0 text-center md:justify-center md:px-2 md:py-8 px-4 py-3 relative [&:before]:content-[''] [&:before]:absolute [&:before]:inset-0 [&:before]:bg-white/10 [&:before]:overflow-hidden [&:before]:rounded-[calc(0.75rem-1px)]"
@@ -162,18 +141,17 @@ function MinistryCard({ delay }: { delay: number }) {
       ) : (
         <div className="flex-1 bg-white rounded-[calc(0.75rem-1px)] overflow-hidden flex items-center justify-center ">
           <img
-            src="/ministryImg.jpg"
-            alt=""
+            src={userSession?.user?.entity_image || "/entityPlaceholder.png"}
+            alt={userSession?.user?.entity_title}
             className=" h-20 md:h-24 xl:h-27 2xl:h-33 w-auto"
           />
         </div>
       )}
 
       <div className="flex-1 grid grid-cols-2 md:flex gap-2 md:gap-1">
-        {data.map((item, index) =>
+        {data?.glossaryData?.map((item, index) =>
           item.link ? (
             <Link
-              to={"/"}
               key={index}
               className="flex flex-1 items-center justify-between flex-col text-center justify-center px-2 py-8 relative [&:before]:content-[''] [&:before]:absolute [&:before]:inset-0 [&:before]:bg-white/10  hover:[&:before]:scale-105 [&:before]:transition-all [&:before]:duration-300 [&:before]:overflow-hidden [&:before]:rounded-[calc(0.75rem-1px)]"
             >
@@ -243,57 +221,30 @@ function NumberCard({
 function PerformingEntitiesCard({
   delay,
   title,
+  entities,
 }: {
   delay: number;
   title: string;
+  entities: any[];
 }) {
   const { t, i18n } = useTranslation();
   const userSession = useAtomValue(userSessionAtom);
   const [theme, setTheme] = useState("all");
 
-  const data = [
-    {
-      name: t("ministry-of-health"),
-      value: 80,
+  const { data, isLoading, error, isRefetching } = useQuery({
+    queryKey: ["dashboardGraphData"],
+    queryFn: async () => {
+      const res = await apiClient
+        .get(i18n.language + "/get_usergraph_data", {
+          headers: {
+            Authorization: `Bearer ${userSession?.accessToken}`,
+          },
+        })
+        .json();
+      return res?.data;
     },
-    {
-      name: t("ministry-of-health"),
-      value: 75,
-    },
-    {
-      name: t("ministry-of-health"),
-      value: 60,
-    },
-    {
-      name: t("ministry-of-health"),
-      value: 62,
-      visibility: true,
-    },
-    {
-      name: t("ministry-of-health"),
-      value: 45,
-    },
-    {
-      name: t("ministry-of-health"),
-      value: 35,
-    },
-    {
-      name: t("ministry-of-health"),
-      value: 25,
-    },
-    {
-      name: t("ministry-of-health"),
-      value: 20,
-    },
-    {
-      name: t("ministry-of-health"),
-      value: 15,
-    },
-    {
-      name: t("ministry-of-health"),
-      value: 9,
-    },
-  ];
+  });
+
   return (
     <div className="w-full flex flex-col gap-4 lg:gap-3 flex-1">
       <motion.div
@@ -309,7 +260,7 @@ function PerformingEntitiesCard({
             </SectionTitle>
           </div>
 
-          {userSession?.user.role === "admin" && (
+          {userSession?.user?.roles?.includes("admin") && (
             <div className="flex gap-2 justify-end w-full md:w-auto">
               <Select value={theme} onValueChange={setTheme}>
                 <SelectTrigger className=" w-auto text-[var(--textColor)] inputStyle border-none rounded-none focus:outline-none  gap-2 min-w-[150px] max-w-[300px] [&>span]:truncate">
@@ -320,22 +271,19 @@ function PerformingEntitiesCard({
                   <SelectItem className="text-[1.1rem] " value="all">
                     All Entities
                   </SelectItem>
-                  <SelectItem className="text-[1.1rem] " value="entitie1">
-                    Entitie 1
-                  </SelectItem>
-                  <SelectItem className="text-[1.1rem] " value="entitie2">
-                    Entitie 2
-                  </SelectItem>
-                  <SelectItem className="text-[1.1rem] " value="entitie3">
-                    Entitie 3
-                  </SelectItem>
+
+                  {entities?.map((item, index) => (
+                    <SelectItem className="text-[1.1rem] " value={item.id}>
+                      {item.title}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
           )}
         </div>
       </motion.div>
-      <BarChart data={data} />
+      <BarChart data={data?.entityData} isLoading={isLoading} />
     </div>
   );
 }
