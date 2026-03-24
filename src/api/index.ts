@@ -5,9 +5,11 @@ const apiClient = ky.create({
     prefixUrl: import.meta.env.VITE_API_URL,
     timeout: 10000,
     headers: {
+       
         'Content-Type': 'application/json',
         'Accept': 'application/json',
         'accept-language': i18n.language,
+      
     },
     retry: {
         limit: 3,

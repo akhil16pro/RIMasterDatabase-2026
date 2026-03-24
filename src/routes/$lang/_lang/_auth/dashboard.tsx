@@ -63,7 +63,7 @@ function RouteComponent() {
             },
           })
           .json();
-        console.log("DASHBOARD_DATA", res?.data);
+        // console.log("DASHBOARD_DATA", res?.data);
         return res?.data;
       } catch (error) {
         console.log("DASHBOARD_DATA_ERROR", error);
@@ -99,14 +99,7 @@ function RouteComponent() {
                 />
                 <MinistryCard delay={0.2} data={data} />
 
-                <PerformingEntitiesCard
-                  title={
-                    data?.translator?.top_performing_entities ||
-                    t("performing-entities-title")
-                  }
-                  delay={0.4}
-                  entities={data?.entities}
-                />
+                <PerformingEntitiesCard data={data} delay={0.4} />
               </div>
             </section>
           </div>
@@ -228,22 +221,19 @@ function NumberCard({
   );
 }
 
-function PerformingEntitiesCard({
-  delay,
-  title,
-  entities,
-}: {
-  delay: number;
-  title: string;
-  entities: any[];
-}) {
+function PerformingEntitiesCard({ delay, data }: { delay: number; data: any }) {
   const { t, i18n } = useTranslation();
   const userSession = useAtomValue(userSessionAtom);
   // const [theme, setTheme] = useState("all");
   const [selectedValues, setSelectedValues] = useState([]);
   const queryClient = useQueryClient();
 
-  const { data, isLoading, error, isRefetching } = useQuery({
+  const {
+    data: barData,
+    isLoading,
+    error,
+    isRefetching,
+  } = useQuery({
     queryKey: ["dashboardGraphData", selectedValues],
     queryFn: async () => {
       const res = await apiClient
@@ -273,7 +263,10 @@ function PerformingEntitiesCard({
         <div className="flex justify-between flex-wrap gap-2 md:gap-4 items-center">
           <div className="flex">
             <SectionTitle size="small">
-              <span>{title} </span>
+              <span>
+                {data?.translator?.top_performing_entities ||
+                  t("performing-entities-title")}{" "}
+              </span>
             </SectionTitle>
           </div>
 
@@ -281,12 +274,16 @@ function PerformingEntitiesCard({
             <div className="flex gap-2 justify-end   md:flex-1 w-full md:w-auto">
               <div className="flex w-full md:w-auto">
                 <MultiSelect
-                  options={entities}
+                  options={data?.entities}
                   onValueChange={setSelectedValues}
                   defaultValue={selectedValues}
                   responsive={true}
-                  placeholder="All Entities"
-                  searchPlaceholder="Search Entities"
+                  placeholder={
+                    data?.translator?.all_entity || t("all-entities")
+                  }
+                  searchPlaceholder={
+                    data?.translator?.search_entity || t("search-entities")
+                  }
                   hideSelectAll={true}
                 />
               </div>
@@ -294,7 +291,7 @@ function PerformingEntitiesCard({
           )}
         </div>
       </motion.div>
-      <BarChart data={data?.entityData} isLoading={isLoading} />
+      <BarChart data={barData?.entityData} isLoading={isLoading} />
     </div>
   );
 }

@@ -7,12 +7,14 @@ import { ToggleButton } from "@/components/ui/ToggleButton";
 import { useMobile } from "@/hooks/use-mobile";
 import { PenLine, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+
 interface TableProps extends React.ComponentPropsWithoutRef<typeof motion.div> {
   tableHead: any[];
   tableData: any[];
   EditAction?: React.ReactNode;
   DeleteAction?: React.ReactNode;
   translator?: any;
+  pageStartIndex?: number;
 }
 
 export const Table = ({
@@ -23,7 +25,7 @@ export const Table = ({
   className = "",
   translator,
   onStatusToggle,
-
+  pageStartIndex = 1,
   ...rest
 }: TableProps) => {
   const isMobile = useMobile();
@@ -90,7 +92,7 @@ export const Table = ({
                   )}
                 >
                   {head.key === "no" ? (
-                    (rowIndex + 1).toString().padStart(2, "0")
+                    (rowIndex + pageStartIndex).toString().padStart(2, "0")
                   ) : head.key === "status" ? (
                     <div className="inline-flex">
                       <ToggleButton

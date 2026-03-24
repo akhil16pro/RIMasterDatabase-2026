@@ -64,6 +64,8 @@
     "submit": "إرسال",
     "already_have_an_account": "هل لديك حساب بالفعل؟",
     "enter-email": "أدخل البريد الإلكتروني",
-    "invalid-field": "حقل غير صالح"
+    "invalid-field": "حقل غير صالح",
+    "previous": "السابق",
+    "next": "التالي"
   }
 }

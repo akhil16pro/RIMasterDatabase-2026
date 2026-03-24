@@ -17,6 +17,11 @@
     "title-required": "Title is required",
     "description-required": "Description is required",
 
+    "file-required": "File is required",
+    "file-must-be-csv": "File must be CSV",
+    "upload-file": "Upload File",
+    "file-must-be-excel-or-csv": "File must be Excel or CSV",
+
     "add-glossary": "Add Glossary",
     "edit-glossary": "Edit Glossary",
     "update": "Update",
@@ -35,6 +40,10 @@
 
     "read_more": "Read More",
     "scroll": "Scroll",
+    "previous": "Previous",
+    "next": "Next",
+    "all-entities": "All Entities",
+    "search-entities": "Search Entities",
 
     "page-not-found": "Page Not Found",
     "page-not-found-description": "Sorry, the page you are looking for does not exist. Please try again later.",

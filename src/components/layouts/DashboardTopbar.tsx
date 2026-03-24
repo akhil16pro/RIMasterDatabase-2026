@@ -28,6 +28,9 @@ import { useTranslation } from "react-i18next";
 import { useSetAtom } from "jotai";
 import { userSessionAtom } from "@/store/atoms";
 import { useAtomValue } from "jotai";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiClient } from "@/api";
+import { toast } from "sonner";
 
 export default function DashboardTopbar({
   delay,
@@ -270,14 +273,41 @@ function LoginAvatar() {
     router.navigate({ to: newUrl });
   };
 
-  const handleLogout = () => {
-    setUserSession(null);
-    localStorage.removeItem("auth-session");
-    router.navigate({
-      to: "/$lang/login",
-      params: { lang: i18n.language },
+  const useLogout = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+      mutationFn: async () => {
+        return await apiClient
+          .get(i18n.language + "/logout", {
+            headers: {
+              Authorization: `Bearer ${userSession?.accessToken}`,
+            },
+          })
+          .json();
+      },
+      onMutate: async () => {
+        setUserSession(null);
+        localStorage.removeItem("auth-session");
+
+        queryClient.clear();
+      },
+      onSettled: () => {
+        router.navigate({
+          to: "/$lang/login",
+          params: { lang: i18n.language },
+        });
+      },
+      onError: (error) => {
+        console.error("Logout failed:", error);
+        toast.error(error?.message || t("logout-failed"));
+      },
     });
   };
+
+  // Usage in your component:
+  const { mutate: handleLogout, isLoading } = useLogout();
+
   return (
     <DropdownMenu dir={isRtl ? "rtl" : "ltr"}>
       <DropdownMenuTrigger asChild>
@@ -321,7 +351,7 @@ function LoginAvatar() {
         <DropdownMenuItem
           color="red"
           className="w-full text-[var(--textColor)] font-semibold md:text-[1rem] text-[.9rem] leading-[100%]  overflow-hidden text-ellipsis whitespace-nowrap flex gap-2"
-          onClick={handleLogout}
+          onClick={() => handleLogout()}
         >
           <LogOut className=" h-4 w-4" />
           <span>{t("logout")}</span>

@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Upload } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useId, useRef, useState } from "react";
 
@@ -59,7 +59,7 @@ function Input({
             "peer h-10 w-full text-black bg-transparent px-0 py-1 text-[1.2rem] border-b border-black/20 outline-none transition-all placeholder:text-transparent placeholder:text-muted-foreground",
             "font-secondary font-light",
             error === true && " border-[var(--brandRed)]",
-            type === "password" && "pe-7",
+            type === "password" || (type === "file" && "pe-7"),
             className,
           )}
         />
@@ -102,6 +102,15 @@ function Input({
           ) : (
             <EyeOff className=" text-black/50 w-5 h-5" />
           )}
+        </div>
+      )}
+
+      {type === "file" && (
+        <div
+          onClick={() => document.getElementById(inputId)?.click()}
+          className="absolute ltr:right-0 rtl:left-0 top-[50%] translate-y-[-50%] cursor-pointer"
+        >
+          <Upload className=" text-black/50 w-5 h-5" />
         </div>
       )}
 

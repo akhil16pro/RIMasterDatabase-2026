@@ -83,7 +83,7 @@ function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="dialog-header"
-      className={cn("block gap-0 text-center sm:text-start ", className)}
+      className={cn("block gap-0 text-center sm:text-start mb-2 ", className)}
       {...props}
     />
   );

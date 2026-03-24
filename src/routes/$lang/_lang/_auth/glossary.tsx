@@ -36,6 +36,7 @@ import { toast } from "sonner";
 
 import { useAtomValue } from "jotai";
 import { userSessionAtom } from "@/store/atoms";
+import { Pagination } from "@/components/ui/Pagination";
 
 export const Route = createFileRoute("/$lang/_lang/_auth/glossary")({
   component: RouteComponent,
@@ -46,8 +47,13 @@ function RouteComponent() {
 
   const userSession = useAtomValue(userSessionAtom);
 
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    totalPages: 1,
+  });
+
   const { data, isLoading, error, isRefetching } = useQuery({
-    queryKey: ["glossary", i18n.language, userSession?.accessToken],
+    queryKey: ["glossary", pagination.currentPage],
     enabled: !!userSession?.accessToken,
     refetchOnMount: true,
     refetchOnWindowFocus: true,
@@ -55,11 +61,14 @@ function RouteComponent() {
     queryFn: async () => {
       try {
         const res = await apiClient
-          .get(i18n.language + "/glossary/list", {
-            headers: {
-              Authorization: `Bearer ${userSession?.accessToken}`,
+          .get(
+            i18n.language + `/glossary/list?page=${pagination.currentPage}`,
+            {
+              headers: {
+                Authorization: `Bearer ${userSession?.accessToken}`,
+              },
             },
-          })
+          )
           .json();
         // console.log("GLOSSARY_DATA", res?.data);
         return res?.data;
@@ -104,7 +113,7 @@ function RouteComponent() {
                   transition={{ delay: 0.1, duration: 0.5, ease: "easeInOut" }}
                   className="flex flex-wrap md:justify-end gap-2"
                 >
-                  {isCampaignActive && (
+                  {isCampaignActive && data?.campaign && (
                     <>
                       <div className="md:flex-1">
                         <AddGlossaryModal translator={data?.translator} />
@@ -116,13 +125,12 @@ function RouteComponent() {
                           t("download-excel-template")
                         }
                         icon={<Download className="size-5" />}
+                        onClick={() => {
+                          window.open(data?.campaign?.url, "_blank");
+                        }}
                       />
-                      <DefaultButton
-                        title={
-                          data?.translator?.upload_excel || t("upload-excel")
-                        }
-                        icon={<Upload className="size-5" />}
-                      />
+
+                      <UploadExcelModal translator={data?.translator} />
                     </>
                   )}
                   <DefaultButton
@@ -132,6 +140,18 @@ function RouteComponent() {
                 </motion.div>
 
                 {data?.glossary_headers && <GlossaryTable data={data} />}
+                {data?.pagination && (
+                  <Pagination
+                    currentPage={data?.pagination?.current_page}
+                    totalPages={data?.pagination?.last_page}
+                    onPageChange={(page: number) => {
+                      setPagination((prev) => ({
+                        ...prev,
+                        currentPage: page,
+                      }));
+                    }}
+                  />
+                )}
               </div>
             </section>
           </div>
@@ -168,6 +188,7 @@ function GlossaryTable({ data }: { data: any }) {
 
   return (
     <Table
+      pageStartIndex={data?.pagination?.page_start_index}
       tableHead={data?.glossary_headers}
       tableData={data?.glossaries}
       EditAction={EditAction}
@@ -363,7 +384,7 @@ function EditAction({ slug, translator }: { slug: string; translator?: any }) {
               title={t("update")}
               onClick={form.handleSubmit}
               icon={<Pencil className="size-5" />}
-              disabled={isSubmitting}
+              isDisabled={isSubmitting}
               isLoading={isSubmitting}
             />
           </DialogFooter>
@@ -401,7 +422,7 @@ function DeleteAction({
             },
           })
           .json();
-        console.log(res);
+        // console.log(res);
 
         form.reset();
 
@@ -460,7 +481,7 @@ function DeleteAction({
               title={translator?.cancel || t("cancel")}
               onClick={() => setOpen(false)}
               icon={<X className="size-5" />}
-              disabled={isSubmitting}
+              isDisabled={isSubmitting}
               iconGradient="gray"
             />
             <DefaultButton
@@ -469,7 +490,7 @@ function DeleteAction({
               title={translator?.delete || t("delete")}
               onClick={form.handleSubmit}
               icon={<Trash2 className="size-5" />}
-              disabled={isSubmitting}
+              isDisabled={isSubmitting}
               isLoading={isSubmitting}
               iconGradient="delete"
             />
@@ -647,7 +668,131 @@ function AddGlossaryModal({ translator }: { translator?: any }) {
               title={t("add-item")}
               onClick={form.handleSubmit}
               icon={<Plus className="size-5" />}
-              disabled={isSubmitting}
+              isDisabled={isSubmitting}
+              isLoading={isSubmitting}
+            />
+          </DialogFooter>
+        </DialogContent>
+      </form>
+    </Dialog>
+  );
+}
+
+function UploadExcelModal({ translator }: { translator?: any }) {
+  const { t, i18n } = useTranslation();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [open, setOpen] = useState(false);
+  const queryClient = useQueryClient();
+  const data = queryClient.getQueryData(["settings"]);
+  const userSession = useAtomValue(userSessionAtom);
+
+  const form = useForm({
+    defaultValues: {
+      file: null,
+    },
+    onSubmit: async ({ value }) => {
+      setIsSubmitting(true);
+      try {
+        const formData = new FormData();
+        if (value.file) {
+          formData.append("excel_file", value.file);
+        }
+
+        // console.log(formData.get("excel_file"), "formData");
+
+        const res = await apiClient
+          .post(i18n.language + "/glossary/upload-excel-template", {
+            headers: {
+              Authorization: `Bearer ${userSession?.accessToken}`,
+              "Content-Type": undefined,
+            },
+            body: formData,
+          })
+          .json();
+        form.reset();
+        if (res?.status) {
+          toast.success(res?.message || t("success"));
+          queryClient.invalidateQueries({ queryKey: ["glossary"] });
+          setTimeout(() => {
+            setOpen(false);
+          }, 100);
+        } else {
+          toast.error(res?.message || t("error-occurred"));
+        }
+      } catch (error) {
+        console.log(error);
+        toast.error(error?.response?.message || t("error-occurred"));
+      } finally {
+        setIsSubmitting(false);
+      }
+    },
+  });
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          form.handleSubmit();
+        }}
+      >
+        <DialogTrigger asChild>
+          <DefaultButton
+            className=""
+            title={translator?.upload_excel || t("upload-excel")}
+            icon={<Upload className="size-5" />}
+          />
+        </DialogTrigger>
+        <DialogContent className="lg:max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>
+              {translator?.upload_excel || t("upload-excel")}
+            </DialogTitle>
+          </DialogHeader>
+
+          <form.Field
+            name="file"
+            validators={{
+              onSubmit: ({ value }) => {
+                if (!value) return t("file-required");
+
+                const fileName = value.name.toLowerCase();
+                const allowedExtensions = [".csv", ".xls", ".xlsx"];
+                const isValid = allowedExtensions.some((ext) =>
+                  fileName.endsWith(ext),
+                );
+
+                if (!isValid) return t("file-must-be-excel-or-csv");
+                return null;
+              },
+            }}
+            children={(field) => (
+              <Input
+                id="file"
+                name="file"
+                onChange={(e) => {
+                  const file = e.target.files?.[0]; // Get the actual File object
+                  field.handleChange(file);
+                }}
+                label={t("file")}
+                className=""
+                type="file"
+                error={field.state.meta.errors.length > 0 ? true : false}
+                errorMessage={field.state.meta.errors[0]}
+              />
+            )}
+            className="w-full"
+          />
+
+          <DialogFooter className="sm:justify-start mt-2">
+            <DefaultButton
+              type="submit"
+              variant="dark"
+              title={t("upload-file")}
+              onClick={form.handleSubmit}
+              icon={<Plus className="size-5" />}
+              isDisabled={isSubmitting}
               isLoading={isSubmitting}
             />
           </DialogFooter>
