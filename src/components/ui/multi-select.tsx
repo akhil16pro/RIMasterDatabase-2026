@@ -602,6 +602,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
           }))
           .filter((group) => group.options.length > 0);
       }
+
       return options.filter(
         (option) =>
           option.label.toLowerCase().includes(searchValue.toLowerCase()) ||
@@ -1040,7 +1041,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
             align="start"
             onEscapeKeyDown={() => setIsPopoverOpen(false)}
           >
-            <Command>
+            <Command shouldFilter={false}>
               {searchable && (
                 <CommandInput
                   placeholder={searchPlaceholder}
@@ -1115,6 +1116,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                         return (
                           <CommandItem
                             key={option.value}
+                            value={option.value}
                             onSelect={() => toggleOption(option.value)}
                             role="option"
                             aria-selected={isSelected}
@@ -1159,6 +1161,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                       return (
                         <CommandItem
                           key={option.value}
+                          value={option.value}
                           onSelect={() => toggleOption(option.value)}
                           role="option"
                           aria-selected={isSelected}

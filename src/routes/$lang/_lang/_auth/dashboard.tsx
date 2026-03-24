@@ -63,7 +63,7 @@ function RouteComponent() {
             },
           })
           .json();
-        // console.log("DASHBOARD_DATA", res?.data);
+        console.log("DASHBOARD_DATA", res?.data);
         return res?.data;
       } catch (error) {
         console.log("DASHBOARD_DATA_ERROR", error);
