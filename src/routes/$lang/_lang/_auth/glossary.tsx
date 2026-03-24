@@ -47,13 +47,8 @@ function RouteComponent() {
 
   const userSession = useAtomValue(userSessionAtom);
 
-  const [pagination, setPagination] = useState({
-    currentPage: 1,
-    totalPages: 1,
-  });
-
   const { data, isLoading, error, isRefetching } = useQuery({
-    queryKey: ["glossary", pagination.currentPage],
+    queryKey: ["glossary"],
     enabled: !!userSession?.accessToken,
     refetchOnMount: true,
     refetchOnWindowFocus: true,
@@ -61,14 +56,11 @@ function RouteComponent() {
     queryFn: async () => {
       try {
         const res = await apiClient
-          .get(
-            i18n.language + `/glossary/list?page=${pagination.currentPage}`,
-            {
-              headers: {
-                Authorization: `Bearer ${userSession?.accessToken}`,
-              },
+          .get(i18n.language + `/glossary`, {
+            headers: {
+              Authorization: `Bearer ${userSession?.accessToken}`,
             },
-          )
+          })
           .json();
         // console.log("GLOSSARY_DATA", res?.data);
         return res?.data;
@@ -139,19 +131,7 @@ function RouteComponent() {
                   />
                 </motion.div>
 
-                {data?.glossary_headers && <GlossaryTable data={data} />}
-                {data?.pagination && (
-                  <Pagination
-                    currentPage={data?.pagination?.current_page}
-                    totalPages={data?.pagination?.last_page}
-                    onPageChange={(page: number) => {
-                      setPagination((prev) => ({
-                        ...prev,
-                        currentPage: page,
-                      }));
-                    }}
-                  />
-                )}
+                <GlossaryTable />
               </div>
             </section>
           </div>
@@ -161,10 +141,40 @@ function RouteComponent() {
   );
 }
 
-function GlossaryTable({ data }: { data: any }) {
+function GlossaryTable() {
   const { t, i18n } = useTranslation();
   const queryClient = useQueryClient();
   const userSession = useAtomValue(userSessionAtom);
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    totalPages: 1,
+  });
+
+  const { data, isLoading, error, isRefetching } = useQuery({
+    queryKey: ["glossaryTable", pagination.currentPage],
+    enabled: !!userSession?.accessToken,
+    placeholderData: (previousData) => previousData,
+    staleTime: 1000 * 60 * 5,
+    queryFn: async () => {
+      try {
+        const res = await apiClient
+          .get(
+            i18n.language + `/glossary/table?page=${pagination.currentPage}`,
+            {
+              headers: {
+                Authorization: `Bearer ${userSession?.accessToken}`,
+              },
+            },
+          )
+          .json();
+        // console.log("GLOSSARY_TABLE_DATA", res?.data);
+        return res?.data;
+      } catch (error) {
+        console.log("GLOSSARY_TABLE_DATA_ERROR", error);
+        return null;
+      }
+    },
+  });
 
   const toggleStatusMutation = useMutation({
     mutationFn: async ({ slug, status }: { slug: string; status: number }) => {
@@ -178,7 +188,7 @@ function GlossaryTable({ data }: { data: any }) {
     },
     onSuccess: (res: any) => {
       toast.success(res?.message || t("success"));
-      queryClient.invalidateQueries({ queryKey: ["glossary"] });
+      queryClient.invalidateQueries({ queryKey: ["glossaryTable"] });
     },
     onError: (error: any) => {
       console.error(error);
@@ -187,22 +197,39 @@ function GlossaryTable({ data }: { data: any }) {
   });
 
   return (
-    <Table
-      pageStartIndex={data?.pagination?.page_start_index}
-      tableHead={data?.glossary_headers}
-      tableData={data?.glossaries}
-      EditAction={EditAction}
-      DeleteAction={DeleteAction}
-      translator={data?.translator}
-      onStatusToggle={
-        userSession?.user?.roles.includes("admin")
-          ? (slug: string, value: boolean) => {
-              const status = value === true ? 1 : 3;
-              toggleStatusMutation.mutate({ slug, status });
-            }
-          : undefined
-      }
-    />
+    <>
+      {data && (
+        <Table
+          pageStartIndex={data?.pagination?.page_start_index}
+          tableHead={data?.glossary_headers}
+          tableData={data?.glossaries}
+          EditAction={EditAction}
+          DeleteAction={DeleteAction}
+          translator={data?.translator}
+          onStatusToggle={
+            userSession?.user?.roles.includes("admin")
+              ? (slug: string, value: boolean) => {
+                  const status = value === true ? 1 : 3;
+                  toggleStatusMutation.mutate({ slug, status });
+                }
+              : undefined
+          }
+        />
+      )}
+
+      {data?.pagination && (
+        <Pagination
+          currentPage={data?.pagination?.current_page}
+          totalPages={data?.pagination?.last_page}
+          onPageChange={(page: number) => {
+            setPagination((prev) => ({
+              ...prev,
+              currentPage: page,
+            }));
+          }}
+        />
+      )}
+    </>
   );
 }
 
