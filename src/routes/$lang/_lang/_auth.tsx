@@ -1,18 +1,19 @@
 import { createFileRoute, redirect, Outlet } from "@tanstack/react-router";
 import { getDefaultStore } from "jotai";
 import { userSessionAtom } from "@/store/atoms";
-import { apiClient } from "@/api"; // Ensure this is imported
+import { apiClient } from "@/api";
 
 const store = getDefaultStore();
 
 export const Route = createFileRoute("/$lang/_lang/_auth")({
   beforeLoad: async ({ params, context }) => {
-    // 1. Get queryClient from context (passed during router creation)
     const { queryClient } = context;
     let userSession = store.get(userSessionAtom);
 
     // Initial hydration fallback
-    if (!userSession && typeof window !== "undefined") {
+    const needsRefresh = !userSession || userSession.lang !== params.lang;
+
+    if (needsRefresh && typeof window !== "undefined") {
       const stored = localStorage.getItem("auth-session");
       if (stored) {
         try {
@@ -22,7 +23,7 @@ export const Route = createFileRoute("/$lang/_lang/_auth")({
             queryKey: ["userInfo", params.lang],
             queryFn: async () => {
               const res = await apiClient
-                .get(params.lang + "/get_userinfo", {
+                .get(`${params.lang}/get_userinfo`, {
                   headers: {
                     Authorization: `Bearer ${parsedSession?.accessToken}`,
                   },
@@ -30,13 +31,16 @@ export const Route = createFileRoute("/$lang/_lang/_auth")({
                 .json();
               return res?.data;
             },
+            staleTime: 0,
           });
 
-          const updatedSession = { ...parsedSession, ...data };
+          const updatedSession = {
+            ...parsedSession,
+            ...data,
+            lang: params.lang,
+          };
           store.set(userSessionAtom, updatedSession);
-
           userSession = updatedSession;
-          console.log(userSession, "Updated user data");
         } catch (e) {
           console.error("Auth hydration error", e);
         }

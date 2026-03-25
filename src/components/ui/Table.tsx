@@ -1,6 +1,6 @@
 import React from "react";
 import { cn } from "@/lib/utils";
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 
 import { DefaultButton } from "@/components/ui/buttons";
 import { ToggleButton } from "@/components/ui/ToggleButton";
@@ -29,23 +29,27 @@ export const Table = ({
   ...rest
 }: TableProps) => {
   const isMobile = useMobile();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   return (
-    <motion.div
-      {...rest}
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.1, duration: 0.5, ease: "easeInOut" }}
-      className={cn("flex-1 w-full overflow-hidden", className)}
-    >
+    <div {...rest} className={cn("flex-1 w-full overflow-hidden", className)}>
       <table
         className={cn(
           "w-full text-[var(--textColor)] border-separate border-spacing-y-2",
           isMobile ? "flex flex-col" : "table",
         )}
       >
-        <thead className={cn(isMobile && "hidden")}>
+        <motion.thead
+          className={cn(isMobile && "hidden")}
+          initial={{ opacity: 0, x: i18n.language === "ar" ? -40 : 40 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: i18n.language === "ar" ? 40 : -40 }}
+          transition={{
+            delay: 0,
+            duration: 0.5,
+            ease: "easeInOut",
+          }}
+        >
           <tr className="bg-[linear-gradient(100deg,#FFC99D_-20%,#022EE4_120%)] text-white">
             {tableHead.map((head, index) => (
               <th
@@ -63,98 +67,113 @@ export const Table = ({
               </th>
             ))}
           </tr>
-        </thead>
+        </motion.thead>
         <tbody
           className={cn(isMobile ? "flex flex-col gap-4" : "table-row-group")}
         >
-          {tableData.map((row, rowIndex) => (
-            <tr
-              key={`row-${rowIndex}`}
-              className={cn(
-                "group transition-all duration-300 bg-[linear-gradient(240deg,rgba(2,46,228,0.1)_0%,rgba(3,203,255,0.1)_100%)]",
-                isMobile ? "flex flex-col rounded-lg p-2" : "table-row",
-              )}
-            >
-              {tableHead.map((head, colIndex) => (
-                <TD
-                  key={`cell-${rowIndex}-${colIndex}`}
-                  data-label={head.title}
-                  className={cn(
-                    !isMobile &&
-                      colIndex === 0 &&
-                      "ltr:rounded-l-lg rtl:rounded-r-lg",
-                    !isMobile &&
-                      colIndex === tableHead.length - 1 &&
-                      "ltr:rounded-r-lg rtl:rounded-l-lg ",
-
-                    head.key === "no" &&
-                      "font-semibold text-lg bg-[linear-gradient(270deg,#022EE4_0%,#03CBFF_100%)] bg-clip-text text-transparent",
-                  )}
-                >
-                  {head.key === "no" ? (
-                    (rowIndex + pageStartIndex).toString().padStart(2, "0")
-                  ) : head.key === "status" ? (
-                    <div className="inline-flex">
-                      <ToggleButton
-                        status={row[head.key || "status"]}
-                        readonly={onStatusToggle === undefined ? true : false}
-                        key={`toggle-${row.id}`}
-                        onToggle={(value: boolean) => {
-                          onStatusToggle(row?.slug, value);
-                        }}
-                      />
-                    </div>
-                  ) : head.key === "action" || head.key === "actions" ? (
-                    <div className="flex gap-2">
-                      {row.actions?.map((action: any, aIndex: number) => (
-                        <React.Fragment key={`action-${aIndex}-${row.id}`}>
-                          {action.type === "edit" && (
-                            <EditAction
-                              slug={row?.slug}
-                              translator={translator}
-                            />
-                          )}
-                          {action.type === "delete" && (
-                            <DeleteAction
-                              slug={row?.slug}
-                              translator={translator}
-                            />
-                          )}
-                        </React.Fragment>
-                      ))}
-                    </div>
-                  ) : head.key === "title" ? (
-                    <span className="font-semibold text-lg">
-                      {row[head.key]}
-                    </span>
-                  ) : (
-                    row[head.key] || ""
-                  )}
-                </TD>
-              ))}
-            </tr>
-          ))}
-
-          {tableData.length === 0 && (
-            <tr
-              className={cn(
-                "group transition-all duration-300 bg-[linear-gradient(240deg,rgba(2,46,228,0.1)_0%,rgba(3,203,255,0.1)_100%)]",
-                isMobile ? "flex flex-col rounded-lg p-2" : "table-row",
-              )}
-            >
-              <td
-                colSpan={tableHead.length}
+          <AnimatePresence mode="wait">
+            {tableData.map((row, rowIndex) => (
+              <motion.tr
+                key={row?.id || row?.slug || `row-${rowIndex}`}
+                initial={{ opacity: 0, x: i18n.language === "ar" ? -40 : 40 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: i18n.language === "ar" ? 40 : -40 }}
+                transition={{
+                  delay: 0.1 * rowIndex + 0.1,
+                  duration: 0.5,
+                  ease: "easeInOut",
+                }}
                 className={cn(
-                  "px-4 py-4 text-base font-secondary text-center rounded-lg",
+                  "group bg-[linear-gradient(240deg,rgba(2,46,228,0.1)_0%,rgba(3,203,255,0.1)_100%)]",
+                  isMobile ? "flex flex-col rounded-lg p-2" : "table-row",
                 )}
               >
-                {t("no-data-available")}
-              </td>
-            </tr>
-          )}
+                {tableHead.map((head, colIndex) => (
+                  <TD
+                    key={`cell-${rowIndex}-${colIndex}`}
+                    data-label={head.title}
+                    className={cn(
+                      !isMobile &&
+                        colIndex === 0 &&
+                        "ltr:rounded-l-lg rtl:rounded-r-lg",
+                      !isMobile &&
+                        colIndex === tableHead.length - 1 &&
+                        "ltr:rounded-r-lg rtl:rounded-l-lg ",
+
+                      head.key === "no" &&
+                        "font-semibold text-lg bg-[linear-gradient(270deg,#022EE4_0%,#03CBFF_100%)] bg-clip-text text-transparent",
+                    )}
+                  >
+                    {head.key === "no" ? (
+                      (rowIndex + pageStartIndex).toString().padStart(2, "0")
+                    ) : head.key === "status" ? (
+                      <div className="inline-flex">
+                        <ToggleButton
+                          status={row[head.key || "status"]}
+                          readonly={onStatusToggle === undefined ? true : false}
+                          key={`toggle-${row.id}`}
+                          onToggle={(value: boolean) => {
+                            onStatusToggle(row?.slug, value);
+                          }}
+                        />
+                      </div>
+                    ) : head.key === "action" || head.key === "actions" ? (
+                      <div className="flex gap-2">
+                        {row.actions?.map((action: any, aIndex: number) => (
+                          <React.Fragment key={`action-${aIndex}-${row.id}`}>
+                            {action.type === "edit" && (
+                              <EditAction
+                                slug={row?.slug}
+                                translator={translator}
+                              />
+                            )}
+                            {action.type === "delete" && (
+                              <DeleteAction
+                                slug={row?.slug}
+                                translator={translator}
+                              />
+                            )}
+                          </React.Fragment>
+                        ))}
+                      </div>
+                    ) : head.key === "title" ? (
+                      <span className="font-semibold text-lg">
+                        {row[head.key]}
+                      </span>
+                    ) : (
+                      row[head.key] || ""
+                    )}
+                  </TD>
+                ))}
+              </motion.tr>
+            ))}
+
+            {tableData.length === 0 && (
+              <motion.tr
+                key="empty-state-row"
+                initial={{ opacity: 0, x: i18n.language === "ar" ? -40 : 40 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: i18n.language === "ar" ? 40 : -40 }}
+                transition={{ delay: 0.2, duration: 0.5, ease: "easeInOut" }}
+                className={cn(
+                  "group transition-all duration-300 bg-[linear-gradient(240deg,rgba(2,46,228,0.1)_0%,rgba(3,203,255,0.1)_100%)]",
+                  isMobile ? "flex flex-col rounded-lg p-2" : "table-row",
+                )}
+              >
+                <td
+                  colSpan={tableHead.length}
+                  className={cn(
+                    "px-4 py-4 text-base font-secondary text-center rounded-lg",
+                  )}
+                >
+                  {t("no-data-available")}
+                </td>
+              </motion.tr>
+            )}
+          </AnimatePresence>
         </tbody>
       </table>
-    </motion.div>
+    </div>
   );
 };
 

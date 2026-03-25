@@ -254,11 +254,9 @@ function LastLoginInfo() {
 
 function LoginAvatar() {
   const { t, i18n } = useTranslation();
-  const { href } = useLocation();
+  // const { href } = useLocation();
   const router = useRouter();
   const setUserSession = useSetAtom(userSessionAtom);
-  const currentLang = i18n.language;
-  const isRtl = currentLang === "ar";
 
   const userSession = useAtomValue(userSessionAtom);
 
@@ -277,7 +275,7 @@ function LoginAvatar() {
 
     router.navigate({ to: newUrl });
 
-    queryClient.invalidateQueries();
+    queryClient.invalidateQueries({ queryKey: ["userInfo"] });
   };
 
   const useLogout = () => {
@@ -314,7 +312,7 @@ function LoginAvatar() {
   const { mutate: handleLogout, isLoading } = useLogout();
 
   return (
-    <DropdownMenu dir={isRtl ? "rtl" : "ltr"}>
+    <DropdownMenu dir={i18n.language === "ar" ? "rtl" : "ltr"}>
       <DropdownMenuTrigger asChild>
         <div className="flex  items-center lg:p-2 p-[5px]  rounded-lg bg-[linear-gradient(195deg,rgba(2,46,228,0.4)_0%,rgba(255,201,157,0.4)_100%)] cursor-pointer group ">
           {/* <img
