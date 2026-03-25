@@ -99,37 +99,39 @@ function RouteComponent() {
                   campaign={data?.campaign}
                   translator={data?.translator}
                 />
-                <motion.div
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1, duration: 0.5, ease: "easeInOut" }}
-                  className="flex flex-wrap md:justify-end gap-2"
-                >
-                  {isCampaignActive && data?.campaign && (
-                    <>
-                      <div className="md:flex-1">
-                        <AddGlossaryModal translator={data?.translator} />
-                      </div>
+                {isCampaignActive && data?.campaign && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                      delay: 0.1,
+                      duration: 0.5,
+                      ease: "easeInOut",
+                    }}
+                    className="flex flex-wrap md:justify-end gap-2"
+                  >
+                    <div className="md:flex-1">
+                      <AddGlossaryModal translator={data?.translator} />
+                    </div>
 
-                      <DefaultButton
-                        title={
-                          data?.translator?.download_excel_template ||
-                          t("download-excel-template")
-                        }
-                        icon={<Download className="size-5" />}
-                        onClick={() => {
-                          window.open(data?.campaign?.url, "_blank");
-                        }}
-                      />
+                    <DefaultButton
+                      title={
+                        data?.translator?.download_excel_template ||
+                        t("download-excel-template")
+                      }
+                      icon={<Download className="size-5" />}
+                      onClick={() => {
+                        window.open(data?.campaign?.url, "_blank");
+                      }}
+                    />
 
-                      <UploadExcelModal translator={data?.translator} />
-                    </>
-                  )}
-                  <DefaultButton
-                    title={data?.translator?.guideline || t("guideline")}
-                    icon={<BookOpenText className="size-5" />}
-                  />
-                </motion.div>
+                    <UploadExcelModal translator={data?.translator} />
+                    <DefaultButton
+                      title={data?.translator?.guideline || t("guideline")}
+                      icon={<BookOpenText className="size-5" />}
+                    />
+                  </motion.div>
+                )}
 
                 <GlossaryTable />
               </div>

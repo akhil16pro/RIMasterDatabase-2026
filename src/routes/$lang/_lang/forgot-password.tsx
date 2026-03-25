@@ -40,21 +40,31 @@ function RouteComponent() {
           })
           .json();
 
-        console.log("FORGOT_PASSWORD_DATA", res);
-
-        if (res?.status) {
-          // Navigate to the login route
-          navigate({
-            to: `/${i18n.language}/login`,
-          });
-        } else {
-          toast.error(res?.message || t("error-occurred"));
-        }
-
         // form.reset();
       } catch (error) {
-        console.log(error);
-        toast.error(error?.response?.message || t("error-occurred"));
+        if (error?.name === "HTTPError") {
+          try {
+            const errorData = await error?.response?.json();
+
+            if (errorData?.status) {
+              toast.success(errorData?.message);
+              form.reset();
+              setTimeout(() => {
+                navigate({
+                  to: `/${i18n.language}/login`,
+                });
+              }, 1000);
+            } else {
+              toast.error(errorData?.message || t("error-occurred"));
+            }
+          } catch (parseError) {
+            toast.error(t("error-occurred"));
+          }
+        } else {
+          // 3. Handle network errors or syntax errors
+          console.error("Generic Error:", error);
+          toast.error(t("error-occurred"));
+        }
       } finally {
         setIsSubmitting(false);
       }

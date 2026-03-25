@@ -313,14 +313,14 @@ function LoginAvatar() {
 
   return (
     <DropdownMenu dir={i18n.language === "ar" ? "rtl" : "ltr"}>
-      <DropdownMenuTrigger asChild>
+      <DropdownMenuTrigger asChild className="group">
         <div className="flex  items-center lg:p-2 p-[5px]  rounded-lg bg-[linear-gradient(195deg,rgba(2,46,228,0.4)_0%,rgba(255,201,157,0.4)_100%)] cursor-pointer group ">
           {/* <img
             src={userSession?.user?.photo || userSession?.user?.avatar}
             alt=""
             className="w-8 h-8 md:w-10 md:h-10 lg:w-11 lg:h-11 rounded-[5px] md:rounded-lg me-2 group-hover:scale-105 transition-all duration-300 bg-white object-cover"
           /> */}
-          <Avatar className="me-2 rounded-[5px] md:rounded-lg w-8 h-8 md:w-10 md:h-10 lg:w-11 lg:h-11 ">
+          <Avatar className="me-2 rounded-[5px] md:rounded-lg size-8 md:size-10 lg:size-11">
             <AvatarImage
               src={userSession?.user?.photo}
               alt={userSession?.user?.name}
@@ -336,7 +336,10 @@ function LoginAvatar() {
           </span>
           <ChevronDown
             // size={24}
-            className="size-[18px] md:size-[20px] lg:size-[24px] text-[var(--textColor)]"
+            className={cn(
+              " size-[17px]  md:size-[20px] text-[var(--textColor)] ms-1",
+              "group-data-[state=open]:rotate-180 transition-all duration-300",
+            )}
           />
         </div>
       </DropdownMenuTrigger>

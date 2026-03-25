@@ -12,7 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as LangLangRouteImport } from './routes/$lang/_lang'
 import { Route as LangLangIndexRouteImport } from './routes/$lang/_lang/index'
-import { Route as LangLangResetRouteImport } from './routes/$lang/_lang/reset'
+import { Route as LangLangResetPasswordRouteImport } from './routes/$lang/_lang/reset-password'
 import { Route as LangLangLoginRouteImport } from './routes/$lang/_lang/login'
 import { Route as LangLangForgotPasswordRouteImport } from './routes/$lang/_lang/forgot-password'
 import { Route as LangLangAuthRouteImport } from './routes/$lang/_lang/_auth'
@@ -34,9 +34,9 @@ const LangLangIndexRoute = LangLangIndexRouteImport.update({
   path: '/',
   getParentRoute: () => LangLangRoute,
 } as any)
-const LangLangResetRoute = LangLangResetRouteImport.update({
-  id: '/reset',
-  path: '/reset',
+const LangLangResetPasswordRoute = LangLangResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => LangLangRoute,
 } as any)
 const LangLangLoginRoute = LangLangLoginRouteImport.update({
@@ -69,7 +69,7 @@ export interface FileRoutesByFullPath {
   '/$lang': typeof LangLangAuthRouteWithChildren
   '/$lang/forgot-password': typeof LangLangForgotPasswordRoute
   '/$lang/login': typeof LangLangLoginRoute
-  '/$lang/reset': typeof LangLangResetRoute
+  '/$lang/reset-password': typeof LangLangResetPasswordRoute
   '/$lang/': typeof LangLangIndexRoute
   '/$lang/dashboard': typeof LangLangAuthDashboardRoute
   '/$lang/glossary': typeof LangLangAuthGlossaryRoute
@@ -79,7 +79,7 @@ export interface FileRoutesByTo {
   '/$lang': typeof LangLangIndexRoute
   '/$lang/forgot-password': typeof LangLangForgotPasswordRoute
   '/$lang/login': typeof LangLangLoginRoute
-  '/$lang/reset': typeof LangLangResetRoute
+  '/$lang/reset-password': typeof LangLangResetPasswordRoute
   '/$lang/dashboard': typeof LangLangAuthDashboardRoute
   '/$lang/glossary': typeof LangLangAuthGlossaryRoute
 }
@@ -90,7 +90,7 @@ export interface FileRoutesById {
   '/$lang/_lang/_auth': typeof LangLangAuthRouteWithChildren
   '/$lang/_lang/forgot-password': typeof LangLangForgotPasswordRoute
   '/$lang/_lang/login': typeof LangLangLoginRoute
-  '/$lang/_lang/reset': typeof LangLangResetRoute
+  '/$lang/_lang/reset-password': typeof LangLangResetPasswordRoute
   '/$lang/_lang/': typeof LangLangIndexRoute
   '/$lang/_lang/_auth/dashboard': typeof LangLangAuthDashboardRoute
   '/$lang/_lang/_auth/glossary': typeof LangLangAuthGlossaryRoute
@@ -102,7 +102,7 @@ export interface FileRouteTypes {
     | '/$lang'
     | '/$lang/forgot-password'
     | '/$lang/login'
-    | '/$lang/reset'
+    | '/$lang/reset-password'
     | '/$lang/'
     | '/$lang/dashboard'
     | '/$lang/glossary'
@@ -112,7 +112,7 @@ export interface FileRouteTypes {
     | '/$lang'
     | '/$lang/forgot-password'
     | '/$lang/login'
-    | '/$lang/reset'
+    | '/$lang/reset-password'
     | '/$lang/dashboard'
     | '/$lang/glossary'
   id:
@@ -122,7 +122,7 @@ export interface FileRouteTypes {
     | '/$lang/_lang/_auth'
     | '/$lang/_lang/forgot-password'
     | '/$lang/_lang/login'
-    | '/$lang/_lang/reset'
+    | '/$lang/_lang/reset-password'
     | '/$lang/_lang/'
     | '/$lang/_lang/_auth/dashboard'
     | '/$lang/_lang/_auth/glossary'
@@ -156,11 +156,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LangLangIndexRouteImport
       parentRoute: typeof LangLangRoute
     }
-    '/$lang/_lang/reset': {
-      id: '/$lang/_lang/reset'
-      path: '/reset'
-      fullPath: '/$lang/reset'
-      preLoaderRoute: typeof LangLangResetRouteImport
+    '/$lang/_lang/reset-password': {
+      id: '/$lang/_lang/reset-password'
+      path: '/reset-password'
+      fullPath: '/$lang/reset-password'
+      preLoaderRoute: typeof LangLangResetPasswordRouteImport
       parentRoute: typeof LangLangRoute
     }
     '/$lang/_lang/login': {
@@ -219,7 +219,7 @@ interface LangLangRouteChildren {
   LangLangAuthRoute: typeof LangLangAuthRouteWithChildren
   LangLangForgotPasswordRoute: typeof LangLangForgotPasswordRoute
   LangLangLoginRoute: typeof LangLangLoginRoute
-  LangLangResetRoute: typeof LangLangResetRoute
+  LangLangResetPasswordRoute: typeof LangLangResetPasswordRoute
   LangLangIndexRoute: typeof LangLangIndexRoute
 }
 
@@ -227,7 +227,7 @@ const LangLangRouteChildren: LangLangRouteChildren = {
   LangLangAuthRoute: LangLangAuthRouteWithChildren,
   LangLangForgotPasswordRoute: LangLangForgotPasswordRoute,
   LangLangLoginRoute: LangLangLoginRoute,
-  LangLangResetRoute: LangLangResetRoute,
+  LangLangResetPasswordRoute: LangLangResetPasswordRoute,
   LangLangIndexRoute: LangLangIndexRoute,
 }
 

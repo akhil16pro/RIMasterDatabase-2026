@@ -98,6 +98,25 @@
     "submit": "Submit",
     "already_have_an_account": "Already have an account?",
     "reset_password": "Reset Password",
-    "passwords-do-not-match": "Passwords do not match"
+    "passwords-do-not-match": "Passwords do not match",
+    "error-occurred": "An error occurred. Please try again later.",
+    "password-is-too-weak": "Password is too weak",
+    "password-is-too-strong": "Password is too strong",
+    "password-is-too-short": "Password is too short",
+    "password-is-too-long": "Password is too long",
+    "sequences": "Sequences",
+    "patterns": "Patterns",
+    "dictionary": "Dictionary",
+    "common": "Common",
+    "graphs": "Graphs",
+    "translations": "Translations",
+    "use-a-more-complex-password": "Use a more complex password",
+    "use-a-less-complex-password": "Use a less complex password",
+    "use-a-longer-password": "Use a longer password",
+    "use-a-shorter-password": "Use a shorter password",
+    "use-a-more-complex-password": "Use a more complex password",
+    "use-a-less-complex-password": "Use a less complex password",
+    "use-a-longer-password": "Use a longer password",
+    "use-a-shorter-password": "Use a shorter password"
   }
 }
