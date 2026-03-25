@@ -5,6 +5,7 @@
     "login": "Login",
     "email": "Email",
     "password": "Password",
+    "confirm_password": "Confirm Password",
     "enter-email": "Enter email",
     "forgot_password": "Forgot Password?",
     "reset": "Reset",
@@ -95,6 +96,8 @@
     "delete": "Delete",
     "avname": "Ahmed Sharif Chaudhry",
     "submit": "Submit",
-    "already_have_an_account": "Already have an account?"
+    "already_have_an_account": "Already have an account?",
+    "reset_password": "Reset Password",
+    "passwords-do-not-match": "Passwords do not match"
   }
 }

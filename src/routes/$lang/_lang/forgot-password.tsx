@@ -1,7 +1,4 @@
-import { useEffect, useRef, useState, type FormEvent } from "react";
-// import ReCAPTCHA from "react-google-recaptcha";
-// import RoutesBanner from '@/components/layouts/RoutesBanner'
-import { createFileRoute, useNavigate, redirect } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { apiClient } from "@/api";
@@ -12,93 +9,43 @@ import { Input } from "@/components/ui/input";
 import { AnimatePresence, motion } from "motion/react";
 
 import { Link } from "@tanstack/react-router";
+import { settingsAtom } from "@/routes/__root";
+import { useAtomValue } from "jotai";
+import { useForm } from "@tanstack/react-form";
+import { useState } from "react";
 import { toast } from "sonner";
 
-import { useSetAtom, useAtomValue, getDefaultStore } from "jotai";
-import { userSessionAtom } from "@/store/atoms";
-
-import { settingsAtom } from "@/routes/__root";
-
-import { useForm } from "@tanstack/react-form";
-
-// const RECAPTCHA_SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
-// Get the store instance
-const store = getDefaultStore();
-
-export const Route = createFileRoute("/$lang/_lang/login")({
+export const Route = createFileRoute("/$lang/_lang/forgot-password")({
   component: RouteComponent,
-
-  beforeLoad: async ({ location, params }) => {
-    let userSession = store.get(userSessionAtom);
-
-    if (!userSession && typeof window !== "undefined") {
-      const stored = localStorage.getItem("auth-session");
-
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (parsed?.accessToken) {
-          throw redirect({
-            to: `/${params.lang}/dashboard`,
-          });
-        }
-      }
-    }
-  },
 });
 
 function RouteComponent() {
   const { t, i18n } = useTranslation();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const navigate = useNavigate();
-  // const recaptchaRef = useRef<ReCAPTCHA>(null);
-
-  const setUserSession = useSetAtom(userSessionAtom);
-
   const settings = useAtomValue(settingsAtom);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const navigate = useNavigate();
   const form = useForm({
     defaultValues: {
       email: "",
-      password: "",
     },
     onSubmit: async ({ value }) => {
       setIsSubmitting(true);
       try {
-        // const currentCaptchaToken = await recaptchaRef.current?.executeAsync();
-        // if (!currentCaptchaToken) {
-        //   toast.error("Failed to verify reCAPTCHA. Please try again.", {
-        //     position: "bottom-center",
-        //   });
-        //   return;
-        // }
-
         const res = await apiClient
-          .post(i18n.language + "/login", {
+          .post(i18n.language + "/forgot-password", {
             json: {
               email: value.email,
-              password: value.password,
-              // captchaToken: currentCaptchaToken,
             },
           })
           .json();
 
-        // console.log("LOGIN_DATA", res);
+        console.log("FORGOT_PASSWORD_DATA", res);
 
-        if (res?.status === true) {
-          localStorage.setItem(
-            "auth-session",
-            JSON.stringify({
-              accessToken: res?.access_token,
-              user: res?.user,
-            }),
-          );
-          setUserSession({
-            accessToken: res?.access_token,
-            user: res?.user,
-          });
-          // Navigate to the protected route
+        if (res?.status) {
+          // Navigate to the login route
           navigate({
-            to: `/${i18n.language}/dashboard`,
+            to: `/${i18n.language}/login`,
           });
         } else {
           toast.error(res?.message || t("error-occurred"));
@@ -108,7 +55,6 @@ function RouteComponent() {
       } catch (error) {
         console.log(error);
         toast.error(error?.response?.message || t("error-occurred"));
-        // recaptchaRef.current?.reset();
       } finally {
         setIsSubmitting(false);
       }
@@ -148,13 +94,13 @@ function RouteComponent() {
                     alt="Regulatory Intelligence Logo"
                     className="h-auto object-contain lg:w-[5rem] md:w-[5rem] w-[4rem]"
                   />
-                  <div className="font-medium text-[2.2rem] md:text-[2.7rem] lg:text-[2.45rem] text-text/80 relative block bg-gradient-to-r from-white to-secondary bg-clip-text text-transparent  leading-[100%] text-center tracking-[.42px]">
+                  <div className="font-medium text-[2.2rem] md:text-[2.7rem] lg:text-[2.45rem]    text-text/80 relative block bg-gradient-to-r from-white to-secondary bg-clip-text text-transparent  leading-[100%] text-center tracking-[.42px]">
                     {settings?.settings?.title || t("logo-text")}
                   </div>
                 </Link>
                 <div className="flex-2/3 bg-white p-5 md:p-10 flex flex-col justify-center gap-5">
                   <div className="font-medium text-[1.8rem] md:text-[2.4rem] lg:text-[2.25rem] relative text-black ltr:leading-[100%] rtl:leading-[120%]">
-                    {t("login-title")}
+                    {t("forgot_password")}
                   </div>
                   <form
                     onSubmit={(e) => {
@@ -193,55 +139,19 @@ function RouteComponent() {
                       )}
                     />
 
-                    <form.Field
-                      name="password"
-                      validators={{
-                        onSubmit: ({ value }) =>
-                          !value
-                            ? t("password-required")
-                            : value?.length < 8
-                              ? t("password-must-be-at-least-8-characters")
-                              : null,
-                      }}
-                      children={(field) => (
-                        <Input
-                          id="password"
-                          name="password"
-                          value={field.state.value}
-                          onChange={(e) => field.handleChange(e.target.value)}
-                          type="password"
-                          label={t("password")}
-                          className=""
-                          error={
-                            field.state.meta.errors.length > 0 ? true : false
-                          }
-                          errorMessage={t(field.state.meta.errors[0])}
-                        />
-                      )}
-                    />
-
                     <div className="relative flex items-center gap-2">
                       <label className="text-[1.2rem] text-black font-secondary">
-                        {t("forgot_password")}
+                        {t("already_have_an_account")}
                       </label>
                       <Link
-                        to={"/" + i18n.language + "/forgot-password"}
+                        to={"/" + i18n.language + "/login"}
                         className="text-[1.2rem] text-black font-secondary underline text-secondary hover:text-primary transition-colors duration-300"
                       >
-                        <span>{t("reset")}</span>
+                        <span>{t("login")}</span>
                       </Link>
                     </div>
-
-                    {/* <div className="flex justify-center w-full">
-                      <ReCAPTCHA
-                        ref={recaptchaRef}
-                        sitekey={RECAPTCHA_SITE_KEY} // Replace with your actual Invisible Site Key
-                        size="invisible"
-                      />
-                    </div> */}
-
                     <DefaultButton
-                      title={t("login")}
+                      title={t("submit")}
                       size="lg"
                       variant="dark"
                       type="submit"

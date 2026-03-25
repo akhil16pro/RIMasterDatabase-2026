@@ -60,6 +60,7 @@ function Input({
             "font-secondary font-light",
             error === true && " border-[var(--brandRed)]",
             type === "password" || (type === "file" && "pe-7"),
+
             className,
           )}
         />

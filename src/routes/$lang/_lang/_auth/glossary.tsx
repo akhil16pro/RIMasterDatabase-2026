@@ -48,7 +48,7 @@ function RouteComponent() {
   const userSession = useAtomValue(userSessionAtom);
 
   const { data, isLoading, error, isRefetching } = useQuery({
-    queryKey: ["glossary"],
+    queryKey: ["glossary", i18n.language],
     enabled: !!userSession?.accessToken,
     refetchOnMount: true,
     refetchOnWindowFocus: true,
@@ -151,7 +151,7 @@ function GlossaryTable() {
   });
 
   const { data, isLoading, error, isRefetching } = useQuery({
-    queryKey: ["glossaryTable", pagination.currentPage],
+    queryKey: ["glossaryTable", pagination.currentPage, i18n.language],
     enabled: !!userSession?.accessToken,
     placeholderData: (previousData) => previousData,
     staleTime: 1000 * 60 * 5,
@@ -281,7 +281,7 @@ function EditAction({ slug, translator }: { slug: string; translator?: any }) {
 
         if (res?.status) {
           toast.success(res?.message || t("success"));
-          queryClient.invalidateQueries({ queryKey: ["glossary"] });
+          queryClient.invalidateQueries({ queryKey: ["glossaryTable"] });
           setOpen(false);
         } else {
           toast.error(res?.message || t("error-occurred"));
@@ -455,7 +455,7 @@ function DeleteAction({
 
         if (res?.status) {
           toast.success(res?.message || t("success"));
-          queryClient.invalidateQueries({ queryKey: ["glossary"] });
+          queryClient.invalidateQueries({ queryKey: ["glossaryTable"] });
           // setOpen(false);
         } else {
           toast.error(res?.message || t("error-occurred"));

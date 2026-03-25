@@ -66,6 +66,7 @@
     "enter-email": "أدخل البريد الإلكتروني",
     "invalid-field": "حقل غير صالح",
     "previous": "السابق",
-    "next": "التالي"
+    "next": "التالي",
+    "passwords-do-not-match": "كلمات المرور غير متطابقة"
   }
 }

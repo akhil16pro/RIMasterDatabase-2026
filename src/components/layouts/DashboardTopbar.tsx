@@ -31,6 +31,8 @@ import { useAtomValue } from "jotai";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "@/api";
 import { toast } from "sonner";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { useRouterState } from "@tanstack/react-router";
 
 export default function DashboardTopbar({
   delay,
@@ -260,22 +262,25 @@ function LoginAvatar() {
 
   const userSession = useAtomValue(userSessionAtom);
 
-  const handleLanguageChange = () => {
+  const queryClient = useQueryClient();
+
+  const { location } = useRouterState();
+
+  const handleLanguageChange = async () => {
     const newLang = i18n.language === "en" ? "ar" : "en";
 
-    i18n.changeLanguage(newLang);
+    await i18n.changeLanguage(newLang);
 
-    const pathSegments = href.split("/").filter(Boolean);
+    const pathSegments = location.pathname.split("/").filter(Boolean);
     pathSegments[0] = newLang;
-
     const newUrl = `/${pathSegments.join("/")}`;
 
     router.navigate({ to: newUrl });
+
+    queryClient.invalidateQueries();
   };
 
   const useLogout = () => {
-    const queryClient = useQueryClient();
-
     return useMutation({
       mutationFn: async () => {
         return await apiClient
@@ -312,11 +317,22 @@ function LoginAvatar() {
     <DropdownMenu dir={isRtl ? "rtl" : "ltr"}>
       <DropdownMenuTrigger asChild>
         <div className="flex  items-center lg:p-2 p-[5px]  rounded-lg bg-[linear-gradient(195deg,rgba(2,46,228,0.4)_0%,rgba(255,201,157,0.4)_100%)] cursor-pointer group ">
-          <img
+          {/* <img
             src={userSession?.user?.photo || userSession?.user?.avatar}
             alt=""
             className="w-8 h-8 md:w-10 md:h-10 lg:w-11 lg:h-11 rounded-[5px] md:rounded-lg me-2 group-hover:scale-105 transition-all duration-300 bg-white object-cover"
-          />
+          /> */}
+          <Avatar className="me-2 rounded-[5px] md:rounded-lg w-8 h-8 md:w-10 md:h-10 lg:w-11 lg:h-11 ">
+            <AvatarImage
+              src={userSession?.user?.photo}
+              alt={userSession?.user?.name}
+              className=""
+            />
+            <AvatarFallback className="rounded-[5px]  ">
+              {userSession?.user?.first_name?.slice(0, 2).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+
           <span className="text-[var(--textColor)] font-semibold md:text-[1.2rem] text-[1rem] leading-[100%] max-w-[7rem] overflow-hidden text-ellipsis whitespace-nowrap">
             {userSession?.user?.name}
           </span>

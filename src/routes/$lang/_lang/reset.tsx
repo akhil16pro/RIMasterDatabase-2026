@@ -9,6 +9,11 @@ import { Input } from "@/components/ui/input";
 import { AnimatePresence, motion } from "motion/react";
 
 import { Link } from "@tanstack/react-router";
+import { settingsAtom } from "@/routes/__root";
+import { useAtomValue } from "jotai";
+import { useForm } from "@tanstack/react-form";
+import { toast } from "sonner";
+import { useState } from "react";
 
 export const Route = createFileRoute("/$lang/_lang/reset")({
   component: RouteComponent,
@@ -16,34 +21,55 @@ export const Route = createFileRoute("/$lang/_lang/reset")({
 
 function RouteComponent() {
   const { t, i18n } = useTranslation();
-
+  const settings = useAtomValue(settingsAtom);
   const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // const { data, isLoading, error, isRefetching } = useQuery({
-  //   queryKey: ['about', i18n.language],
-  //   refetchOnMount: true,
-  //   refetchOnWindowFocus: true,
-  //   staleTime: 1000 * 60 * 60 * 24,
-  //   enabled: true,
-  //   queryFn: async () => {
-  //     try{
-  //       const res = await apiClient.get( i18n.language + '/about').json()
-  //       // console.log('ABOUT_DATA', res?.data)
-  //       return res?.data
-  //     }catch(error) {
-  //       console.log('ABOUT_DATA_ERROR', error)
-  //       return null
-  //     }
-  //   },
-  // })
+  const form = useForm({
+    defaultValues: {
+      password: "",
+      confirm_password: "",
+    },
+    onSubmit: async ({ value }) => {
+      setIsSubmitting(true);
+      try {
+        const res = await apiClient
+          .post(i18n.language + "/reset", {
+            json: {
+              password: value.password,
+              confirm_password: value.confirm_password,
+            },
+          })
+          .json();
+
+        console.log("RESET_DATA", res);
+
+        if (res?.status) {
+          toast.success(res?.message || t("success"));
+
+          // Navigate to the protected route
+          //   navigate({
+          //     to: `/${i18n.language}/login`,
+          //   });
+        } else {
+          toast.error(res?.message || t("error-occurred"));
+        }
+
+        // form.reset();
+      } catch (error) {
+        console.log(error);
+        toast.error(error?.response?.message || t("error-occurred"));
+        // recaptchaRef.current?.reset();
+      } finally {
+        setIsSubmitting(false);
+      }
+    },
+  });
 
   let isLoading = false;
   let error = false;
   let isRefetching = false;
 
-  const data = {
-    title: "RI Unified Master Database",
-  };
   return (
     <AnimatePresence mode={"wait"}>
       {isLoading || isRefetching ? (
@@ -74,20 +100,74 @@ function RouteComponent() {
                     className="h-auto object-contain lg:w-[5rem] md:w-[5rem] w-[4rem]"
                   />
                   <div className="font-medium text-[2.2rem] md:text-[2.7rem] lg:text-[2.45rem]    text-text/80 relative block bg-gradient-to-r from-white to-secondary bg-clip-text text-transparent  leading-[100%] text-center tracking-[.42px]">
-                    {data.title}
+                    {settings?.settings?.title || t("logo-text")}
                   </div>
                 </Link>
                 <div className="flex-2/3 bg-white p-5 md:p-10 flex flex-col justify-center gap-5">
                   <div className="font-medium text-[1.8rem] md:text-[2.4rem] lg:text-[2.25rem] relative text-black ltr:leading-[100%] rtl:leading-[120%]">
-                    {t("forgot_password")}
+                    {t("reset_password")}
                   </div>
-                  <form action="#" className="flex flex-col gap-7">
-                    <Input
-                      type="email"
-                      label={t("email")}
-                      // placeholder={t("enter-email")}
-                      error={true}
-                      errorMessage="Invalid email"
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      form.handleSubmit();
+                    }}
+                    className="flex flex-col gap-7"
+                  >
+                    <form.Field
+                      name="password"
+                      validators={{
+                        onSubmit: ({ value }) =>
+                          !value
+                            ? t("password-required")
+                            : value?.length < 8
+                              ? t("password-must-be-at-least-8-characters")
+                              : null,
+                      }}
+                      children={(field) => (
+                        <Input
+                          id="password"
+                          name="password"
+                          value={field.state.value}
+                          onChange={(e) => field.handleChange(e.target.value)}
+                          type="password"
+                          label={t("password")}
+                          className=""
+                          error={
+                            field.state.meta.errors.length > 0 ? true : false
+                          }
+                          errorMessage={t(field.state.meta.errors[0])}
+                        />
+                      )}
+                    />
+                    <form.Field
+                      name="confirm_password"
+                      validators={{
+                        onSubmit: ({ value, fieldApi }) =>
+                          !value
+                            ? t("password-required")
+                            : value?.length < 8
+                              ? t("password-must-be-at-least-8-characters")
+                              : value !== fieldApi.form.getFieldValue("password")
+                                ? t("passwords-do-not-match")
+                                : null,
+                      }}
+                      children={(field) => (
+                        <Input
+                          id="confirm_password"
+                          name="confirm_password"
+                          value={field.state.value}
+                          onChange={(e) => field.handleChange(e.target.value)}
+                          type="password"
+                          label={t("confirm_password")}
+                          className=""
+                          error={
+                            field.state.meta.errors.length > 0 ? true : false
+                          }
+                          errorMessage={field.state.meta.errors[0] ? t(field.state.meta.errors[0] as string) : ""}
+                        />
+                      )}
                     />
 
                     <div className="relative flex items-center gap-2">
@@ -105,7 +185,10 @@ function RouteComponent() {
                       title={t("submit")}
                       size="lg"
                       variant="dark"
-                      onClick={() => {}}
+                      type="submit"
+                      onClick={form.handleSubmit}
+                      disabled={isSubmitting}
+                      isLoading={isSubmitting}
                     />
                   </form>
                 </div>

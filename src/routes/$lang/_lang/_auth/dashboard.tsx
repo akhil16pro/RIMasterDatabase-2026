@@ -234,7 +234,7 @@ function PerformingEntitiesCard({ delay, data }: { delay: number; data: any }) {
     error,
     isRefetching,
   } = useQuery({
-    queryKey: ["dashboardGraphData", selectedValues],
+    queryKey: ["dashboardGraphData", selectedValues, i18n.language],
     queryFn: async () => {
       const res = await apiClient
         .post(i18n.language + "/get_usergraph_data", {
