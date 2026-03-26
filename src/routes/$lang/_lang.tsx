@@ -56,6 +56,20 @@ function RouteComponent() {
 
         <svg width="0" height="0">
           <linearGradient
+            id="button_linear_green"
+            x1="24.2998"
+            y1="3.79999"
+            x2="-6.20019"
+            y2="22.3"
+            gradientUnits="userSpaceOnUse"
+          >
+            <stop stopColor="#15bf94" />
+            <stop offset="1" stopColor="#abe0d3" />
+          </linearGradient>
+        </svg>
+
+        <svg width="0" height="0">
+          <linearGradient
             id="dashboard_linear"
             x1="23.1869"
             y1="14.8085"

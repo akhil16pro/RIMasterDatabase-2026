@@ -19,6 +19,7 @@ import {
   CircleCheck,
   Pencil,
   X,
+  Eye,
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -213,6 +214,7 @@ function GlossaryTable() {
           tableData={data?.glossaries}
           EditAction={EditAction}
           DeleteAction={DeleteAction}
+          ViewAction={ViewAction}
           translator={data?.translator}
           onStatusToggle={
             userSession?.user?.roles.includes("admin")
@@ -238,6 +240,115 @@ function GlossaryTable() {
         />
       )}
     </>
+  );
+}
+
+function ViewAction({ slug }: { slug: string }) {
+  const { t, i18n } = useTranslation();
+
+  const [open, setOpen] = useState(false);
+  const queryClient = useQueryClient();
+  const userSession = useAtomValue(userSessionAtom);
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["glossaryView", slug],
+    queryFn: async () => {
+      const res = await apiClient
+        .get(i18n.language + "/glossary/edit/" + slug, {
+          headers: {
+            Authorization: `Bearer ${userSession?.accessToken}`,
+          },
+        })
+        .json();
+      console.log(res?.data, "dsf");
+      return res?.data;
+    },
+    enabled: open,
+    staleTime: 0,
+  });
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        }}
+      >
+        <DialogTrigger asChild>
+          <DefaultButton
+            icon={<Eye className="size-4" stroke="url(#button_linear_green)" />}
+            rounded={true}
+            iconGradient={"view"}
+            toolTip={pageTranslation?.view || t("view")}
+            toolTipClass="viewTip"
+          />
+        </DialogTrigger>
+        <DialogContent className="lg:max-w-4xl">
+          <DialogHeader>
+            <DialogTitle>
+              {pageTranslation?.glossary_details || t("view-glossary")}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="grid md:grid-cols-2 gap-x-8 gap-y-7 items-start">
+            <Input
+              id="title"
+              name="title"
+              value={data?.glossaryData?.title}
+              label={pageTranslation?.title_english || t("title-english")}
+              className=""
+              dir="ltr"
+              isLoading={isLoading}
+            />
+
+            <Input
+              id="title_arabic"
+              name="title_arabic"
+              value={data?.glossaryData?.title_arabic}
+              label={pageTranslation?.title_arabic || t("title-arabic")}
+              className=""
+              dir="rtl"
+              isLoading={isLoading}
+            />
+
+            <Input
+              id="description"
+              name="description"
+              value={data?.glossaryData?.description}
+              label={
+                pageTranslation?.description_english || t("description-english")
+              }
+              dir="ltr"
+              type="textarea"
+              isLoading={isLoading}
+            />
+
+            <Input
+              id="description_arabic"
+              name="description_arabic"
+              value={data?.glossaryData?.description_arabic}
+              label={
+                pageTranslation?.description_arabic || t("description-arabic")
+              }
+              dir="rtl"
+              type="textarea"
+              isLoading={isLoading}
+            />
+            <div className="inline-flex gap-2 text-[var(--textColor)] text-[1.2rem]">
+              <label className="text-muted-foreground">
+                {pageTranslation?.status || t("status")}
+              </label>
+              <div className="flex gap-1 items-center">
+                <label className="font-bold">
+                  {pageTranslation?.draft || t("draft")}
+                </label>
+                <CircleCheck className="size-[14px]" strokeWidth={1} />
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </form>
+    </Dialog>
   );
 }
 

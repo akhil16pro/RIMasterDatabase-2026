@@ -22,6 +22,7 @@ export const Table = ({
   tableData,
   EditAction,
   DeleteAction,
+  ViewAction,
   className = "",
   translator,
   onStatusToggle,
@@ -126,6 +127,9 @@ export const Table = ({
                             )}
                             {action.type === "delete" && (
                               <DeleteAction slug={row?.slug} />
+                            )}
+                            {action.type === "view" && (
+                              <ViewAction slug={row?.slug} />
                             )}
                           </React.Fragment>
                         ))}

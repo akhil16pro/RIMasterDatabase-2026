@@ -110,6 +110,9 @@
     "use-a-more-complex-password": "Use a more complex password",
     "use-a-less-complex-password": "Use a less complex password",
     "use-a-longer-password": "Use a longer password",
-    "use-a-shorter-password": "Use a shorter password"
+    "use-a-shorter-password": "Use a shorter password",
+    "glossary_details": "Glossary Details",
+    "view": "View",
+    "view_glossary": "View Glossary"
   }
 }

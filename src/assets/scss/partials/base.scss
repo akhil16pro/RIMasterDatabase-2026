@@ -404,6 +404,18 @@ input {
         fill: #f07067;
       }
     }
+    &.viewTip {
+      color: var(--color-white);
+      background-image: linear-gradient(0deg, #15bf94 15%, #abe0d3 120%);
+      span {
+        svg.bg-foreground {
+          background: #15bf94;
+        }
+      }
+      svg {
+        fill: #15bf94;
+      }
+    }
   }
   svg {
     fill: var(--color-secondary);
