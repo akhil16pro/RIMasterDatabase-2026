@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
-import { Eye, EyeOff, Upload } from "lucide-react";
+import { Eye, EyeOff, Upload, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useId, useRef, useState } from "react";
 
@@ -12,12 +12,13 @@ function Input({
   errorMessage,
   id,
   label,
-
+  isLoading = false,
   ...props
 }: React.ComponentProps<"input"> & {
   error?: boolean;
   errorMessage?: string;
   label?: string;
+  isLoading?: boolean;
 }) {
   const [showPassword, setShowPassword] = useState(false);
   const { t } = useTranslation();
@@ -70,18 +71,20 @@ function Input({
         <label
           htmlFor={inputId}
           className={cn(
-            "absolute  top-[.25rem] -translate-y-full text-[0.85rem] text-black/70 transition-all pointer-events-none leading-[100%]",
+            "absolute top-[.25rem] -translate-y-full text-[0.85rem] text-black/70 transition-all pointer-events-none leading-[100%]",
 
             type === "textarea"
-              ? "peer-placeholder-shown:top-2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-[1.2rem] peer-placeholder-shown:text-black/70"
-              : "peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-[1.2rem] peer-placeholder-shown:text-black/70",
+              ? "peer-placeholder-shown:top-2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-[1.2rem]"
+              : "peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-[1.2rem]",
 
-            "peer-focus:top-[.25rem] peer-focus:-translate-y-full peer-focus:text-[0.85rem] peer-focus:text-black/70",
+            "peer-focus:top-[.25rem] peer-focus:-translate-y-full peer-focus:text-[0.85rem]",
+            "peer-autofill:top-[.25rem] peer-autofill:-translate-y-full peer-autofill:text-[0.85rem]",
 
             error === true &&
               "text-[var(--brandRed)] peer-focus:text-[var(--brandRed)] peer-placeholder-shown:text-[var(--brandRed)]",
             props.placeholder &&
               "peer-placeholder-shown:top-[.25rem] peer-placeholder-shown:-translate-y-full peer-placeholder-shown:text-[.85rem] peer-placeholder-shown:text-black/70",
+
             props.dir
               ? props.dir === "rtl"
                 ? "right-0 "
@@ -123,6 +126,16 @@ function Input({
         >
           {errorMessage || t("invalid-field")}
         </span>
+      )}
+      {isLoading && (
+        <div
+          className={cn(
+            "absolute ltr:right-0 rtl:left-0 top-[50%] translate-y-[-50%] cursor-wait opacity-20",
+            type === "textarea" && "bottom-3 top-auto translate-y-[0%]",
+          )}
+        >
+          <Loader2 className=" text-black/50 w-5 h-5 animate-spin" />
+        </div>
       )}
     </div>
   );

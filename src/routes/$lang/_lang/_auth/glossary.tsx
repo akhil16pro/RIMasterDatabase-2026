@@ -37,6 +37,7 @@ import { toast } from "sonner";
 import { useAtomValue } from "jotai";
 import { userSessionAtom } from "@/store/atoms";
 import { Pagination } from "@/components/ui/Pagination";
+import { useEffect } from "react";
 
 export const Route = createFileRoute("/$lang/_lang/_auth/glossary")({
   component: RouteComponent,
@@ -241,9 +242,8 @@ function EditAction({ slug, translator }: { slug: string; translator?: any }) {
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
   const userSession = useAtomValue(userSessionAtom);
-  // console.log(slug, "edit slug");
 
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["glossaryEdit", slug],
     queryFn: async () => {
       const res = await apiClient
@@ -255,14 +255,16 @@ function EditAction({ slug, translator }: { slug: string; translator?: any }) {
         .json();
       return res?.data;
     },
+    enabled: open,
+    staleTime: 0,
   });
 
   const form = useForm({
     defaultValues: {
-      title: data?.glossaryData?.title || "",
-      title_arabic: data?.glossaryData?.title_arabic || "",
-      description: data?.glossaryData?.description || "",
-      description_arabic: data?.glossaryData?.description_arabic || "",
+      title: "",
+      title_arabic: "",
+      description: "",
+      description_arabic: "",
     },
     onSubmit: async ({ value }) => {
       setIsSubmitting(true);
@@ -296,6 +298,18 @@ function EditAction({ slug, translator }: { slug: string; translator?: any }) {
       }
     },
   });
+
+  useEffect(() => {
+    if (data?.glossaryData) {
+      form.setFieldValue("title", data.glossaryData?.title || "");
+      form.setFieldValue("title_arabic", data.glossaryData?.title_arabic || "");
+      form.setFieldValue("description", data.glossaryData?.description || "");
+      form.setFieldValue(
+        "description_arabic",
+        data.glossaryData?.description_arabic || "",
+      );
+    }
+  }, [data, form]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -336,6 +350,7 @@ function EditAction({ slug, translator }: { slug: string; translator?: any }) {
                   dir="ltr"
                   error={field.state.meta.errors.length > 0 ? true : false}
                   errorMessage={field.state.meta.errors[0]}
+                  isLoading={isLoading}
                 />
               )}
             />
@@ -355,6 +370,7 @@ function EditAction({ slug, translator }: { slug: string; translator?: any }) {
                   dir="rtl"
                   error={field.state.meta.errors.length > 0 ? true : false}
                   errorMessage={t(field.state.meta.errors[0])}
+                  isLoading={isLoading}
                 />
               )}
             />
@@ -375,6 +391,7 @@ function EditAction({ slug, translator }: { slug: string; translator?: any }) {
                   type="textarea"
                   error={field.state.meta.errors.length > 0 ? true : false}
                   errorMessage={t(field.state.meta.errors[0])}
+                  isLoading={isLoading}
                 />
               )}
             />
@@ -395,6 +412,7 @@ function EditAction({ slug, translator }: { slug: string; translator?: any }) {
                   type="textarea"
                   error={field.state.meta.errors.length > 0 ? true : false}
                   errorMessage={t(field.state.meta.errors[0])}
+                  isLoading={isLoading}
                 />
               )}
             />

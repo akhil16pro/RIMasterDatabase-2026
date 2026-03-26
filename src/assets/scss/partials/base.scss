@@ -152,6 +152,20 @@ html[dir="rtl"] {
   }
 }
 
+input:-internal-autofill-selected {
+  background: transparent;
+}
+input {
+  &:-webkit-autofill,
+  &:-webkit-autofill:hover,
+  &:-webkit-autofill:focus,
+  &:-webkit-autofill:active {
+    -webkit-text-fill-color: var(--color-bg);
+    -webkit-box-shadow: 0 0 0px 1000px var(--color-white) inset;
+    transition: background-color 5000s ease-in-out 0s;
+  }
+}
+
 .mainBody {
   @media only screen and (min-width: rem(1025)) {
     padding: 1.25rem;

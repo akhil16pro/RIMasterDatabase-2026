@@ -274,7 +274,6 @@ function LoginAvatar() {
     const newUrl = `/${pathSegments.join("/")}`;
 
     router.navigate({ to: newUrl });
-
     queryClient.invalidateQueries({ queryKey: ["userInfo"] });
   };
 
@@ -289,20 +288,23 @@ function LoginAvatar() {
           })
           .json();
       },
-      onMutate: async () => {
+      onSuccess: async () => {
         setUserSession(null);
         localStorage.removeItem("auth-session");
 
         queryClient.clear();
-      },
-      onSettled: () => {
+
         router.navigate({
           to: "/$lang/login",
           params: { lang: i18n.language },
         });
       },
+
       onError: (error) => {
         console.error("Logout failed:", error);
+        setUserSession(null);
+        localStorage.removeItem("auth-session");
+        queryClient.clear();
         toast.error(error?.message || t("logout-failed"));
       },
     });
