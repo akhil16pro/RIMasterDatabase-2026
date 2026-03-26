@@ -61,7 +61,7 @@ export default function BarChart({
   }, [data, updateHeights]);
 
   return (
-    <div className="barChart w-full h-full grid grid-flow-row md:grid-flow-col  gap-4 relative ps-0 md:ps-10">
+    <div className="barChart w-full h-full grid grid-flow-row md:grid-cols-10  gap-4 relative ps-0 md:ps-10">
       {!isMobile && (
         <div
           className="bgLayer absolute left-0 top-0 w-full z-0  flex flex-col justify-between pointer-events-none "
@@ -160,8 +160,8 @@ function Bar({ item, index, maxLabelHeight, labelRefs, isMobile }: any) {
                   }
                   animate={
                     isMobile
-                      ? { width: `${item.value}%` }
-                      : { height: `${item.value}%` }
+                      ? { width: `${item.percentage}%` }
+                      : { height: `${item.percentage}%` }
                   }
                   transition={{
                     delay: index * 0.1,
@@ -196,7 +196,7 @@ function Bar({ item, index, maxLabelHeight, labelRefs, isMobile }: any) {
         )}
       </div>
       <div
-        className="flex  md:justify-center md:text-center order-1 md:order-2 "
+        className="flex justify-center md:text-center order-1 md:order-2 "
         style={{
           height:
             !isMobile && maxLabelHeight > 0 ? `${maxLabelHeight}px` : "auto",

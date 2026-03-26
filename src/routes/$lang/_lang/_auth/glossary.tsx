@@ -43,6 +43,8 @@ export const Route = createFileRoute("/$lang/_lang/_auth/glossary")({
   component: RouteComponent,
 });
 
+let pageTranslation = [];
+
 function RouteComponent() {
   const { t, i18n } = useTranslation();
 
@@ -63,7 +65,10 @@ function RouteComponent() {
             },
           })
           .json();
-        // console.log("GLOSSARY_DATA", res?.data);
+        console.log("GLOSSARY_DATA", res?.data);
+
+        pageTranslation = res?.data?.translator;
+        // console.log(pageTranslation, "pageTranslation");
         return res?.data;
       } catch (error) {
         console.log("GLOSSARY_DATA_ERROR", error);
@@ -96,7 +101,7 @@ function RouteComponent() {
               <div className="contentBox">
                 <DashboardTopbar
                   delay={0}
-                  title={data?.translator?.glossary || t("glossary")}
+                  title={pageTranslation?.glossary || t("glossary")}
                   campaign={data?.campaign}
                   translator={data?.translator}
                 />
@@ -112,12 +117,12 @@ function RouteComponent() {
                     className="flex flex-wrap md:justify-end gap-2"
                   >
                     <div className="md:flex-1">
-                      <AddGlossaryModal translator={data?.translator} />
+                      <AddGlossaryModal />
                     </div>
 
                     <DefaultButton
                       title={
-                        data?.translator?.download_excel_template ||
+                        pageTranslation?.download_excel_template ||
                         t("download-excel-template")
                       }
                       icon={<Download className="size-5" />}
@@ -126,9 +131,9 @@ function RouteComponent() {
                       }}
                     />
 
-                    <UploadExcelModal translator={data?.translator} />
+                    <UploadExcelModal />
                     <DefaultButton
-                      title={data?.translator?.guideline || t("guideline")}
+                      title={pageTranslation?.guideline || t("guideline")}
                       icon={<BookOpenText className="size-5" />}
                     />
                   </motion.div>
@@ -236,7 +241,7 @@ function GlossaryTable() {
   );
 }
 
-function EditAction({ slug, translator }: { slug: string; translator?: any }) {
+function EditAction({ slug }: { slug: string }) {
   const { t, i18n } = useTranslation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [open, setOpen] = useState(false);
@@ -325,13 +330,15 @@ function EditAction({ slug, translator }: { slug: string; translator?: any }) {
             icon={<PenLine className="size-4" stroke="url(#button_linear)" />}
             rounded={true}
             iconGradient={"edit"}
-            toolTip={t("edit")}
+            toolTip={pageTranslation?.edit || t("edit")}
             toolTipClass="editTip"
           />
         </DialogTrigger>
         <DialogContent className="lg:max-w-4xl">
           <DialogHeader>
-            <DialogTitle>{t("edit-glossary")}</DialogTitle>
+            <DialogTitle>
+              {pageTranslation?.edit_glossary || t("edit-glossary")}
+            </DialogTitle>
           </DialogHeader>
           <div className="grid md:grid-cols-2 gap-x-8 gap-y-7 items-start">
             <form.Field
@@ -345,7 +352,7 @@ function EditAction({ slug, translator }: { slug: string; translator?: any }) {
                   name="title"
                   value={field.state.value}
                   onChange={(e) => field.handleChange(e.target.value)}
-                  label={t("title-english")}
+                  label={pageTranslation?.title_english || t("title-english")}
                   className=""
                   dir="ltr"
                   error={field.state.meta.errors.length > 0 ? true : false}
@@ -365,7 +372,7 @@ function EditAction({ slug, translator }: { slug: string; translator?: any }) {
                   name="title_arabic"
                   value={field.state.value}
                   onChange={(e) => field.handleChange(e.target.value)}
-                  label={t("title-arabic")}
+                  label={pageTranslation?.title_arabic || t("title-arabic")}
                   className=""
                   dir="rtl"
                   error={field.state.meta.errors.length > 0 ? true : false}
@@ -386,7 +393,10 @@ function EditAction({ slug, translator }: { slug: string; translator?: any }) {
                   name="description"
                   value={field.state.value}
                   onChange={(e) => field.handleChange(e.target.value)}
-                  label={t("description-english")}
+                  label={
+                    pageTranslation?.description_english ||
+                    t("description-english")
+                  }
                   dir="ltr"
                   type="textarea"
                   error={field.state.meta.errors.length > 0 ? true : false}
@@ -407,7 +417,10 @@ function EditAction({ slug, translator }: { slug: string; translator?: any }) {
                   name="description_arabic"
                   value={field.state.value}
                   onChange={(e) => field.handleChange(e.target.value)}
-                  label={t("description-arabic")}
+                  label={
+                    pageTranslation?.description_arabic ||
+                    t("description-arabic")
+                  }
                   dir="rtl"
                   type="textarea"
                   error={field.state.meta.errors.length > 0 ? true : false}
@@ -417,9 +430,13 @@ function EditAction({ slug, translator }: { slug: string; translator?: any }) {
               )}
             />
             <div className="inline-flex gap-2 text-[var(--textColor)] text-[1.2rem]">
-              <label className="text-muted-foreground">{t("status")}</label>
+              <label className="text-muted-foreground">
+                {pageTranslation?.status || t("status")}
+              </label>
               <div className="flex gap-1 items-center">
-                <label className="font-bold">{t("draft")}</label>
+                <label className="font-bold">
+                  {pageTranslation?.draft || t("draft")}
+                </label>
                 <CircleCheck className="size-[14px]" strokeWidth={1} />
               </div>
             </div>
@@ -428,7 +445,7 @@ function EditAction({ slug, translator }: { slug: string; translator?: any }) {
             <DefaultButton
               type="submit"
               variant="dark"
-              title={t("update")}
+              title={pageTranslation?.update || t("update")}
               onClick={form.handleSubmit}
               icon={<Pencil className="size-5" />}
               isDisabled={isSubmitting}
@@ -441,13 +458,7 @@ function EditAction({ slug, translator }: { slug: string; translator?: any }) {
   );
 }
 
-function DeleteAction({
-  slug,
-  translator,
-}: {
-  slug: string;
-  translator?: any;
-}) {
+function DeleteAction({ slug }: { slug: string }) {
   const { t, i18n } = useTranslation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [open, setOpen] = useState(false);
@@ -505,19 +516,19 @@ function DeleteAction({
             }
             rounded={true}
             iconGradient={"delete"}
-            toolTip={t("delete")}
+            toolTip={pageTranslation?.delete || t("delete")}
             toolTipClass="deleteTip"
           />
         </DialogTrigger>
         <DialogContent className="lg:max-w-xl">
           <DialogHeader>
             <DialogTitle>
-              {translator?.delete_glossary || t("delete-glossary")}
+              {pageTranslation?.delete_glossary || t("delete-glossary")}
             </DialogTitle>
           </DialogHeader>
           <div className="flex">
             <p className=" text-lg font-secondary text-[var(--textColor)]">
-              {translator?.are_you_sure ||
+              {pageTranslation?.are_you_sure ||
                 t("are-you-sure-you-want-to-delete-this-glossary")}
             </p>
           </div>
@@ -525,7 +536,7 @@ function DeleteAction({
             <DefaultButton
               type="button"
               variant="dark"
-              title={translator?.cancel || t("cancel")}
+              title={pageTranslation?.cancel || t("cancel")}
               onClick={() => setOpen(false)}
               icon={<X className="size-5" />}
               isDisabled={isSubmitting}
@@ -534,7 +545,7 @@ function DeleteAction({
             <DefaultButton
               type="submit"
               variant="dark"
-              title={translator?.delete || t("delete")}
+              title={pageTranslation?.delete || t("delete")}
               onClick={form.handleSubmit}
               icon={<Trash2 className="size-5" />}
               isDisabled={isSubmitting}
@@ -548,7 +559,7 @@ function DeleteAction({
   );
 }
 
-function AddGlossaryModal({ translator }: { translator?: any }) {
+function AddGlossaryModal() {
   const { t, i18n } = useTranslation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [open, setOpen] = useState(false);
@@ -609,7 +620,7 @@ function AddGlossaryModal({ translator }: { translator?: any }) {
       >
         <DialogTrigger asChild>
           <DefaultButton
-            title={translator?.add_glossary || t("add-glossary")}
+            title={pageTranslation?.add_glossary || t("add-glossary")}
             variant="dark"
             icon={<Plus className="size-5" />}
             className=""
@@ -618,7 +629,7 @@ function AddGlossaryModal({ translator }: { translator?: any }) {
         <DialogContent className="lg:max-w-4xl">
           <DialogHeader>
             <DialogTitle>
-              {translator?.add_glossary || t("add-glossary")}
+              {pageTranslation?.add_glossary || t("add-glossary")}
             </DialogTitle>
           </DialogHeader>
           <div className="grid md:grid-cols-2 gap-x-8 gap-y-7 items-start">
@@ -712,7 +723,7 @@ function AddGlossaryModal({ translator }: { translator?: any }) {
             <DefaultButton
               type="submit"
               variant="dark"
-              title={t("add-item")}
+              title={pageTranslation?.add_item || t("add-item")}
               onClick={form.handleSubmit}
               icon={<Plus className="size-5" />}
               isDisabled={isSubmitting}
@@ -725,7 +736,7 @@ function AddGlossaryModal({ translator }: { translator?: any }) {
   );
 }
 
-function UploadExcelModal({ translator }: { translator?: any }) {
+function UploadExcelModal() {
   const { t, i18n } = useTranslation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [open, setOpen] = useState(false);
@@ -787,14 +798,14 @@ function UploadExcelModal({ translator }: { translator?: any }) {
         <DialogTrigger asChild>
           <DefaultButton
             className=""
-            title={translator?.upload_excel || t("upload-excel")}
+            title={pageTranslation?.upload_excel || t("upload-excel")}
             icon={<Upload className="size-5" />}
           />
         </DialogTrigger>
         <DialogContent className="lg:max-w-2xl">
           <DialogHeader>
             <DialogTitle>
-              {translator?.upload_excel || t("upload-excel")}
+              {pageTranslation?.upload_excel || t("upload-excel")}
             </DialogTitle>
           </DialogHeader>
 
@@ -822,7 +833,7 @@ function UploadExcelModal({ translator }: { translator?: any }) {
                   const file = e.target.files?.[0]; // Get the actual File object
                   field.handleChange(file);
                 }}
-                label={t("file")}
+                label={pageTranslation?.file || t("file")}
                 className=""
                 type="file"
                 error={field.state.meta.errors.length > 0 ? true : false}
@@ -836,7 +847,7 @@ function UploadExcelModal({ translator }: { translator?: any }) {
             <DefaultButton
               type="submit"
               variant="dark"
-              title={t("upload-file")}
+              title={pageTranslation?.upload_file || t("upload-file")}
               onClick={form.handleSubmit}
               icon={<Plus className="size-5" />}
               isDisabled={isSubmitting}

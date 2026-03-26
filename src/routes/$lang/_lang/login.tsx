@@ -30,17 +30,15 @@ export const Route = createFileRoute("/$lang/_lang/login")({
 
   beforeLoad: async ({ location, params }) => {
     let userSession = store.get(userSessionAtom);
+    const stored = localStorage.getItem("auth-session");
+    if (stored || userSession?.accessToken) {
+      const parsed = JSON.parse(stored);
+      // console.log(userSession, parsed, "userSession");
 
-    if (!userSession && typeof window !== "undefined") {
-      const stored = localStorage.getItem("auth-session");
-
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (parsed?.accessToken) {
-          throw redirect({
-            to: `/${params.lang}/dashboard`,
-          });
-        }
+      if (parsed?.accessToken || userSession?.accessToken) {
+        throw redirect({
+          to: `/${params.lang}/dashboard`,
+        });
       }
     }
   },

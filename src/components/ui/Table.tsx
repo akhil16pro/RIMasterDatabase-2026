@@ -122,16 +122,10 @@ export const Table = ({
                         {row.actions?.map((action: any, aIndex: number) => (
                           <React.Fragment key={`action-${aIndex}-${row.id}`}>
                             {action.type === "edit" && (
-                              <EditAction
-                                slug={row?.slug}
-                                translator={translator}
-                              />
+                              <EditAction slug={row?.slug} />
                             )}
                             {action.type === "delete" && (
-                              <DeleteAction
-                                slug={row?.slug}
-                                translator={translator}
-                              />
+                              <DeleteAction slug={row?.slug} />
                             )}
                           </React.Fragment>
                         ))}
