@@ -16,12 +16,11 @@ export const Route = createFileRoute("/$lang/_lang/")({
 function RouteComponent() {
   const { i18n } = useTranslation();
 
-  const { data, isLoading, error, isRefetching } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ["home", i18n.language],
     refetchOnMount: true,
     refetchOnWindowFocus: true,
     staleTime: 1000 * 60 * 60 * 24,
-    enabled: true,
     queryFn: async () => {
       try {
         const res = await apiClient.get(i18n.language + "/home").json();
@@ -34,17 +33,16 @@ function RouteComponent() {
     },
   });
 
+  // const isLoading = true;
+
   return (
     <AnimatePresence mode={"wait"}>
-      {isLoading || isRefetching ? (
-        <RouteLoader key="about-loader" />
+      {isLoading ? (
+        <RouteLoader key="loader" />
       ) : error ? (
-        <RoteError key="about-error" />
+        <RoteError key="error" />
       ) : (
-        <div
-          key="home-content"
-          className="flex flex-col items-center justify-center w-full min-h-screen flex-1"
-        >
+        <div className="flex flex-col items-center justify-center w-full min-h-screen flex-1">
           <AppHeader delay={1} />
           <HomeBanner data={data} />
         </div>
@@ -54,7 +52,7 @@ function RouteComponent() {
 }
 
 function HomeBanner({ data }: { data: any }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { scrollY } = useScroll();
 
   const heroTranslateY = useTransform(scrollY, [0, 380], [0, -70]);
@@ -70,6 +68,7 @@ function HomeBanner({ data }: { data: any }) {
       id="home-banner"
     >
       <motion.div
+        key={`home-banner-bg-${i18n.language}`}
         initial={{ opacity: 0, y: 0, scale: 1.4 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={{ opacity: 0, y: 0, scale: 1.4 }}
@@ -94,12 +93,13 @@ function HomeBanner({ data }: { data: any }) {
         /> */}
       </motion.div>
       <div className="relative w-full  flex items-center justify-center">
-        <motion.div
+        <div
           // style={{ y: heroTranslateY, scale: heroScale, opacity: heroOpacity }}
           className="container mx-auto relative z-10 "
         >
           <div className="block xl:min-w-[68%] xl:max-w-[68%] lg:min-w-[75%] lg:max-w-[75%] md:min-w-[85%] md:max-w-[85%] min-w-[90%] max-w-[90%] relative m-auto">
             <motion.div
+              key={`home-banner-text-${i18n.language}`}
               layout
               initial={{
                 clipPath: "polygon(50% 0, 50% 0, 50% 100%, 50% 100%)",
@@ -152,6 +152,7 @@ function HomeBanner({ data }: { data: any }) {
             {data?.introduction?.description ? (
               <div className="flex flex-col relative ">
                 <motion.div
+                  key={`home-banner-description-${i18n.language}`}
                   initial={{ opacity: 0, y: 50, scaleY: 1.1, skewY: 2 }}
                   animate={{ opacity: 1, y: 0, scaleY: 1, skewY: 0 }}
                   exit={{ opacity: 0, y: 50, scaleY: 1.1, skewY: 2 }}
@@ -162,6 +163,7 @@ function HomeBanner({ data }: { data: any }) {
                   }}
                 ></motion.div>
                 <motion.div
+                  key={`home-banner-more-${i18n.language}`}
                   initial={{ opacity: 0, y: 150 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 1, delay: 2 }}
@@ -218,7 +220,7 @@ function HomeBanner({ data }: { data: any }) {
               </div>
             ) : null}
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );
