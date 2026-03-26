@@ -82,38 +82,60 @@ function RouteComponent() {
           })
           .json();
 
-        // console.log("LOGIN_DATA", res);
+        console.log("LOGIN_DATA", res);
 
         if (res?.status === true) {
-          localStorage.setItem(
-            "auth-session",
-            JSON.stringify({
-              accessToken: res?.access_token,
-              user: res?.user,
-            }),
-          );
-          setUserSession({
-            accessToken: res?.access_token,
-            user: res?.user,
-          });
-          // Navigate to the protected route
-          navigate({
-            to: `/${i18n.language}/dashboard`,
-          });
+          loginDir(res);
         } else {
           toast.error(res?.message || t("error-occurred"));
         }
 
         // form.reset();
       } catch (error) {
-        console.log(error);
-        toast.error(error?.response?.message || t("error-occurred"));
+        if (error?.name === "HTTPError") {
+          try {
+            const errorData = await error?.response?.json();
+
+            if (errorData?.status) {
+              toast.success(errorData?.message);
+              form.reset();
+
+              loginDir(errorData);
+            } else {
+              toast.error(errorData?.message || t("error-occurred"));
+            }
+          } catch (parseError) {
+            toast.error(t("error-occurred"));
+          }
+        } else {
+          console.error("Generic Error:", error);
+          toast.error(t("error-occurred"));
+        }
+
         // recaptchaRef.current?.reset();
       } finally {
         setIsSubmitting(false);
       }
     },
   });
+
+  const loginDir = (res: any) => {
+    localStorage.setItem(
+      "auth-session",
+      JSON.stringify({
+        accessToken: res?.access_token,
+        user: res?.user,
+      }),
+    );
+    setUserSession({
+      accessToken: res?.access_token,
+      user: res?.user,
+    });
+    // Navigate to the protected route
+    navigate({
+      to: `/${i18n.language}/dashboard`,
+    });
+  };
 
   let isLoading = false;
   let error = false;

@@ -20,7 +20,9 @@ export default function AppHeader({ delay }: { delay: number }) {
   const [scrollDirection, setScrollDirection] = useAtom(scrollDirectionAtom);
   const { href } = useLocation();
   const router = useRouter();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  const isLargeTablet = useMobile(1024);
   const { data, isLoading, error, isRefetching } = useQuery({
     queryKey: ["menu", i18n.language],
     refetchOnMount: true,
@@ -42,6 +44,7 @@ export default function AppHeader({ delay }: { delay: number }) {
   useMotionValueEvent(scrollY, "change", (current) => {
     const diff = current - scrollY.getPrevious();
     setScrollDirection(diff > 1 ? "down" : "up");
+    isMenuOpen === true && setScrollDirection("up");
   });
 
   const onChangeLanguage = () => {
@@ -51,10 +54,6 @@ export default function AppHeader({ delay }: { delay: number }) {
     const newUrl = "/" + lang + "/" + ur.join("/");
     router.navigate({ to: newUrl });
   };
-
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  const isLargeTablet = useMobile(1024);
 
   return (
     <>
