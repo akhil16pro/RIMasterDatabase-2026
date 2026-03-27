@@ -86,7 +86,6 @@ function RouteComponent() {
   campaignEndDate.setHours(0, 0, 0, 0);
 
   const isCampaignActive = campaignStartDate <= now && campaignEndDate >= now;
-  console.log(campaignEndDate, now, "campaignEndDate");
 
   return (
     <>
@@ -291,7 +290,7 @@ function ViewAction({ slug }: { slug: string }) {
         <DialogContent className="lg:max-w-4xl">
           <DialogHeader>
             <DialogTitle>
-              {pageTranslation?.glossary_details || t("view-glossary")}
+              {pageTranslation?.glossary_details || t("glossary_details")}
             </DialogTitle>
           </DialogHeader>
           <div className="grid md:grid-cols-2 gap-x-8 gap-y-7 items-start">
@@ -303,6 +302,7 @@ function ViewAction({ slug }: { slug: string }) {
               className=""
               dir="ltr"
               isLoading={isLoading}
+              readOnly
             />
 
             <Input
@@ -313,6 +313,7 @@ function ViewAction({ slug }: { slug: string }) {
               className=""
               dir="rtl"
               isLoading={isLoading}
+              readOnly
             />
 
             <Input
@@ -325,6 +326,7 @@ function ViewAction({ slug }: { slug: string }) {
               dir="ltr"
               type="textarea"
               isLoading={isLoading}
+              readOnly
             />
 
             <Input
@@ -337,16 +339,54 @@ function ViewAction({ slug }: { slug: string }) {
               dir="rtl"
               type="textarea"
               isLoading={isLoading}
+              readOnly
             />
+
+            <Input
+              id="created_by"
+              name="created_by"
+              value={data?.glossaryData?.user_info?.name}
+              label={pageTranslation?.created_by || t("created-by")}
+              type="text"
+              isLoading={isLoading}
+              readOnly
+            />
+            <Input
+              id="entity_name"
+              name="entity_name"
+              value={data?.glossaryData?.entity_info?.title}
+              label={pageTranslation?.entity_name || t("entity-name")}
+              type="text"
+              isLoading={isLoading}
+              readOnly
+            />
+
             <div className="inline-flex gap-2 text-[var(--textColor)] text-[1.2rem]">
               <label className="text-muted-foreground">
                 {pageTranslation?.status || t("status")}
               </label>
               <div className="flex gap-1 items-center">
-                <label className="font-bold">
-                  {pageTranslation?.draft || t("draft")}
+                <label
+                  className={cn(
+                    "font-bold",
+                    data?.glossaryData?.status === 1
+                      ? "text-[var(--color-success)]"
+                      : "text-[var(--color-danger)]",
+                  )}
+                >
+                  {data?.glossaryData?.status === 1
+                    ? pageTranslation?.published || t("published")
+                    : pageTranslation?.draft || t("draft")}
                 </label>
-                <CircleCheck className="size-[14px]" strokeWidth={1} />
+                <CircleCheck
+                  className={cn(
+                    "size-[14px] ",
+                    data?.glossaryData?.status === 1
+                      ? "text-[var(--color-success)]"
+                      : "text-[var(--color-danger)]",
+                  )}
+                  strokeWidth={1}
+                />
               </div>
             </div>
           </div>
@@ -885,7 +925,7 @@ function UploadExcelModal() {
         form.reset();
         if (res?.status) {
           toast.success(res?.message || t("success"));
-          queryClient.invalidateQueries({ queryKey: ["glossary"] });
+          queryClient.invalidateQueries({ queryKey: ["glossaryTable"] });
           setTimeout(() => {
             setOpen(false);
           }, 100);
@@ -893,8 +933,27 @@ function UploadExcelModal() {
           toast.error(res?.message || t("error-occurred"));
         }
       } catch (error) {
-        console.log(error);
-        toast.error(error?.response?.message || t("error-occurred"));
+        if (error?.name === "HTTPError") {
+          try {
+            const errorData = await error?.response?.json();
+
+            if (errorData?.status) {
+              toast.success(errorData?.message || t("success"));
+              queryClient.invalidateQueries({ queryKey: ["glossaryTable"] });
+              setTimeout(() => {
+                setOpen(false);
+              }, 100);
+            } else {
+              toast.error(errorData?.message || t("error-occurred"));
+            }
+          } catch (parseError) {
+            toast.error(t("error-occurred"));
+          }
+        } else {
+          // 3. Handle network errors or syntax errors
+          console.error("Generic Error:", error);
+          toast.error(t("error-occurred"));
+        }
       } finally {
         setIsSubmitting(false);
       }

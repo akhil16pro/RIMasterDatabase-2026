@@ -113,6 +113,8 @@
     "use-a-shorter-password": "Use a shorter password",
     "glossary_details": "Glossary Details",
     "view": "View",
-    "view_glossary": "View Glossary"
+    "view_glossary": "View Glossary",
+    "created-by": "Created By",
+    "entity-name": "Entity Name"
   }
 }
