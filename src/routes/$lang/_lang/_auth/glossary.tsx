@@ -66,7 +66,7 @@ function RouteComponent() {
             },
           })
           .json();
-        console.log("GLOSSARY_DATA", res?.data);
+        // console.log("GLOSSARY_DATA", res?.data);
 
         pageTranslation = res?.data?.translator;
         // console.log(pageTranslation, "pageTranslation");
@@ -79,11 +79,11 @@ function RouteComponent() {
   });
 
   const now = new Date();
-  now.setHours(0, 0, 0, 0);
+  now.setHours(23, 59, 59, 999);
   const campaignStartDate = new Date(data?.campaign?.from_date);
   campaignStartDate.setHours(0, 0, 0, 0);
   const campaignEndDate = new Date(data?.campaign?.to_date);
-  campaignEndDate.setHours(0, 0, 0, 0);
+  campaignEndDate.setHours(23, 59, 59, 999);
 
   const isCampaignActive = campaignStartDate <= now && campaignEndDate >= now;
 

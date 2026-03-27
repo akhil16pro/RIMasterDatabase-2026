@@ -47,11 +47,14 @@ export default function DashboardTopbar({
   campaign?: any;
   translator?: any;
 }) {
+  const now = new Date();
+  now.setHours(23, 59, 59, 999);
   const campaignStartDate = new Date(campaign?.from_date);
+  campaignStartDate.setHours(0, 0, 0, 0);
   const campaignEndDate = new Date(campaign?.to_date);
+  campaignEndDate.setHours(23, 59, 59, 999);
 
-  const isCampaignActive =
-    campaignStartDate <= new Date() && campaignEndDate >= new Date();
+  const isCampaignActive = campaignStartDate <= now && campaignEndDate >= now;
 
   const userSession = useAtomValue(userSessionAtom);
 
@@ -91,6 +94,8 @@ function CampaignInfo({
   const { t } = useTranslation();
 
   const targetDate = new Date(campaign?.to_date);
+
+  targetDate.setHours(23, 59, 59, 999);
 
   const [timeLeft, setTimeLeft] = useState({
     days: "00",
