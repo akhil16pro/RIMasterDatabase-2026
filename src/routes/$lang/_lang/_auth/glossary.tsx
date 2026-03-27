@@ -78,11 +78,15 @@ function RouteComponent() {
     },
   });
 
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
   const campaignStartDate = new Date(data?.campaign?.from_date);
+  campaignStartDate.setHours(0, 0, 0, 0);
   const campaignEndDate = new Date(data?.campaign?.to_date);
+  campaignEndDate.setHours(0, 0, 0, 0);
 
-  const isCampaignActive =
-    campaignStartDate <= new Date() && campaignEndDate >= new Date();
+  const isCampaignActive = campaignStartDate <= now && campaignEndDate >= now;
+  console.log(campaignEndDate, now, "campaignEndDate");
 
   return (
     <>

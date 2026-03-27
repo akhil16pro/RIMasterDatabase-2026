@@ -1,14 +1,14 @@
 import { Link, useRouter } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { DefaultButton } from "../ui/buttons";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import i18n from "@/lang";
 import { motion } from "motion/react";
 import Lottie from "lottie-react";
 import notFoundAnimation from "@/assets/animations/404Animation.json";
 
 export default function NotFoundLayout() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   return (
     <div className="flex flex-col items-center justify-center h-full w-full flex-1 p-5 md:p-10 fixed top-0 left-0 overflow-hidden">
       <motion.div
@@ -71,7 +71,13 @@ export default function NotFoundLayout() {
             <DefaultButton
               type="button"
               title={t("back-to-home")}
-              icon={<ArrowLeft className="w-4 h-4" />}
+              icon={
+                i18n.dir() === "rtl" ? (
+                  <ArrowRight className="w-4 h-4" />
+                ) : (
+                  <ArrowLeft className="w-4 h-4" />
+                )
+              }
               variant="dark"
             />
           </Link>
