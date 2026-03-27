@@ -87,11 +87,13 @@ export default function BarChart({
                   ease: "easeInOut",
                 }}
                 className={cn(
-                  "num w-6 text-right text-[var(--textColor)] text-sm font-medium opacity-70 leading-[100%] translate-y-[50%]",
+                  "num h-0 w-6 text-right text-[var(--textColor)] text-sm font-medium opacity-70 leading-[100%] ",
                   val === 0 && "opacity-0",
                 )}
               >
-                {val}
+                <span className="translate-y-[-50%] top-[50%] inline-block">
+                  {val}
+                </span>
               </motion.div>
               <motion.div
                 initial={{ scaleX: 0 }}
