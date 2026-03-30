@@ -78,37 +78,17 @@ function RouteComponent() {
               // captchaToken: currentCaptchaToken,
             },
           })
-          .json();
+          .json<any>();
 
-        console.log("LOGIN_DATA", res);
+        // console.log("LOGIN_DATA", res);
 
-        if (res?.status === true) {
+        if (res?.status) {
           loginDir(res);
-        } else {
-          toast.error(res?.message || t("error-occurred"));
         }
 
         // form.reset();
       } catch (error) {
-        if (error?.name === "HTTPError") {
-          try {
-            const errorData = await error?.response?.json();
-
-            if (errorData?.status) {
-              toast.success(errorData?.message);
-              form.reset();
-
-              loginDir(errorData);
-            } else {
-              toast.error(errorData?.message || t("error-occurred"));
-            }
-          } catch (parseError) {
-            toast.error(t("error-occurred"));
-          }
-        } else {
-          console.error("Generic Error:", error);
-          toast.error(t("error-occurred"));
-        }
+        console.error("Request failed:", error);
 
         // recaptchaRef.current?.reset();
       } finally {

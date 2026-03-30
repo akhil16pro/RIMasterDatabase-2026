@@ -6,9 +6,24 @@ import i18n from "@/lang";
 import { motion } from "motion/react";
 import Lottie from "lottie-react";
 import notFoundAnimation from "@/assets/animations/404Animation.json";
+import { userSessionAtom } from "@/store/atoms";
+import { useAtomValue } from "jotai";
 
 export default function NotFoundLayout() {
   const { t, i18n } = useTranslation();
+  const userSession = useAtomValue(userSessionAtom);
+  const router = useRouter();
+  const goHome = () => {
+    if (userSession?.accessToken) {
+      router.navigate({
+        to: "/" + i18n.language + "/dashboard",
+      });
+    } else {
+      router.navigate({
+        to: "/" + i18n.language,
+      });
+    }
+  };
   return (
     <div className="flex flex-col items-center justify-center h-full w-full flex-1 p-5 md:p-10 fixed top-0 left-0 overflow-hidden">
       <motion.div
@@ -67,7 +82,7 @@ export default function NotFoundLayout() {
           transition={{ duration: 0.4, delay: 0.8, type: "tween" }}
           className="w-full flex items-center justify-center mt-4 md:mt-7"
         >
-          <Link to={"/" + i18n.language} className="inline-block">
+          <Link onClick={goHome} className="inline-block">
             <DefaultButton
               type="button"
               title={t("back-to-home")}

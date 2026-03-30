@@ -39,45 +39,44 @@ import { useAtomValue } from "jotai";
 import { userSessionAtom } from "@/store/atoms";
 import { Pagination } from "@/components/ui/Pagination";
 import { useEffect } from "react";
+import { useNavigate } from "@tanstack/react-router";
+import { SearchBox } from "@/components/ui/search";
 
-export const Route = createFileRoute("/$lang/_lang/_auth/glossary")({
+export const Route = createFileRoute("/$lang/_lang/_auth/legislations/")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
 
   const userSession = useAtomValue(userSessionAtom);
 
-  const { data, isLoading, error, isRefetching } = useQuery({
-    queryKey: ["glossary", i18n.language],
-    enabled: !!userSession?.accessToken,
-    refetchOnMount: true,
-    refetchOnWindowFocus: true,
-    staleTime: 1000 * 60 * 60 * 24,
-    queryFn: async () => {
-      try {
-        const res = await apiClient
-          .get(i18n.language + `/glossary`)
-          .json<any>();
-        // console.log("GLOSSARY_DATA", res?.data);
+  const [search, setSearch] = useState("");
 
-        return res?.data;
-      } catch (error) {
-        console.log("GLOSSARY_DATA_ERROR", error);
-        return null;
-      }
-    },
-  });
+  // const { data, isLoading, error, isRefetching } = useQuery({
+  //   queryKey: ["legislations", i18n.language],
+  //   enabled: !!userSession?.accessToken,
+  //   refetchOnMount: true,
+  //   refetchOnWindowFocus: true,
+  //   staleTime: 1000 * 60 * 60 * 24,
+  //   queryFn: async () => {
+  //     try {
+  //       const res = await apiClient
+  //         .get(i18n.language + `/glossary`)
+  //         .json<any>();
+  //       console.log("legislations_data", res?.data);
 
-  const now = new Date();
-  now.setHours(23, 59, 59, 999);
-  const campaignStartDate = new Date(data?.campaign?.from_date);
-  campaignStartDate.setHours(0, 0, 0, 0);
-  const campaignEndDate = new Date(data?.campaign?.to_date);
-  campaignEndDate.setHours(23, 59, 59, 999);
+  //       return res?.data;
+  //     } catch (error) {
+  //       console.log("legislations_data_error", error);
+  //       return null;
+  //     }
+  //   },
+  // });
 
-  const isCampaignActive = campaignStartDate <= now && campaignEndDate >= now;
+  const isLoading = false;
+  const error = false;
 
   return (
     <>
@@ -97,39 +96,49 @@ function RouteComponent() {
               <div className="contentBox">
                 <DashboardTopbar
                   delay={0}
-                  title={t("glossary")}
-                  campaign={data?.campaign}
+                  title={t("all_governments_legislations")}
                 />
-                {isCampaignActive && data?.campaign && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{
-                      delay: 0.1,
-                      duration: 0.5,
-                      ease: "easeInOut",
-                    }}
-                    className="flex flex-wrap md:justify-end gap-2"
-                  >
-                    <div className="md:flex-1">
-                      <AddModal />
-                    </div>
 
+                <motion.div
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    delay: 0.1,
+                    duration: 0.5,
+                    ease: "easeInOut",
+                  }}
+                  className="flex flex-wrap md:justify-end gap-2"
+                >
+                  <div className="md:flex-1">
                     <DefaultButton
-                      title={t("download_excel_template")}
-                      icon={<Download className="size-5" />}
+                      title={t("add_legislation")}
+                      variant="dark"
+                      icon={<Plus className="size-5" />}
+                      className=""
                       onClick={() => {
-                        window.open(data?.campaign?.url, "_blank");
+                        navigate({
+                          to: "/" + i18n.language + "/legislations/add",
+                        });
                       }}
                     />
+                  </div>
 
-                    <UploadExcelModal />
-                    <DefaultButton
-                      title={t("guideline")}
-                      icon={<BookOpenText className="size-5" />}
-                    />
-                  </motion.div>
-                )}
+                  <SearchBox
+                    placeholder={t("search")}
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    onClear={() => setSearch("")}
+                    className="order-5 md:order-none"
+                  />
+
+                  <DefaultButton
+                    title={t("download_legislations")}
+                    icon={<Download className="size-5" />}
+                    onClick={() => {
+                      // window.open(data?.campaign?.url, "_blank");
+                    }}
+                  />
+                </motion.div>
 
                 <PageTable />
               </div>
@@ -150,24 +159,24 @@ function PageTable() {
     totalPages: 1,
   });
 
-  const { data, isLoading, error, isRefetching } = useQuery({
-    queryKey: ["glossaryTable", pagination.currentPage, i18n.language],
-    enabled: !!userSession?.accessToken,
-    placeholderData: (previousData) => previousData,
-    staleTime: 1000 * 60 * 5,
-    queryFn: async () => {
-      try {
-        const res = await apiClient
-          .get(i18n.language + `/glossary/table?page=${pagination.currentPage}`)
-          .json<any>();
-        // console.log("GLOSSARY_TABLE_DATA", res?.data);
-        return res?.data;
-      } catch (error) {
-        console.log("GLOSSARY_TABLE_DATA_ERROR", error);
-        return null;
-      }
-    },
-  });
+  // const { data, isLoading, error, isRefetching } = useQuery({
+  //   queryKey: ["legislationTable", pagination.currentPage, i18n.language],
+  //   enabled: !!userSession?.accessToken,
+  //   placeholderData: (previousData) => previousData,
+  //   staleTime: 1000 * 60 * 5,
+  //   queryFn: async () => {
+  //     try {
+  //       const res = await apiClient
+  //         .get(i18n.language + `/glossary/table?page=${pagination.currentPage}`)
+  //         .json<any>();
+  //       console.log("GLOSSARY_TABLE_DATA", res?.data);
+  //       return res?.data;
+  //     } catch (error) {
+  //       console.log("GLOSSARY_TABLE_DATA_ERROR", error);
+  //       return null;
+  //     }
+  //   },
+  // });
 
   const toggleStatusMutation = useMutation({
     mutationFn: async ({ slug, status }: { slug: string; status: number }) => {
@@ -177,13 +186,52 @@ function PageTable() {
     },
     onSuccess: (res: any) => {
       toast.success(res?.message || t("success"));
-      queryClient.invalidateQueries({ queryKey: ["glossaryTable"] });
+      queryClient.invalidateQueries({ queryKey: ["legislationTable"] });
     },
     onError: (error: any) => {
       console.error(error);
       toast.error(error?.message || t("error-occurred"));
     },
   });
+
+  const data = {
+    glossary_headers: [
+      {
+        title: "No",
+        key: "no",
+      },
+      {
+        title: "Title",
+        key: "title",
+      },
+      {
+        title: "Sector",
+        key: "sector",
+      },
+      {
+        title: "Type",
+        key: "type",
+      },
+      {
+        title: "Status",
+        key: "status",
+      },
+      {
+        title: "Actions",
+        key: "actions",
+      },
+    ],
+    glossaries: [],
+    pagination: {
+      total: 4,
+      per_page: 10,
+      current_page: 1,
+      last_page: 1,
+      next_page_url: null,
+      prev_page_url: null,
+      page_start_index: 1,
+    },
+  };
 
   return (
     <>
@@ -223,6 +271,41 @@ function PageTable() {
   );
 }
 
+function SearchAction({ slug }: { slug: string }) {
+  const { t, i18n } = useTranslation();
+
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["legislationView", slug],
+    queryFn: async () => {
+      const res = await apiClient
+        .get(i18n.language + "/legislation/edit/" + slug)
+        .json<any>();
+      // console.log(res?.data, "dsf");
+      setLoading(false);
+      setOpen(true);
+      return res?.data;
+    },
+    enabled: loading,
+    staleTime: 0,
+  });
+
+  return (
+    <Input
+      id="title"
+      name="title"
+      value={data?.glossaryData?.title}
+      label={t("title_english")}
+      className=""
+      dir="ltr"
+      isLoading={isLoading}
+      readOnly
+    />
+  );
+}
+
 function ViewAction({ slug }: { slug: string }) {
   const { t, i18n } = useTranslation();
 
@@ -230,10 +313,10 @@ function ViewAction({ slug }: { slug: string }) {
   const [loading, setLoading] = useState(false);
 
   const { data, isLoading } = useQuery({
-    queryKey: ["glossaryView", slug],
+    queryKey: ["legislationView", slug],
     queryFn: async () => {
       const res = await apiClient
-        .get(i18n.language + "/glossary/edit/" + slug)
+        .get(i18n.language + "/legislation/edit/" + slug)
         .json<any>();
       // console.log(res?.data, "dsf");
       setLoading(false);
@@ -272,6 +355,7 @@ function ViewAction({ slug }: { slug: string }) {
               value={data?.glossaryData?.title}
               label={t("title_english")}
               className=""
+              dir="ltr"
               isLoading={isLoading}
               readOnly
             />
@@ -292,6 +376,7 @@ function ViewAction({ slug }: { slug: string }) {
               name="description"
               value={data?.glossaryData?.description}
               label={t("description_english")}
+              dir="ltr"
               type="textarea"
               isLoading={isLoading}
               readOnly
@@ -369,10 +454,10 @@ function EditAction({ slug }: { slug: string }) {
   const userSession = useAtomValue(userSessionAtom);
 
   const { data, isLoading } = useQuery({
-    queryKey: ["glossaryEdit", slug],
+    queryKey: ["legislationEdit", slug],
     queryFn: async () => {
       const res = await apiClient
-        .get(i18n.language + "/glossary/edit/" + slug)
+        .get(i18n.language + "/legislation/edit/" + slug)
         .json<any>();
       setLoading(false);
       setOpen(true);
@@ -408,7 +493,7 @@ function EditAction({ slug }: { slug: string }) {
 
         if (res?.status) {
           toast.success(res?.message || t("success"));
-          queryClient.invalidateQueries({ queryKey: ["glossaryTable"] });
+          queryClient.invalidateQueries({ queryKey: ["legislationTable"] });
           setOpen(false);
         } else {
           toast.error(res?.message || t("error-occurred"));
@@ -470,6 +555,7 @@ function EditAction({ slug }: { slug: string }) {
                   onChange={(e) => field.handleChange(e.target.value)}
                   label={t("title_english")}
                   className=""
+                  dir="ltr"
                   error={field.state.meta.errors.length > 0 ? true : false}
                   errorMessage={field.state.meta.errors[0]}
                   isLoading={isLoading}
@@ -509,6 +595,7 @@ function EditAction({ slug }: { slug: string }) {
                   value={field.state.value}
                   onChange={(e) => field.handleChange(e.target.value)}
                   label={t("description_english")}
+                  dir="ltr"
                   type="textarea"
                   error={field.state.meta.errors.length > 0 ? true : false}
                   errorMessage={t(field.state.meta.errors[0])}
@@ -584,7 +671,7 @@ function DeleteAction({
       setIsSubmitting(true);
       try {
         const res = await apiClient
-          .get(i18n.language + "/glossary/delete/" + value.slug)
+          .get(i18n.language + "/legislation/delete/" + value.slug)
           .json<any>();
 
         if (res?.status) {
@@ -592,7 +679,9 @@ function DeleteAction({
           setOpen(false);
           form.reset();
           toast.success(res?.message || t("success"));
-          await queryClient.invalidateQueries({ queryKey: ["glossaryTable"] });
+          await queryClient.invalidateQueries({
+            queryKey: ["legislationTable"],
+          });
           setTimeout(() => {
             setAnimationWait(true);
           }, 700);
@@ -653,290 +742,6 @@ function DeleteAction({
               isDisabled={isSubmitting}
               isLoading={isSubmitting}
               iconGradient="delete"
-            />
-          </DialogFooter>
-        </DialogContent>
-      </form>
-    </Dialog>
-  );
-}
-
-function AddModal() {
-  const { t, i18n } = useTranslation();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [open, setOpen] = useState(false);
-  const queryClient = useQueryClient();
-
-  const userSession = useAtomValue(userSessionAtom);
-
-  const form = useForm({
-    defaultValues: {
-      title: "",
-      title_arabic: "",
-      description: "",
-      description_arabic: "",
-    },
-    onSubmit: async ({ value }) => {
-      setIsSubmitting(true);
-      try {
-        const res = await apiClient
-          .post(i18n.language + "/glossary/create", {
-            json: {
-              title: value.title,
-              title_arabic: value.title_arabic,
-              description: value.description,
-              description_arabic: value.description_arabic,
-            },
-          })
-          .json<any>();
-
-        form.reset();
-
-        if (res?.status) {
-          toast.success(res?.message || t("success"));
-          setTimeout(() => {
-            queryClient.invalidateQueries({ queryKey: ["glossaryTable"] });
-          }, 100);
-          // setOpen(false);
-        }
-      } catch (error) {
-        console.error("Add request failed:", error);
-      } finally {
-        setIsSubmitting(false);
-      }
-    },
-  });
-
-  return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          form.handleSubmit();
-        }}
-      >
-        <DialogTrigger asChild>
-          <DefaultButton
-            title={t("add_glossary")}
-            variant="dark"
-            icon={<Plus className="size-5" />}
-            className=""
-          />
-        </DialogTrigger>
-        <DialogContent className="lg:max-w-4xl">
-          <DialogHeader>
-            <DialogTitle>{t("add_glossary")}</DialogTitle>
-          </DialogHeader>
-          <div className="grid md:grid-cols-2 gap-x-8 gap-y-7 items-start">
-            <form.Field
-              name="title"
-              validators={{
-                onSubmit: ({ value }) => (!value ? t("title-required") : null),
-              }}
-              children={(field) => (
-                <Input
-                  id="title"
-                  name="title"
-                  value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  label={t("title_english")}
-                  className=""
-                  error={field.state.meta.errors.length > 0 ? true : false}
-                  errorMessage={field.state.meta.errors[0]}
-                />
-              )}
-            />
-            <form.Field
-              name="title_arabic"
-              validators={{
-                onSubmit: ({ value }) => (!value ? t("title-required") : null),
-              }}
-              children={(field) => (
-                <Input
-                  id="title_arabic"
-                  name="title_arabic"
-                  value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  label={t("title_arabic")}
-                  className=""
-                  dir="rtl"
-                  error={field.state.meta.errors.length > 0 ? true : false}
-                  errorMessage={t(field.state.meta.errors[0])}
-                />
-              )}
-            />
-            <form.Field
-              name="description"
-              validators={{
-                onSubmit: ({ value }) =>
-                  !value ? t("description-required") : null,
-              }}
-              children={(field) => (
-                <Input
-                  id="description"
-                  name="description"
-                  value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  label={t("description_english")}
-                  type="textarea"
-                  error={field.state.meta.errors.length > 0 ? true : false}
-                  errorMessage={t(field.state.meta.errors[0])}
-                />
-              )}
-            />
-            <form.Field
-              name="description_arabic"
-              validators={{
-                onSubmit: ({ value }) =>
-                  !value ? t("description-required") : null,
-              }}
-              children={(field) => (
-                <Input
-                  id="description_arabic"
-                  name="description_arabic"
-                  value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  label={t("description_arabic")}
-                  dir="rtl"
-                  type="textarea"
-                  error={field.state.meta.errors.length > 0 ? true : false}
-                  errorMessage={t(field.state.meta.errors[0])}
-                />
-              )}
-            />
-            <div className="inline-flex gap-2 text-[var(--textColor)] text-[1.2rem]">
-              <label className="text-muted-foreground">{t("status")}</label>
-              <div className="flex gap-1 items-center">
-                <label className="font-bold">{t("draft")}</label>
-                <CircleCheck className="size-[14px]" strokeWidth={1} />
-              </div>
-            </div>
-          </div>
-          <DialogFooter className="sm:justify-start mt-2">
-            <DefaultButton
-              type="submit"
-              variant="dark"
-              title={t("add_item")}
-              onClick={form.handleSubmit}
-              icon={<Plus className="size-5" />}
-              isDisabled={isSubmitting}
-              isLoading={isSubmitting}
-            />
-          </DialogFooter>
-        </DialogContent>
-      </form>
-    </Dialog>
-  );
-}
-
-function UploadExcelModal() {
-  const { t, i18n } = useTranslation();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [open, setOpen] = useState(false);
-  const queryClient = useQueryClient();
-
-  const userSession = useAtomValue(userSessionAtom);
-
-  const form = useForm({
-    defaultValues: {
-      file: null,
-    },
-    onSubmit: async ({ value }) => {
-      setIsSubmitting(true);
-      try {
-        const formData = new FormData();
-        if (value.file) {
-          formData.append("excel_file", value.file);
-        }
-
-        const res = await apiClient
-          .post(i18n.language + "/glossary/upload-excel-template", {
-            headers: {
-              "Content-Type": undefined,
-            },
-            body: formData,
-          })
-          .json<any>();
-
-        if (res?.status) {
-          form.reset();
-          await queryClient.invalidateQueries({ queryKey: ["glossaryTable"] });
-          toast.success(res?.message || t("success"));
-          setOpen(false);
-        }
-      } catch (error) {
-        console.error("Excel upload failed:", error);
-      } finally {
-        setIsSubmitting(false);
-      }
-    },
-  });
-
-  return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          form.handleSubmit();
-        }}
-      >
-        <DialogTrigger asChild>
-          <DefaultButton
-            className=""
-            title={t("upload_excel")}
-            icon={<Upload className="size-5" />}
-          />
-        </DialogTrigger>
-        <DialogContent className="lg:max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>{t("upload_excel")}</DialogTitle>
-          </DialogHeader>
-
-          <form.Field
-            name="file"
-            validators={{
-              onSubmit: ({ value }) => {
-                if (!value) return t("file-required");
-
-                const fileName = value.name.toLowerCase();
-                const allowedExtensions = [".csv", ".xls", ".xlsx"];
-                const isValid = allowedExtensions.some((ext) =>
-                  fileName.endsWith(ext),
-                );
-
-                if (!isValid) return t("file-must-be-excel-or-csv");
-                return null;
-              },
-            }}
-            children={(field) => (
-              <Input
-                id="file"
-                name="file"
-                onChange={(e) => {
-                  const file = e.target.files?.[0]; // Get the actual File object
-                  field.handleChange(file);
-                }}
-                label={t("file")}
-                className=""
-                type="file"
-                error={field.state.meta.errors.length > 0 ? true : false}
-                errorMessage={field.state.meta.errors[0]}
-              />
-            )}
-            className="w-full"
-          />
-
-          <DialogFooter className="sm:justify-start mt-2">
-            <DefaultButton
-              type="submit"
-              variant="dark"
-              title={t("upload_file")}
-              onClick={form.handleSubmit}
-              icon={<Plus className="size-5" />}
-              isDisabled={isSubmitting}
-              isLoading={isSubmitting}
             />
           </DialogFooter>
         </DialogContent>

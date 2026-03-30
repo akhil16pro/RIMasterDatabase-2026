@@ -21,16 +21,8 @@ export const Route = createFileRoute("/$lang/_lang/_auth")({
 
           const data = await queryClient.fetchQuery({
             queryKey: ["userInfo", params.lang],
-            queryFn: async () => {
-              const res = await apiClient
-                .get(`${params.lang}/get_userinfo`, {
-                  headers: {
-                    Authorization: `Bearer ${parsedSession?.accessToken}`,
-                  },
-                })
-                .json();
-              return res?.data;
-            },
+            queryFn: () =>
+              apiClient.get(`${params.lang}/get_userinfo`).json<any>(),
             staleTime: 0,
           });
 
@@ -42,6 +34,7 @@ export const Route = createFileRoute("/$lang/_lang/_auth")({
           store.set(userSessionAtom, updatedSession);
           userSession = updatedSession;
         } catch (e) {
+          userSession = null;
           console.error("Auth hydration error", e);
         }
       }
@@ -54,9 +47,5 @@ export const Route = createFileRoute("/$lang/_lang/_auth")({
       });
     }
   },
-  component: AuthLayoutComponent,
+  component: () => <Outlet />,
 });
-
-function AuthLayoutComponent() {
-  return <Outlet />;
-}

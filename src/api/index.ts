@@ -1,23 +1,64 @@
+// @/api.ts
 import i18n from "@/lang";
 import ky from "ky";
+import { toast } from "sonner";
 
 const apiClient = ky.create({
-    prefixUrl: import.meta.env.VITE_API_URL,
-    timeout: 10000,
-    headers: {
-       
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'accept-language': i18n.language,
-      
-    },
-    retry: {
-        limit: 3,
-        methods: ['get', 'post', 'put', 'delete'],
-        statusCodes: [408, 500, 502, 503, 504]
-    },
-})
+  prefixUrl: import.meta.env.VITE_API_URL,
+  timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+  },
+  hooks: {
+   beforeRequest: [
+      (request) => {
+        request.headers.set('accept-language', i18n.language);
+        const stored = localStorage.getItem("auth-session");
+        if (stored) {
+          try {
+            const { accessToken } = JSON.parse(stored);
+            if (accessToken) request.headers.set('Authorization', `Bearer ${accessToken}`);
+          } catch (e) {
+            console.error("Session parse error", e);
+          }
+        }
+      }
+    ],
+   afterResponse: [
+      async (request, options, response) => {
+        // If the response is not 2xx
+        if (!response.ok) {
+          let errorMessage = "error-occurred"; // Default translation key
+          
+          try {
+            const errorData = await response.json();
+            // If your API returns { message: "..." }, use it
+            if (errorData?.message) {
+              errorMessage = errorData.message;
+            }
+          } catch {
+            // Fallback if response isn't JSON
+          }
 
-export {
-    apiClient,
-}
+          // Trigger the toast globally
+          // i18n.t() will translate the key if it exists in your JSON files
+          toast.error(i18n.t(errorMessage));
+        }
+
+        if (response.status === 401) {
+           localStorage.removeItem("auth-session");
+           // window.location.href = `/${i18n.language}/login`;
+        }
+
+      }
+    ]
+  },
+  retry: {
+    limit: 3,
+    methods: ['get', 'post', 'put', 'delete'],
+    statusCodes: [408, 500, 502, 503, 504]
+  },
+});
+
+export { apiClient };

@@ -82,7 +82,10 @@ export const DefaultButton = ({
       type={type}
       disabled={isDisabled || isLoading}
       onClick={onClick}
-      transition={{ duration: 0.2, ease: "easeInOut" }}
+      transition={{
+        scale: { duration: 0.2, ease: "easeInOut" },
+        default: { duration: 0 },
+      }}
       layout
       className={cn(
         "inline-flex h-10 px-4 rounded-lg items-center justify-center gap-2 text-secondary font-regular font-secondary border border-secondary/10 cursor-pointer group overflow-hidden relative ",

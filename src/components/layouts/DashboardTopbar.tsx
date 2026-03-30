@@ -39,13 +39,11 @@ export default function DashboardTopbar({
   title,
   lastLogin,
   campaign,
-  translator,
 }: {
   delay: number;
   title: string;
   lastLogin?: boolean;
   campaign?: any;
-  translator?: any;
 }) {
   const now = new Date();
   now.setHours(23, 59, 59, 999);
@@ -75,22 +73,14 @@ export default function DashboardTopbar({
         {userSession?.user?.last_logged_in && !isCampaignActive && (
           <LastLoginInfo />
         )}
-        {isCampaignActive && (
-          <CampaignInfo campaign={campaign} translator={translator} />
-        )}
+        {isCampaignActive && <CampaignInfo campaign={campaign} />}
         <LoginAvatar />
       </div>
     </motion.div>
   );
 }
 
-function CampaignInfo({
-  campaign,
-  translator,
-}: {
-  campaign: any;
-  translator?: any;
-}) {
+function CampaignInfo({ campaign }: { campaign: any }) {
   const { t } = useTranslation();
 
   const targetDate = new Date(campaign?.to_date);
@@ -149,7 +139,7 @@ function CampaignInfo({
         <div
           className="text-[.7rem] md:text-[.85rem] font-medium leading-[100%] uppercase flex flex-col"
           dangerouslySetInnerHTML={{
-            __html: translator?.time_left || t("time-left"),
+            __html: t("time_left"),
           }}
         />
       </div>
@@ -160,7 +150,7 @@ function CampaignInfo({
             {timeLeft.days}
           </span>
           <span className="text-[var(--brandRed)] text-[.7rem] md:text-[.85rem] font-medium leading-[90%] uppercase">
-            {translator?.days || t("days")}
+            {t("days")}
           </span>
         </div>
         <span className="text-[1.5rem] leading-[100%] font-bold text-[var(--textColor)]">
@@ -171,7 +161,7 @@ function CampaignInfo({
             {timeLeft.hours}
           </span>
           <span className="text-[var(--brandRed)] text-[.7rem] md:text-[.85rem] font-medium leading-[90%] uppercase">
-            {translator?.hours || t("hours")}
+            {t("hours")}
           </span>
         </div>
         <span className="text-[1.5rem] leading-[100%] font-bold text-[var(--textColor)]">
@@ -182,7 +172,7 @@ function CampaignInfo({
             {timeLeft.minutes}
           </span>
           <span className="text-[var(--brandRed)] text-[.7rem] md:text-[.85rem] font-medium leading-[90%] uppercase">
-            {translator?.mins || t("mins")}
+            {t("mins")}
           </span>
         </div>
         <span className="text-[1.5rem] leading-[100%] font-bold text-[var(--textColor)]  ">
@@ -193,7 +183,7 @@ function CampaignInfo({
             {timeLeft.seconds}
           </span>
           <span className="text-[var(--brandRed)] text-[.7rem] md:text-[.85rem] font-medium leading-[90%] uppercase">
-            {translator?.secs || t("secs")}
+            {t("secs")}
           </span>
         </div>
       </div>
@@ -259,19 +249,28 @@ function LastLoginInfo() {
 
 function LoginAvatar() {
   const { t, i18n } = useTranslation();
-  // const { href } = useLocation();
   const router = useRouter();
-  const setUserSession = useSetAtom(userSessionAtom);
-
-  const userSession = useAtomValue(userSessionAtom);
-
+  const { location } = useRouterState();
   const queryClient = useQueryClient();
 
-  const { location } = useRouterState();
+  const userSession = useAtomValue(userSessionAtom);
+  const setUserSession = useSetAtom(userSessionAtom);
+
+  const { mutate: handleLogout, isPending: isLoggingOut } = useMutation({
+    mutationFn: () => apiClient.get(`${i18n.language}/logout`).json(),
+    onSettled: () => {
+      setUserSession(null);
+      localStorage.removeItem("auth-session");
+      queryClient.clear();
+      router.navigate({
+        to: "/$lang/login",
+        params: { lang: i18n.language },
+      });
+    },
+  });
 
   const handleLanguageChange = async () => {
     const newLang = i18n.language === "en" ? "ar" : "en";
-
     await i18n.changeLanguage(newLang);
 
     const pathSegments = location.pathname.split("/").filter(Boolean);
@@ -281,41 +280,6 @@ function LoginAvatar() {
     router.navigate({ to: newUrl });
     queryClient.invalidateQueries({ queryKey: ["userInfo"] });
   };
-
-  const useLogout = () => {
-    return useMutation({
-      mutationFn: async () => {
-        return await apiClient
-          .get(i18n.language + "/logout", {
-            headers: {
-              Authorization: `Bearer ${userSession?.accessToken}`,
-            },
-          })
-          .json();
-      },
-      onSuccess: async () => {
-        setUserSession(null);
-        localStorage.removeItem("auth-session");
-        queryClient.clear();
-        router.navigate({
-          to: "/$lang/login",
-          params: { lang: i18n.language },
-        });
-      },
-
-      onError: (error) => {
-        console.error("Logout failed:", error);
-        setUserSession(null);
-        localStorage.removeItem("auth-session");
-        queryClient.clear();
-        toast.error(error?.message || t("logout-failed"));
-      },
-    });
-  };
-
-  // Usage in your component:
-  const { mutate: handleLogout, isLoading } = useLogout();
-
   return (
     <DropdownMenu dir={i18n.language === "ar" ? "rtl" : "ltr"}>
       <DropdownMenuTrigger asChild className="group">

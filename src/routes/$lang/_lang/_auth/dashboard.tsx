@@ -79,7 +79,7 @@ function RouteComponent() {
       ) : error ? (
         <RoteError key="dashboard-error" />
       ) : (
-        <AnimatePresence mode={"wait"}>
+        <AnimatePresence>
           <div
             key="dashboard-content"
             className="flex flex-col items-center justify-center w-full h-full flex-1 mainBody "
@@ -228,29 +228,23 @@ function PerformingEntitiesCard({ delay, data }: { delay: number; data: any }) {
   const [selectedValues, setSelectedValues] = useState([]);
   // const queryClient = useQueryClient();
 
-  const {
-    data: barData,
-    isLoading,
-    error,
-    isRefetching,
-  } = useQuery({
+  const { data: barData, isLoading } = useQuery({
     queryKey: ["dashboardGraphData", selectedValues, i18n.language],
     queryFn: async () => {
       const res = await apiClient
         .post(i18n.language + "/get_usergraph_data", {
-          headers: {
-            Authorization: `Bearer ${userSession?.accessToken}`,
-          },
           json: {
             entity_id: selectedValues,
           },
         })
-        .json();
+        .json<any>();
 
       // console.log(res?.data, "Graph Data");
       return res?.data;
     },
   });
+
+  const isAdmin = userSession?.user?.roles?.includes("admin");
 
   return (
     <div className="w-full flex flex-col gap-4 lg:gap-3 flex-1">
@@ -267,7 +261,7 @@ function PerformingEntitiesCard({ delay, data }: { delay: number; data: any }) {
             </SectionTitle>
           </div>
 
-          {userSession?.user?.roles?.includes("admin") && (
+          {isAdmin && (
             <div className="flex gap-2 justify-end   md:flex-1 w-full md:w-auto">
               <div className="flex w-full md:w-auto">
                 <MultiSelect

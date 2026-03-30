@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
-import { Eye, EyeOff, Upload, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Upload, Loader2, Ban, CalendarDays } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useId, useRef, useState } from "react";
 
@@ -12,6 +12,7 @@ function Input({
   errorMessage,
   id,
   label,
+  disabled = false,
   isLoading = false,
   ...props
 }: React.ComponentProps<"input"> & {
@@ -19,6 +20,7 @@ function Input({
   errorMessage?: string;
   label?: string;
   isLoading?: boolean;
+  disabled?: boolean;
 }) {
   const [showPassword, setShowPassword] = useState(false);
   const { t } = useTranslation();
@@ -41,7 +43,7 @@ function Input({
             "[&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-gray-200 [&::-webkit-scrollbar-thumb]:rounded-full",
 
             error === true && " border-[var(--brandRed)]",
-
+            disabled && "opacity-50 cursor-not-allowed pointer-events-none",
             className,
           )}
         />
@@ -62,8 +64,11 @@ function Input({
             error === true && " border-[var(--brandRed)]",
             type === "password" || (type === "file" && "pe-7"),
 
+            disabled &&
+              "opacity-50 cursor-not-allowed pointer-events-none pe-7",
             className,
           )}
+          dir={type === "date" ? "ltr" : props?.dir}
         />
       )}
 
@@ -90,6 +95,8 @@ function Input({
                 ? "right-0 "
                 : "left-0 "
               : "ltr:left-0 rtl:right-0 ",
+
+            disabled && "opacity-50 cursor-not-allowed",
           )}
         >
           {label}
@@ -106,6 +113,15 @@ function Input({
           ) : (
             <EyeOff className=" text-black/50 w-5 h-5" />
           )}
+        </div>
+      )}
+
+      {type === "date" && (
+        <div
+          onClick={() => document.getElementById(inputId)?.click()}
+          className="absolute right-0  top-[50%] translate-y-[-50%] pointer-events-none cursor-pointer"
+        >
+          <CalendarDays className=" text-black/50 w-5 h-5" />
         </div>
       )}
 
@@ -135,6 +151,17 @@ function Input({
           )}
         >
           <Loader2 className=" text-black/50 w-5 h-5 animate-spin" />
+        </div>
+      )}
+
+      {disabled && (
+        <div
+          className={cn(
+            "absolute ltr:right-0 rtl:left-0 top-[50%] translate-y-[-50%] cursor-wait opacity-20",
+            type === "textarea" && "bottom-3 top-auto translate-y-[0%]",
+          )}
+        >
+          <Ban className=" text-black/50 w-5 h-5 " />
         </div>
       )}
     </div>

@@ -7,6 +7,7 @@ import { ToggleButton } from "@/components/ui/ToggleButton";
 import { useMobile } from "@/hooks/use-mobile";
 import { PenLine, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useState } from "react";
 
 interface TableProps extends React.ComponentPropsWithoutRef<typeof motion.div> {
   tableHead: any[];
@@ -27,10 +28,13 @@ export const Table = ({
   translator,
   onStatusToggle,
   pageStartIndex = 1,
+
   ...rest
 }: TableProps) => {
   const isMobile = useMobile();
   const { t, i18n } = useTranslation();
+
+  const [animationWait, setAnimationWait] = useState(true);
 
   return (
     <div {...rest} className={cn("flex-1 w-full overflow-hidden", className)}>
@@ -72,7 +76,7 @@ export const Table = ({
         <tbody
           className={cn(isMobile ? "flex flex-col gap-4" : "table-row-group")}
         >
-          <AnimatePresence mode="wait">
+          <AnimatePresence mode={animationWait ? "wait" : ""}>
             {tableData.map((row, rowIndex) => (
               <motion.tr
                 key={row?.id || row?.slug || `row-${rowIndex}`}
@@ -126,7 +130,10 @@ export const Table = ({
                               <EditAction slug={row?.slug} />
                             )}
                             {action.type === "delete" && (
-                              <DeleteAction slug={row?.slug} />
+                              <DeleteAction
+                                slug={row?.slug}
+                                setAnimationWait={setAnimationWait}
+                              />
                             )}
                             {action.type === "view" && (
                               <ViewAction slug={row?.slug} />
@@ -152,9 +159,9 @@ export const Table = ({
                 initial={{ opacity: 0, x: i18n.language === "ar" ? -40 : 40 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: i18n.language === "ar" ? 40 : -40 }}
-                transition={{ delay: 0.2, duration: 0.5, ease: "easeInOut" }}
+                transition={{ delay: 0.1, duration: 0.5, ease: "easeInOut" }}
                 className={cn(
-                  "group transition-all duration-300 bg-[linear-gradient(240deg,rgba(2,46,228,0.1)_0%,rgba(3,203,255,0.1)_100%)]",
+                  "group  bg-[linear-gradient(240deg,rgba(2,46,228,0.1)_0%,rgba(3,203,255,0.1)_100%)]",
                   isMobile ? "flex flex-col rounded-lg p-2" : "table-row",
                 )}
               >
