@@ -80,8 +80,8 @@ export const Table = ({
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: i18n.language === "ar" ? 40 : -40 }}
                 transition={{
-                  delay: 0.1 * rowIndex + 0.1,
-                  duration: 0.5,
+                  delay: 0.05 * rowIndex + 0.05,
+                  duration: 0.3,
                   ease: "easeInOut",
                 }}
                 className={cn(

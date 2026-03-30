@@ -13,14 +13,17 @@ import { cn } from "@/lib/utils";
 
 import { useMobile } from "@/hooks/use-mobile";
 import { useQuery } from "@tanstack/react-query";
+import { settingsAtom } from "@/routes/__root";
 
 export default function AppHeader({ delay }: { delay: number }) {
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
   const { scrollY } = useScroll();
   const [scrollDirection, setScrollDirection] = useAtom(scrollDirectionAtom);
   const { href } = useLocation();
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const settings = useAtomValue(settingsAtom);
 
   const isLargeTablet = useMobile(1024);
   const { data, isLoading, error, isRefetching } = useQuery({
@@ -87,7 +90,7 @@ export default function AppHeader({ delay }: { delay: number }) {
                     src={
                       i18n.language === "en" ? "/logo-en.png" : "/logo-ar.png"
                     }
-                    alt="Regulatory Intelligence Logo"
+                    alt={settings?.settings?.title || t("logo-text")}
                     className="h-full object-contain w-auto"
                   />
                 </Link>

@@ -296,9 +296,7 @@ function LoginAvatar() {
       onSuccess: async () => {
         setUserSession(null);
         localStorage.removeItem("auth-session");
-
         queryClient.clear();
-
         router.navigate({
           to: "/$lang/login",
           params: { lang: i18n.language },
@@ -338,7 +336,7 @@ function LoginAvatar() {
             </AvatarFallback>
           </Avatar>
 
-          <span className="text-[var(--textColor)] font-semibold md:text-[1.2rem] text-[1rem] leading-[100%] max-w-[7rem] overflow-hidden text-ellipsis whitespace-nowrap">
+          <span className="text-[var(--textColor)] font-semibold md:text-[1.2rem] text-[1rem] leading-[100%] max-w-[7rem] overflow-hidden text-ellipsis whitespace-nowrap [&:first-letter]:uppercase">
             {userSession?.user?.name}
           </span>
           <ChevronDown

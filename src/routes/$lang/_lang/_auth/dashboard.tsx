@@ -92,7 +92,7 @@ function RouteComponent() {
                   delay={0}
                   title={
                     userSession?.user?.roles?.includes("admin")
-                      ? data?.translator?.overview || t("overview")
+                      ? t("overview")
                       : userSession?.user?.entity_title
                   }
                   lastLogin={true}
@@ -226,7 +226,7 @@ function PerformingEntitiesCard({ delay, data }: { delay: number; data: any }) {
   const userSession = useAtomValue(userSessionAtom);
   // const [theme, setTheme] = useState("all");
   const [selectedValues, setSelectedValues] = useState([]);
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
 
   const {
     data: barData,
@@ -247,7 +247,7 @@ function PerformingEntitiesCard({ delay, data }: { delay: number; data: any }) {
         })
         .json();
 
-      console.log(res?.data, "Graph Data");
+      // console.log(res?.data, "Graph Data");
       return res?.data;
     },
   });
@@ -263,10 +263,7 @@ function PerformingEntitiesCard({ delay, data }: { delay: number; data: any }) {
         <div className="flex justify-between flex-wrap gap-2 md:gap-4 items-center">
           <div className="flex">
             <SectionTitle size="small">
-              <span>
-                {data?.translator?.top_performing_entities ||
-                  t("performing-entities-title")}{" "}
-              </span>
+              <span>{t("top_performing_entities")}</span>
             </SectionTitle>
           </div>
 
@@ -278,12 +275,8 @@ function PerformingEntitiesCard({ delay, data }: { delay: number; data: any }) {
                   onValueChange={setSelectedValues}
                   defaultValue={selectedValues}
                   responsive={true}
-                  placeholder={
-                    data?.translator?.all_entity || t("all-entities")
-                  }
-                  searchPlaceholder={
-                    data?.translator?.search_entity || t("search-entities")
-                  }
+                  placeholder={t("all_entity")}
+                  searchPlaceholder={t("search_entity")}
                   hideSelectAll={true}
                 />
               </div>

@@ -44,8 +44,6 @@ export const Route = createFileRoute("/$lang/_lang/_auth/glossary")({
   component: RouteComponent,
 });
 
-let pageTranslation = [];
-
 function RouteComponent() {
   const { t, i18n } = useTranslation();
 
@@ -68,8 +66,6 @@ function RouteComponent() {
           .json();
         // console.log("GLOSSARY_DATA", res?.data);
 
-        pageTranslation = res?.data?.translator;
-        // console.log(pageTranslation, "pageTranslation");
         return res?.data;
       } catch (error) {
         console.log("GLOSSARY_DATA_ERROR", error);
@@ -105,7 +101,7 @@ function RouteComponent() {
               <div className="contentBox">
                 <DashboardTopbar
                   delay={0}
-                  title={pageTranslation?.glossary || t("glossary")}
+                  title={t("glossary")}
                   campaign={data?.campaign}
                   translator={data?.translator}
                 />
@@ -125,10 +121,7 @@ function RouteComponent() {
                     </div>
 
                     <DefaultButton
-                      title={
-                        pageTranslation?.download_excel_template ||
-                        t("download-excel-template")
-                      }
+                      title={t("download_excel_template")}
                       icon={<Download className="size-5" />}
                       onClick={() => {
                         window.open(data?.campaign?.url, "_blank");
@@ -137,7 +130,7 @@ function RouteComponent() {
 
                     <UploadExcelModal />
                     <DefaultButton
-                      title={pageTranslation?.guideline || t("guideline")}
+                      title={t("guideline")}
                       icon={<BookOpenText className="size-5" />}
                     />
                   </motion.div>
@@ -283,22 +276,20 @@ function ViewAction({ slug }: { slug: string }) {
             icon={<Eye className="size-4" stroke="url(#button_linear_green)" />}
             rounded={true}
             iconGradient={"view"}
-            toolTip={pageTranslation?.view || t("view")}
+            toolTip={t("view")}
             toolTipClass="viewTip"
           />
         </DialogTrigger>
         <DialogContent className="lg:max-w-4xl">
           <DialogHeader>
-            <DialogTitle>
-              {pageTranslation?.glossary_details || t("glossary_details")}
-            </DialogTitle>
+            <DialogTitle>{t("glossary_details")}</DialogTitle>
           </DialogHeader>
           <div className="grid md:grid-cols-2 gap-x-8 gap-y-7 items-start">
             <Input
               id="title"
               name="title"
               value={data?.glossaryData?.title}
-              label={pageTranslation?.title_english || t("title-english")}
+              label={t("title_english")}
               className=""
               dir="ltr"
               isLoading={isLoading}
@@ -309,7 +300,7 @@ function ViewAction({ slug }: { slug: string }) {
               id="title_arabic"
               name="title_arabic"
               value={data?.glossaryData?.title_arabic}
-              label={pageTranslation?.title_arabic || t("title-arabic")}
+              label={t("title_arabic")}
               className=""
               dir="rtl"
               isLoading={isLoading}
@@ -320,9 +311,7 @@ function ViewAction({ slug }: { slug: string }) {
               id="description"
               name="description"
               value={data?.glossaryData?.description}
-              label={
-                pageTranslation?.description_english || t("description-english")
-              }
+              label={t("description_english")}
               dir="ltr"
               type="textarea"
               isLoading={isLoading}
@@ -333,9 +322,7 @@ function ViewAction({ slug }: { slug: string }) {
               id="description_arabic"
               name="description_arabic"
               value={data?.glossaryData?.description_arabic}
-              label={
-                pageTranslation?.description_arabic || t("description-arabic")
-              }
+              label={t("description_arabic")}
               dir="rtl"
               type="textarea"
               isLoading={isLoading}
@@ -346,7 +333,7 @@ function ViewAction({ slug }: { slug: string }) {
               id="created_by"
               name="created_by"
               value={data?.glossaryData?.user_info?.name}
-              label={pageTranslation?.created_by || t("created-by")}
+              label={t("created_by")}
               type="text"
               isLoading={isLoading}
               readOnly
@@ -355,16 +342,14 @@ function ViewAction({ slug }: { slug: string }) {
               id="entity_name"
               name="entity_name"
               value={data?.glossaryData?.entity_info?.title}
-              label={pageTranslation?.entity_name || t("entity-name")}
+              label={t("entity_name")}
               type="text"
               isLoading={isLoading}
               readOnly
             />
 
             <div className="inline-flex gap-2 text-[var(--textColor)] text-[1.2rem]">
-              <label className="text-muted-foreground">
-                {pageTranslation?.status || t("status")}
-              </label>
+              <label className="text-muted-foreground">{t("status")}</label>
               <div className="flex gap-1 items-center">
                 <label
                   className={cn(
@@ -375,8 +360,8 @@ function ViewAction({ slug }: { slug: string }) {
                   )}
                 >
                   {data?.glossaryData?.status === 1
-                    ? pageTranslation?.published || t("published")
-                    : pageTranslation?.draft || t("draft")}
+                    ? t("published")
+                    : t("draft")}
                 </label>
                 <CircleCheck
                   className={cn(
@@ -485,15 +470,13 @@ function EditAction({ slug }: { slug: string }) {
             icon={<PenLine className="size-4" stroke="url(#button_linear)" />}
             rounded={true}
             iconGradient={"edit"}
-            toolTip={pageTranslation?.edit || t("edit")}
+            toolTip={t("edit")}
             toolTipClass="editTip"
           />
         </DialogTrigger>
         <DialogContent className="lg:max-w-4xl">
           <DialogHeader>
-            <DialogTitle>
-              {pageTranslation?.edit_glossary || t("edit-glossary")}
-            </DialogTitle>
+            <DialogTitle>{t("edit_glossary")}</DialogTitle>
           </DialogHeader>
           <div className="grid md:grid-cols-2 gap-x-8 gap-y-7 items-start">
             <form.Field
@@ -507,7 +490,7 @@ function EditAction({ slug }: { slug: string }) {
                   name="title"
                   value={field.state.value}
                   onChange={(e) => field.handleChange(e.target.value)}
-                  label={pageTranslation?.title_english || t("title-english")}
+                  label={t("title_english")}
                   className=""
                   dir="ltr"
                   error={field.state.meta.errors.length > 0 ? true : false}
@@ -527,7 +510,7 @@ function EditAction({ slug }: { slug: string }) {
                   name="title_arabic"
                   value={field.state.value}
                   onChange={(e) => field.handleChange(e.target.value)}
-                  label={pageTranslation?.title_arabic || t("title-arabic")}
+                  label={t("title_arabic")}
                   className=""
                   dir="rtl"
                   error={field.state.meta.errors.length > 0 ? true : false}
@@ -548,10 +531,7 @@ function EditAction({ slug }: { slug: string }) {
                   name="description"
                   value={field.state.value}
                   onChange={(e) => field.handleChange(e.target.value)}
-                  label={
-                    pageTranslation?.description_english ||
-                    t("description-english")
-                  }
+                  label={t("description_english")}
                   dir="ltr"
                   type="textarea"
                   error={field.state.meta.errors.length > 0 ? true : false}
@@ -572,10 +552,7 @@ function EditAction({ slug }: { slug: string }) {
                   name="description_arabic"
                   value={field.state.value}
                   onChange={(e) => field.handleChange(e.target.value)}
-                  label={
-                    pageTranslation?.description_arabic ||
-                    t("description-arabic")
-                  }
+                  label={t("description_arabic")}
                   dir="rtl"
                   type="textarea"
                   error={field.state.meta.errors.length > 0 ? true : false}
@@ -585,13 +562,9 @@ function EditAction({ slug }: { slug: string }) {
               )}
             />
             <div className="inline-flex gap-2 text-[var(--textColor)] text-[1.2rem]">
-              <label className="text-muted-foreground">
-                {pageTranslation?.status || t("status")}
-              </label>
+              <label className="text-muted-foreground">{t("status")}</label>
               <div className="flex gap-1 items-center">
-                <label className="font-bold">
-                  {pageTranslation?.draft || t("draft")}
-                </label>
+                <label className="font-bold">{t("draft")}</label>
                 <CircleCheck className="size-[14px]" strokeWidth={1} />
               </div>
             </div>
@@ -600,7 +573,7 @@ function EditAction({ slug }: { slug: string }) {
             <DefaultButton
               type="submit"
               variant="dark"
-              title={pageTranslation?.update || t("update")}
+              title={t("update")}
               onClick={form.handleSubmit}
               icon={<Pencil className="size-5" />}
               isDisabled={isSubmitting}
@@ -618,7 +591,7 @@ function DeleteAction({ slug }: { slug: string }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
-  const data = queryClient.getQueryData(["settings"]);
+
   const userSession = useAtomValue(userSessionAtom);
   // console.log(slug, "delete slug");
   const form = useForm({
@@ -642,7 +615,9 @@ function DeleteAction({ slug }: { slug: string }) {
         if (res?.status) {
           toast.success(res?.message || t("success"));
           queryClient.invalidateQueries({ queryKey: ["glossaryTable"] });
-          // setOpen(false);
+          setTimeout(() => {
+            setOpen(false);
+          }, 800);
         } else {
           toast.error(res?.message || t("error-occurred"));
         }
@@ -671,27 +646,24 @@ function DeleteAction({ slug }: { slug: string }) {
             }
             rounded={true}
             iconGradient={"delete"}
-            toolTip={pageTranslation?.delete || t("delete")}
+            toolTip={t("delete")}
             toolTipClass="deleteTip"
           />
         </DialogTrigger>
         <DialogContent className="lg:max-w-xl">
           <DialogHeader>
-            <DialogTitle>
-              {pageTranslation?.delete_glossary || t("delete-glossary")}
-            </DialogTitle>
+            <DialogTitle>{t("delete_glossary")}</DialogTitle>
           </DialogHeader>
           <div className="flex">
             <p className=" text-lg font-secondary text-[var(--textColor)]">
-              {pageTranslation?.are_you_sure ||
-                t("are-you-sure-you-want-to-delete-this-glossary")}
+              {t("are_you_sure")}
             </p>
           </div>
           <DialogFooter className="sm:justify-end mt-2">
             <DefaultButton
               type="button"
               variant="dark"
-              title={pageTranslation?.cancel || t("cancel")}
+              title={t("cancel")}
               onClick={() => setOpen(false)}
               icon={<X className="size-5" />}
               isDisabled={isSubmitting}
@@ -700,7 +672,7 @@ function DeleteAction({ slug }: { slug: string }) {
             <DefaultButton
               type="submit"
               variant="dark"
-              title={pageTranslation?.delete || t("delete")}
+              title={t("delete")}
               onClick={form.handleSubmit}
               icon={<Trash2 className="size-5" />}
               isDisabled={isSubmitting}
@@ -719,7 +691,7 @@ function AddGlossaryModal() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
-  const data = queryClient.getQueryData(["settings"]);
+
   const userSession = useAtomValue(userSessionAtom);
 
   const form = useForm({
@@ -775,7 +747,7 @@ function AddGlossaryModal() {
       >
         <DialogTrigger asChild>
           <DefaultButton
-            title={pageTranslation?.add_glossary || t("add-glossary")}
+            title={t("add_glossary")}
             variant="dark"
             icon={<Plus className="size-5" />}
             className=""
@@ -783,9 +755,7 @@ function AddGlossaryModal() {
         </DialogTrigger>
         <DialogContent className="lg:max-w-4xl">
           <DialogHeader>
-            <DialogTitle>
-              {pageTranslation?.add_glossary || t("add-glossary")}
-            </DialogTitle>
+            <DialogTitle>{t("add_glossary")}</DialogTitle>
           </DialogHeader>
           <div className="grid md:grid-cols-2 gap-x-8 gap-y-7 items-start">
             <form.Field
@@ -799,7 +769,7 @@ function AddGlossaryModal() {
                   name="title"
                   value={field.state.value}
                   onChange={(e) => field.handleChange(e.target.value)}
-                  label={t("title-english")}
+                  label={t("title_english")}
                   className=""
                   dir="ltr"
                   error={field.state.meta.errors.length > 0 ? true : false}
@@ -818,7 +788,7 @@ function AddGlossaryModal() {
                   name="title_arabic"
                   value={field.state.value}
                   onChange={(e) => field.handleChange(e.target.value)}
-                  label={t("title-arabic")}
+                  label={t("title_arabic")}
                   className=""
                   dir="rtl"
                   error={field.state.meta.errors.length > 0 ? true : false}
@@ -838,7 +808,7 @@ function AddGlossaryModal() {
                   name="description"
                   value={field.state.value}
                   onChange={(e) => field.handleChange(e.target.value)}
-                  label={t("description-english")}
+                  label={t("description_english")}
                   dir="ltr"
                   type="textarea"
                   error={field.state.meta.errors.length > 0 ? true : false}
@@ -858,7 +828,7 @@ function AddGlossaryModal() {
                   name="description_arabic"
                   value={field.state.value}
                   onChange={(e) => field.handleChange(e.target.value)}
-                  label={t("description-arabic")}
+                  label={t("description_arabic")}
                   dir="rtl"
                   type="textarea"
                   error={field.state.meta.errors.length > 0 ? true : false}
@@ -878,7 +848,7 @@ function AddGlossaryModal() {
             <DefaultButton
               type="submit"
               variant="dark"
-              title={pageTranslation?.add_item || t("add-item")}
+              title={t("add_item")}
               onClick={form.handleSubmit}
               icon={<Plus className="size-5" />}
               isDisabled={isSubmitting}
@@ -896,7 +866,7 @@ function UploadExcelModal() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
-  const data = queryClient.getQueryData(["settings"]);
+
   const userSession = useAtomValue(userSessionAtom);
 
   const form = useForm({
@@ -972,15 +942,13 @@ function UploadExcelModal() {
         <DialogTrigger asChild>
           <DefaultButton
             className=""
-            title={pageTranslation?.upload_excel || t("upload-excel")}
+            title={t("upload_excel")}
             icon={<Upload className="size-5" />}
           />
         </DialogTrigger>
         <DialogContent className="lg:max-w-2xl">
           <DialogHeader>
-            <DialogTitle>
-              {pageTranslation?.upload_excel || t("upload-excel")}
-            </DialogTitle>
+            <DialogTitle>{t("upload_excel")}</DialogTitle>
           </DialogHeader>
 
           <form.Field
@@ -1007,7 +975,7 @@ function UploadExcelModal() {
                   const file = e.target.files?.[0]; // Get the actual File object
                   field.handleChange(file);
                 }}
-                label={pageTranslation?.file || t("file")}
+                label={t("file")}
                 className=""
                 type="file"
                 error={field.state.meta.errors.length > 0 ? true : false}
@@ -1021,7 +989,7 @@ function UploadExcelModal() {
             <DefaultButton
               type="submit"
               variant="dark"
-              title={pageTranslation?.upload_file || t("upload-file")}
+              title={t("upload_file")}
               onClick={form.handleSubmit}
               icon={<Plus className="size-5" />}
               isDisabled={isSubmitting}

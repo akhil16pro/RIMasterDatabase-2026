@@ -174,7 +174,7 @@ function HomeBanner({ data }: { data: any }) {
                     className="more relative text-[1.3rem] font-regular"
                   >
                     <span className="absolute top-[50%] ltr:left-0 rtl:right-0 translate-y-[-50%] bg-gradient-to-r ltr:from-white  ltr:to-secondary rtl:from-secondary rtl:to-white bg-clip-text text-transparent">
-                      {data?.translator?.scroll || t("scroll")}
+                      {t("scroll")}
                     </span>
                     <motion.div
                       className="iconBox w-[4rem] aspect-square"
