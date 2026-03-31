@@ -190,8 +190,8 @@ function PageTable() {
       {data && (
         <Table
           pageStartIndex={data?.pagination?.page_start_index}
-          tableHead={data?.glossary_headers}
-          tableData={data?.glossaries}
+          tableHead={data?.table_headers}
+          tableData={data?.table_values}
           EditAction={EditAction}
           DeleteAction={DeleteAction}
           ViewAction={ViewAction}

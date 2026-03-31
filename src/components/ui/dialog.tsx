@@ -126,7 +126,7 @@ function DialogDescription({
     <DialogPrimitive.Description
       data-slot="dialog-description"
       className={cn(
-        "text-text/75 text-lg mt-1 font-regular font-secondary text-start block",
+        "text-[var(--textColor)] text-lg mt-1 font-regular font-secondary text-start block",
         className,
       )}
       {...props}

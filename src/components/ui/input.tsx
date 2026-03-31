@@ -23,7 +23,7 @@ function Input({
   disabled?: boolean;
 }) {
   const [showPassword, setShowPassword] = useState(false);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const errorId = useId();
   const inputId = id || useId();
@@ -90,14 +90,15 @@ function Input({
             props.placeholder &&
               "peer-placeholder-shown:top-[.25rem] peer-placeholder-shown:-translate-y-full peer-placeholder-shown:text-[.85rem] peer-placeholder-shown:text-black/70",
 
-            props.dir
-              ? props.dir === "rtl"
-                ? "right-0 "
-                : "left-0 "
-              : "ltr:left-0 rtl:right-0 ",
+            // props.dir
+            //   ? props.dir === "rtl"
+            //     ? "right-0 "
+            //     : "left-0 "
+            //   : "ltr:left-0 rtl:right-0 ",
 
             disabled && "opacity-50 cursor-not-allowed",
           )}
+          dir={i18n.dir() === "ltr" && props?.dir === "rtl" && "let"}
         >
           {label}
         </label>

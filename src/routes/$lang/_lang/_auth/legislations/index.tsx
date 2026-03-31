@@ -195,7 +195,7 @@ function PageTable() {
   });
 
   const data = {
-    glossary_headers: [
+    table_headers: [
       {
         title: "No",
         key: "no",
@@ -221,7 +221,7 @@ function PageTable() {
         key: "actions",
       },
     ],
-    glossaries: [],
+    table_values: [],
     pagination: {
       total: 4,
       per_page: 10,
@@ -238,8 +238,8 @@ function PageTable() {
       {data && (
         <Table
           pageStartIndex={data?.pagination?.page_start_index}
-          tableHead={data?.glossary_headers}
-          tableData={data?.glossaries}
+          tableHead={data?.table_headers}
+          tableData={data?.table_values}
           EditAction={EditAction}
           DeleteAction={DeleteAction}
           ViewAction={ViewAction}
@@ -268,41 +268,6 @@ function PageTable() {
         />
       )}
     </>
-  );
-}
-
-function SearchAction({ slug }: { slug: string }) {
-  const { t, i18n } = useTranslation();
-
-  const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-
-  const { data, isLoading } = useQuery({
-    queryKey: ["legislationView", slug],
-    queryFn: async () => {
-      const res = await apiClient
-        .get(i18n.language + "/legislation/edit/" + slug)
-        .json<any>();
-      // console.log(res?.data, "dsf");
-      setLoading(false);
-      setOpen(true);
-      return res?.data;
-    },
-    enabled: loading,
-    staleTime: 0,
-  });
-
-  return (
-    <Input
-      id="title"
-      name="title"
-      value={data?.glossaryData?.title}
-      label={t("title_english")}
-      className=""
-      dir="ltr"
-      isLoading={isLoading}
-      readOnly
-    />
   );
 }
 

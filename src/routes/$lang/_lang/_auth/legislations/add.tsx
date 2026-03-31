@@ -23,6 +23,8 @@ import {
   SelectValue,
 } from "@/components/ui/Select";
 import { Label } from "@radix-ui/react-label";
+import { ThankYouPopup } from "@/components/ui/thankYouPopup";
+import { useEffect } from "react";
 export const Route = createFileRoute("/$lang/_lang/_auth/legislations/add")({
   component: RouteComponent,
 });
@@ -32,6 +34,7 @@ function RouteComponent() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const queryClient = useQueryClient();
+  const [thankYouPopup, setThankYouPopup] = useState(false);
 
   const form = useForm({
     defaultValues: {
@@ -70,6 +73,12 @@ function RouteComponent() {
       }
     },
   });
+
+  useEffect(() => {
+    setTimeout(() => {
+      setThankYouPopup(true);
+    }, 1000);
+  }, []);
 
   return (
     <AnimatePresence mode={"wait"}>
@@ -503,7 +512,7 @@ function RouteComponent() {
                     dir="rtl"
                   />
                 )}
-              /> */}
+              /> 
               <form.Field
                 name="official_gazette_title_english"
                 children={(field) => (
@@ -564,7 +573,7 @@ function RouteComponent() {
                     errorMessage={field.state.meta.errors[0]}
                   />
                 )}
-              />
+              />*/}
               <form.Field
                 name="attachment"
                 children={(field) => (
@@ -595,6 +604,13 @@ function RouteComponent() {
             </div>
           </div>
         </section>
+        <ThankYouPopup
+          type="success"
+          open={thankYouPopup}
+          setOpen={setThankYouPopup}
+          title={t("submitted_successfully")}
+          description={`The <strong>${t("legislations")}</strong> have been submitted successfully. This is now under review and will be notified accordingly.`}
+        />
       </div>
     </AnimatePresence>
   );
