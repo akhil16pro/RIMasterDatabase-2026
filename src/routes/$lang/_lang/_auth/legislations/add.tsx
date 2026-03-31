@@ -77,7 +77,7 @@ function RouteComponent() {
   useEffect(() => {
     setTimeout(() => {
       setThankYouPopup(true);
-    }, 1000);
+    }, 100);
   }, []);
 
   return (

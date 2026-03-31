@@ -27,14 +27,22 @@ function ThankYouPopup({
 }) {
   const { t } = useTranslation();
 
+  // const bgColor =
+  //   type === "success"
+  //     ? "var(--color-primary)"
+  //     : type === "error"
+  //       ? "var(--color-danger)"
+  //       : type === "warning"
+  //         ? "var(--color-warning)"
+  //         : "var(--color-info)";
   const bgColor =
     type === "success"
-      ? "var(--color-primary)"
+      ? "bg-[linear-gradient(180deg,#FFC99D_0%,var(--color-primary)_100%)]"
       : type === "error"
-        ? "var(--color-danger)"
+        ? "bg-[linear-gradient(180deg,#FFC99D_0%,var(--color-danger)_100%)]"
         : type === "warning"
-          ? "var(--color-warning)"
-          : "var(--color-info)";
+          ? "bg-[linear-gradient(180deg,#FFC99D_0%,var(--color-warning)_100%)]"
+          : "bg-[linear-gradient(180deg,#FFC99D_0%,var(--color-secondary)_100%)]";
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent
@@ -50,7 +58,7 @@ function ThankYouPopup({
             transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
             className="size-18 md:size-[6rem]  flex items-center justify-center relative"
           >
-            <svg
+            {/* <svg
               width="131"
               height="131"
               viewBox="0 0 131 131"
@@ -75,7 +83,13 @@ function ThankYouPopup({
                   <stop offset="1" stop-color="#FFC99D" />
                 </linearGradient>
               </defs>
-            </svg>
+            </svg> */}
+            <div className="absolute w-[44px] h-[44px] z-[-1]  scale-[2.3] animate-spin animation-duration-[5000ms]">
+              <div
+                className={cn("w-full h-full", bgColor, "shapeMorphing")}
+              ></div>
+            </div>
+
             {type === "success" && (
               <Check strokeWidth={3} className="size-8 md:size-10 text-white" />
             )}
