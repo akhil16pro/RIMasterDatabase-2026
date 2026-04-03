@@ -22,7 +22,7 @@ interface CKEditorProps {
   onChange: (data: string) => void;
   placeholder?: string;
   disabled?: boolean;
-  dir?: "ltr" | "rtl";
+  dir?: string;
 }
 
 const CKEditorCustom = ({

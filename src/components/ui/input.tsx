@@ -68,7 +68,7 @@ function Input({
               "opacity-50 cursor-not-allowed pointer-events-none pe-7",
             className,
           )}
-          dir={type === "date" ? "ltr" : props?.dir}
+          dir={type === "date" ? "ltr" : props?.dir || i18n.dir()}
         />
       )}
 
@@ -98,7 +98,7 @@ function Input({
 
             disabled && "opacity-50 cursor-not-allowed",
           )}
-          dir={i18n.dir() === "ltr" && props?.dir === "rtl" && "let"}
+          // dir={props?.dir || i18n.dir()}
         >
           {label}
         </label>
