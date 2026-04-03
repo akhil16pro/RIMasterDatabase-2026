@@ -14,15 +14,16 @@ export default function NotFoundLayout() {
   const userSession = useAtomValue(userSessionAtom);
   const router = useRouter();
   const goHome = () => {
-    if (userSession?.accessToken) {
-      router.navigate({
-        to: "/" + i18n.language + "/dashboard",
-      });
-    } else {
-      router.navigate({
-        to: "/" + i18n.language,
-      });
-    }
+    router.history.back();
+    // if (userSession?.accessToken) {
+    //   router.navigate({
+    //     to: "/" + i18n.language + "/dashboard",
+    //   });
+    // } else {
+    //   router.navigate({
+    //     to: "/" + i18n.language,
+    //   });
+    // }
   };
   return (
     <div className="flex flex-col items-center justify-center h-full w-full flex-1 p-5 md:p-10 fixed top-0 left-0 overflow-hidden">
@@ -62,7 +63,7 @@ export default function NotFoundLayout() {
           animate={{ opacity: 1, y: 0, scaleY: 1 }}
           exit={{ opacity: 0, y: 30, scaleY: 1.1 }}
           transition={{ duration: 0.4, delay: 0.4, type: "tween" }}
-          className="md:text-5xl text-3xl font-bold"
+          className="md:text-5xl text-3xl font-bold text-white"
         >
           {t("page-not-found")}
         </motion.h1>

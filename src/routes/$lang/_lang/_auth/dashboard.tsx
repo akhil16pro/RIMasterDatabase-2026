@@ -3,8 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "@/api";
-import RouteLoader from "@/components/layouts/RouteLoader";
-import RoteError from "@/components/layouts/RoteError";
+
 // import { DefaultButton } from "@/components/ui/buttons";
 // import { Input } from "@/components/ui/input";
 import {
@@ -17,8 +16,8 @@ import {
 } from "motion/react";
 
 import { Link } from "@tanstack/react-router";
-import DashboardSidebar from "@/components/layouts/DashboardSidebar";
-import DashboardTopbar from "@/components/layouts/DashboardTopbar";
+
+import DashboardLayout from "@/components/layouts/DashboardLayout";
 
 import { ArrowUp, ArrowUpLeft } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -73,39 +72,20 @@ function RouteComponent() {
   });
 
   return (
-    <>
-      {isLoading || isRefetching || !userSession?.accessToken ? (
-        <RouteLoader key="dashboard-loader" />
-      ) : error ? (
-        <RoteError key="dashboard-error" />
-      ) : (
-        <AnimatePresence>
-          <div
-            key="dashboard-content"
-            className="flex flex-col items-center justify-center w-full h-full flex-1 mainBody "
-          >
-            <section className="w-full flex-1 relative mainWrapper ">
-              <DashboardSidebar delay={0} />
-
-              <div className="contentBox">
-                <DashboardTopbar
-                  delay={0}
-                  title={
-                    userSession?.user?.roles?.includes("admin")
-                      ? t("overview")
-                      : userSession?.user?.entity_title
-                  }
-                  lastLogin={true}
-                />
-                <MinistryCard delay={0.2} data={data} />
-
-                <PerformingEntitiesCard data={data} delay={0.4} />
-              </div>
-            </section>
-          </div>
-        </AnimatePresence>
-      )}
-    </>
+    <DashboardLayout
+      isLoading={isLoading}
+      isRefetching={isRefetching}
+      error={error}
+      title={
+        userSession?.user?.roles?.includes("admin")
+          ? t("overview")
+          : userSession?.user?.entity_title
+      }
+      lastLogin={true}
+    >
+      <MinistryCard delay={0.2} data={data} />
+      <PerformingEntitiesCard data={data} delay={0.4} />
+    </DashboardLayout>
   );
 }
 
@@ -124,7 +104,7 @@ function MinistryCard({
   return (
     // lg:bg-[linear-gradient(50deg,#022EE4_0%,#FFC99D_50%,#022EE4_108%)]
     <motion.div
-      className="w-full flex   justify-center w-full rounded-lg overflow-hidden  ltr:bg-[linear-gradient(50deg,#FFC99D_0%,#022EE4_108%)] rtl:bg-[linear-gradient(-50deg,#FFC99D_0%,#022EE4_108%)] p-[1px] [&>div]:p-3 md:[&>div]:p-5 lg:flex-row flex-col"
+      className="w-full flex justify-center w-full rounded-lg overflow-hidden  ltr:bg-[linear-gradient(50deg,#FFC99D_0%,#022EE4_108%)] rtl:bg-[linear-gradient(-50deg,#FFC99D_0%,#022EE4_108%)] p-[1px] [&>div]:p-3 md:[&>div]:p-5 lg:flex-row flex-col text-white"
       initial={{ opacity: 0, y: -20, scale: 0.9 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: -20, scale: 0.9 }}

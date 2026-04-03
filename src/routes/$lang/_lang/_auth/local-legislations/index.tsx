@@ -2,13 +2,11 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { apiClient } from "@/api";
-import RouteLoader from "@/components/layouts/RouteLoader";
-import RoteError from "@/components/layouts/RoteError";
 import { DefaultButton } from "@/components/ui/buttons";
 import { Input } from "@/components/ui/input";
-import { AnimatePresence, motion } from "motion/react";
-import DashboardSidebar from "@/components/layouts/DashboardSidebar";
+import { motion } from "motion/react";
 import DashboardTopbar from "@/components/layouts/DashboardTopbar";
+import DashboardLayout from "@/components/layouts/DashboardLayout";
 import {
   BookOpenText,
   Download,
@@ -42,7 +40,7 @@ import { useEffect } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { SearchBox } from "@/components/ui/search";
 
-export const Route = createFileRoute("/$lang/_lang/_auth/legislations/")({
+export const Route = createFileRoute("/$lang/_lang/_auth/local-legislations/")({
   component: RouteComponent,
 });
 
@@ -77,76 +75,49 @@ function RouteComponent() {
 
   const isLoading = false;
   const error = false;
+  const isRefetching = false;
 
   return (
-    <>
-      {isLoading ? (
-        <RouteLoader key="dashboard-loader" />
-      ) : error ? (
-        <RoteError key="dashboard-error" />
-      ) : (
-        <AnimatePresence>
-          <div
-            key="dashboard-content"
-            className="flex flex-col items-center justify-center w-full h-full flex-1 mainBody "
-          >
-            <section className="w-full flex-1 relative mainWrapper ">
-              <DashboardSidebar delay={0} />
+    <DashboardLayout
+      isLoading={isLoading}
+      isRefetching={isRefetching}
+      error={error}
+      title={t("all_governments_legislations")}
+    >
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{
+          delay: 0.1,
+          duration: 0.5,
+          ease: "easeInOut",
+        }}
+        className="flex flex-wrap md:justify-end gap-2"
+      >
+        <div className="md:flex-1">
+          <DefaultButton
+            title={t("add_legislation")}
+            variant="dark"
+            icon={<Plus className="size-5" />}
+            className=""
+            onClick={() => {
+              navigate({
+                to: "/" + i18n.language + "/local-legislations/add",
+              });
+            }}
+          />
+        </div>
 
-              <div className="contentBox">
-                <DashboardTopbar
-                  delay={0}
-                  title={t("all_governments_legislations")}
-                />
+        <SearchBox
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          onClear={() => setSearch("")}
+          className="order-5 md:order-none"
+        />
+      </motion.div>
 
-                <motion.div
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{
-                    delay: 0.1,
-                    duration: 0.5,
-                    ease: "easeInOut",
-                  }}
-                  className="flex flex-wrap md:justify-end gap-2"
-                >
-                  <div className="md:flex-1">
-                    <DefaultButton
-                      title={t("add_legislation")}
-                      variant="dark"
-                      icon={<Plus className="size-5" />}
-                      className=""
-                      onClick={() => {
-                        navigate({
-                          to: "/" + i18n.language + "/legislations/add",
-                        });
-                      }}
-                    />
-                  </div>
-
-                  <SearchBox
-                    placeholder={t("search")}
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    onClear={() => setSearch("")}
-                    className="order-5 md:order-none"
-                  />
-
-                  <DefaultButton
-                    title={t("download_legislations")}
-                    icon={<Download className="size-5" />}
-                    onClick={() => {
-                      // window.open(data?.campaign?.url, "_blank");
-                    }}
-                  />
-                </motion.div>
-
-                <PageTable />
-              </div>
-            </section>
-          </div>
-        </AnimatePresence>
-      )}
-    </>
+      <PageTable />
+    </DashboardLayout>
   );
 }
 

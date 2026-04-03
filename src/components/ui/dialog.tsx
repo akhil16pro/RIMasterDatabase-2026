@@ -68,7 +68,7 @@ function DialogContent({
         {showCloseButton && (
           <DialogPrimitive.Close
             data-slot="dialog-close"
-            className="ring-offset-background focus:ring-ring data-[state=open]:bg-accent data-[state=open]:text-muted-foreground absolute md:top-2.5 top-1.5 ltr:right-1.5 md:ltr:right-2.5 md:rtl:left-2.5 rtl:left-1.5   disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 p-1.5 bg-[linear-gradient(26deg,#022EE4_-24.52%,#03CBFF_147%)]  cursor-pointer rounded-full lg:w-[36px] lg:h-[36px] w-[30px] h-[30px] flex items-center justify-center hover:scale-110 transition-all duration-200 linear"
+            className="ring-offset-background focus:ring-ring data-[state=open]:bg-accent data-[state=open]:text-muted-foreground absolute md:top-2.5 top-1.5 ltr:right-1.5 md:ltr:right-2.5 md:rtl:left-2.5 rtl:left-1.5   disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 p-1.5 bg-[linear-gradient(26deg,#022EE4_-24.52%,#03CBFF_147%)]  cursor-pointer rounded-full lg:w-[36px] lg:h-[36px] w-[30px] h-[30px] flex items-center justify-center hover:scale-110 transition-all duration-200 linear text-white"
           >
             <XIcon />
             <span className="sr-only">Close</span>

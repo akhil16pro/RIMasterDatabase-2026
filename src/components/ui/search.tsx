@@ -2,12 +2,7 @@ import { cn } from "@/lib/utils";
 import { motion } from "motion/react";
 import { Spinner } from "./spinner";
 import { Search, X } from "lucide-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { useTranslation } from "react-i18next";
 import { useId } from "react";
 export const SearchBox = ({
   id,
@@ -31,7 +26,7 @@ export const SearchBox = ({
   onClear?: () => void;
 }) => {
   const inputId = id || useId();
-
+  const { t } = useTranslation();
   return (
     <div
       className={cn(
@@ -78,7 +73,7 @@ export const SearchBox = ({
       <input
         {...props}
         id={inputId}
-        placeholder={props.placeholder || " "}
+        placeholder={props.placeholder || t("search")}
         data-slot="search"
         className={cn(
           "peer h-10 w-full text-black bg-transparent px-0 py-1 text-[1.2rem] border-b border-black/20 outline-none transition-all placeholder:text-transparent placeholder:text-muted-foreground",

@@ -16,7 +16,7 @@ html {
 
 body {
   // background-color: var(--color-bg);
-  color: var(--color-text);
+  color: var(--textColor);
   font-family: var(--font-family);
   color-scheme: dark;
   margin: 0;
@@ -38,6 +38,18 @@ body {
   .maplibregl-ctrl-bottom-right {
     display: none !important;
   }
+}
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px hsla(from var(--color-primary) h s l / 0.1);
+  background-color: hsla(from var(--color-primary) h s l / 0.05);
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-primary);
 }
 
 html[dir="rtl"] {

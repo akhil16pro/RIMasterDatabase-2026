@@ -64,7 +64,7 @@ function HomeBanner({ data }: { data: any }) {
   });
   return (
     <section
-      className="w-full h-auto relative xl:pt-[30vh] lg:pt-[25vh] md:pt-[20vh] pt-[25vh] "
+      className="w-full h-auto relative xl:pt-[30vh] lg:pt-[25vh] md:pt-[20vh] pt-[25vh] text-white"
       id="home-banner"
     >
       <motion.div

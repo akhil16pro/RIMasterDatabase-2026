@@ -43,6 +43,22 @@ function ThankYouPopup({
         : type === "warning"
           ? "bg-[linear-gradient(180deg,#FFC99D_0%,var(--color-warning)_100%)]"
           : "bg-[linear-gradient(180deg,#FFC99D_0%,var(--color-secondary)_100%)]";
+  if (!title) {
+    switch (type) {
+      case "success":
+        title = t("success");
+        break;
+      case "error":
+        title = t("error");
+        break;
+      case "warning":
+        title = t("warning");
+        break;
+      case "info":
+        title = t("info");
+        break;
+    }
+  }
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent
@@ -84,7 +100,7 @@ function ThankYouPopup({
                 </linearGradient>
               </defs>
             </svg> */}
-            <div className="absolute w-[44px] h-[44px] z-[-1]  scale-[2.3] animate-spin animation-duration-[5000ms]">
+            <div className="absolute w-[44px] h-[44px] z-[-1] scale-[1.5] md:scale-[2.3] animate-spin animation-duration-[5000ms]">
               <div
                 className={cn("w-full h-full", bgColor, "shapeMorphing")}
               ></div>
@@ -107,24 +123,24 @@ function ThankYouPopup({
             )}
           </motion.div>
         </div>
-        {title && (
-          <motion.DialogHeader
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.25 }}
-            className="mb-0"
-          >
-            <DialogTitle
-              className={cn(
-                "text-center font-medium",
 
-                type === "error" && "text-[var(--color-danger)]",
-              )}
-            >
-              {title}
-            </DialogTitle>
-          </motion.DialogHeader>
-        )}
+        <motion.DialogHeader
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.25 }}
+          className="mb-0"
+        >
+          <DialogTitle
+            className={cn(
+              "text-center font-medium",
+
+              type === "error" && "text-[var(--color-danger)]",
+            )}
+          >
+            {title}
+          </DialogTitle>
+        </motion.DialogHeader>
+
         {description && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}

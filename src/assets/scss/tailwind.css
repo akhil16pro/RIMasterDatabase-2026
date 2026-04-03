@@ -82,6 +82,8 @@
   @media only screen and (max-width: 767px) {
     --mainGap: 0.8rem;
   }
+
+  --ck-content-font-family: var(--font-secondary-family);
 }
 
 @custom-variant dark (&:is(.dark *));

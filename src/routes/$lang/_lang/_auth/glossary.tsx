@@ -2,13 +2,11 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { apiClient } from "@/api";
-import RouteLoader from "@/components/layouts/RouteLoader";
-import RoteError from "@/components/layouts/RoteError";
 import { DefaultButton } from "@/components/ui/buttons";
 import { Input } from "@/components/ui/input";
-import { AnimatePresence, motion } from "motion/react";
-import DashboardSidebar from "@/components/layouts/DashboardSidebar";
+import { motion } from "motion/react";
 import DashboardTopbar from "@/components/layouts/DashboardTopbar";
+import DashboardLayout from "@/components/layouts/DashboardLayout";
 import {
   BookOpenText,
   Download,
@@ -80,64 +78,46 @@ function RouteComponent() {
   const isCampaignActive = campaignStartDate <= now && campaignEndDate >= now;
 
   return (
-    <>
-      {isLoading ? (
-        <RouteLoader key="dashboard-loader" />
-      ) : error ? (
-        <RoteError key="dashboard-error" />
-      ) : (
-        <AnimatePresence>
-          <div
-            key="dashboard-content"
-            className="flex flex-col items-center justify-center w-full h-full flex-1 mainBody "
-          >
-            <section className="w-full flex-1 relative mainWrapper ">
-              <DashboardSidebar delay={0} />
-
-              <div className="contentBox">
-                <DashboardTopbar
-                  delay={0}
-                  title={t("glossary")}
-                  campaign={data?.campaign}
-                />
-                {isCampaignActive && data?.campaign && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{
-                      delay: 0.1,
-                      duration: 0.5,
-                      ease: "easeInOut",
-                    }}
-                    className="flex flex-wrap md:justify-end gap-2"
-                  >
-                    <div className="md:flex-1">
-                      <AddModal />
-                    </div>
-
-                    <DefaultButton
-                      title={t("download_excel_template")}
-                      icon={<Download className="size-5" />}
-                      onClick={() => {
-                        window.open(data?.campaign?.url, "_blank");
-                      }}
-                    />
-
-                    <UploadExcelModal />
-                    <DefaultButton
-                      title={t("guideline")}
-                      icon={<BookOpenText className="size-5" />}
-                    />
-                  </motion.div>
-                )}
-
-                <PageTable />
-              </div>
-            </section>
+    <DashboardLayout
+      isLoading={isLoading}
+      isRefetching={isRefetching}
+      error={error}
+      title={t("glossary")}
+      campaign={data?.campaign}
+    >
+      {isCampaignActive && data?.campaign && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{
+            delay: 0.1,
+            duration: 0.5,
+            ease: "easeInOut",
+          }}
+          className="flex flex-wrap md:justify-end gap-2"
+        >
+          <div className="md:flex-1">
+            <AddModal />
           </div>
-        </AnimatePresence>
+
+          <DefaultButton
+            title={t("download_excel_template")}
+            icon={<Download className="size-5" />}
+            onClick={() => {
+              window.open(data?.campaign?.url, "_blank");
+            }}
+          />
+
+          <UploadExcelModal />
+          <DefaultButton
+            title={t("guideline")}
+            icon={<BookOpenText className="size-5" />}
+          />
+        </motion.div>
       )}
-    </>
+
+      <PageTable />
+    </DashboardLayout>
   );
 }
 

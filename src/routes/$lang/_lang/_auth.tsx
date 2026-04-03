@@ -8,37 +8,46 @@ const store = getDefaultStore();
 export const Route = createFileRoute("/$lang/_lang/_auth")({
   beforeLoad: async ({ params, context }) => {
     const { queryClient } = context;
+    const store = getDefaultStore();
+
     let userSession = store.get(userSessionAtom);
 
-    // Initial hydration fallback
-    const needsRefresh = !userSession || userSession.lang !== params.lang;
+    try {
+      const response = await queryClient.fetchQuery({
+        queryKey: ["userInfo", params.lang],
+        queryFn: () => apiClient.get(`${params.lang}/get_userinfo`).json<any>(),
+        staleTime: 0, // Force a fetch to ensure data is fresh
+      });
 
-    if (needsRefresh && typeof window !== "undefined") {
-      const stored = localStorage.getItem("auth-session");
-      if (stored) {
-        try {
-          const parsedSession = JSON.parse(stored);
+      const apiUserData = response?.data;
 
-          const data = await queryClient.fetchQuery({
-            queryKey: ["userInfo", params.lang],
-            queryFn: () =>
-              apiClient.get(`${params.lang}/get_userinfo`).json<any>(),
-            staleTime: 0,
-          });
+      if (apiUserData) {
+        const stored =
+          typeof window !== "undefined"
+            ? localStorage.getItem("auth-session")
+            : null;
+        const parsedSession = stored ? JSON.parse(stored) : {};
 
-          const updatedSession = {
-            ...parsedSession,
-            ...data,
-            lang: params.lang,
-          };
+        const updatedSession = {
+          ...parsedSession,
+          ...apiUserData,
+          lang: params.lang,
+        };
+
+        if (JSON.stringify(userSession) !== JSON.stringify(updatedSession)) {
           store.set(userSessionAtom, updatedSession);
           userSession = updatedSession;
-        } catch (e) {
-          userSession = null;
-          console.error("Auth hydration error", e);
+
+          localStorage.setItem("auth-session", JSON.stringify(updatedSession));
         }
+        // console.log(apiUserData, "apiUserData");
       }
+    } catch (e) {
+      console.error("Auth hydration error", e);
+      userSession = null;
     }
+
+    console.log(userSession, "userSession");
 
     if (!userSession?.accessToken) {
       throw redirect({

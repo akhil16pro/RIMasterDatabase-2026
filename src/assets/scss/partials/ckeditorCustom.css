@@ -1,0 +1,32 @@
+/* Ensures the editor height is consistent */
+@reference "tailwindcss";
+@plugin "@tailwindcss/typography";
+:root {
+  --ck-content-font-family: var(--font-secondary-family);
+  /* --ck-content-font-size: 1.2rem; */
+}
+.ck-editor__editable_inline {
+  min-height: 200px;
+  max-height: 300px;
+  font-weight: 300;
+}
+
+.ck-content {
+  @apply prose prose-slate max-w-none;
+}
+
+.ck-content p {
+  @apply text-lg;
+}
+.ck-content h2 {
+  @apply text-2xl font-bold mb-4;
+}
+.ck-content h3 {
+  @apply text-xl font-semibold mb-3;
+}
+.ck-content ul {
+  @apply list-disc ms-5;
+}
+.ck-content ol {
+  @apply list-decimal ms-5;
+}
