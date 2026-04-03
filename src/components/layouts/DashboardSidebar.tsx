@@ -117,26 +117,23 @@ export default function DashboardSidebar({ delay }: { delay: number }) {
               to={"/" + i18n.language}
               className="inline-flex items-center md:gap-4 gap-2 outline-none border-none  overflow-clip w-full relative"
             >
-              <motion.img
-                initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.5 }}
-                transition={{ duration: 0.25, ease: "easeInOut" }}
+              <img
+                // initial={{ opacity: 0, scale: 0.5 }}
+                // animate={{ opacity: 1, scale: 1 }}
+                // exit={{ opacity: 0, scale: 0.5 }}
+                // transition={{ duration: 0.25, ease: "easeInOut" }}
                 src="/logoShape.svg"
                 alt=""
                 className=" object-contain lg:h-[5rem] md:h-[4rem] h-[3rem] w-auto"
               />
 
               <motion.span
-                initial={{
-                  opacity: 0,
-                  x: currentLang === "en" ? 20 : -20,
+                key="sidebar-logo-text"
+                initial={false}
+                animate={{
+                  opacity: !isMenuOpen ? 1 : 0,
+                  x: !isMenuOpen ? 0 : currentLang === "en" ? 20 : -20,
                 }}
-                animate={
-                  !isMenuOpen
-                    ? { opacity: 1, x: 0 }
-                    : { opacity: 0, x: currentLang === "en" ? 20 : -20 }
-                }
                 exit={{
                   opacity: 0,
                   x: currentLang === "en" ? 20 : -20,
@@ -239,7 +236,7 @@ function MenuItem({
             to={item.href}
             activeOptions={{ exact: false }}
             className={cn(
-              "group relative flex justify-content-start w-full items-center gap-2 py-[.8rem] md:py-[1rem] ps-2 md:ps-4 text-[1.2rem] md:text-[1.25rem] font-medium text-white transition-all duration-300 z-10 [&:before]:content-[''] [&:before]:absolute [&:before]:inset-0 rtl:[&:before]:-left-[var(--sidePadd)] ltr:[&:before]:-right-[var(--sidePadd)] [&:before]:z-[11] ltr:[&:before]:origin-right rtl:[&:before]:origin-left [&:before]:scale-x-0 rtl:[&:before]:rounded-r-[8px] rtl:md:[&:before]:rounded-r-[10px] ltr:[&:before]:rounded-l-[8px] ltr:md:[&:before]:rounded-l-[10px] [&:before]:bg-white [&:before]:transition-transform [&:before]:duration-300 hover:[&:before]:scale-x-100 [&:not(.active)]:before:opacity-[.2]",
+              "group relative flex justify-content-start w-full items-center gap-2 md:gap-3 lg:gap-4 py-[.8rem] md:py-[1rem] ps-2 md:ps-4 text-[1.2rem] md:text-[1.25rem] font-medium text-white transition-all duration-300 z-10 [&:before]:content-[''] [&:before]:absolute [&:before]:inset-0 rtl:[&:before]:-left-[var(--sidePadd)] ltr:[&:before]:-right-[var(--sidePadd)] [&:before]:z-[11] ltr:[&:before]:origin-right rtl:[&:before]:origin-left [&:before]:scale-x-0 rtl:[&:before]:rounded-r-[8px] rtl:md:[&:before]:rounded-r-[10px] ltr:[&:before]:rounded-l-[8px] ltr:md:[&:before]:rounded-l-[10px] [&:before]:bg-white [&:before]:transition-transform [&:before]:duration-300 hover:[&:before]:scale-x-100 [&:not(.active)]:before:opacity-[.2]",
               item.preventClick ? "blur-[5px] pointer-events-none" : "",
             )}
             activeProps={{
@@ -260,23 +257,35 @@ function MenuItem({
               // />
               <ShieldCheck
                 strokeWidth={2}
-                className="iconBox size-6 md:size-7 relative z-12 transition-all duration-400 stroke-white group-[.active]:stroke-[url(#dashboard_linear)] transition-stroke duration-300"
+                className="iconBox size-7 md:size-8 relative z-12 transition-all duration-400 stroke-white group-[.active]:stroke-[url(#dashboard_linear)] transition-stroke duration-300"
               />
             )}
 
             <motion.div
-              initial={{ opacity: 0, x: currentLang === "en" ? 20 : -20 }}
+              key={`menu-item-text-${item.id}`}
+              initial={false}
               animate={
                 !isMenuOpen
                   ? { opacity: 1, x: 0 }
                   : { opacity: 0, x: currentLang === "en" ? 20 : -20 }
               }
-              // exit={{ opacity: 0, x: currentLang === "en" ? 20 : -20 }}
               transition={{
                 duration: 0.25,
 
-                delay: index * 0.05,
+                delay: isMenuOpen ? 0 : index * 0.08,
               }}
+              // initial={{ opacity: 0, x: currentLang === "en" ? 20 : -20 }}
+              // animate={
+              //   !isMenuOpen
+              //     ? { opacity: 1, x: 0 }
+              //     : { opacity: 0, x: currentLang === "en" ? 20 : -20 }
+              // }
+              // // exit={{ opacity: 0, x: currentLang === "en" ? 20 : -20 }}
+              // transition={{
+              //   duration: 0.25,
+
+              //   delay: index * 0.05,
+              // }}
               className="flex-1 whitespace-nowrap overflow-hidden text-ellipsis leading-[100%]"
             >
               <span

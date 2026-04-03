@@ -202,13 +202,14 @@ input {
     --sideBar: 17rem;
   }
   &:has(.sideBar.open) {
-    --sideBar: calc(24px + 2rem + (var(--sidePadd) * 2));
+    --sideBar: calc(32px + 2rem + (var(--sidePadd) * 2));
 
     @media only screen and (max-width: rem(1024)) {
-      --sideBar: 6rem;
+      --sideBar: calc(28px + 2.1rem + (var(--sidePadd) * 2));
     }
+
     @media only screen and (max-width: rem(767)) {
-      --sideBar: 4rem;
+      --sideBar: calc(24px + 1rem + (var(--sidePadd) * 2));
     }
   }
 
@@ -222,7 +223,7 @@ input {
     // border-radius: 10px;
     --sidePadd: 0.8rem;
     --sideBar: 17rem;
-    padding-inline-start: 4rem;
+    padding-inline-start: var(--sideBar);
   }
 }
 
