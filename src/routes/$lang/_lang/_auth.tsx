@@ -2,6 +2,7 @@ import { createFileRoute, redirect, Outlet } from "@tanstack/react-router";
 import { getDefaultStore } from "jotai";
 import { userSessionAtom } from "@/store/atoms";
 import { apiClient } from "@/api";
+import { NAV_CONFIG } from "@/lib/navigation";
 
 const store = getDefaultStore();
 
@@ -55,6 +56,48 @@ export const Route = createFileRoute("/$lang/_lang/_auth")({
         params: { lang: params.lang },
       });
     }
+
+    /**
+     * Map your URL segments to the keys in APP_PERMISSIONS.
+     * This logic checks if the current URL contains a restricted keyword.
+     */
+    const userRole = userSession?.user?.roles;
+    const pathname = location.pathname;
+
+    const currentPath = params.lang
+      ? pathname.replace(`/${params.lang}`, "")
+      : pathname;
+
+    const activeRequirement = NAV_CONFIG.find((item) => {
+      // Matches if the current simplified path starts with the config href
+      // e.g., "/dashboard" matches item.href === "/dashboard"
+      return currentPath.startsWith(item.href);
+    });
+
+    if (activeRequirement) {
+      const roleToVerify = Array.isArray(userRole) ? userRole[0] : userRole;
+
+      const hasPermission = activeRequirement.roles.includes(roleToVerify);
+
+      if (!hasPermission) {
+        console.warn(
+          `Access Denied: ${roleToVerify} cannot access ${pathname}`,
+        );
+
+        // Redirect to a safe "Entry" page or Login
+        throw redirect({
+          to: "/$lang/login", // Or a generic landing page
+          params: { lang: params.lang },
+        });
+      }
+    }
+
+    // console.log({
+    //   currentPath,
+    //   userRole,
+    //   activeRequirementRoles: activeRequirement?.roles,
+    //   match: activeRequirement?.roles.includes(userRole),
+    // });
   },
   component: () => <Outlet />,
 });
