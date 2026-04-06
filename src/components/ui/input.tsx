@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { Eye, EyeOff, Upload, Loader2, Ban, CalendarDays } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useId, useRef, useState } from "react";
-
+import { Label } from "@/components/ui/label";
 function Input({
   className,
   type,
@@ -36,7 +36,7 @@ function Input({
           id={inputId}
           placeholder={props.placeholder || " "}
           aria-invalid={error ? "true" : "false"}
-          aria-describedby={error ? errorId : undefined}
+          aria-describedby={inputId}
           data-slot="textarea"
           className={cn(
             "peer h-25 md:h-40 max-h-70 min-h-25 md:min-h-40 w-full text-black bg-transparent px-0 py-1 text-[1.2rem] border-b border-black/20 outline-none transition-all placeholder:text-transparent placeholder:text-muted-foreground font-secondary font-light leading-[120%]",
@@ -56,7 +56,7 @@ function Input({
             type === "password" ? (showPassword ? "text" : "password") : type
           }
           aria-invalid={error ? "true" : "false"}
-          aria-describedby={error ? errorId : undefined}
+          aria-describedby={inputId}
           data-slot="input"
           className={cn(
             "peer h-10 w-full text-black bg-transparent px-0 py-1 text-[1.2rem] border-b border-black/20 outline-none transition-all placeholder:text-transparent placeholder:text-muted-foreground",
@@ -136,13 +136,9 @@ function Input({
       )}
 
       {error && (
-        <span
-          id={errorId}
-          role="alert"
-          className="absolute bottom-[-1px] ltr:right-0 rtl:left-0 bg-[var(--brandRed)] text-[.85rem] inline-flex leading-[100%] px-2 py-[2px] rounded-[3px] font-secondary translate-y-full"
-        >
+        <Label htmlFor={inputId} errorLabel={true} floating={true} role="alert">
           {errorMessage || t("invalid-field")}
-        </span>
+        </Label>
       )}
       {isLoading && (
         <div

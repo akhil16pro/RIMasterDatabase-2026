@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as SelectPrimitive from "@radix-ui/react-select";
-import { Check, ChevronDown, Loader2 } from "lucide-react";
+import { Check, ChevronDown, ChevronUp, Loader2 } from "lucide-react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -8,11 +8,9 @@ function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export const Select = SelectPrimitive.Root;
 export const SelectGroup = SelectPrimitive.Group;
 export const SelectValue = SelectPrimitive.Value;
-
-// Added dir prop to the Root if you want to force RTL/LTR locally
-export const Select = SelectPrimitive.Root;
 
 interface SelectTriggerProps extends React.ComponentPropsWithoutRef<
   typeof SelectPrimitive.Trigger
@@ -45,16 +43,13 @@ export const SelectTrigger = React.forwardRef<
   ) => {
     const errorId = React.useId();
 
-    // Determine if we are in RTL mode to flip icons/labels
-    const isRtl = dir === "rtl";
-
     return (
       <div className="group relative flex w-full">
         <SelectPrimitive.Trigger
           ref={ref}
           className={cn(
             "peer flex h-10 w-full items-center justify-between border-b border-black/20 bg-transparent py-1 text-[1.2rem] outline-none transition-all disabled:cursor-not-allowed disabled:opacity-50 text-black font-secondary font-light",
-            "text-start", // Ensures text aligns to the start (right for RTL, left for LTR)
+            "text-start",
             error && "border-[var(--brandRed)]",
             className,
           )}
@@ -71,13 +66,9 @@ export const SelectTrigger = React.forwardRef<
           <label
             className={cn(
               "absolute transition-all pointer-events-none leading-[100%] font-secondary",
-              // Logic for LTR vs RTL alignment
               "ltr:left-0 rtl:right-0",
-
               "top-[.25rem] -translate-y-full text-[0.85rem]",
-
               "peer-focus:top-[.25rem] peer-focus:-translate-y-full peer-focus:text-[0.85rem]",
-
               "text-black/70",
               error &&
                 "text-[var(--brandRed)] peer-focus:text-[var(--brandRed)]",
@@ -93,7 +84,7 @@ export const SelectTrigger = React.forwardRef<
             role="alert"
             className={cn(
               "absolute bottom-[-1px] bg-[var(--brandRed)] text-[.85rem] inline-flex leading-[100%] px-2 py-[2px] rounded-[3px] font-secondary translate-y-full text-white",
-              "ltr:right-0 rtl:left-0", // Error badge sits on the opposite side of the label
+              "ltr:right-0 rtl:left-0",
             )}
           >
             {errorMessage || "Invalid selection"}
@@ -116,6 +107,38 @@ export const SelectTrigger = React.forwardRef<
 );
 SelectTrigger.displayName = SelectPrimitive.Trigger.displayName;
 
+export const SelectScrollUpButton = React.forwardRef<
+  React.ElementRef<typeof SelectPrimitive.ScrollUpButton>,
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.ScrollUpButton>
+>(({ className, ...props }, ref) => (
+  <SelectPrimitive.ScrollUpButton
+    ref={ref}
+    className={cn(
+      "flex cursor-default items-center justify-center py-1",
+      className,
+    )}
+    {...props}
+  >
+    <ChevronUp className="h-4 w-4" />
+  </SelectPrimitive.ScrollUpButton>
+));
+
+export const SelectScrollDownButton = React.forwardRef<
+  React.ElementRef<typeof SelectPrimitive.ScrollDownButton>,
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.ScrollDownButton>
+>(({ className, ...props }, ref) => (
+  <SelectPrimitive.ScrollDownButton
+    ref={ref}
+    className={cn(
+      "flex cursor-default items-center justify-center py-1",
+      className,
+    )}
+    {...props}
+  >
+    <ChevronDown className="h-4 w-4" />
+  </SelectPrimitive.ScrollDownButton>
+));
+
 export const SelectContent = React.forwardRef<
   HTMLDivElement,
   SelectPrimitive.SelectContentProps
@@ -132,12 +155,21 @@ export const SelectContent = React.forwardRef<
       position={position}
       {...props}
     >
-      <SelectPrimitive.Viewport className="p-1">
+      <SelectScrollUpButton />
+      <SelectPrimitive.Viewport
+        className={cn(
+          "p-1",
+          position === "popper" &&
+            "h-[var(--radix-select-content-available-height)] max-h-[300px] w-full min-w-[var(--radix-select-trigger-width)]",
+        )}
+      >
         {children}
       </SelectPrimitive.Viewport>
+      <SelectScrollDownButton />
     </SelectPrimitive.Content>
   </SelectPrimitive.Portal>
 ));
+SelectContent.displayName = SelectPrimitive.Content.displayName;
 
 export const SelectItem = React.forwardRef<
   HTMLDivElement,
@@ -160,3 +192,4 @@ export const SelectItem = React.forwardRef<
     <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
   </SelectPrimitive.Item>
 ));
+SelectItem.displayName = SelectPrimitive.Item.displayName;

@@ -1,4 +1,4 @@
-import { AnimatePresence } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 import RouteLoader from "@/components/layouts/RouteLoader";
 import RoteError from "@/components/layouts/RoteError";
 import DashboardSidebar from "@/components/layouts/DashboardSidebar";
@@ -7,28 +7,30 @@ import { userSessionAtom } from "@/store/atoms";
 import DashboardTopbar from "@/components/layouts/DashboardTopbar";
 import { useTranslation } from "react-i18next";
 
+import Lottie from "lottie-react";
+import docLoading from "@/assets/animations/loading2.json";
 export default function DashboardLayout({
-  isLoading,
-  isRefetching,
-  error,
+  isLoading = false,
+  isRefetching = false,
+  error = false,
   children,
   title,
   lastLogin = false,
-  campaign,
+  campaign = [],
 }: {
   isLoading: boolean;
   isRefetching: boolean;
   error: any;
   title: string;
   lastLogin?: boolean;
-  campaign?: string;
+  campaign?: string[];
   children: React.ReactNode;
 }) {
   const { t } = useTranslation();
   const userSession = useAtomValue(userSessionAtom);
   return (
     <>
-      {isLoading || isRefetching || !userSession?.accessToken ? (
+      {!userSession?.accessToken ? (
         <RouteLoader key="dashboard-loader" />
       ) : error ? (
         <RoteError key="dashboard-error" />
@@ -41,13 +43,31 @@ export default function DashboardLayout({
             <section className="w-full flex-1 relative mainWrapper ">
               <DashboardSidebar delay={0} />
               <div className="contentBox">
-                <DashboardTopbar
-                  delay={0}
-                  title={title}
-                  lastLogin={lastLogin}
-                  campaign={campaign}
-                />
-                {children}
+                {isLoading || isRefetching ? (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 1.5 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 1.5 }}
+                    transition={{ duration: 0.4, type: "tween" }}
+                    className="flex w-full h-full flex items-center justify-center "
+                  >
+                    <Lottie
+                      animationData={docLoading}
+                      loop={true}
+                      className="size-25 opacity-70"
+                    />
+                  </motion.div>
+                ) : (
+                  <>
+                    <DashboardTopbar
+                      delay={0}
+                      title={title}
+                      lastLogin={lastLogin}
+                      campaign={campaign}
+                    />
+                    {children}
+                  </>
+                )}
               </div>
             </section>
           </div>

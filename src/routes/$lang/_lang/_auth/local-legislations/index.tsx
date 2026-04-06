@@ -61,27 +61,21 @@ function RouteComponent() {
   //   queryFn: async () => {
   //     try {
   //       const res = await apiClient
-  //         .get(i18n.language + `/glossary`)
+  //         .get(i18n.language + `/local-legislation/list`)
   //         .json<any>();
-  //       console.log("legislations_data", res?.data);
+  //       console.log("local_legislations_data", res?.data);
 
   //       return res?.data;
   //     } catch (error) {
-  //       console.log("legislations_data_error", error);
+  //       console.log("local_legislations_data_error", error);
   //       return null;
   //     }
   //   },
   // });
 
-  const isLoading = false;
-  const error = false;
-  const isRefetching = false;
-
   return (
     <DashboardLayout
-      isLoading={isLoading}
-      isRefetching={isRefetching}
-      error={error}
+      isLoading={false}
       title={t("all_governments_legislations")}
     >
       <motion.div
@@ -116,12 +110,12 @@ function RouteComponent() {
         />
       </motion.div>
 
-      <PageTable />
+      <PageTable search={search} />
     </DashboardLayout>
   );
 }
 
-function PageTable() {
+function PageTable({ search }: { search: string }) {
   const { t, i18n } = useTranslation();
   const queryClient = useQueryClient();
   const userSession = useAtomValue(userSessionAtom);
@@ -131,19 +125,22 @@ function PageTable() {
   });
 
   // const { data, isLoading, error, isRefetching } = useQuery({
-  //   queryKey: ["legislationTable", pagination.currentPage, i18n.language],
+  //   queryKey: ["localLegislationTable", pagination.currentPage, i18n.language],
   //   enabled: !!userSession?.accessToken,
   //   placeholderData: (previousData) => previousData,
   //   staleTime: 1000 * 60 * 5,
   //   queryFn: async () => {
   //     try {
   //       const res = await apiClient
-  //         .get(i18n.language + `/glossary/table?page=${pagination.currentPage}`)
+  //         .get(
+  //           i18n.language +
+  //             `/local-legislation/table?page=${pagination.currentPage}`,
+  //         )
   //         .json<any>();
-  //       console.log("GLOSSARY_TABLE_DATA", res?.data);
+  //       console.log("LOCAL_LEGISLATION_TABLE_DATA", res?.data);
   //       return res?.data;
   //     } catch (error) {
-  //       console.log("GLOSSARY_TABLE_DATA_ERROR", error);
+  //       console.log("LOCAL_LEGISLATION_TABLE_DATA_ERROR", error);
   //       return null;
   //     }
   //   },

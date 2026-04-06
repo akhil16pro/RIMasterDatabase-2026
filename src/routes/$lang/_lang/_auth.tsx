@@ -4,7 +4,7 @@ import { userSessionAtom } from "@/store/atoms";
 import { apiClient } from "@/api";
 import { NAV_CONFIG } from "@/lib/navigation";
 
-const store = getDefaultStore();
+// const store = getDefaultStore();
 
 export const Route = createFileRoute("/$lang/_lang/_auth")({
   beforeLoad: async ({ params, context }) => {
@@ -12,6 +12,21 @@ export const Route = createFileRoute("/$lang/_lang/_auth")({
     const store = getDefaultStore();
 
     let userSession = store.get(userSessionAtom);
+
+    const now = Date.now();
+    const DAY_IN_MS = 86400000;
+
+    if (
+      userSession?.lastVerified &&
+      now - userSession.lastVerified > DAY_IN_MS
+    ) {
+      store.set(userSessionAtom, null);
+      localStorage.removeItem("auth-session");
+      throw redirect({
+        to: "/$lang/login",
+        params: { lang: params.lang },
+      });
+    }
 
     try {
       const response = await queryClient.fetchQuery({
@@ -33,6 +48,7 @@ export const Route = createFileRoute("/$lang/_lang/_auth")({
           ...parsedSession,
           ...apiUserData,
           lang: params.lang,
+          lastVerified: Date.now(),
         };
 
         if (JSON.stringify(userSession) !== JSON.stringify(updatedSession)) {
@@ -48,7 +64,7 @@ export const Route = createFileRoute("/$lang/_lang/_auth")({
       userSession = null;
     }
 
-    console.log(userSession, "userSession");
+    // console.log(userSession, "userSession");
 
     if (!userSession?.accessToken) {
       throw redirect({

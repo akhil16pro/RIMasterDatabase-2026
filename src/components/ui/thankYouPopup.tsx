@@ -6,9 +6,12 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
+  DialogFooter,
+  DialogClose,
 } from "@/components/ui/dialog";
-import { Check, X, AlertTriangle, Info } from "lucide-react";
+import { Check, X, AlertTriangle, Info, CircleX } from "lucide-react";
 import { motion } from "framer-motion";
+import { DefaultButton } from "@/components/ui/buttons";
 function ThankYouPopup({
   className,
   open,
@@ -62,6 +65,7 @@ function ThankYouPopup({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent
+        showCloseButton={false}
         className={cn(
           "lg:max-w-2xl py-15 md:py-18 flex flex-col items-center justify-center",
           className,
@@ -153,6 +157,23 @@ function ThankYouPopup({
             />
           </motion.div>
         )}
+        <DialogFooter className="sm:justify-center mt-2">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.45 }}
+          >
+            <DefaultButton
+              type="button"
+              variant="dark"
+              title={t("ok")}
+              onClick={() => {
+                setOpen(false);
+              }}
+              icon={<CircleX className="size-5" />}
+            />
+          </motion.div>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

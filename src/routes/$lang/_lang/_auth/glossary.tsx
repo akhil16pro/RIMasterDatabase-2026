@@ -241,7 +241,7 @@ function ViewAction({ slug }: { slug: string }) {
           onClick={() => setLoading(true)}
         />
 
-        <DialogContent className="lg:max-w-4xl">
+        <DialogContent className="lg:max-w-4xl" aria-describedby={undefined}>
           <DialogHeader>
             <DialogTitle>{t("glossary_details")}</DialogTitle>
           </DialogHeader>
@@ -308,9 +308,15 @@ function ViewAction({ slug }: { slug: string }) {
             />
 
             <div className="inline-flex gap-2 text-[var(--textColor)] text-[1.2rem]">
-              <label className="text-muted-foreground">{t("status")}</label>
+              <label
+                className="text-muted-foreground"
+                aria-describedby={undefined}
+              >
+                {t("status")}
+              </label>
               <div className="flex gap-1 items-center">
                 <label
+                  aria-describedby={undefined}
                   className={cn(
                     "font-bold",
                     data?.glossaryData?.status === 1
@@ -786,9 +792,16 @@ function AddModal() {
               )}
             />
             <div className="inline-flex gap-2 text-[var(--textColor)] text-[1.2rem]">
-              <label className="text-muted-foreground">{t("status")}</label>
+              <label
+                className="text-muted-foreground"
+                aria-describedby={undefined}
+              >
+                {t("status")}
+              </label>
               <div className="flex gap-1 items-center">
-                <label className="font-bold">{t("draft")}</label>
+                <label className="font-bold" aria-describedby={undefined}>
+                  {t("draft")}
+                </label>
                 <CircleCheck className="size-[14px]" strokeWidth={1} />
               </div>
             </div>

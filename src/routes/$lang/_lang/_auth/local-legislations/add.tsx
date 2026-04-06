@@ -26,6 +26,8 @@ import { ThankYouPopup } from "@/components/ui/thankYouPopup";
 import { useEffect } from "react";
 
 import CKEditorCustom from "@/components/ui/CKEditor";
+import { useAtomValue } from "jotai";
+import { userSessionAtom } from "@/store/atoms";
 
 export const Route = createFileRoute(
   "/$lang/_lang/_auth/local-legislations/add",
@@ -35,40 +37,100 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
   const { t, i18n } = useTranslation();
+  const userSession = useAtomValue(userSessionAtom);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const queryClient = useQueryClient();
   const [thankYouPopup, setThankYouPopup] = useState(false);
 
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["localLegislationFormData", i18n.language],
+    enabled: !!userSession?.accessToken,
+    queryFn: async () => {
+      try {
+        const res = await apiClient
+          .get(i18n.language + `/local-legislation/create`)
+          .json<any>();
+        console.log("local_legislation_form_data", res?.data);
+
+        return res?.data;
+      } catch (error) {
+        console.log("local_legislation_form_data_error", error);
+        return null;
+      }
+    },
+  });
+
   const form = useForm({
     defaultValues: {
-      local_government: "Dubai",
-      sector: "",
-      description: "",
-      description_arabic: "",
+      lm_has_english_version: "2",
+      local_government: userSession?.user?.userEmirateName || "",
+      lm_law_type_id: "",
+      lm_sector_id: "",
+      lm_title: "",
+      lm_title_arabic: "",
+      lm_short_title: "",
+      lm_short_title_arabic: "",
+      lm_description: "",
+      lm_description_arabic: "",
+      lm_year: "",
+      lm_issue_date: "",
+      lm_effective_date: "",
+      lm_pdf_file: "",
+      lm_pdf_file_arabic: "",
+      lm_gazette_number: "",
+      lm_gazette_number_arabic: "",
+      lm_official_gazette_issue_date: "",
+      lm_gazette_title: "",
+      lm_gazette_title_arabic: "",
     },
     onSubmit: async ({ value }) => {
       setIsSubmitting(true);
       try {
         const res = await apiClient
-          .post(i18n.language + "/glossary/create", {
+          .post(i18n.language + "/local-legislation/store", {
+            headers: {
+              "Content-Type": undefined,
+            },
             json: {
-              title: value.title,
-              title_arabic: value.title_arabic,
-              description: value.description,
-              description_arabic: value.description_arabic,
+              lm_created_by: userSession?.user?.id,
+              lm_has_english_version: value.lm_has_english_version,
+              local_government: userSession?.user?.userEmirateId,
+              lm_sector_id: value.lm_sector_id,
+              lm_law_type_id: value.lm_law_type_id,
+              lm_title: value.lm_title,
+              lm_title_arabic: value.lm_title_arabic,
+              lm_short_title: value.lm_short_title,
+              lm_short_title_arabic: value.lm_short_title_arabic,
+              lm_description: value.lm_description,
+              lm_description_arabic: value.lm_description_arabic,
+              lm_year: value.lm_year,
+              lm_issue_date: value.lm_issue_date,
+              lm_effective_date: value.lm_effective_date,
+              lm_pdf_file: value.lm_pdf_file,
+              lm_pdf_file_arabic: value.lm_pdf_file_arabic,
+              lm_gazette_number: value.lm_gazette_number,
+              lm_gazette_number_arabic: value.lm_gazette_number_arabic,
+              lm_official_gazette_issue_date:
+                value.lm_official_gazette_issue_date,
+              lm_gazette_title: value.lm_gazette_title,
+              lm_gazette_title_arabic: value.lm_gazette_title_arabic,
             },
           })
           .json<any>();
 
-        form.reset();
-
+        console.log(res, "local_legislation_store_res");
         if (res?.status) {
+          form.reset();
           toast.success(res?.message || t("success"));
+
           setTimeout(() => {
-            queryClient.invalidateQueries({ queryKey: ["glossaryTable"] });
-          }, 100);
-          // setOpen(false);
+            setThankYouPopup(true);
+          }, 150);
+
+          // setTimeout(() => {
+          //   queryClient.invalidateQueries({ queryKey: ["glossaryTable"] });
+          // }, 100);
         }
       } catch (error) {
         console.error("Add request failed:", error);
@@ -78,420 +140,637 @@ function RouteComponent() {
     },
   });
 
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     setThankYouPopup(true);
-  //   }, 100);
-  // }, []);
+  // console.log(userSession);
 
   return (
-    <DashboardLayout title={t("add_governments_legislations")}>
-      <div className="grid md:grid-cols-2 gap-x-8 gap-y-10 items-start">
-        <div className="inline-flex gap-5 text-black  text-[1.2rem] col-span-2">
-          <Label className="text-black/70">{t("has_english")}</Label>
+    <DashboardLayout
+      isLoading={isLoading}
+      title={t("add_governments_legislations")}
+    >
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          form.handleSubmit();
+        }}
+      >
+        <div className="grid md:grid-cols-2 gap-x-8 gap-y-10 items-start">
+          <div className="inline-flex gap-5 text-black  text-[1.2rem] col-span-2">
+            <Label className="text-black/70">{t("has_english")}</Label>
+            <form.Field
+              name="lm_has_english_version"
+              validators={{
+                onChange: ({ value }) =>
+                  !value ? t("required-field") : undefined,
+              }}
+              children={(field) => (
+                <>
+                  <RadioGroup
+                    className="flex gap-4"
+                    value={field.state.value}
+                    onValueChange={(val) => field.handleChange(val)}
+                    defaultValue="2"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem
+                        value="1"
+                        id="yes"
+                        error={field.state.meta.errors.length > 0}
+                      />
+                      <Label
+                        normalLabel={true}
+                        htmlFor="yes"
+                        className="cursor-pointer"
+                      >
+                        {t("yes")}
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem
+                        value="2"
+                        id="no"
+                        error={field.state.meta.errors.length > 0}
+                      />
+                      <Label
+                        normalLabel={true}
+                        htmlFor="no"
+                        className="cursor-pointer"
+                      >
+                        {t("no")}
+                      </Label>
+                    </div>
+                  </RadioGroup>
+                  {field.state.meta.errors.length > 0 && (
+                    <Label errorLabel={true}>
+                      {field.state.meta.errors[0] || t("invalid-field")}
+                    </Label>
+                  )}
+                </>
+              )}
+            />
+          </div>
           <form.Field
-            name="has_english"
+            name="local_government"
             children={(field) => (
-              <>
-                <RadioGroup defaultValue="option-one" className="flex gap-4">
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="yes" id="yes" />
-                    <Label
-                      normalLabel={true}
-                      htmlFor="yes"
-                      className="cursor-pointer"
+              <Input
+                id="local_government"
+                name="local_government"
+                value={field.state.value}
+                onChange={(e) => field.handleChange(e.target.value)}
+                label={t("local_government")}
+                error={field.state.meta.errors.length > 0 ? true : false}
+                errorMessage={field.state.meta.errors[0]}
+                disabled={true}
+              />
+            )}
+          />
+          <form.Field
+            name="lm_sector_id"
+            validators={{
+              onSubmit: ({ value }) => (!value ? t("required-field") : null),
+            }}
+            children={(field) => (
+              <Select
+                id="lm_sector_id"
+                name="lm_sector_id"
+                value={field.state.value?.toString() || ""}
+                onValueChange={(e) => field.handleChange(e)}
+              >
+                <SelectTrigger
+                  label={t("sector")}
+                  hasValue={!!field.state.value}
+                  error={field.state.meta.errors.length > 0 ? true : false}
+                  errorMessage={field.state.meta.errors[0]}
+                >
+                  <SelectValue placeholder={t("select_sector")} />
+                </SelectTrigger>
+                <SelectContent>
+                  {data?.sectorList?.map((item: any) => (
+                    <SelectItem
+                      key={`sector-${item.value}`}
+                      value={item.value.toString()}
                     >
-                      {t("yes")}
-                    </Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="no" id="no" />
-                    <Label
-                      normalLabel={true}
-                      htmlFor="no"
-                      className="cursor-pointer"
+                      {item.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          />
+          <form.Field
+            name="lm_law_type_id"
+            validators={{
+              onSubmit: ({ value }) => (!value ? t("required-field") : null),
+            }}
+            children={(field) => (
+              <Select
+                id="lm_law_type_id"
+                name="lm_law_type_id"
+                value={field.state.value?.toString() || ""}
+                onValueChange={(e) => field.handleChange(e)}
+              >
+                <SelectTrigger
+                  label={t("legislation_type")}
+                  hasValue={!!field.state.value}
+                  error={field.state.meta.errors.length > 0 ? true : false}
+                  errorMessage={field.state.meta.errors[0]}
+                >
+                  <SelectValue placeholder={t("select_legislation_type")} />
+                </SelectTrigger>
+                <SelectContent>
+                  {data?.lawTypeList?.map((item: any) => (
+                    <SelectItem
+                      key={`lawType-${item.value}`}
+                      value={item.value.toString()}
                     >
-                      {t("no")}
-                    </Label>
-                  </div>
-                </RadioGroup>
-                {field.state.meta.errors.length > 0 && (
-                  <span className="bg-[var(--brandRed)] text-[.85rem] inline-flex px-2 py-[2px] rounded-[3px] font-secondary text-white">
-                    {field.state.meta.errors[0] || t("invalid-field")}
-                  </span>
+                      {item.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          />
+          <form.Subscribe
+            selector={(state) => state.values.lm_has_english_version}
+            children={(hasEnglish) => (
+              <AnimatePresence>
+                {hasEnglish === "1" && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="col-span-2 grid md:grid-cols-2 gap-x-8 gap-y-10 items-start"
+                  >
+                    <form.Field
+                      name="lm_title"
+                      validators={{
+                        onChange: ({ value }) =>
+                          !value ? t("required-field") : undefined,
+
+                        onSubmit: ({ value }) =>
+                          !value ? t("required-field") : null,
+                      }}
+                      children={(field) => (
+                        <Input
+                          id="lm_title"
+                          name="lm_title"
+                          type="text"
+                          value={field.state.value}
+                          onChange={(e) => field.handleChange(e.target.value)}
+                          label={t("legislation_title_english")}
+                          error={
+                            field.state.meta.isTouched &&
+                            field.state.meta.errors.length > 0
+                          }
+                          errorMessage={field.state.meta.errors[0]}
+                          onBlur={field.handleBlur}
+                        />
+                      )}
+                    />
+                    <form.Field
+                      name="lm_short_title"
+                      children={(field) => (
+                        <Input
+                          id="lm_short_title"
+                          name="lm_short_title"
+                          type="text"
+                          value={field.state.value}
+                          onChange={(e) => field.handleChange(e.target.value)}
+                          label={t("legislation_short_title_english")}
+                          error={field.state.meta.errors.length > 0}
+                          errorMessage={field.state.meta.errors[0]}
+                        />
+                      )}
+                    />
+                  </motion.div>
                 )}
-              </>
+              </AnimatePresence>
             )}
           />
-        </div>
-        <form.Field
-          name="local_government"
-          children={(field) => (
-            <Input
-              id="local_government"
-              name="local_government"
-              value={field.state.value}
-              onChange={(e) => field.handleChange(e.target.value)}
-              label={t("local_government")}
-              error={field.state.meta.errors.length > 0 ? true : false}
-              errorMessage={field.state.meta.errors[0]}
-              disabled={true}
-            />
-          )}
-        />
-        <form.Field
-          name="sector"
-          children={(field) => (
-            <Select
-              id="sector"
-              name="sector"
-              value={field.state.value}
-              onValueChange={(e) => field.handleChange(e)}
-            >
-              <SelectTrigger
-                label={t("sector")}
-                hasValue={!!field.state.value}
-                error={field.state.meta.errors.length > 0 ? true : false}
-                errorMessage={field.state.meta.errors[0]}
-              >
-                <SelectValue placeholder={t("select_sector")} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="option1">Option 1</SelectItem>
-                <SelectItem value="option2">Option 2</SelectItem>
-                <SelectItem value="option3">Option 3</SelectItem>
-              </SelectContent>
-            </Select>
-          )}
-        />
-        <form.Field
-          name="legislation_type"
-          children={(field) => (
-            <Select
-              id="legislation_type"
-              name="legislation_type"
-              value={field.state.value}
-              onValueChange={(e) => field.handleChange(e)}
-            >
-              <SelectTrigger
-                label={t("legislation_type")}
-                hasValue={!!field.state.value}
-                error={field.state.meta.errors.length > 0 ? true : false}
-                errorMessage={field.state.meta.errors[0]}
-              >
-                <SelectValue placeholder={t("select_legislation_type")} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="option1">Option 1</SelectItem>
-                <SelectItem value="option2">Option 2</SelectItem>
-                <SelectItem value="option3">Option 3</SelectItem>
-              </SelectContent>
-            </Select>
-          )}
-        />
-        <form.Field
-          name="issued_date"
-          children={(field) => (
-            <Input
-              type="date"
-              id="issued_date"
-              name="issued_date"
-              value={field.state.value}
-              onChange={(e) => field.handleChange(e.target.value)}
-              label={t("issued_date")}
-              error={field.state.meta.errors.length > 0 ? true : false}
-              errorMessage={field.state.meta.errors[0]}
-            />
-          )}
-        />
-        <form.Field
-          name="legislation_full_title_english"
-          children={(field) => (
-            <Input
-              type="text"
-              id="legislation_full_title_english"
-              name="legislation_full_title_english"
-              value={field.state.value}
-              onChange={(e) => field.handleChange(e.target.value)}
-              label={t("legislation_full_title_english")}
-              error={field.state.meta.errors.length > 0 ? true : false}
-              errorMessage={field.state.meta.errors[0]}
-            />
-          )}
-        />
-        <form.Field
-          name="legislation_full_title_arabic"
-          children={(field) => (
-            <Input
-              type="text"
-              id="legislation_full_title_arabic"
-              name="legislation_full_title_arabic"
-              value={field.state.value}
-              onChange={(e) => field.handleChange(e.target.value)}
-              label={t("legislation_full_title_arabic")}
-              error={field.state.meta.errors.length > 0 ? true : false}
-              errorMessage={field.state.meta.errors[0]}
-              dir="rtl"
-            />
-          )}
-        />
-        <form.Field
-          name="effective_date"
-          children={(field) => (
-            <Input
-              type="date"
-              id="effective_date"
-              name="effective_date"
-              value={field.state.value}
-              onChange={(e) => field.handleChange(e.target.value)}
-              label={t("effective_date")}
-              error={field.state.meta.errors.length > 0 ? true : false}
-              errorMessage={field.state.meta.errors[0]}
-            />
-          )}
-        />
-        <form.Field
-          name="legislation_year"
-          children={(field) => (
-            <Select
-              id="legislation_year"
-              name="legislation_year"
-              value={field.state.value}
-              onValueChange={(e) => field.handleChange(e)}
-            >
-              <SelectTrigger
-                label={t("legislation_year")}
-                hasValue={!!field.state.value}
-                error={field.state.meta.errors.length > 0 ? true : false}
-                errorMessage={field.state.meta.errors[0]}
-              >
-                <SelectValue placeholder={t("select_legislation_year")} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="option1">Option 1</SelectItem>
-                <SelectItem value="option2">Option 2</SelectItem>
-                <SelectItem value="option3">Option 3</SelectItem>
-              </SelectContent>
-            </Select>
-          )}
-        />
-        <form.Field
-          name="legislation_number"
-          children={(field) => (
-            <Input
-              type="text"
-              id="legislation_number"
-              name="legislation_number"
-              value={field.state.value}
-              onChange={(e) => field.handleChange(e.target.value)}
-              label={t("legislation_number")}
-              error={field.state.meta.errors.length > 0 ? true : false}
-              errorMessage={field.state.meta.errors[0]}
-            />
-          )}
-        />
-        <div className="col-span-2">
-          <form.Field
-            name="legislation_details_english"
-            children={(field) => (
-              <div className="space-y-2">
-                <Label htmlFor="legislation_details_english">
-                  {t("legislation_details_english")}
-                </Label>
-                <CKEditorCustom
+          <div className="col-span-2 grid md:grid-cols-2 gap-x-8 gap-y-10 items-start">
+            <form.Field
+              name="lm_title_arabic"
+              validators={{
+                onChange: ({ value }) =>
+                  !value ? t("required-field") : undefined,
+
+                onSubmit: ({ value }) => (!value ? t("required-field") : null),
+              }}
+              children={(field) => (
+                <Input
+                  type="text"
+                  id="lm_title_arabic"
+                  name="lm_title_arabic"
                   value={field.state.value}
-                  onChange={(data) => field.handleChange(data)}
-                />
-                {field.state.meta.errors ? (
-                  <em className="text-destructive text-xs">
-                    {field.state.meta.errors.join(", ")}
-                  </em>
-                ) : null}
-              </div>
-            )}
-          />
-        </div>
-        <div className="col-span-2">
-          <form.Field
-            name="legislation_details_arabic"
-            children={(field) => (
-              <div className="space-y-2">
-                <Label htmlFor="legislation_details_arabic">
-                  {t("legislation_details_arabic")}
-                </Label>
-                <CKEditorCustom
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  label={t("legislation_title_arabic")}
+                  error={
+                    field.state.meta.isTouched &&
+                    field.state.meta.errors.length > 0
+                  }
+                  errorMessage={field.state.meta.errors[0]}
+                  onBlur={field.handleBlur}
                   dir="rtl"
-                  value={field.state.value}
-                  onChange={(data) => field.handleChange(data)}
                 />
-                {field.state.meta.errors ? (
-                  <em className="text-destructive text-xs">
-                    {field.state.meta.errors.join(", ")}
-                  </em>
-                ) : null}
-              </div>
-            )}
-          />
-        </div>
+              )}
+            />
+            <form.Field
+              name="lm_short_title_arabic"
+              children={(field) => (
+                <Input
+                  type="text"
+                  id="lm_short_title_arabic"
+                  name="lm_short_title_arabic"
+                  value={field.state.value}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  label={t("legislation_short_title_arabic")}
+                  error={field.state.meta.errors.length > 0 ? true : false}
+                  errorMessage={field.state.meta.errors[0]}
+                  dir="rtl"
+                />
+              )}
+            />
+          </div>
 
-        <form.Field
-          name="official_gazette_title_english"
-          children={(field) => (
-            <Input
-              type="text"
-              id="official_gazette_title_english"
-              name="official_gazette_title_english"
-              value={field.state.value}
-              onChange={(e) => field.handleChange(e.target.value)}
-              label={t("official_gazette_title_english")}
-              error={field.state.meta.errors.length > 0 ? true : false}
-              errorMessage={field.state.meta.errors[0]}
-            />
-          )}
-        />
-        <form.Field
-          name="official_gazette_title_arabic"
-          children={(field) => (
-            <Input
-              type="text"
-              id="official_gazette_title_arabic"
-              name="official_gazette_title_arabic"
-              value={field.state.value}
-              onChange={(e) => field.handleChange(e.target.value)}
-              label={t("official_gazette_title_arabic")}
-              error={field.state.meta.errors.length > 0 ? true : false}
-              errorMessage={field.state.meta.errors[0]}
-              dir="rtl"
-            />
-          )}
-        />
-        <form.Field
-          name="official_gazette_date"
-          children={(field) => (
-            <Input
-              type="date"
-              id="official_gazette_date"
-              name="official_gazette_date"
-              value={field.state.value}
-              onChange={(e) => field.handleChange(e.target.value)}
-              label={t("official_gazette_date")}
-              error={field.state.meta.errors.length > 0 ? true : false}
-              errorMessage={field.state.meta.errors[0]}
-            />
-          )}
-        />
-        <form.Field
-          name="official_gazette_number"
-          children={(field) => (
-            <Input
-              type="text"
-              id="official_gazette_number"
-              name="official_gazette_number"
-              value={field.state.value}
-              onChange={(e) => field.handleChange(e.target.value)}
-              label={t("official_gazette_number")}
-              error={field.state.meta.errors.length > 0 ? true : false}
-              errorMessage={field.state.meta.errors[0]}
-            />
-          )}
-        />
-        <div className="inline-flex gap-5 text-black  text-[1.2rem] col-span-2">
-          <label className="text-black/70">{t("has_modifications")}</label>
-          <form.Field
-            name="has_modifications"
-            children={(field) => (
-              <>
-                <RadioGroup defaultValue="option-one" className="flex gap-4">
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="yes" id="has_modifications_yes" />
-                    <Label
-                      htmlFor="has_modifications_yes"
-                      className="text-[1.2rem] font-secondary font-light cursor-pointer"
-                    >
-                      {t("yes")}
-                    </Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="no" id="has_modifications_no" />
-                    <Label
-                      htmlFor="has_modifications_no"
-                      className="text-[1.2rem] font-secondary font-light cursor-pointer"
-                    >
-                      {t("no")}
-                    </Label>
-                  </div>
-                </RadioGroup>
-                {field.state.meta.errors.length > 0 && (
-                  <span className="bg-[var(--brandRed)] text-[.85rem] inline-flex px-2 py-[2px] rounded-[3px] font-secondary text-white">
-                    {field.state.meta.errors[0] || t("invalid-field")}
-                  </span>
+          <form.Subscribe
+            selector={(state) => state.values.lm_has_english_version}
+            children={(hasEnglish) => (
+              <AnimatePresence>
+                {hasEnglish === "1" && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="col-span-2 "
+                  >
+                    <form.Field
+                      name="lm_description"
+                      validators={{
+                        onSubmit: ({ value }) =>
+                          !value ? t("required-field") : null,
+                      }}
+                      children={(field) => (
+                        <div className="space-y-2 relative">
+                          <Label htmlFor="lm_description">
+                            {t("legislation_details_english")}
+                          </Label>
+                          <CKEditorCustom
+                            value={field.state.value}
+                            onChange={(data) => field.handleChange(data)}
+                          />
+                          {field.state.meta.errors ? (
+                            <Label
+                              htmlFor="lm_description"
+                              errorLabel={true}
+                              floating={true}
+                            >
+                              {field.state.meta.errors.join(", ")}
+                            </Label>
+                          ) : null}
+                        </div>
+                      )}
+                    />
+                  </motion.div>
                 )}
-              </>
+              </AnimatePresence>
             )}
           />
-        </div>
-        <form.Field
-          name="parent_legislation"
-          children={(field) => (
-            <Select
-              id="parent_legislation"
-              name="parent_legislation"
-              value={field.state.value}
-              onValueChange={(e) => field.handleChange(e)}
-            >
-              <SelectTrigger
-                label={t("parent_legislation")}
-                hasValue={!!field.state.value}
+
+          <div className="col-span-2">
+            <form.Field
+              name="lm_description_arabic"
+              validators={{
+                onSubmit: ({ value }) => (!value ? t("required-field") : null),
+              }}
+              children={(field) => (
+                <div className="space-y-2 relative">
+                  <Label htmlFor="lm_description_arabic">
+                    {t("legislation_details_arabic")}
+                  </Label>
+                  <CKEditorCustom
+                    dir="rtl"
+                    value={field.state.value}
+                    onChange={(data) => field.handleChange(data)}
+                  />
+                  {field.state.meta.errors ? (
+                    <Label
+                      htmlFor="lm_description_arabic"
+                      errorLabel={true}
+                      floating={true}
+                    >
+                      {field.state.meta.errors.join(", ")}
+                    </Label>
+                  ) : null}
+                </div>
+              )}
+            />
+          </div>
+          <form.Field
+            name="lm_year"
+            validators={{
+              onSubmit: ({ value }) => (!value ? t("required-field") : null),
+            }}
+            children={(field) => (
+              <Select
+                id="lm_year"
+                name="lm_year"
+                value={field.state.value?.toString()}
+                onValueChange={(e) => field.handleChange(e)}
+              >
+                <SelectTrigger
+                  label={t("legislation_year")}
+                  hasValue={!!field.state.value}
+                  error={field.state.meta.errors.length > 0 ? true : false}
+                  errorMessage={field.state.meta.errors[0]}
+                >
+                  <SelectValue placeholder={t("select_legislation_year")} />
+                </SelectTrigger>
+                <SelectContent>
+                  {data?.yearList?.map((item: any) => (
+                    <SelectItem
+                      key={`year-${item.value}`}
+                      value={item.value.toString()}
+                    >
+                      {item.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          />
+          <div className="col-span-2 grid md:grid-cols-2 gap-x-8 gap-y-10 items-start">
+            <form.Field
+              name="lm_issue_date"
+              validators={{
+                onSubmit: ({ value }) => (!value ? t("required-field") : null),
+              }}
+              children={(field) => (
+                <Input
+                  type="date"
+                  id="lm_issue_date"
+                  name="lm_issue_date"
+                  value={field.state.value}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  label={t("issued_date")}
+                  error={field.state.meta.errors.length > 0 ? true : false}
+                  errorMessage={field.state.meta.errors[0]}
+                />
+              )}
+            />
+
+            <form.Field
+              name="lm_effective_date"
+              validators={{
+                onSubmit: ({ value }) => (!value ? t("required-field") : null),
+              }}
+              children={(field) => (
+                <Input
+                  type="date"
+                  id="lm_effective_date"
+                  name="lm_effective_date"
+                  value={field.state.value}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  label={t("effective_date")}
+                  error={field.state.meta.errors.length > 0 ? true : false}
+                  errorMessage={field.state.meta.errors[0]}
+                />
+              )}
+            />
+          </div>
+          <form.Subscribe
+            selector={(state) => state.values.lm_has_english_version}
+            children={(hasEnglish) => (
+              <AnimatePresence>
+                {hasEnglish === "1" && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className=""
+                  >
+                    <form.Field
+                      name="lm_pdf_file"
+                      validators={{
+                        onSubmit: ({ value }) =>
+                          !value ? t("required-field") : null,
+                        onChange: ({ value }) => {
+                          if (!value) return null;
+
+                          const file =
+                            value instanceof FileList ? value[0] : value;
+                          if (!file) return null;
+
+                          const fileName = file?.toLowerCase();
+                          const allowedExtensions = [".pdf"];
+                          const isValid = allowedExtensions.some((ext) =>
+                            fileName.endsWith(ext),
+                          );
+
+                          if (!isValid) return t("file_must_be_pdf");
+
+                          // Optional: Add file size validation (e.g., 5MB limit)
+                          const maxSize = 5 * 1024 * 1024;
+                          if (file.size > maxSize) return t("file_too_large");
+
+                          return null;
+                        },
+                      }}
+                      children={(field) => (
+                        <Input
+                          type="file"
+                          id="lm_pdf_file"
+                          name="lm_pdf_file"
+                          value={field.state.value}
+                          onChange={(e) => field.handleChange(e.target.value)}
+                          label={t("attachment_english")}
+                          error={
+                            field.state.meta.errors.length > 0 ? true : false
+                          }
+                          errorMessage={field.state.meta.errors[0]}
+                        />
+                      )}
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            )}
+          />
+
+          <form.Field
+            name="lm_pdf_file_arabic"
+            validators={{
+              onSubmit: ({ value }) => (!value ? t("required-field") : null),
+              onChange: ({ value }) => {
+                if (!value) return null;
+
+                const file = value instanceof FileList ? value[0] : value;
+                if (!file) return null;
+
+                const fileName = file?.toLowerCase();
+                const allowedExtensions = [".pdf"];
+                const isValid = allowedExtensions.some((ext) =>
+                  fileName.endsWith(ext),
+                );
+
+                if (!isValid) return t("file_must_be_pdf");
+
+                // Optional: Add file size validation (e.g., 5MB limit)
+                const maxSize = 5 * 1024 * 1024;
+                if (file.size > maxSize) return t("file_too_large");
+
+                return null;
+              },
+            }}
+            children={(field) => (
+              <Input
+                type="file"
+                id="lm_pdf_file_arabic"
+                name="lm_pdf_file_arabic"
+                value={field.state.value}
+                onChange={(e) => field.handleChange(e.target.value)}
+                label={t("attachment_arabic")}
                 error={field.state.meta.errors.length > 0 ? true : false}
                 errorMessage={field.state.meta.errors[0]}
-              >
-                <SelectValue
-                  placeholder={t("name_of_the_parent_legislation")}
-                />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="option1">Option 1</SelectItem>
-                <SelectItem value="option2">Option 2</SelectItem>
-                <SelectItem value="option3">Option 3</SelectItem>
-              </SelectContent>
-            </Select>
-          )}
-        />
-
-        <form.Field
-          name="attachment"
-          children={(field) => (
-            <Input
-              type="file"
-              id="attachment"
-              name="attachment"
-              value={field.state.value}
-              onChange={(e) => field.handleChange(e.target.value)}
-              label={t("attachment")}
-              error={field.state.meta.errors.length > 0 ? true : false}
-              errorMessage={field.state.meta.errors[0]}
-            />
-          )}
-        />
-
-        <div className="col-span-full">
-          <DefaultButton
-            type="submit"
-            variant="dark"
-            title={t("submit")}
-            onClick={form.handleSubmit}
-            icon={<Plus className="size-5" />}
-            isDisabled={isSubmitting}
-            isLoading={isSubmitting}
+              />
+            )}
           />
+
+          <form.Subscribe
+            selector={(state) => state.values.lm_has_english_version}
+            children={(hasEnglish) => (
+              <AnimatePresence>
+                {hasEnglish === "1" && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="col-span-2 grid md:grid-cols-2 gap-x-8 gap-y-10 items-start"
+                  >
+                    <form.Field
+                      name="lm_gazette_number"
+                      validators={{
+                        onSubmit: ({ value }) =>
+                          !value ? t("required-field") : null,
+                      }}
+                      children={(field) => (
+                        <Input
+                          type="text"
+                          id="lm_gazette_number"
+                          name="lm_gazette_number"
+                          value={field.state.value}
+                          onChange={(e) => field.handleChange(e.target.value)}
+                          label={t("gazette_number")}
+                          error={
+                            field.state.meta.errors.length > 0 ? true : false
+                          }
+                          errorMessage={field.state.meta.errors[0]}
+                        />
+                      )}
+                    />
+                    <form.Field
+                      name="lm_gazette_title"
+                      validators={{
+                        onSubmit: ({ value }) =>
+                          !value ? t("required-field") : null,
+                      }}
+                      children={(field) => (
+                        <Input
+                          type="text"
+                          id="lm_gazette_title"
+                          name="lm_gazette_title"
+                          value={field.state.value}
+                          onChange={(e) => field.handleChange(e.target.value)}
+                          label={t("gazette_title_english")}
+                          error={
+                            field.state.meta.errors.length > 0 ? true : false
+                          }
+                          errorMessage={field.state.meta.errors[0]}
+                        />
+                      )}
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            )}
+          />
+
+          <form.Field
+            name="lm_gazette_number_arabic"
+            validators={{
+              onSubmit: ({ value }) => (!value ? t("required-field") : null),
+            }}
+            children={(field) => (
+              <Input
+                type="text"
+                id="lm_gazette_number_arabic"
+                name="lm_gazette_number_arabic"
+                value={field.state.value}
+                onChange={(e) => field.handleChange(e.target.value)}
+                label={t("gazette_number_arabic")}
+                error={field.state.meta.errors.length > 0 ? true : false}
+                errorMessage={field.state.meta.errors[0]}
+                dir="rtl"
+              />
+            )}
+          />
+
+          <form.Field
+            name="lm_gazette_title_arabic"
+            validators={{
+              onSubmit: ({ value }) => (!value ? t("required-field") : null),
+            }}
+            children={(field) => (
+              <Input
+                type="text"
+                id="lm_gazette_title_arabic"
+                name="lm_gazette_title_arabic"
+                value={field.state.value}
+                onChange={(e) => field.handleChange(e.target.value)}
+                label={t("gazette_title_arabic")}
+                error={field.state.meta.errors.length > 0 ? true : false}
+                errorMessage={field.state.meta.errors[0]}
+                dir="rtl"
+              />
+            )}
+          />
+          <form.Field
+            name="lm_official_gazette_issue_date"
+            validators={{
+              onSubmit: ({ value }) => (!value ? t("required-field") : null),
+            }}
+            children={(field) => (
+              <Input
+                type="date"
+                id="lm_official_gazette_issue_date"
+                name="lm_official_gazette_issue_date"
+                value={field.state.value}
+                onChange={(e) => field.handleChange(e.target.value)}
+                label={t("gazette_issue_date")}
+                error={field.state.meta.errors.length > 0 ? true : false}
+                errorMessage={field.state.meta.errors[0]}
+              />
+            )}
+          />
+
+          <div className="col-span-full">
+            <DefaultButton
+              type="submit"
+              variant="dark"
+              title={t("submit")}
+              onClick={form.handleSubmit}
+              icon={<Plus className="size-5" />}
+              isDisabled={isSubmitting}
+              isLoading={isSubmitting}
+            />
+          </div>
         </div>
-      </div>
+      </form>
       <ThankYouPopup
         type="success"
         open={thankYouPopup}
         setOpen={setThankYouPopup}
         title={t("submitted_successfully")}
-        description={`The <strong>${t("legislations")}</strong> have been submitted successfully. This is now under review and will be notified accordingly.`}
+        description={t("law_created_success_message")}
       />
     </DashboardLayout>
   );
