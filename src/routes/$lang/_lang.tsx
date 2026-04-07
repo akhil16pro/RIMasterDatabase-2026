@@ -38,9 +38,7 @@ function RouteComponent() {
             <stop stopColor="#022EE4" />
             <stop offset="1" stopColor="#03CBFF" />
           </linearGradient>
-        </svg>
 
-        <svg width="0" height="0">
           <linearGradient
             id="button_linear_red"
             x1="24.2998"
@@ -52,9 +50,7 @@ function RouteComponent() {
             <stop stopColor="#F07067" />
             <stop offset="1" stopColor="#FFC99D" />
           </linearGradient>
-        </svg>
 
-        <svg width="0" height="0">
           <linearGradient
             id="button_linear_green"
             x1="24.2998"
@@ -66,9 +62,19 @@ function RouteComponent() {
             <stop stopColor="#15bf94" />
             <stop offset="1" stopColor="#abe0d3" />
           </linearGradient>
-        </svg>
 
-        <svg width="0" height="0">
+          <linearGradient
+            id="button_linear_amber"
+            x1="24.2998"
+            y1="3.79999"
+            x2="-6.20019"
+            y2="22.3"
+            gradientUnits="userSpaceOnUse"
+          >
+            <stop stopColor="#f5b002" />
+            <stop offset="1" stopColor="#fde68a" />
+          </linearGradient>
+
           <linearGradient
             id="dashboard_linear"
             x1="23.1869"
@@ -80,9 +86,7 @@ function RouteComponent() {
             <stop stopColor="#022EE4" />
             <stop offset="1" stopColor="#03CBFF" />
           </linearGradient>
-        </svg>
 
-        <svg width="0" height="0" style={{ position: "absolute" }}>
           <linearGradient
             id="LastLoginLine"
             x1="34.5"

@@ -1,3 +1,4 @@
+import React from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
@@ -165,16 +166,42 @@ function PageTable() {
     },
   });
 
+  const processedTableData = React.useMemo(() => {
+    return data?.table_values?.map((row: any) => ({
+      ...row,
+      actions: row.actions?.map((action: any) => {
+        let ActionComponent;
+        switch (action.type) {
+          case "view":
+            ActionComponent = ViewAction;
+            break;
+          case "edit":
+            ActionComponent = EditAction;
+            break;
+
+          case "delete":
+            ActionComponent = DeleteAction;
+            break;
+          default:
+            ActionComponent = null;
+        }
+
+        return {
+          ...action,
+
+          render: ActionComponent,
+        };
+      }),
+    }));
+  }, [data?.table_values, i18n.language]);
+
   return (
     <>
       {data && (
         <Table
           pageStartIndex={data?.pagination?.page_start_index}
           tableHead={data?.table_headers}
-          tableData={data?.table_values}
-          EditAction={EditAction}
-          DeleteAction={DeleteAction}
-          ViewAction={ViewAction}
+          tableData={processedTableData}
           translator={data?.translator}
           onStatusToggle={
             userSession?.user?.roles.includes("admin")

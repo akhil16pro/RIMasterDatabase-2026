@@ -12,8 +12,6 @@ import { useState } from "react";
 interface TableProps extends React.ComponentPropsWithoutRef<typeof motion.div> {
   tableHead: any[];
   tableData: any[];
-  EditAction?: React.ReactNode;
-  DeleteAction?: React.ReactNode;
   translator?: any;
   pageStartIndex?: number;
 }
@@ -21,9 +19,6 @@ interface TableProps extends React.ComponentPropsWithoutRef<typeof motion.div> {
 export const Table = ({
   tableHead,
   tableData,
-  EditAction,
-  DeleteAction,
-  ViewAction,
   className = "",
   translator,
   onStatusToggle,
@@ -123,23 +118,43 @@ export const Table = ({
                         />
                       </div>
                     ) : head.key === "action" || head.key === "actions" ? (
+                      // <div className="flex gap-2">
+                      //   {row.actions?.map((action: any, aIndex: number) => (
+                      //     <React.Fragment key={`action-${aIndex}-${row.id}`}>
+                      //       {action.type === "view" && (
+                      //         <ViewAction slug={row?.slug} />
+                      //       )}
+                      //       {action.type === "edit" && (
+                      //         <EditAction slug={row?.slug} />
+                      //       )}
+                      //       {action.type === "delete" && (
+                      //         <DeleteAction
+                      //           slug={row?.slug}
+                      //           setAnimationWait={setAnimationWait}
+                      //         />
+                      //       )}
+                      //       {action.type === "view" && (
+                      //         <ModificationAction slug={row?.slug} />
+                      //       )}
+                      //     </React.Fragment>
+                      //   ))}
+                      // </div>
                       <div className="flex gap-2">
-                        {row.actions?.map((action: any, aIndex: number) => (
-                          <React.Fragment key={`action-${aIndex}-${row.id}`}>
-                            {action.type === "edit" && (
-                              <EditAction slug={row?.slug} />
-                            )}
-                            {action.type === "delete" && (
-                              <DeleteAction
-                                slug={row?.slug}
-                                setAnimationWait={setAnimationWait}
-                              />
-                            )}
-                            {action.type === "view" && (
-                              <ViewAction slug={row?.slug} />
-                            )}
-                          </React.Fragment>
-                        ))}
+                        {row.actions?.map((action: any, aIndex: number) => {
+                          const Component = action.render;
+
+                          if (!Component) return null;
+
+                          return (
+                            <Component
+                              key={`action-${rowIndex}-${aIndex}`}
+                              slug={row?.slug}
+                              {...(action.type === "delete"
+                                ? { setAnimationWait }
+                                : {})}
+                            />
+                          );
+                        })}
                       </div>
                     ) : head.key === "title" ? (
                       <span className="font-semibold text-lg leading-[80%]">

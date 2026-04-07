@@ -107,6 +107,8 @@ export const DefaultButton = ({
           "bg-[linear-gradient(100deg,#a1a1a1_0%,#7a7a7a_100%)] border-none",
         iconGradient === "view" &&
           "bg-[linear-gradient(100deg,var(--color-success-100)_0%,var(--color-success)_120%)] border-none",
+        iconGradient === "modification" &&
+          "bg-[linear-gradient(100deg,var(--color-amber)_0%,var(--color-amber-500)_120%)] border-none",
         className,
       )}
     >

@@ -28,6 +28,10 @@
   --color-btn-shade-rgb: 39 39 39;
   --color-dark-rgb: 19 19 19;
 
+  --color-amber-200-rgb: 253 230 138;
+  --color-amber-500-rgb: 245 176 2;
+  --color-amber-600-rgb: 200 121 0;
+
   --color-primary: rgba(var(--color-primary-rgb) / 1);
   --color-primary-600: rgba(var(--color-primary-600-rgb) / 1);
 
@@ -59,6 +63,9 @@
   --color-success: rgba(var(--color-success-rgb) / 1);
   --color-success-100: rgba(var(--color-success-100-rgb) / 1);
   --color-success-600: rgba(var(--color-success-600-rgb) / 1);
+
+  --color-amber: rgba(var(--color-amber-200-rgb) / 1);
+  --color-amber-500: rgba(var(--color-amber-500-rgb) / 1);
 
   --color-btn-shade: rgba(var(--color-btn-shade-rgb) / 1);
 

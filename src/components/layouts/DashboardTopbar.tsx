@@ -58,7 +58,7 @@ export default function DashboardTopbar({
 
   return (
     <motion.div
-      className="topBar flex md:flex-row flex-col gap-2 md:items-center"
+      className="topBar flex md:flex-row flex-col gap-2 md:items-center flex-wrap"
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
@@ -66,7 +66,10 @@ export default function DashboardTopbar({
     >
       <div className="flex flex-1  order-2 md:order-1">
         <SectionTitle gradient={true}>
-          <span>{title}</span>
+          <span
+            dangerouslySetInnerHTML={{ __html: title }}
+            className="[&>small]:text-[60%] [&>small]:line-clamp-1 [&>small]:text-muted-foreground/50 [&>small]:font-normal"
+          />
         </SectionTitle>
       </div>
       <div className="flex md:gap-2 gap-1 order-1 md:order-2 justify-end flex-wrap ">
@@ -76,6 +79,9 @@ export default function DashboardTopbar({
         {isCampaignActive && <CampaignInfo campaign={campaign} />}
         <LoginAvatar />
       </div>
+      {/* <div className="w-full flex md:gap-2 gap-1 order-1 md:order-2 justify-end flex-wrap ">
+        //Breadcrumbs
+      </div> */}
     </motion.div>
   );
 }
