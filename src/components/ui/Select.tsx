@@ -20,6 +20,7 @@ interface SelectTriggerProps extends React.ComponentPropsWithoutRef<
   errorMessage?: string;
   isLoading?: boolean;
   hasValue?: boolean;
+  readOnly?: boolean;
   dir?: "ltr" | "rtl";
 }
 
@@ -37,6 +38,7 @@ export const SelectTrigger = React.forwardRef<
       isLoading,
       hasValue,
       dir,
+      readOnly,
       ...props
     },
     ref,
@@ -51,15 +53,18 @@ export const SelectTrigger = React.forwardRef<
             "peer flex h-10 w-full items-center justify-between border-b border-black/20 bg-transparent py-1 text-[1.2rem] outline-none transition-all disabled:cursor-not-allowed disabled:opacity-50 text-black font-secondary font-light",
             "text-start",
             error && "border-[var(--brandRed)]",
+            readOnly && "pointer-events-none",
             className,
           )}
           {...props}
           dir={dir}
         >
           {children}
-          <SelectPrimitive.Icon asChild>
-            <ChevronDown className="h-4 w-4 opacity-50 shrink-0" />
-          </SelectPrimitive.Icon>
+          {!readOnly && (
+            <SelectPrimitive.Icon asChild>
+              <ChevronDown className="h-4 w-4 opacity-50 shrink-0" />
+            </SelectPrimitive.Icon>
+          )}
         </SelectPrimitive.Trigger>
 
         {label && (

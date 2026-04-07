@@ -142,7 +142,7 @@ export const Table = ({
                         ))}
                       </div>
                     ) : head.key === "title" ? (
-                      <span className="font-semibold text-lg">
+                      <span className="font-semibold text-lg leading-[80%]">
                         {row[head.key]}
                       </span>
                     ) : (
@@ -189,7 +189,7 @@ function TD({ children, className, "data-label": dataLabel, ...props }: any) {
       {...props}
       data-label={dataLabel}
       className={cn(
-        "px-4 py-4 text-base font-secondary",
+        "px-4 py-4 text-base font-secondary ",
         isMobile &&
           "py-3 grid grid-cols-[40%_1fr] [&:before]:content-[attr(data-label)] [&:before]:text-[var(--textColor)] [&:before]:font-medium [&:before]:opacity-40 border-b border-black/5 last:border-b-0 ",
         !isMobile && "table-cell",

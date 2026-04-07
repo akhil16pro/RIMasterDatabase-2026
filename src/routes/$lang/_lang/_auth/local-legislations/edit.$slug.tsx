@@ -95,7 +95,7 @@ function RouteComponent() {
     },
     onSubmit: async ({ value }) => {
       setIsSubmitting(true);
-      console.log("fom submit");
+
       try {
         const formData = new FormData();
 
@@ -147,7 +147,7 @@ function RouteComponent() {
           })
           .json<any>();
 
-        console.log(res, "local_legislation_update_res");
+        // console.log(res, "local_legislation_update_res");
         if (res?.status) {
           // form.reset();
           toast.success(res?.message || t("success"));
@@ -237,7 +237,7 @@ function RouteComponent() {
   return (
     <DashboardLayout
       isLoading={isLoading}
-      title={t("add_governments_legislations")}
+      title={t("edit_governments_legislations")}
     >
       <form
         onSubmit={(e) => {
@@ -641,11 +641,11 @@ function RouteComponent() {
                       name="lm_pdf_file"
                       validators={{
                         onSubmit: ({ value }) => {
-                          return (
-                            deletedFiles.includes("lm_pdf_file") &&
-                            !value &&
-                            t("required-field")
-                          );
+                          return data?.lawData?.lm_pdf_file
+                            ? deletedFiles.includes("lm_pdf_file") &&
+                                !value &&
+                                t("required-field")
+                            : !value && t("required-field");
                         },
                         onChange: ({ value }) => {
                           if (!value) return null;
@@ -891,11 +891,14 @@ function RouteComponent() {
         description={t("law_updated_success_message")}
         onConfirm={() => {
           queryClient.invalidateQueries({
+            queryKey: ["localLegislationFormData"],
+          });
+          queryClient.invalidateQueries({
             queryKey: ["localLegislationTable"],
           });
-          navigate({
-            to: `/${i18n.language}/local-legislations`,
-          });
+          // navigate({
+          //   to: `/${i18n.language}/local-legislations`,
+          // });
         }}
       />
     </DashboardLayout>

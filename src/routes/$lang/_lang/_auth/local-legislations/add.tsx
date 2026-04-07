@@ -28,6 +28,7 @@ import { useEffect } from "react";
 import CKEditorCustom from "@/components/ui/CKEditor";
 import { useAtomValue } from "jotai";
 import { userSessionAtom } from "@/store/atoms";
+import { useNavigate } from "@tanstack/react-router";
 
 export const Route = createFileRoute(
   "/$lang/_lang/_auth/local-legislations/add",
@@ -39,7 +40,7 @@ function RouteComponent() {
   const { t, i18n } = useTranslation();
   const userSession = useAtomValue(userSessionAtom);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [thankYouPopup, setThankYouPopup] = useState(false);
 
@@ -51,7 +52,7 @@ function RouteComponent() {
         const res = await apiClient
           .get(i18n.language + `/local-legislation/create`)
           .json<any>();
-        console.log("local_legislation_form_data", res?.data);
+        // console.log("local_legislation_form_data", res?.data);
 
         return res?.data;
       } catch (error) {
@@ -86,7 +87,7 @@ function RouteComponent() {
     },
     onSubmit: async ({ value }) => {
       setIsSubmitting(true);
-      console.log("fom submit");
+
       try {
         const formData = new FormData();
 
@@ -138,7 +139,7 @@ function RouteComponent() {
           })
           .json<any>();
 
-        console.log(res, "local_legislation_store_res");
+        // console.log(res, "local_legislation_store_res");
         if (res?.status) {
           form.reset();
           toast.success(res?.message || t("success"));
@@ -800,6 +801,11 @@ function RouteComponent() {
         setOpen={setThankYouPopup}
         title={t("submitted_successfully")}
         description={t("law_created_success_message")}
+        onConfirm={() => {
+          navigate({
+            to: `/${i18n.language}/local-legislations`,
+          });
+        }}
       />
     </DashboardLayout>
   );

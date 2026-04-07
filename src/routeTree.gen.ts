@@ -20,6 +20,7 @@ import { Route as LangLangAuthGlossaryRouteImport } from './routes/$lang/_lang/_
 import { Route as LangLangAuthDashboardRouteImport } from './routes/$lang/_lang/_auth/dashboard'
 import { Route as LangLangAuthLocalLegislationsIndexRouteImport } from './routes/$lang/_lang/_auth/local-legislations/index'
 import { Route as LangLangAuthLocalLegislationsAddRouteImport } from './routes/$lang/_lang/_auth/local-legislations/add'
+import { Route as LangLangAuthLocalLegislationsViewSlugRouteImport } from './routes/$lang/_lang/_auth/local-legislations/view.$slug'
 import { Route as LangLangAuthLocalLegislationsEditSlugRouteImport } from './routes/$lang/_lang/_auth/local-legislations/edit.$slug'
 
 const IndexRoute = IndexRouteImport.update({
@@ -78,6 +79,12 @@ const LangLangAuthLocalLegislationsAddRoute =
     path: '/local-legislations/add',
     getParentRoute: () => LangLangAuthRoute,
   } as any)
+const LangLangAuthLocalLegislationsViewSlugRoute =
+  LangLangAuthLocalLegislationsViewSlugRouteImport.update({
+    id: '/local-legislations/view/$slug',
+    path: '/local-legislations/view/$slug',
+    getParentRoute: () => LangLangAuthRoute,
+  } as any)
 const LangLangAuthLocalLegislationsEditSlugRoute =
   LangLangAuthLocalLegislationsEditSlugRouteImport.update({
     id: '/local-legislations/edit/$slug',
@@ -97,6 +104,7 @@ export interface FileRoutesByFullPath {
   '/$lang/local-legislations/add': typeof LangLangAuthLocalLegislationsAddRoute
   '/$lang/local-legislations/': typeof LangLangAuthLocalLegislationsIndexRoute
   '/$lang/local-legislations/edit/$slug': typeof LangLangAuthLocalLegislationsEditSlugRoute
+  '/$lang/local-legislations/view/$slug': typeof LangLangAuthLocalLegislationsViewSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -109,6 +117,7 @@ export interface FileRoutesByTo {
   '/$lang/local-legislations/add': typeof LangLangAuthLocalLegislationsAddRoute
   '/$lang/local-legislations': typeof LangLangAuthLocalLegislationsIndexRoute
   '/$lang/local-legislations/edit/$slug': typeof LangLangAuthLocalLegislationsEditSlugRoute
+  '/$lang/local-legislations/view/$slug': typeof LangLangAuthLocalLegislationsViewSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -124,6 +133,7 @@ export interface FileRoutesById {
   '/$lang/_lang/_auth/local-legislations/add': typeof LangLangAuthLocalLegislationsAddRoute
   '/$lang/_lang/_auth/local-legislations/': typeof LangLangAuthLocalLegislationsIndexRoute
   '/$lang/_lang/_auth/local-legislations/edit/$slug': typeof LangLangAuthLocalLegislationsEditSlugRoute
+  '/$lang/_lang/_auth/local-legislations/view/$slug': typeof LangLangAuthLocalLegislationsViewSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -139,6 +149,7 @@ export interface FileRouteTypes {
     | '/$lang/local-legislations/add'
     | '/$lang/local-legislations/'
     | '/$lang/local-legislations/edit/$slug'
+    | '/$lang/local-legislations/view/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -151,6 +162,7 @@ export interface FileRouteTypes {
     | '/$lang/local-legislations/add'
     | '/$lang/local-legislations'
     | '/$lang/local-legislations/edit/$slug'
+    | '/$lang/local-legislations/view/$slug'
   id:
     | '__root__'
     | '/'
@@ -165,6 +177,7 @@ export interface FileRouteTypes {
     | '/$lang/_lang/_auth/local-legislations/add'
     | '/$lang/_lang/_auth/local-legislations/'
     | '/$lang/_lang/_auth/local-legislations/edit/$slug'
+    | '/$lang/_lang/_auth/local-legislations/view/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -251,6 +264,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LangLangAuthLocalLegislationsAddRouteImport
       parentRoute: typeof LangLangAuthRoute
     }
+    '/$lang/_lang/_auth/local-legislations/view/$slug': {
+      id: '/$lang/_lang/_auth/local-legislations/view/$slug'
+      path: '/local-legislations/view/$slug'
+      fullPath: '/$lang/local-legislations/view/$slug'
+      preLoaderRoute: typeof LangLangAuthLocalLegislationsViewSlugRouteImport
+      parentRoute: typeof LangLangAuthRoute
+    }
     '/$lang/_lang/_auth/local-legislations/edit/$slug': {
       id: '/$lang/_lang/_auth/local-legislations/edit/$slug'
       path: '/local-legislations/edit/$slug'
@@ -267,6 +287,7 @@ interface LangLangAuthRouteChildren {
   LangLangAuthLocalLegislationsAddRoute: typeof LangLangAuthLocalLegislationsAddRoute
   LangLangAuthLocalLegislationsIndexRoute: typeof LangLangAuthLocalLegislationsIndexRoute
   LangLangAuthLocalLegislationsEditSlugRoute: typeof LangLangAuthLocalLegislationsEditSlugRoute
+  LangLangAuthLocalLegislationsViewSlugRoute: typeof LangLangAuthLocalLegislationsViewSlugRoute
 }
 
 const LangLangAuthRouteChildren: LangLangAuthRouteChildren = {
@@ -277,6 +298,8 @@ const LangLangAuthRouteChildren: LangLangAuthRouteChildren = {
     LangLangAuthLocalLegislationsIndexRoute,
   LangLangAuthLocalLegislationsEditSlugRoute:
     LangLangAuthLocalLegislationsEditSlugRoute,
+  LangLangAuthLocalLegislationsViewSlugRoute:
+    LangLangAuthLocalLegislationsViewSlugRoute,
 }
 
 const LangLangAuthRouteWithChildren = LangLangAuthRoute._addFileChildren(

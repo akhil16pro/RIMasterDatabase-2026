@@ -25,6 +25,7 @@ function Input({
   isLoading = false,
   preview,
   onClearPreview,
+  readOnly = false,
   ...props
 }: React.ComponentProps<"input"> & {
   error?: boolean;
@@ -34,6 +35,7 @@ function Input({
   disabled?: boolean;
   preview?: string;
   onClearPreview?: () => void;
+  readOnly?: boolean;
 }) {
   const [showPassword, setShowPassword] = useState(false);
   const { t, i18n } = useTranslation();
@@ -82,6 +84,7 @@ function Input({
 
               disabled &&
                 "opacity-50 cursor-not-allowed pointer-events-none pe-7",
+              readOnly && "pointer-events-none",
               className,
             )}
             dir={type === "date" ? "ltr" : props?.dir || i18n.dir()}
@@ -194,12 +197,14 @@ function Input({
               {fileName}
             </span>
           </div>
-          <div
-            className="group p-2 bg-[var(--brandRed)] rounded-r-md  flex items-center"
-            onClick={onClearPreview}
-          >
-            <X className="size-4 text-white cursor-pointer group-hover:rotate-90 transition-all duration-300" />
-          </div>
+          {!readOnly && onClearPreview && (
+            <div
+              className="group p-2 bg-[var(--brandRed)] rounded-r-md  flex items-center"
+              onClick={onClearPreview}
+            >
+              <X className="size-4 text-white cursor-pointer group-hover:rotate-90 transition-all duration-300" />
+            </div>
+          )}
         </div>
       )}
     </div>

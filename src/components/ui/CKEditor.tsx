@@ -23,6 +23,7 @@ interface CKEditorProps {
   placeholder?: string;
   disabled?: boolean;
   dir?: string;
+  readOnly?: boolean;
 }
 
 const CKEditorCustom = ({
@@ -31,6 +32,7 @@ const CKEditorCustom = ({
   placeholder,
   disabled,
   dir,
+  readOnly,
 }: CKEditorProps) => {
   const { i18n } = useTranslation();
   const isRTL = dir === "rtl" ? "rtl" : i18n.language === "ar" ? "rtl" : "ltr";
@@ -39,7 +41,7 @@ const CKEditorCustom = ({
     <div className="ck-editor-wrapper prose-none" dir={isRTL ? "rtl" : "ltr"}>
       <CKEditor
         editor={ClassicEditor}
-        disabled={disabled}
+        disabled={disabled || readOnly}
         config={{
           licenseKey: "GPL",
           placeholder: placeholder || "Start typing...",

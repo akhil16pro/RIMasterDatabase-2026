@@ -130,22 +130,23 @@ function ThankYouPopup({
           </motion.div>
         </div>
 
-        <motion.DialogHeader
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.25 }}
-          className="mb-0"
         >
-          <DialogTitle
-            className={cn(
-              "text-center font-medium",
+          <DialogHeader className="mb-0">
+            <DialogTitle
+              className={cn(
+                "text-center font-medium",
 
-              type === "error" && "text-[var(--color-danger)]",
-            )}
-          >
-            {title}
-          </DialogTitle>
-        </motion.DialogHeader>
+                type === "error" && "text-[var(--color-danger)]",
+              )}
+            >
+              {title}
+            </DialogTitle>
+          </DialogHeader>
+        </motion.div>
 
         {description && (
           <motion.div
