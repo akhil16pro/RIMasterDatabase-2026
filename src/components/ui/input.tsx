@@ -52,6 +52,7 @@ function Input({
           <textarea
             {...props}
             id={inputId}
+            readOnly={readOnly}
             placeholder={props.placeholder || " "}
             aria-invalid={error ? "true" : "false"}
             aria-describedby={inputId}
@@ -69,6 +70,7 @@ function Input({
           <input
             {...props}
             id={inputId}
+            readOnly={readOnly}
             placeholder={props.placeholder || " "}
             type={
               type === "password" ? (showPassword ? "text" : "password") : type
