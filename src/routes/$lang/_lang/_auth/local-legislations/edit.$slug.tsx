@@ -45,6 +45,8 @@ function RouteComponent() {
   const queryClient = useQueryClient();
   const [thankYouPopup, setThankYouPopup] = useState(false);
 
+  const [deletedFiles, setDeletedFiles] = useState<string[]>([]);
+
   const { data, isLoading, error } = useQuery({
     queryKey: ["localLegislationFormData", slug, i18n.language],
     enabled: true,
@@ -68,7 +70,6 @@ function RouteComponent() {
     },
   });
 
-  console.log("formData", isLoading, data);
   const form = useForm({
     defaultValues: {
       lm_has_english_version: "2",
@@ -226,6 +227,13 @@ function RouteComponent() {
       );
     }
   }, [data, form, userSession]);
+
+  const handleClearFile = (fieldName: string, previewKey: string) => {
+    form.setFieldValue(fieldName as any, null);
+
+    setDeletedFiles((prev) => [...prev, previewKey]);
+  };
+
   return (
     <DashboardLayout
       isLoading={isLoading}
@@ -632,6 +640,13 @@ function RouteComponent() {
                     <form.Field
                       name="lm_pdf_file"
                       validators={{
+                        onSubmit: ({ value }) => {
+                          return (
+                            deletedFiles.includes("lm_pdf_file") &&
+                            !value &&
+                            t("required-field")
+                          );
+                        },
                         onChange: ({ value }) => {
                           if (!value) return null;
                           const file =
@@ -656,8 +671,7 @@ function RouteComponent() {
                       children={(field) => (
                         <Input
                           type="file"
-                          id="lm_pdf_file"
-                          name="lm_pdf_file"
+                          accept=".pdf"
                           onChange={(e) => {
                             const file = e.target.files?.[0];
                             field.handleChange(file);
@@ -667,6 +681,15 @@ function RouteComponent() {
                             field.state.meta.errors.length > 0 ? true : false
                           }
                           errorMessage={field.state.meta.errors[0]}
+                          preview={
+                            deletedFiles.includes("lm_pdf_file")
+                              ? undefined
+                              : data?.lawData?.lm_pdf_file
+                          }
+                          onClearPreview={() => {
+                            field.handleChange(null);
+                            setDeletedFiles((prev) => [...prev, "lm_pdf_file"]);
+                          }}
                         />
                       )}
                     />
@@ -679,6 +702,13 @@ function RouteComponent() {
           <form.Field
             name="lm_pdf_file_arabic"
             validators={{
+              onSubmit: ({ value }) => {
+                return (
+                  deletedFiles.includes("lm_pdf_file_arabic") &&
+                  !value &&
+                  t("required-field")
+                );
+              },
               onChange: ({ value }) => {
                 if (!value) return null;
                 const file = value instanceof FileList ? value[0] : value;
@@ -702,8 +732,7 @@ function RouteComponent() {
             children={(field) => (
               <Input
                 type="file"
-                id="lm_pdf_file_arabic"
-                name="lm_pdf_file_arabic"
+                accept=".pdf"
                 onChange={(e) => {
                   const file = e.target.files?.[0];
                   field.handleChange(file);
@@ -711,6 +740,15 @@ function RouteComponent() {
                 label={t("attachment_arabic")}
                 error={field.state.meta.errors.length > 0 ? true : false}
                 errorMessage={field.state.meta.errors[0]}
+                preview={
+                  deletedFiles.includes("lm_pdf_file_arabic")
+                    ? undefined
+                    : data?.lawData?.lm_pdf_file_arabic
+                }
+                onClearPreview={() => {
+                  field.handleChange(null);
+                  setDeletedFiles((prev) => [...prev, "lm_pdf_file_arabic"]);
+                }}
               />
             )}
           />
