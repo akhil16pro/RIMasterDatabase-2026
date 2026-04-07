@@ -124,82 +124,43 @@ function PageTable({ search }: { search: string }) {
     totalPages: 1,
   });
 
-  // const { data, isLoading, error, isRefetching } = useQuery({
-  //   queryKey: ["localLegislationTable", pagination.currentPage, i18n.language],
-  //   enabled: !!userSession?.accessToken,
-  //   placeholderData: (previousData) => previousData,
-  //   staleTime: 1000 * 60 * 5,
-  //   queryFn: async () => {
-  //     try {
-  //       const res = await apiClient
-  //         .get(
-  //           i18n.language +
-  //             `/local-legislation/table?page=${pagination.currentPage}`,
-  //         )
-  //         .json<any>();
-  //       console.log("LOCAL_LEGISLATION_TABLE_DATA", res?.data);
-  //       return res?.data;
-  //     } catch (error) {
-  //       console.log("LOCAL_LEGISLATION_TABLE_DATA_ERROR", error);
-  //       return null;
-  //     }
-  //   },
-  // });
+  const { data, isLoading, error, isRefetching } = useQuery({
+    queryKey: ["localLegislationTable", pagination.currentPage, i18n.language],
+    enabled: !!userSession?.accessToken,
+    placeholderData: (previousData) => previousData,
+    staleTime: 1000 * 60 * 5,
+    queryFn: async () => {
+      try {
+        const res = await apiClient
+          .get(
+            i18n.language +
+              `/local-legislation/table?page=${pagination.currentPage}`,
+          )
+          .json<any>();
+        console.log("LOCAL_LEGISLATION_TABLE_DATA", res?.data);
+        return res?.data;
+      } catch (error) {
+        console.log("LOCAL_LEGISLATION_TABLE_DATA_ERROR", error);
+        return null;
+      }
+    },
+  });
 
   const toggleStatusMutation = useMutation({
     mutationFn: async ({ slug, status }: { slug: string; status: number }) => {
       return await apiClient
-        .post(`${i18n.language}/glossary/status/${slug}/${status}`)
+        .post(`${i18n.language}/local-legislation/status/${slug}/${status}`)
         .json<any>();
     },
     onSuccess: (res: any) => {
       toast.success(res?.message || t("success"));
-      queryClient.invalidateQueries({ queryKey: ["legislationTable"] });
+      queryClient.invalidateQueries({ queryKey: ["localLegislationTable"] });
     },
     onError: (error: any) => {
       console.error(error);
       toast.error(error?.message || t("error-occurred"));
     },
   });
-
-  const data = {
-    table_headers: [
-      {
-        title: "No",
-        key: "no",
-      },
-      {
-        title: "Title",
-        key: "title",
-      },
-      {
-        title: "Sector",
-        key: "sector",
-      },
-      {
-        title: "Type",
-        key: "type",
-      },
-      {
-        title: "Status",
-        key: "status",
-      },
-      {
-        title: "Actions",
-        key: "actions",
-      },
-    ],
-    table_values: [],
-    pagination: {
-      total: 4,
-      per_page: 10,
-      current_page: 1,
-      last_page: 1,
-      next_page_url: null,
-      prev_page_url: null,
-      page_start_index: 1,
-    },
-  };
 
   return (
     <>
@@ -242,343 +203,42 @@ function PageTable({ search }: { search: string }) {
 function ViewAction({ slug }: { slug: string }) {
   const { t, i18n } = useTranslation();
 
-  const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["legislationView", slug],
-    queryFn: async () => {
-      const res = await apiClient
-        .get(i18n.language + "/legislation/edit/" + slug)
-        .json<any>();
-      // console.log(res?.data, "dsf");
-      setLoading(false);
-      setOpen(true);
-      return res?.data;
-    },
-    enabled: loading,
-    staleTime: 0,
-  });
+  const handleView = () => {
+    navigate({ to: `/${i18n.language}/local-legislations/view/${slug}` });
+  };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-        }}
-      >
-        <DefaultButton
-          icon={<Eye className="size-4" stroke="url(#button_linear_green)" />}
-          rounded={true}
-          iconGradient={"view"}
-          toolTip={t("view")}
-          toolTipClass="viewTip"
-          onClick={() => setLoading(true)}
-        />
-
-        <DialogContent className="lg:max-w-4xl">
-          <DialogHeader>
-            <DialogTitle>{t("glossary_details")}</DialogTitle>
-          </DialogHeader>
-          <div className="grid md:grid-cols-2 gap-x-8 gap-y-7 items-start">
-            <Input
-              id="title"
-              name="title"
-              value={data?.glossaryData?.title}
-              label={t("title_english")}
-              className=""
-              dir="ltr"
-              isLoading={isLoading}
-              readOnly
-            />
-
-            <Input
-              id="title_arabic"
-              name="title_arabic"
-              value={data?.glossaryData?.title_arabic}
-              label={t("title_arabic")}
-              className=""
-              dir="rtl"
-              isLoading={isLoading}
-              readOnly
-            />
-
-            <Input
-              id="description"
-              name="description"
-              value={data?.glossaryData?.description}
-              label={t("description_english")}
-              dir="ltr"
-              type="textarea"
-              isLoading={isLoading}
-              readOnly
-            />
-
-            <Input
-              id="description_arabic"
-              name="description_arabic"
-              value={data?.glossaryData?.description_arabic}
-              label={t("description_arabic")}
-              dir="rtl"
-              type="textarea"
-              isLoading={isLoading}
-              readOnly
-            />
-
-            <Input
-              id="created_by"
-              name="created_by"
-              value={data?.glossaryData?.user_info?.name}
-              label={t("created_by")}
-              type="text"
-              isLoading={isLoading}
-              readOnly
-            />
-            <Input
-              id="entity_name"
-              name="entity_name"
-              value={data?.glossaryData?.entity_info?.title}
-              label={t("entity_name")}
-              type="text"
-              isLoading={isLoading}
-              readOnly
-            />
-
-            <div className="inline-flex gap-2 text-[var(--textColor)] text-[1.2rem]">
-              <label className="text-muted-foreground">{t("status")}</label>
-              <div className="flex gap-1 items-center">
-                <label
-                  className={cn(
-                    "font-bold",
-                    data?.glossaryData?.status === 1
-                      ? "text-[var(--color-success)]"
-                      : "text-[var(--color-danger)]",
-                  )}
-                >
-                  {data?.glossaryData?.status === 1
-                    ? t("published")
-                    : t("draft")}
-                </label>
-                <CircleCheck
-                  className={cn(
-                    "size-[14px] ",
-                    data?.glossaryData?.status === 1
-                      ? "text-[var(--color-success)]"
-                      : "text-[var(--color-danger)]",
-                  )}
-                  strokeWidth={1}
-                />
-              </div>
-            </div>
-          </div>
-        </DialogContent>
-      </form>
-    </Dialog>
+    <DefaultButton
+      icon={<Eye className="size-4" stroke="url(#button_linear_green)" />}
+      rounded={true}
+      iconGradient={"view"}
+      toolTip={t("view")}
+      toolTipClass="viewTip"
+      onClick={handleView}
+    />
   );
 }
 
 function EditAction({ slug }: { slug: string }) {
   const { t, i18n } = useTranslation();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const queryClient = useQueryClient();
-  const userSession = useAtomValue(userSessionAtom);
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["legislationEdit", slug],
-    queryFn: async () => {
-      const res = await apiClient
-        .get(i18n.language + "/legislation/edit/" + slug)
-        .json<any>();
-      setLoading(false);
-      setOpen(true);
-      return res?.data;
-    },
-    enabled: loading,
-    staleTime: 0,
-  });
+  const navigate = useNavigate();
 
-  const form = useForm({
-    defaultValues: {
-      title: "",
-      title_arabic: "",
-      description: "",
-      description_arabic: "",
-    },
-    onSubmit: async ({ value }) => {
-      setIsSubmitting(true);
-      try {
-        const res = await apiClient
-          .post(i18n.language + "/glossary/update/" + slug, {
-            headers: {
-              Authorization: `Bearer ${userSession?.accessToken}`,
-            },
-            json: {
-              title: value.title,
-              title_arabic: value.title_arabic,
-              description: value.description,
-              description_arabic: value.description_arabic,
-            },
-          })
-          .json();
-
-        if (res?.status) {
-          toast.success(res?.message || t("success"));
-          queryClient.invalidateQueries({ queryKey: ["legislationTable"] });
-          setOpen(false);
-        } else {
-          toast.error(res?.message || t("error-occurred"));
-        }
-      } catch (error) {
-        console.log(error);
-        toast.error(error?.response?.message || t("error-occurred"));
-      } finally {
-        setIsSubmitting(false);
-      }
-    },
-  });
-
-  useEffect(() => {
-    if (data?.glossaryData) {
-      form.setFieldValue("title", data.glossaryData?.title || "");
-      form.setFieldValue("title_arabic", data.glossaryData?.title_arabic || "");
-      form.setFieldValue("description", data.glossaryData?.description || "");
-      form.setFieldValue(
-        "description_arabic",
-        data.glossaryData?.description_arabic || "",
-      );
-    }
-  }, [data, form]);
+  const handleEdit = () => {
+    navigate({ to: `/${i18n.language}/local-legislations/edit/${slug}` });
+  };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          form.handleSubmit();
-        }}
-      >
-        <DefaultButton
-          icon={<PenLine className="size-4" stroke="url(#button_linear)" />}
-          rounded={true}
-          iconGradient={"edit"}
-          toolTip={t("edit")}
-          toolTipClass="editTip"
-          onClick={() => setLoading(true)}
-        />
-
-        <DialogContent className="lg:max-w-4xl">
-          <DialogHeader>
-            <DialogTitle>{t("edit_glossary")}</DialogTitle>
-          </DialogHeader>
-          <div className="grid md:grid-cols-2 gap-x-8 gap-y-7 items-start">
-            <form.Field
-              name="title"
-              validators={{
-                onSubmit: ({ value }) => (!value ? t("title-required") : null),
-              }}
-              children={(field) => (
-                <Input
-                  id="title"
-                  name="title"
-                  value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  label={t("title_english")}
-                  className=""
-                  dir="ltr"
-                  error={field.state.meta.errors.length > 0 ? true : false}
-                  errorMessage={field.state.meta.errors[0]}
-                  isLoading={isLoading}
-                />
-              )}
-            />
-            <form.Field
-              name="title_arabic"
-              validators={{
-                onSubmit: ({ value }) => (!value ? t("title-required") : null),
-              }}
-              children={(field) => (
-                <Input
-                  id="title_arabic"
-                  name="title_arabic"
-                  value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  label={t("title_arabic")}
-                  className=""
-                  dir="rtl"
-                  error={field.state.meta.errors.length > 0 ? true : false}
-                  errorMessage={t(field.state.meta.errors[0])}
-                  isLoading={isLoading}
-                />
-              )}
-            />
-            <form.Field
-              name="description"
-              validators={{
-                onSubmit: ({ value }) =>
-                  !value ? t("description-required") : null,
-              }}
-              children={(field) => (
-                <Input
-                  id="description"
-                  name="description"
-                  value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  label={t("description_english")}
-                  dir="ltr"
-                  type="textarea"
-                  error={field.state.meta.errors.length > 0 ? true : false}
-                  errorMessage={t(field.state.meta.errors[0])}
-                  isLoading={isLoading}
-                />
-              )}
-            />
-            <form.Field
-              name="description_arabic"
-              validators={{
-                onSubmit: ({ value }) =>
-                  !value ? t("description-required") : null,
-              }}
-              children={(field) => (
-                <Input
-                  id="description_arabic"
-                  name="description_arabic"
-                  value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  label={t("description_arabic")}
-                  dir="rtl"
-                  type="textarea"
-                  error={field.state.meta.errors.length > 0 ? true : false}
-                  errorMessage={t(field.state.meta.errors[0])}
-                  isLoading={isLoading}
-                />
-              )}
-            />
-            <div className="inline-flex gap-2 text-[var(--textColor)] text-[1.2rem]">
-              <label className="text-muted-foreground">{t("status")}</label>
-              <div className="flex gap-1 items-center">
-                <label className="font-bold">{t("draft")}</label>
-                <CircleCheck className="size-[14px]" strokeWidth={1} />
-              </div>
-            </div>
-          </div>
-          <DialogFooter className="sm:justify-start mt-2">
-            <DefaultButton
-              type="submit"
-              variant="dark"
-              title={t("update")}
-              onClick={form.handleSubmit}
-              icon={<Pencil className="size-5" />}
-              isDisabled={isSubmitting}
-              isLoading={isSubmitting}
-            />
-          </DialogFooter>
-        </DialogContent>
-      </form>
-    </Dialog>
+    <DefaultButton
+      icon={<PenLine className="size-4" stroke="url(#button_linear)" />}
+      rounded={true}
+      iconGradient={"edit"}
+      toolTip={t("edit")}
+      toolTipClass="editTip"
+      onClick={handleEdit}
+    />
   );
 }
 
@@ -604,7 +264,7 @@ function DeleteAction({
       setIsSubmitting(true);
       try {
         const res = await apiClient
-          .get(i18n.language + "/legislation/delete/" + value.slug)
+          .get(i18n.language + "/local-legislation/delete/" + value.slug)
           .json<any>();
 
         if (res?.status) {
@@ -613,7 +273,7 @@ function DeleteAction({
           form.reset();
           toast.success(res?.message || t("success"));
           await queryClient.invalidateQueries({
-            queryKey: ["legislationTable"],
+            queryKey: ["localLegislationTable"],
           });
           setTimeout(() => {
             setAnimationWait(true);
@@ -649,7 +309,7 @@ function DeleteAction({
         </DialogTrigger>
         <DialogContent className="lg:max-w-xl">
           <DialogHeader>
-            <DialogTitle>{t("delete_glossary")}</DialogTitle>
+            <DialogTitle>{t("delete_local_legislation")}</DialogTitle>
           </DialogHeader>
           <div className="flex">
             <p className=" text-lg font-secondary text-[var(--textColor)]">

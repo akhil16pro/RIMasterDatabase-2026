@@ -18,6 +18,7 @@ function ThankYouPopup({
   setOpen,
   description,
   title,
+  onConfirm,
   type = "success",
   ...props
 }: {
@@ -26,6 +27,7 @@ function ThankYouPopup({
   className?: string;
   description: string;
   title: string;
+  onConfirm?: () => void;
   type: "success" | "error" | "warning" | "info";
 }) {
   const { t } = useTranslation();
@@ -169,6 +171,7 @@ function ThankYouPopup({
               title={t("ok")}
               onClick={() => {
                 setOpen(false);
+                onConfirm?.();
               }}
               icon={<CircleX className="size-5" />}
             />
