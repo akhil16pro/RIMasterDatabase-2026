@@ -153,9 +153,10 @@ function ThankYouPopup({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.35 }}
+            className="w-full"
           >
             <DialogDescription
-              className="text-center max-w-[80%]  mx-auto text-xl md:text-2xl leading-[140%]"
+              className="text-center max-w-[80%]  mx-auto text-xl md:text-2xl leading-[140%] "
               dangerouslySetInnerHTML={{ __html: description }}
             />
           </motion.div>

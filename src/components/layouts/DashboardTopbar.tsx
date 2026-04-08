@@ -1,11 +1,4 @@
-import {
-  Clock,
-  ChevronDown,
-  ClockFading,
-  User,
-  LogOut,
-  Languages,
-} from "lucide-react";
+import { Clock, ChevronDown, User, LogOut, Languages } from "lucide-react";
 import { motion } from "motion/react";
 
 import { cn } from "@/lib/utils";
@@ -23,7 +16,7 @@ import {
 
 import clock from "@/assets/animations/clock.json";
 import Lottie from "lottie-react";
-import { useLocation, useRouter } from "@tanstack/react-router";
+import { useRouter, useRouterState } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { useSetAtom } from "jotai";
 import { userSessionAtom } from "@/store/atoms";
@@ -32,7 +25,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "@/api";
 import { toast } from "sonner";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { useRouterState } from "@tanstack/react-router";
+
+import { DefaultButton } from "@/components/ui/buttons";
 
 export default function DashboardTopbar({
   delay,
@@ -45,6 +39,7 @@ export default function DashboardTopbar({
   lastLogin?: boolean;
   campaign?: any;
 }) {
+  const { t } = useTranslation();
   const now = new Date();
   now.setHours(23, 59, 59, 999);
   const campaignStartDate = new Date(campaign?.from_date);
@@ -58,7 +53,7 @@ export default function DashboardTopbar({
 
   return (
     <motion.div
-      className="topBar flex md:flex-row flex-col gap-2 md:items-center flex-wrap"
+      className="topBar flex md:flex-row flex-col gap-2 md:items-center "
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
@@ -79,9 +74,6 @@ export default function DashboardTopbar({
         {isCampaignActive && <CampaignInfo campaign={campaign} />}
         <LoginAvatar />
       </div>
-      {/* <div className="w-full flex md:gap-2 gap-1 order-1 md:order-2 justify-end flex-wrap ">
-        //Breadcrumbs
-      </div> */}
     </motion.div>
   );
 }
@@ -320,3 +312,126 @@ function LoginAvatar() {
     </DropdownMenu>
   );
 }
+
+// function Breadcrumbs({ pageTitle }: { pageTitle?: string }) {
+//   const { location } = useRouterState();
+//   const { t, i18n } = useTranslation();
+//   const router = useRouter();
+
+//   const pathSegments = location.pathname.split("/").filter(Boolean);
+//   const segments = pathSegments.slice(1);
+
+//   if (segments.length === 0) return null;
+
+//   const cleanTitle = pageTitle ? pageTitle.replace(/<[^>]*>?/gm, '') : '';
+
+//   return (
+//     <div className="flex items-center gap-1 md:gap-2 text-[.8rem] md:text-[.9rem] text-muted-foreground w-full overflow-x-auto pb-1 px-1 mt-1 lg:mt-0">
+//       <div
+//         onClick={() => router.navigate({ to: `/${i18n.language}` })}
+//         className="hover:text-[var(--textColor)] transition-colors flex items-center gap-1 shrink-0 cursor-pointer"
+//       >
+//         <Home className="size-4" />
+//       </div>
+
+//       {segments.map((segment, index) => {
+//         let path = `/${pathSegments.slice(0, index + 2).join("/")}`;
+//         const isLast = index === segments.length - 1;
+
+//         const translationKey = segment.replace(/-/g, "_");
+//         const translated = t(translationKey);
+//         let displayName = String(translated) !== translationKey
+//             ? String(translated)
+//             : segment.replace(/-/g, " ");
+
+//         if (isLast && cleanTitle) {
+//           displayName = cleanTitle;
+//         }
+
+//         let isClickable = index === 0;
+
+//         if (segment === "modifications" && pathSegments.length >= 4) {
+//           const possibleSlug = pathSegments[pathSegments.length - 1];
+//           path = `/${pathSegments.slice(0, index + 2).join("/")}/${possibleSlug}`;
+//           isClickable = true;
+//         }
+
+//         return (
+//           <div key={path} className="flex items-center gap-1 md:gap-2 shrink-0">
+//             <ChevronRight
+//               className={cn(
+//                 "size-4 shrink-0",
+//                 i18n.language === "ar" ? "rotate-180" : ""
+//               )}
+//             />
+//             {isLast ? (
+//               <span className="font-medium text-[var(--textColor)] capitalize truncate max-w-[150px] md:max-w-[300px]">
+//                 {displayName}
+//               </span>
+//             ) : isClickable ? (
+//               <div
+//                 onClick={() => router.navigate({ to: path })}
+//                 className="hover:text-[var(--textColor)] transition-colors capitalize cursor-pointer truncate max-w-[150px] md:max-w-[300px]"
+//               >
+//                 {displayName}
+//               </div>
+//             ) : (
+//               <span className="capitalize truncate max-w-[150px] md:max-w-[300px]">
+//                 {displayName}
+//               </span>
+//             )}
+//           </div>
+//         );
+//       })}
+//     </div>
+//   );
+// }
+
+// function Breadcrumbs() {
+//   const { t, i18n } = useTranslation();
+//   const matches = useMatches();
+//   const isRtl = i18n.dir() === "rtl";
+
+//   // Filter matches that have breadcrumb data
+//   const breadcrumbs = matches
+//     .filter((match) => (match.staticData as any)?.breadcrumb)
+//     .map((match) => ({
+//       title: t((match.staticData as any).breadcrumb),
+//       path: match.pathname,
+//     }));
+
+//   console.log(breadcrumbs, "matches");
+//   if (breadcrumbs.length === 0) return null;
+
+//   return (
+//     <nav className="flex items-center gap-1 text-[0.85rem] font-medium text-muted-foreground/60">
+//       <Link
+//         to="/$lang/dashboard"
+//         params={{ lang: i18n.language }}
+//         className="hover:text-[var(--brandBlue)] transition-colors"
+//       >
+//         <Home className="size-3.5" />
+//       </Link>
+
+//       {breadcrumbs.map((bc, index) => (
+//         <div key={bc.path} className="flex items-center gap-1">
+//           {isRtl ? (
+//             <ChevronLeft className="size-3" />
+//           ) : (
+//             <ChevronRight className="size-3" />
+//           )}
+//           <Link
+//             to={bc.path}
+//             className={cn(
+//               "hover:text-[var(--brandBlue)] transition-colors capitalize",
+//               index === breadcrumbs.length - 1 &&
+//                 "text-[var(--brandBlue)] font-semibold pointer-events-none",
+//             )}
+//           >
+//             {bc.title}
+//           </Link>
+//         </div>
+//       ))}
+//     </nav>
+//   );
+// }

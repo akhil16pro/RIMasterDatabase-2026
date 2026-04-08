@@ -34,6 +34,9 @@ export const Route = createFileRoute(
   "/$lang/_lang/_auth/local-legislations/modifications/add/$slug",
 )({
   component: RouteComponent,
+  staticData: {
+    breadcrumb: "add_modification",
+  },
 });
 
 function RouteComponent() {

@@ -32,6 +32,9 @@ import { SearchBox } from "@/components/ui/search";
 
 export const Route = createFileRoute("/$lang/_lang/_auth/local-legislations/")({
   component: RouteComponent,
+  staticData: {
+    breadcrumb: "local-legislations",
+  },
 });
 
 function RouteComponent() {
@@ -224,7 +227,12 @@ function ViewAction({ slug }: { slug: string }) {
   const navigate = useNavigate();
 
   const handleView = () => {
-    navigate({ to: `/${i18n.language}/local-legislations/view/${slug}` });
+    navigate({
+      to: `/${i18n.language}/local-legislations/view/${slug}`,
+      params: {
+        slug: slug,
+      },
+    });
   };
 
   return (
@@ -247,6 +255,9 @@ function ModificationsAction({ slug }: { slug: string }) {
   const handleModification = () => {
     navigate({
       to: `/${i18n.language}/local-legislations/modifications/${slug}`,
+      params: {
+        slug: slug,
+      },
     });
   };
 
@@ -267,7 +278,12 @@ function EditAction({ slug }: { slug: string }) {
   const navigate = useNavigate();
 
   const handleEdit = () => {
-    navigate({ to: `/${i18n.language}/local-legislations/edit/${slug}` });
+    navigate({
+      to: `/${i18n.language}/local-legislations/edit/${slug}`,
+      params: {
+        slug: slug,
+      },
+    });
   };
 
   return (
