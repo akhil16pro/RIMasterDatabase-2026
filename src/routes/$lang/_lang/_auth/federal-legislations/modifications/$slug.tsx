@@ -236,7 +236,7 @@ function PageTable({ search, slug }: { search: string; slug: string }) {
   );
 }
 
-function ViewAction({ slug }: { slug: string }) {
+function ViewAction({ slug, action }: { slug: string; action: any }) {
   const { t, i18n } = useTranslation();
 
   const navigate = useNavigate();
@@ -244,6 +244,7 @@ function ViewAction({ slug }: { slug: string }) {
   const handleView = () => {
     navigate({
       to: `/${i18n.language}/federal-legislations/modifications/view/${slug}`,
+      search: { parentSlug: action?.parent_slug },
     });
   };
 
@@ -259,7 +260,7 @@ function ViewAction({ slug }: { slug: string }) {
   );
 }
 
-function EditAction({ slug }: { slug: string }) {
+function EditAction({ slug, action }: { slug: string; action: any }) {
   const { t, i18n } = useTranslation();
 
   const navigate = useNavigate();
@@ -267,6 +268,7 @@ function EditAction({ slug }: { slug: string }) {
   const handleEdit = () => {
     navigate({
       to: `/${i18n.language}/federal-legislations/modifications/edit/${slug}`,
+      search: { parentSlug: action?.parent_slug },
     });
   };
 

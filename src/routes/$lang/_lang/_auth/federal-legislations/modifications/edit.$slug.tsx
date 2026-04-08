@@ -34,11 +34,24 @@ export const Route = createFileRoute(
   "/$lang/_lang/_auth/federal-legislations/modifications/edit/$slug",
 )({
   component: RouteComponent,
+  validateSearch: (search: Record<string, unknown>) => {
+    return {
+      parentSlug: (search.parentSlug as string) || "default",
+    };
+  },
   staticData: {
-    breadcrumb: (params: any) => ({
-      key: "edit",
-      path: `/${params.lang}/federal-legislations/modifications/edit/${params.slug}`,
-    }),
+    breadcrumb: (params: any, search: any) => {
+      return [
+        {
+          key: "modifications",
+          path: `/${params.lang}/federal-legislations/modifications/${search?.parentSlug}`,
+        },
+        {
+          key: "edit",
+          path: `/${params.lang}/federal-legislations/modifications/edit/${params.slug}`,
+        },
+      ];
+    },
   },
 });
 
@@ -78,7 +91,7 @@ function RouteComponent() {
         const res = await apiClient
           .get(i18n.language + `/modifications/edit/${slug}`)
           .json<any>();
-        console.log("federal_modification_edit_form_data", res?.data);
+        // console.log("federal_modification_edit_form_data", res?.data);
 
         return res?.data;
       } catch (error) {

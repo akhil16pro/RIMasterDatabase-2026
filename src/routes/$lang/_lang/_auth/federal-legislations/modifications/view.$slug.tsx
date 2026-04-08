@@ -34,11 +34,24 @@ export const Route = createFileRoute(
   "/$lang/_lang/_auth/federal-legislations/modifications/view/$slug",
 )({
   component: RouteComponent,
+  validateSearch: (search: Record<string, unknown>) => {
+    return {
+      parentSlug: (search.parentSlug as string) || "default",
+    };
+  },
   staticData: {
-    breadcrumb: (params: any) => ({
-      key: "view",
-      path: `/${params.lang}/federal-legislations/modifications/view/${params.slug}`,
-    }),
+    breadcrumb: (params: any, search: any) => {
+      return [
+        {
+          key: "modifications",
+          path: `/${params.lang}/federal-legislations/modifications/${search?.parentSlug}`,
+        },
+        {
+          key: "view",
+          path: `/${params.lang}/federal-legislations/modifications/view/${params.slug}`,
+        },
+      ];
+    },
   },
 });
 

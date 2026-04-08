@@ -33,10 +33,18 @@ export const Route = createFileRoute(
 )({
   component: RouteComponent,
   staticData: {
-    breadcrumb: (params: any) => ({
-      key: "add",
-      path: `/${params.lang}/federal-legislations/modifications/add/${params.slug}`,
-    }),
+    breadcrumb: (params: any, search: any) => {
+      return [
+        {
+          key: "modifications",
+          path: `/${params.lang}/federal-legislations/modifications/${params.slug}`,
+        },
+        {
+          key: "add",
+          path: `/${params.lang}/federal-legislations/modifications/add/${params.slug}`,
+        },
+      ];
+    },
   },
 });
 

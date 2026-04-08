@@ -34,11 +34,20 @@ export const Route = createFileRoute(
   "/$lang/_lang/_auth/local-legislations/modifications/add/$slug",
 )({
   component: RouteComponent,
+
   staticData: {
-    breadcrumb: (params: any) => ({
-      key: "add",
-      path: `/${params.lang}/local-legislations/modifications/add/${params.slug}`,
-    }),
+    breadcrumb: (params: any, search: any) => {
+      return [
+        {
+          key: "modifications",
+          path: `/${params.lang}/local-legislations/modifications/${params.slug}`,
+        },
+        {
+          key: "add",
+          path: `/${params.lang}/local-legislations/modifications/add/${params.slug}`,
+        },
+      ];
+    },
   },
 });
 

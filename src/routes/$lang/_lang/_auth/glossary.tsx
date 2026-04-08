@@ -41,6 +41,14 @@ import { useEffect } from "react";
 
 export const Route = createFileRoute("/$lang/_lang/_auth/glossary")({
   component: RouteComponent,
+  staticData: {
+    breadcrumb: (params: any) => {
+      return {
+        key: "glossary",
+        path: `/${params.lang}/glossary`,
+      };
+    },
+  },
 });
 
 function RouteComponent() {

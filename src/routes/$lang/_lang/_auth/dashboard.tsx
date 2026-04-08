@@ -40,6 +40,14 @@ import { MultiSelect } from "@/components/ui/multi-select";
 
 export const Route = createFileRoute("/$lang/_lang/_auth/dashboard")({
   component: RouteComponent,
+  staticData: {
+    breadcrumb: (params: any) => {
+      return {
+        key: "dashboard",
+        path: `/${params.lang}/dashboard`,
+      };
+    },
+  },
 });
 
 function RouteComponent() {

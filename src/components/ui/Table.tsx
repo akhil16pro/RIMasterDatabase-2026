@@ -148,6 +148,7 @@ export const Table = ({
                           return (
                             <Component
                               key={`action-${rowIndex}-${aIndex}`}
+                              action={action}
                               slug={row?.slug}
                               {...(action.type === "delete"
                                 ? { setAnimationWait }

@@ -11,7 +11,7 @@ import Lottie from "lottie-react";
 import docLoading from "@/assets/animations/loading2.json";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useRouter, useLocation } from "@tanstack/react-router";
-import { useMatches, useParams } from "@tanstack/react-router";
+import { useMatches, useParams, useSearch } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
 export default function DashboardLayout({
   isLoading = false,
@@ -119,18 +119,17 @@ export function Breadcrumbs() {
   const { t } = useTranslation();
   const matches = useMatches();
   const params = useParams({ strict: false });
+  const search = useSearch({ strict: false });
 
   const breadcrumbs = matches
     .filter((match) => match.staticData?.breadcrumb)
     .flatMap((match) => {
-      const result = (match.staticData.breadcrumb as Function)(params);
+      const result = (match.staticData.breadcrumb as Function)(params, search);
       return Array.isArray(result) ? result : [result];
     });
 
-  console.log(matches, "matches");
-
   return (
-    breadcrumbs.length > 0 && (
+    breadcrumbs.length > 1 && (
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -147,13 +146,13 @@ export function Breadcrumbs() {
             <div key={bc.path} className="flex items-center">
               {index < breadcrumbs.length - 1 ? (
                 <>
-                  <Link to={bc.path} className="hover:text-blue-600 capitalize">
+                  <Link to={bc.path} className="hover:text-blue-600 ">
                     {t(bc.key)}
                   </Link>
                   <span className="mx-2">/</span>
                 </>
               ) : (
-                <span className="capitalize">{t(bc.key)}</span>
+                <span>{t(bc.key)}</span>
               )}
             </div>
           ))}
