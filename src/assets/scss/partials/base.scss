@@ -225,6 +225,12 @@ input {
     --sideBar: 17rem;
     padding-inline-start: var(--sideBar);
   }
+
+  &:has(.breadcrumbsWrap) {
+    .contentBox {
+      padding-top: calc(var(--sidePadd) + 0.5rem);
+    }
+  }
 }
 
 .contentBox {

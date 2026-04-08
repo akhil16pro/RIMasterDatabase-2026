@@ -11,7 +11,8 @@ import Lottie from "lottie-react";
 import docLoading from "@/assets/animations/loading2.json";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useRouter, useLocation } from "@tanstack/react-router";
-
+import { useMatches, useParams } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 export default function DashboardLayout({
   isLoading = false,
   isRefetching = false,
@@ -33,16 +34,15 @@ export default function DashboardLayout({
   const userSession = useAtomValue(userSessionAtom);
 
   // const navigate = useNavigate();
-  const router = useRouter();
-  const location = useLocation();
+  // const router = useRouter();
+  // const location = useLocation();
 
-  const pathSegments = location.pathname.split("/").filter(Boolean);
-  const isInnerPage = pathSegments.length > 2;
+  // const pathSegments = location.pathname.split("/").filter(Boolean);
+  // const isInnerPage = pathSegments.length > 2;
 
-  // console.log(router);
-  const goBack = () => {
-    router.history.back();
-  };
+  // const goBack = () => {
+  //   router.history.back();
+  // };
   return (
     <>
       {!userSession?.accessToken ? (
@@ -58,7 +58,9 @@ export default function DashboardLayout({
             <section className="w-full flex-1 relative mainWrapper ">
               <DashboardSidebar delay={0} />
               <div className="contentBox relative">
-                {isInnerPage && (
+                <Breadcrumbs />
+
+                {/* {isInnerPage && (
                   <motion.div
                     initial={{
                       opacity: 0,
@@ -78,7 +80,7 @@ export default function DashboardLayout({
                       )}
                     </div>
                   </motion.div>
-                )}
+                )} */}
                 {isLoading || isRefetching ? (
                   <motion.div
                     initial={{ opacity: 0, scale: 1.5 }}
@@ -110,5 +112,53 @@ export default function DashboardLayout({
         </AnimatePresence>
       )}
     </>
+  );
+}
+
+export function Breadcrumbs() {
+  const { t } = useTranslation();
+  const matches = useMatches();
+  const params = useParams({ strict: false });
+
+  const breadcrumbs = matches
+    .filter((match) => match.staticData?.breadcrumb)
+    .flatMap((match) => {
+      const result = (match.staticData.breadcrumb as Function)(params);
+      return Array.isArray(result) ? result : [result];
+    });
+
+  console.log(matches, "matches");
+
+  return (
+    breadcrumbs.length > 0 && (
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -20 }}
+        transition={{
+          delay: 0.4,
+          duration: 0.5,
+          ease: "easeInOut",
+        }}
+        className="breadcrumbsWrap w-full hidden md:flex [&:empty]:hidden  absolute top-0 ltr:left-0 rtl:right-0 "
+      >
+        <nav className=" flex  text-sm text-gray-600 bg-muted py-1 px-[var(--sidePadd)]">
+          {breadcrumbs.map((bc, index) => (
+            <div key={bc.path} className="flex items-center">
+              {index < breadcrumbs.length - 1 ? (
+                <>
+                  <Link to={bc.path} className="hover:text-blue-600 capitalize">
+                    {t(bc.key)}
+                  </Link>
+                  <span className="mx-2">/</span>
+                </>
+              ) : (
+                <span className="capitalize">{t(bc.key)}</span>
+              )}
+            </div>
+          ))}
+        </nav>
+      </motion.div>
+    )
   );
 }

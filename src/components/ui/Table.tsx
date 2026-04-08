@@ -57,9 +57,9 @@ export const Table = ({
                 className={cn(
                   "px-4 py-4 font-medium text-lg text-start ltr:first:rounded-l-lg ltr:last:rounded-r-lg rtl:first:rounded-r-lg rtl:last:rounded-l-lg",
                   head.key === "no" && "w-[3rem]",
-                  head.key === "title" && "w-[20%]",
+                  head.key === "title" && "min-w-[20%]",
                   (head.key === "action" || head.key === "actions") &&
-                    "w-[10rem]",
+                    "w-[5rem]",
                   head.key === "status" && "w-[6rem]",
                 )}
               >
@@ -139,7 +139,7 @@ export const Table = ({
                       //     </React.Fragment>
                       //   ))}
                       // </div>
-                      <div className="flex gap-2">
+                      <div className="flex gap-1 md:gap-2">
                         {row.actions?.map((action: any, aIndex: number) => {
                           const Component = action.render;
 

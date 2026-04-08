@@ -31,13 +31,13 @@ import { userSessionAtom } from "@/store/atoms";
 import { useNavigate } from "@tanstack/react-router";
 
 export const Route = createFileRoute(
-  "/$lang/_lang/_auth/local-legislations/modifications/view/$slug",
+  "/$lang/_lang/_auth/federal-legislations/view/$slug",
 )({
   component: RouteComponent,
   staticData: {
     breadcrumb: (params: any) => ({
       key: "view",
-      path: `/${params.lang}/local-legislations/modifications/view/${params.slug}`,
+      path: `/${params.lang}/federal-legislations/view/${params.slug}`,
     }),
   },
 });
@@ -48,31 +48,30 @@ function RouteComponent() {
   const userSession = useAtomValue(userSessionAtom);
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["localLegislationModificationViewFormData", slug, i18n.language],
+    queryKey: ["federalLegislationFormData", slug, i18n.language],
     enabled: true,
     staleTime: 0,
     queryFn: async () => {
       try {
-        const res = await apiClient
-          .get(i18n.language + `/modifications/edit/${slug}`)
-          .json<any>();
-        console.log("modification_view_form_data", res?.data);
+        const [createRes, editRes] = await Promise.all([
+          apiClient
+            .get(`${i18n.language}/federal-legislation/create`)
+            .json<any>(),
+          apiClient
+            .get(`${i18n.language}/federal-legislation/edit/${slug}`)
+            .json<any>(),
+        ]);
 
-        return res?.data;
+        return { ...createRes?.data, ...editRes?.data };
       } catch (error) {
-        console.log("modification_view_form_data_error", error);
+        console.log("federal_legislation_form_data_error", error);
         return null;
       }
     },
   });
 
   return (
-    <DashboardLayout
-      isLoading={isLoading}
-      title={
-        t("view_modification") + `<small>${data?.parentLaw?.label}</small>`
-      }
-    >
+    <DashboardLayout isLoading={isLoading} title={t("view_legislation")}>
       <div className="grid md:grid-cols-2 gap-x-8 gap-y-10 items-start">
         <div className="inline-flex gap-5 text-black  text-[1.2rem] col-span-2">
           <Label className="text-black/70">{t("has_english")}</Label>
@@ -101,6 +100,57 @@ function RouteComponent() {
           </RadioGroup>
         </div>
 
+        <Input
+          value={userSession?.user?.userEmirateName || ""}
+          label={t("local_government")}
+          disabled={true}
+          readOnly={true}
+        />
+        <Select
+          key={data?.lawData?.lm_sector_id}
+          value={data?.lawData?.lm_sector_id?.toString() || ""}
+        >
+          <SelectTrigger
+            label={t("sector")}
+            hasValue={!!data?.lawData?.lm_sector_id}
+            readOnly={true}
+          >
+            <SelectValue placeholder={t("select_sector")} />
+          </SelectTrigger>
+          <SelectContent>
+            {data?.sectorList?.map((item: any) => (
+              <SelectItem
+                key={`sector-${item.value}`}
+                value={item.value.toString()}
+              >
+                {item.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <Select
+          key={data?.lawData?.lm_law_type_id}
+          value={data?.lawData?.lm_law_type_id?.toString() || ""}
+        >
+          <SelectTrigger
+            label={t("legislation_type")}
+            hasValue={!!data?.lawData?.lm_law_type_id}
+            readOnly={true}
+          >
+            <SelectValue placeholder={t("select_legislation_type")} />
+          </SelectTrigger>
+          <SelectContent>
+            {data?.lawTypeList?.map((item: any) => (
+              <SelectItem
+                key={`lawType-${item.value}`}
+                value={item.value.toString()}
+              >
+                {item.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
         {data?.lawData?.lm_has_english_version === 1 && (
           <div className="col-span-2 grid md:grid-cols-2 gap-x-8 gap-y-10 items-start">
             <Input
@@ -134,6 +184,29 @@ function RouteComponent() {
           />
         </div>
 
+        {data?.lawData?.lm_has_english_version === 1 && (
+          <div className="col-span-2 space-y-2 relative">
+            <Label htmlFor="lm_description">
+              {t("legislation_details_english")}
+            </Label>
+            <CKEditorCustom
+              value={data?.lawData?.lm_description}
+              readOnly={true}
+            />
+          </div>
+        )}
+
+        <div className="col-span-2 space-y-2 relative">
+          <Label htmlFor="lm_description_arabic">
+            {t("legislation_details_arabic")}
+          </Label>
+          <CKEditorCustom
+            dir="rtl"
+            value={data?.lawData?.lm_description_arabic}
+            readOnly={true}
+          />
+        </div>
+
         <Select
           key={data?.lawData?.lm_year}
           value={data?.lawData?.lm_year?.toString()}
@@ -156,10 +229,36 @@ function RouteComponent() {
             ))}
           </SelectContent>
         </Select>
+        <div className="col-span-2 grid md:grid-cols-2 gap-x-8 gap-y-10 items-start">
+          <Input
+            type="date"
+            value={data?.lawData?.lm_issue_date}
+            label={t("issued_date")}
+            readOnly={true}
+          />
+
+          <Input
+            type="date"
+            value={data?.lawData?.lm_effective_date}
+            label={t("effective_date")}
+            readOnly={true}
+          />
+        </div>
+        {data?.lawData?.lm_has_english_version === 1 && (
+          <Input
+            type="file"
+            accept=".pdf"
+            label={t("attachment_english")}
+            preview={data?.lawData?.lm_pdf_file}
+            readOnly={true}
+          />
+        )}
+
         <Input
-          type="date"
-          value={data?.lawData?.lm_issue_date}
-          label={t("issued_date")}
+          type="file"
+          accept=".pdf"
+          label={t("attachment_arabic")}
+          preview={data?.lawData?.lm_pdf_file_arabic}
           readOnly={true}
         />
 
@@ -196,32 +295,13 @@ function RouteComponent() {
           readOnly={true}
           dir="rtl"
         />
+
         <Input
           type="date"
           value={data?.lawData?.lm_official_gazette_issue_date}
           label={t("gazette_issue_date")}
           readOnly={true}
         />
-        <div className="col-span-2 grid md:grid-cols-2 gap-x-8 gap-y-10 items-start">
-          {data?.lawData?.lm_has_english_version === 1 && (
-            <Input
-              type="file"
-              accept=".pdf"
-              label={t("attachment_english")}
-              preview={data?.lawData?.lm_pdf_file}
-              readOnly={true}
-            />
-          )}
-
-          <Input
-            type="file"
-            accept=".pdf"
-            label={t("attachment_arabic")}
-            preview={data?.lawData?.lm_pdf_file_arabic}
-            readOnly={true}
-          />
-        </div>
-
         <Input
           type="text"
           value={data?.lawData?.user_info?.name}

@@ -32,9 +32,6 @@ import { SearchBox } from "@/components/ui/search";
 
 export const Route = createFileRoute("/$lang/_lang/_auth/local-legislations/")({
   component: RouteComponent,
-  staticData: {
-    breadcrumb: "local-legislations",
-  },
 });
 
 function RouteComponent() {

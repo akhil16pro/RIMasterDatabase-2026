@@ -34,6 +34,12 @@ export const Route = createFileRoute(
   "/$lang/_lang/_auth/local-legislations/add",
 )({
   component: RouteComponent,
+  staticData: {
+    breadcrumb: (params: any) => ({
+      key: "add",
+      path: `/${params.lang}/local-legislations/add`,
+    }),
+  },
 });
 
 function RouteComponent() {
@@ -165,10 +171,7 @@ function RouteComponent() {
   // console.log(userSession);
 
   return (
-    <DashboardLayout
-      isLoading={isLoading}
-      title={t("add_governments_legislations")}
-    >
+    <DashboardLayout isLoading={isLoading} title={t("add_legislation")}>
       <form
         onSubmit={(e) => {
           e.preventDefault();

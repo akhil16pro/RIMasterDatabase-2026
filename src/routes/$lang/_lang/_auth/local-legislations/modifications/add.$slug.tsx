@@ -35,7 +35,10 @@ export const Route = createFileRoute(
 )({
   component: RouteComponent,
   staticData: {
-    breadcrumb: "add_modification",
+    breadcrumb: (params: any) => ({
+      key: "add",
+      path: `/${params.lang}/local-legislations/modifications/add/${params.slug}`,
+    }),
   },
 });
 

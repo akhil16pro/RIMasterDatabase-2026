@@ -7,10 +7,10 @@ import { DefaultButton } from "@/components/ui/buttons";
 import { Input } from "@/components/ui/input";
 import { AnimatePresence, motion } from "motion/react";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
-import DashboardTopbar from "@/components/layouts/DashboardTopbar";
-import { Pencil } from "lucide-react";
+
+import { Plus } from "lucide-react";
 import { useState } from "react";
-import { cn } from "@/lib/utils";
+
 import { useForm } from "@tanstack/react-form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "sonner";
@@ -23,21 +23,19 @@ import {
 } from "@/components/ui/Select";
 import { Label } from "@/components/ui/label";
 import { ThankYouPopup } from "@/components/ui/thankYouPopup";
-import { useEffect } from "react";
 
-import CKEditorCustom from "@/components/ui/CKEditor";
 import { useAtomValue } from "jotai";
 import { userSessionAtom } from "@/store/atoms";
 import { useNavigate } from "@tanstack/react-router";
 
 export const Route = createFileRoute(
-  "/$lang/_lang/_auth/local-legislations/modifications/edit/$slug",
+  "/$lang/_lang/_auth/federal-legislations/modifications/add/$slug",
 )({
   component: RouteComponent,
   staticData: {
     breadcrumb: (params: any) => ({
-      key: "edit",
-      path: `/${params.lang}/local-legislations/modifications/edit/${params.slug}`,
+      key: "add",
+      path: `/${params.lang}/federal-legislations/modifications/add/${params.slug}`,
     }),
   },
 });
@@ -51,30 +49,15 @@ function RouteComponent() {
   const queryClient = useQueryClient();
   const [thankYouPopup, setThankYouPopup] = useState(false);
 
-  const [deletedFiles, setDeletedFiles] = useState<string[]>([]);
-
   const { data, isLoading, error } = useQuery({
-    queryKey: ["localLegislationModificationEditFormData", slug, i18n.language],
-    enabled: true,
-    staleTime: 0,
+    queryKey: ["federal_modificationFormData", i18n.language],
+    enabled: !!userSession?.accessToken,
     queryFn: async () => {
       try {
-        // const [createRes, editRes] = await Promise.all([
-        //   apiClient
-        //     .get(`${i18n.language}/modifications/create/${slug}`)
-        //     .json<any>(),
-        //   apiClient
-        //     .get(`${i18n.language}/modifications/edit/${slug}`)
-        //     .json<any>(),
-        // ]);
-        // console.log(createRes?.data, "createRes");
-        // console.log(editRes?.data, "editRes");
-        // return { ...createRes?.data, ...editRes?.data };
-
         const res = await apiClient
-          .get(i18n.language + `/modifications/edit/${slug}`)
+          .get(i18n.language + `/modifications/create/${slug}`)
           .json<any>();
-        console.log("modification_edit_form_data", res?.data);
+        console.log("modification_form_data", res?.data);
 
         return res?.data;
       } catch (error) {
@@ -87,23 +70,22 @@ function RouteComponent() {
   const form = useForm({
     defaultValues: {
       lm_has_english_version: "2",
-      local_government: userSession?.user?.userEmirateName || "",
-
       lm_title: "",
       lm_title_arabic: "",
       lm_short_title: "",
       lm_short_title_arabic: "",
-
+      lm_description: "",
+      lm_description_arabic: "",
       lm_year: "",
       lm_issue_date: "",
       lm_effective_date: "",
+      lm_pdf_file: "",
+      lm_pdf_file_arabic: "",
       lm_gazette_number: "",
       lm_gazette_number_arabic: "",
       lm_official_gazette_issue_date: "",
       lm_gazette_title: "",
       lm_gazette_title_arabic: "",
-      lm_pdf_file: null,
-      lm_pdf_file_arabic: null,
     },
     onSubmit: async ({ value }) => {
       setIsSubmitting(true);
@@ -111,13 +93,16 @@ function RouteComponent() {
       try {
         const formData = new FormData();
 
+        formData.append("lm_created_by", userSession?.user?.id || "");
         formData.append("lm_has_english_version", value.lm_has_english_version);
+
         formData.append("lm_title", value.lm_title);
         formData.append("lm_title_arabic", value.lm_title_arabic);
         formData.append("lm_short_title", value.lm_short_title);
         formData.append("lm_short_title_arabic", value.lm_short_title_arabic);
-
-        formData.append("lm_year", value.lm_year.toString());
+        formData.append("lm_description", value.lm_description);
+        formData.append("lm_description_arabic", value.lm_description_arabic);
+        formData.append("lm_year", value.lm_year);
         formData.append("lm_issue_date", value.lm_issue_date);
         formData.append("lm_effective_date", value.lm_effective_date);
         formData.append("lm_gazette_number", value.lm_gazette_number);
@@ -143,7 +128,7 @@ function RouteComponent() {
         }
 
         const res = await apiClient
-          .post(i18n.language + `/modifications/update/${slug}`, {
+          .post(i18n.language + "/modifications/store/" + slug, {
             headers: {
               "Content-Type": undefined,
             },
@@ -151,14 +136,20 @@ function RouteComponent() {
           })
           .json<any>();
 
-        // console.log(res, "local_legislation_update_res");
+        // console.log(res, "local_legislation_store_res");
         if (res?.status) {
-          // form.reset();
+          form.reset();
           toast.success(res?.message || t("success"));
-
+          queryClient.invalidateQueries({
+            queryKey: ["federal_legislations_modifications_table", slug],
+          });
           setTimeout(() => {
             setThankYouPopup(true);
           }, 150);
+
+          // setTimeout(() => {
+          //   queryClient.invalidateQueries({ queryKey: ["glossaryTable"] });
+          // }, 100);
         }
       } catch (error) {
         console.error("Add request failed:", error);
@@ -168,65 +159,10 @@ function RouteComponent() {
     },
   });
 
-  useEffect(() => {
-    if (data?.lawData) {
-      form.setFieldValue(
-        "lm_has_english_version",
-        data.lawData?.lm_has_english_version?.toString() || "2",
-      );
-
-      form.setFieldValue("lm_title", data?.lawData?.lm_title || "");
-      form.setFieldValue(
-        "lm_title_arabic",
-        data?.lawData?.lm_title_arabic || "",
-      );
-      form.setFieldValue("lm_short_title", data?.lawData?.lm_short_title || "");
-      form.setFieldValue(
-        "lm_short_title_arabic",
-        data?.lawData?.lm_short_title_arabic || "",
-      );
-
-      form.setFieldValue("lm_year", data?.lawData?.lm_year?.toString() || "");
-      form.setFieldValue("lm_issue_date", data?.lawData?.lm_issue_date || "");
-
-      form.setFieldValue("lm_pdf_file", "");
-      form.setFieldValue("lm_pdf_file_arabic", "");
-      form.setFieldValue(
-        "lm_gazette_number",
-        data?.lawData?.lm_gazette_number || "",
-      );
-      form.setFieldValue(
-        "lm_gazette_number_arabic",
-        data?.lawData?.lm_gazette_number_arabic || "",
-      );
-      form.setFieldValue(
-        "lm_official_gazette_issue_date",
-        data?.lawData?.lm_official_gazette_issue_date || "",
-      );
-      form.setFieldValue(
-        "lm_gazette_title",
-        data?.lawData?.lm_gazette_title || "",
-      );
-      form.setFieldValue(
-        "lm_gazette_title_arabic",
-        data?.lawData?.lm_gazette_title_arabic || "",
-      );
-    }
-  }, [data, form, userSession]);
-
-  const handleClearFile = (fieldName: string, previewKey: string) => {
-    form.setFieldValue(fieldName as any, null);
-
-    setDeletedFiles((prev) => [...prev, previewKey]);
-  };
-
   return (
     <DashboardLayout
       isLoading={isLoading}
-      title={
-        t("edit_governments_legislations") +
-        `<small>${data?.parentLaw?.label}</small>`
-      }
+      title={t("add_modification") + `<small>${data?.label}</small>`}
     >
       <form
         onSubmit={(e) => {
@@ -313,8 +249,6 @@ function RouteComponent() {
                       }}
                       children={(field) => (
                         <Input
-                          id="lm_title"
-                          name="lm_title"
                           type="text"
                           value={field.state.value}
                           onChange={(e) => field.handleChange(e.target.value)}
@@ -332,8 +266,6 @@ function RouteComponent() {
                       name="lm_short_title"
                       children={(field) => (
                         <Input
-                          id="lm_short_title"
-                          name="lm_short_title"
                           type="text"
                           value={field.state.value}
                           onChange={(e) => field.handleChange(e.target.value)}
@@ -360,8 +292,6 @@ function RouteComponent() {
               children={(field) => (
                 <Input
                   type="text"
-                  id="lm_title_arabic"
-                  name="lm_title_arabic"
                   value={field.state.value}
                   onChange={(e) => field.handleChange(e.target.value)}
                   label={t("legislation_title_arabic")}
@@ -392,7 +322,6 @@ function RouteComponent() {
               )}
             />
           </div>
-
           <form.Field
             name="lm_year"
             validators={{
@@ -400,7 +329,8 @@ function RouteComponent() {
             }}
             children={(field) => (
               <Select
-                key={field.state.value}
+                id="lm_year"
+                name="lm_year"
                 value={field.state.value?.toString()}
                 onValueChange={(e) => field.handleChange(e)}
               >
@@ -425,7 +355,6 @@ function RouteComponent() {
               </Select>
             )}
           />
-
           <form.Field
             name="lm_issue_date"
             validators={{
@@ -444,6 +373,7 @@ function RouteComponent() {
               />
             )}
           />
+
           <form.Subscribe
             selector={(state) => state.values.lm_has_english_version}
             children={(hasEnglish) => (
@@ -502,6 +432,7 @@ function RouteComponent() {
               </AnimatePresence>
             )}
           />
+
           <form.Field
             name="lm_gazette_number_arabic"
             validators={{
@@ -574,21 +505,17 @@ function RouteComponent() {
                     <form.Field
                       name="lm_pdf_file"
                       validators={{
-                        onSubmit: ({ value }) => {
-                          return data?.lawData?.lm_pdf_file
-                            ? deletedFiles.includes("lm_pdf_file") &&
-                                !value &&
-                                t("required-field")
-                            : !value && t("required-field");
-                        },
+                        onSubmit: ({ value }) =>
+                          !value ? t("required-field") : null,
                         onChange: ({ value }) => {
                           if (!value) return null;
+
+                          // Ensure we have a File object
                           const file =
                             value instanceof FileList ? value[0] : value;
+                          if (!file || !(file instanceof File)) return null;
 
-                          if (!(file instanceof File)) return null;
-
-                          const fileName = file.name.toLowerCase();
+                          const fileName = file.name.toLowerCase(); // Use file.name
                           const allowedExtensions = [".pdf"];
                           const isValid = allowedExtensions.some((ext) =>
                             fileName.endsWith(ext),
@@ -605,25 +532,19 @@ function RouteComponent() {
                       children={(field) => (
                         <Input
                           type="file"
+                          id="lm_pdf_file"
+                          name="lm_pdf_file"
                           accept=".pdf"
                           onChange={(e) => {
                             const file = e.target.files?.[0];
                             field.handleChange(file);
                           }}
+                          onBlur={field.handleBlur}
                           label={t("attachment_english")}
                           error={
                             field.state.meta.errors.length > 0 ? true : false
                           }
                           errorMessage={field.state.meta.errors[0]}
-                          preview={
-                            deletedFiles.includes("lm_pdf_file")
-                              ? undefined
-                              : data?.lawData?.lm_pdf_file
-                          }
-                          onClearPreview={() => {
-                            field.handleChange(null);
-                            setDeletedFiles((prev) => [...prev, "lm_pdf_file"]);
-                          }}
                         />
                       )}
                     />
@@ -636,20 +557,15 @@ function RouteComponent() {
           <form.Field
             name="lm_pdf_file_arabic"
             validators={{
-              onSubmit: ({ value }) => {
-                return (
-                  deletedFiles.includes("lm_pdf_file_arabic") &&
-                  !value &&
-                  t("required-field")
-                );
-              },
+              onSubmit: ({ value }) => (!value ? t("required-field") : null),
               onChange: ({ value }) => {
                 if (!value) return null;
+
+                // Ensure we have a File object
                 const file = value instanceof FileList ? value[0] : value;
+                if (!file || !(file instanceof File)) return null;
 
-                if (!(file instanceof File)) return null;
-
-                const fileName = file.name.toLowerCase();
+                const fileName = file.name.toLowerCase(); // Use file.name
                 const allowedExtensions = [".pdf"];
                 const isValid = allowedExtensions.some((ext) =>
                   fileName.endsWith(ext),
@@ -666,23 +582,17 @@ function RouteComponent() {
             children={(field) => (
               <Input
                 type="file"
+                id="lm_pdf_file_arabic"
+                name="lm_pdf_file_arabic"
                 accept=".pdf"
                 onChange={(e) => {
                   const file = e.target.files?.[0];
                   field.handleChange(file);
                 }}
+                onBlur={field.handleBlur}
                 label={t("attachment_arabic")}
                 error={field.state.meta.errors.length > 0 ? true : false}
                 errorMessage={field.state.meta.errors[0]}
-                preview={
-                  deletedFiles.includes("lm_pdf_file_arabic")
-                    ? undefined
-                    : data?.lawData?.lm_pdf_file_arabic
-                }
-                onClearPreview={() => {
-                  field.handleChange(null);
-                  setDeletedFiles((prev) => [...prev, "lm_pdf_file_arabic"]);
-                }}
               />
             )}
           />
@@ -691,9 +601,9 @@ function RouteComponent() {
             <DefaultButton
               type="submit"
               variant="dark"
-              title={t("update")}
+              title={t("submit")}
               onClick={form.handleSubmit}
-              icon={<Pencil className="size-5" />}
+              icon={<Plus className="size-5" />}
               isDisabled={isSubmitting}
               isLoading={isSubmitting}
             />
@@ -704,20 +614,12 @@ function RouteComponent() {
         type="success"
         open={thankYouPopup}
         setOpen={setThankYouPopup}
-        title={t("updated_successfully")}
-        description={
-          data?.parentLaw?.success_message || t("law_updated_success_message")
-        }
+        title={t("submitted_successfully")}
+        description={data?.success_message}
         onConfirm={() => {
-          queryClient.invalidateQueries({
-            queryKey: ["localLegislationModificationFormData", slug],
+          navigate({
+            to: `/${i18n.language}/federal-legislations/modifications/${slug}`,
           });
-          queryClient.invalidateQueries({
-            queryKey: ["local_legislations_modifications_table", slug],
-          });
-          // navigate({
-          //   to: `/${i18n.language}/local-legislations`,
-          // });
         }}
       />
     </DashboardLayout>

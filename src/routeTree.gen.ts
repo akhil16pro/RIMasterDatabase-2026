@@ -16,20 +16,31 @@ import { Route as LangLangResetPasswordRouteImport } from './routes/$lang/_lang/
 import { Route as LangLangLoginRouteImport } from './routes/$lang/_lang/login'
 import { Route as LangLangForgotPasswordRouteImport } from './routes/$lang/_lang/forgot-password'
 import { Route as LangLangAuthRouteImport } from './routes/$lang/_lang/_auth'
+import { Route as LangLangAuthLocalLegislationsRouteImport } from './routes/$lang/_lang/_auth/local-legislations'
+import { Route as LangLangAuthLocalDecisionsRouteImport } from './routes/$lang/_lang/_auth/local-decisions'
 import { Route as LangLangAuthGlossaryRouteImport } from './routes/$lang/_lang/_auth/glossary'
+import { Route as LangLangAuthFederalLegislationsRouteImport } from './routes/$lang/_lang/_auth/federal-legislations'
 import { Route as LangLangAuthDashboardRouteImport } from './routes/$lang/_lang/_auth/dashboard'
 import { Route as LangLangAuthLocalLegislationsIndexRouteImport } from './routes/$lang/_lang/_auth/local-legislations/index'
 import { Route as LangLangAuthLocalDecisionsIndexRouteImport } from './routes/$lang/_lang/_auth/local-decisions/index'
+import { Route as LangLangAuthFederalLegislationsIndexRouteImport } from './routes/$lang/_lang/_auth/federal-legislations/index'
 import { Route as LangLangAuthLocalLegislationsAddRouteImport } from './routes/$lang/_lang/_auth/local-legislations/add'
 import { Route as LangLangAuthLocalDecisionsAddRouteImport } from './routes/$lang/_lang/_auth/local-decisions/add'
+import { Route as LangLangAuthFederalLegislationsAddRouteImport } from './routes/$lang/_lang/_auth/federal-legislations/add'
 import { Route as LangLangAuthLocalLegislationsViewSlugRouteImport } from './routes/$lang/_lang/_auth/local-legislations/view.$slug'
 import { Route as LangLangAuthLocalLegislationsModificationsSlugRouteImport } from './routes/$lang/_lang/_auth/local-legislations/modifications/$slug'
 import { Route as LangLangAuthLocalLegislationsEditSlugRouteImport } from './routes/$lang/_lang/_auth/local-legislations/edit.$slug'
 import { Route as LangLangAuthLocalDecisionsViewSlugRouteImport } from './routes/$lang/_lang/_auth/local-decisions/view.$slug'
 import { Route as LangLangAuthLocalDecisionsEditSlugRouteImport } from './routes/$lang/_lang/_auth/local-decisions/edit.$slug'
+import { Route as LangLangAuthFederalLegislationsViewSlugRouteImport } from './routes/$lang/_lang/_auth/federal-legislations/view.$slug'
+import { Route as LangLangAuthFederalLegislationsModificationsSlugRouteImport } from './routes/$lang/_lang/_auth/federal-legislations/modifications/$slug'
+import { Route as LangLangAuthFederalLegislationsEditSlugRouteImport } from './routes/$lang/_lang/_auth/federal-legislations/edit.$slug'
 import { Route as LangLangAuthLocalLegislationsModificationsViewSlugRouteImport } from './routes/$lang/_lang/_auth/local-legislations/modifications/view.$slug'
 import { Route as LangLangAuthLocalLegislationsModificationsEditSlugRouteImport } from './routes/$lang/_lang/_auth/local-legislations/modifications/edit.$slug'
 import { Route as LangLangAuthLocalLegislationsModificationsAddSlugRouteImport } from './routes/$lang/_lang/_auth/local-legislations/modifications/add.$slug'
+import { Route as LangLangAuthFederalLegislationsModificationsViewSlugRouteImport } from './routes/$lang/_lang/_auth/federal-legislations/modifications/view.$slug'
+import { Route as LangLangAuthFederalLegislationsModificationsEditSlugRouteImport } from './routes/$lang/_lang/_auth/federal-legislations/modifications/edit.$slug'
+import { Route as LangLangAuthFederalLegislationsModificationsAddSlugRouteImport } from './routes/$lang/_lang/_auth/federal-legislations/modifications/add.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -65,11 +76,29 @@ const LangLangAuthRoute = LangLangAuthRouteImport.update({
   id: '/_auth',
   getParentRoute: () => LangLangRoute,
 } as any)
+const LangLangAuthLocalLegislationsRoute =
+  LangLangAuthLocalLegislationsRouteImport.update({
+    id: '/local-legislations',
+    path: '/local-legislations',
+    getParentRoute: () => LangLangAuthRoute,
+  } as any)
+const LangLangAuthLocalDecisionsRoute =
+  LangLangAuthLocalDecisionsRouteImport.update({
+    id: '/local-decisions',
+    path: '/local-decisions',
+    getParentRoute: () => LangLangAuthRoute,
+  } as any)
 const LangLangAuthGlossaryRoute = LangLangAuthGlossaryRouteImport.update({
   id: '/glossary',
   path: '/glossary',
   getParentRoute: () => LangLangAuthRoute,
 } as any)
+const LangLangAuthFederalLegislationsRoute =
+  LangLangAuthFederalLegislationsRouteImport.update({
+    id: '/federal-legislations',
+    path: '/federal-legislations',
+    getParentRoute: () => LangLangAuthRoute,
+  } as any)
 const LangLangAuthDashboardRoute = LangLangAuthDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -77,75 +106,123 @@ const LangLangAuthDashboardRoute = LangLangAuthDashboardRouteImport.update({
 } as any)
 const LangLangAuthLocalLegislationsIndexRoute =
   LangLangAuthLocalLegislationsIndexRouteImport.update({
-    id: '/local-legislations/',
-    path: '/local-legislations/',
-    getParentRoute: () => LangLangAuthRoute,
+    id: '/',
+    path: '/',
+    getParentRoute: () => LangLangAuthLocalLegislationsRoute,
   } as any)
 const LangLangAuthLocalDecisionsIndexRoute =
   LangLangAuthLocalDecisionsIndexRouteImport.update({
-    id: '/local-decisions/',
-    path: '/local-decisions/',
-    getParentRoute: () => LangLangAuthRoute,
+    id: '/',
+    path: '/',
+    getParentRoute: () => LangLangAuthLocalDecisionsRoute,
+  } as any)
+const LangLangAuthFederalLegislationsIndexRoute =
+  LangLangAuthFederalLegislationsIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => LangLangAuthFederalLegislationsRoute,
   } as any)
 const LangLangAuthLocalLegislationsAddRoute =
   LangLangAuthLocalLegislationsAddRouteImport.update({
-    id: '/local-legislations/add',
-    path: '/local-legislations/add',
-    getParentRoute: () => LangLangAuthRoute,
+    id: '/add',
+    path: '/add',
+    getParentRoute: () => LangLangAuthLocalLegislationsRoute,
   } as any)
 const LangLangAuthLocalDecisionsAddRoute =
   LangLangAuthLocalDecisionsAddRouteImport.update({
-    id: '/local-decisions/add',
-    path: '/local-decisions/add',
-    getParentRoute: () => LangLangAuthRoute,
+    id: '/add',
+    path: '/add',
+    getParentRoute: () => LangLangAuthLocalDecisionsRoute,
+  } as any)
+const LangLangAuthFederalLegislationsAddRoute =
+  LangLangAuthFederalLegislationsAddRouteImport.update({
+    id: '/add',
+    path: '/add',
+    getParentRoute: () => LangLangAuthFederalLegislationsRoute,
   } as any)
 const LangLangAuthLocalLegislationsViewSlugRoute =
   LangLangAuthLocalLegislationsViewSlugRouteImport.update({
-    id: '/local-legislations/view/$slug',
-    path: '/local-legislations/view/$slug',
-    getParentRoute: () => LangLangAuthRoute,
+    id: '/view/$slug',
+    path: '/view/$slug',
+    getParentRoute: () => LangLangAuthLocalLegislationsRoute,
   } as any)
 const LangLangAuthLocalLegislationsModificationsSlugRoute =
   LangLangAuthLocalLegislationsModificationsSlugRouteImport.update({
-    id: '/local-legislations/modifications/$slug',
-    path: '/local-legislations/modifications/$slug',
-    getParentRoute: () => LangLangAuthRoute,
+    id: '/modifications/$slug',
+    path: '/modifications/$slug',
+    getParentRoute: () => LangLangAuthLocalLegislationsRoute,
   } as any)
 const LangLangAuthLocalLegislationsEditSlugRoute =
   LangLangAuthLocalLegislationsEditSlugRouteImport.update({
-    id: '/local-legislations/edit/$slug',
-    path: '/local-legislations/edit/$slug',
-    getParentRoute: () => LangLangAuthRoute,
+    id: '/edit/$slug',
+    path: '/edit/$slug',
+    getParentRoute: () => LangLangAuthLocalLegislationsRoute,
   } as any)
 const LangLangAuthLocalDecisionsViewSlugRoute =
   LangLangAuthLocalDecisionsViewSlugRouteImport.update({
-    id: '/local-decisions/view/$slug',
-    path: '/local-decisions/view/$slug',
-    getParentRoute: () => LangLangAuthRoute,
+    id: '/view/$slug',
+    path: '/view/$slug',
+    getParentRoute: () => LangLangAuthLocalDecisionsRoute,
   } as any)
 const LangLangAuthLocalDecisionsEditSlugRoute =
   LangLangAuthLocalDecisionsEditSlugRouteImport.update({
-    id: '/local-decisions/edit/$slug',
-    path: '/local-decisions/edit/$slug',
-    getParentRoute: () => LangLangAuthRoute,
+    id: '/edit/$slug',
+    path: '/edit/$slug',
+    getParentRoute: () => LangLangAuthLocalDecisionsRoute,
+  } as any)
+const LangLangAuthFederalLegislationsViewSlugRoute =
+  LangLangAuthFederalLegislationsViewSlugRouteImport.update({
+    id: '/view/$slug',
+    path: '/view/$slug',
+    getParentRoute: () => LangLangAuthFederalLegislationsRoute,
+  } as any)
+const LangLangAuthFederalLegislationsModificationsSlugRoute =
+  LangLangAuthFederalLegislationsModificationsSlugRouteImport.update({
+    id: '/modifications/$slug',
+    path: '/modifications/$slug',
+    getParentRoute: () => LangLangAuthFederalLegislationsRoute,
+  } as any)
+const LangLangAuthFederalLegislationsEditSlugRoute =
+  LangLangAuthFederalLegislationsEditSlugRouteImport.update({
+    id: '/edit/$slug',
+    path: '/edit/$slug',
+    getParentRoute: () => LangLangAuthFederalLegislationsRoute,
   } as any)
 const LangLangAuthLocalLegislationsModificationsViewSlugRoute =
   LangLangAuthLocalLegislationsModificationsViewSlugRouteImport.update({
-    id: '/local-legislations/modifications/view/$slug',
-    path: '/local-legislations/modifications/view/$slug',
-    getParentRoute: () => LangLangAuthRoute,
+    id: '/modifications/view/$slug',
+    path: '/modifications/view/$slug',
+    getParentRoute: () => LangLangAuthLocalLegislationsRoute,
   } as any)
 const LangLangAuthLocalLegislationsModificationsEditSlugRoute =
   LangLangAuthLocalLegislationsModificationsEditSlugRouteImport.update({
-    id: '/local-legislations/modifications/edit/$slug',
-    path: '/local-legislations/modifications/edit/$slug',
-    getParentRoute: () => LangLangAuthRoute,
+    id: '/modifications/edit/$slug',
+    path: '/modifications/edit/$slug',
+    getParentRoute: () => LangLangAuthLocalLegislationsRoute,
   } as any)
 const LangLangAuthLocalLegislationsModificationsAddSlugRoute =
   LangLangAuthLocalLegislationsModificationsAddSlugRouteImport.update({
-    id: '/local-legislations/modifications/add/$slug',
-    path: '/local-legislations/modifications/add/$slug',
-    getParentRoute: () => LangLangAuthRoute,
+    id: '/modifications/add/$slug',
+    path: '/modifications/add/$slug',
+    getParentRoute: () => LangLangAuthLocalLegislationsRoute,
+  } as any)
+const LangLangAuthFederalLegislationsModificationsViewSlugRoute =
+  LangLangAuthFederalLegislationsModificationsViewSlugRouteImport.update({
+    id: '/modifications/view/$slug',
+    path: '/modifications/view/$slug',
+    getParentRoute: () => LangLangAuthFederalLegislationsRoute,
+  } as any)
+const LangLangAuthFederalLegislationsModificationsEditSlugRoute =
+  LangLangAuthFederalLegislationsModificationsEditSlugRouteImport.update({
+    id: '/modifications/edit/$slug',
+    path: '/modifications/edit/$slug',
+    getParentRoute: () => LangLangAuthFederalLegislationsRoute,
+  } as any)
+const LangLangAuthFederalLegislationsModificationsAddSlugRoute =
+  LangLangAuthFederalLegislationsModificationsAddSlugRouteImport.update({
+    id: '/modifications/add/$slug',
+    path: '/modifications/add/$slug',
+    getParentRoute: () => LangLangAuthFederalLegislationsRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -156,16 +233,27 @@ export interface FileRoutesByFullPath {
   '/$lang/reset-password': typeof LangLangResetPasswordRoute
   '/$lang/': typeof LangLangIndexRoute
   '/$lang/dashboard': typeof LangLangAuthDashboardRoute
+  '/$lang/federal-legislations': typeof LangLangAuthFederalLegislationsRouteWithChildren
   '/$lang/glossary': typeof LangLangAuthGlossaryRoute
+  '/$lang/local-decisions': typeof LangLangAuthLocalDecisionsRouteWithChildren
+  '/$lang/local-legislations': typeof LangLangAuthLocalLegislationsRouteWithChildren
+  '/$lang/federal-legislations/add': typeof LangLangAuthFederalLegislationsAddRoute
   '/$lang/local-decisions/add': typeof LangLangAuthLocalDecisionsAddRoute
   '/$lang/local-legislations/add': typeof LangLangAuthLocalLegislationsAddRoute
+  '/$lang/federal-legislations/': typeof LangLangAuthFederalLegislationsIndexRoute
   '/$lang/local-decisions/': typeof LangLangAuthLocalDecisionsIndexRoute
   '/$lang/local-legislations/': typeof LangLangAuthLocalLegislationsIndexRoute
+  '/$lang/federal-legislations/edit/$slug': typeof LangLangAuthFederalLegislationsEditSlugRoute
+  '/$lang/federal-legislations/modifications/$slug': typeof LangLangAuthFederalLegislationsModificationsSlugRoute
+  '/$lang/federal-legislations/view/$slug': typeof LangLangAuthFederalLegislationsViewSlugRoute
   '/$lang/local-decisions/edit/$slug': typeof LangLangAuthLocalDecisionsEditSlugRoute
   '/$lang/local-decisions/view/$slug': typeof LangLangAuthLocalDecisionsViewSlugRoute
   '/$lang/local-legislations/edit/$slug': typeof LangLangAuthLocalLegislationsEditSlugRoute
   '/$lang/local-legislations/modifications/$slug': typeof LangLangAuthLocalLegislationsModificationsSlugRoute
   '/$lang/local-legislations/view/$slug': typeof LangLangAuthLocalLegislationsViewSlugRoute
+  '/$lang/federal-legislations/modifications/add/$slug': typeof LangLangAuthFederalLegislationsModificationsAddSlugRoute
+  '/$lang/federal-legislations/modifications/edit/$slug': typeof LangLangAuthFederalLegislationsModificationsEditSlugRoute
+  '/$lang/federal-legislations/modifications/view/$slug': typeof LangLangAuthFederalLegislationsModificationsViewSlugRoute
   '/$lang/local-legislations/modifications/add/$slug': typeof LangLangAuthLocalLegislationsModificationsAddSlugRoute
   '/$lang/local-legislations/modifications/edit/$slug': typeof LangLangAuthLocalLegislationsModificationsEditSlugRoute
   '/$lang/local-legislations/modifications/view/$slug': typeof LangLangAuthLocalLegislationsModificationsViewSlugRoute
@@ -178,15 +266,23 @@ export interface FileRoutesByTo {
   '/$lang/reset-password': typeof LangLangResetPasswordRoute
   '/$lang/dashboard': typeof LangLangAuthDashboardRoute
   '/$lang/glossary': typeof LangLangAuthGlossaryRoute
+  '/$lang/federal-legislations/add': typeof LangLangAuthFederalLegislationsAddRoute
   '/$lang/local-decisions/add': typeof LangLangAuthLocalDecisionsAddRoute
   '/$lang/local-legislations/add': typeof LangLangAuthLocalLegislationsAddRoute
+  '/$lang/federal-legislations': typeof LangLangAuthFederalLegislationsIndexRoute
   '/$lang/local-decisions': typeof LangLangAuthLocalDecisionsIndexRoute
   '/$lang/local-legislations': typeof LangLangAuthLocalLegislationsIndexRoute
+  '/$lang/federal-legislations/edit/$slug': typeof LangLangAuthFederalLegislationsEditSlugRoute
+  '/$lang/federal-legislations/modifications/$slug': typeof LangLangAuthFederalLegislationsModificationsSlugRoute
+  '/$lang/federal-legislations/view/$slug': typeof LangLangAuthFederalLegislationsViewSlugRoute
   '/$lang/local-decisions/edit/$slug': typeof LangLangAuthLocalDecisionsEditSlugRoute
   '/$lang/local-decisions/view/$slug': typeof LangLangAuthLocalDecisionsViewSlugRoute
   '/$lang/local-legislations/edit/$slug': typeof LangLangAuthLocalLegislationsEditSlugRoute
   '/$lang/local-legislations/modifications/$slug': typeof LangLangAuthLocalLegislationsModificationsSlugRoute
   '/$lang/local-legislations/view/$slug': typeof LangLangAuthLocalLegislationsViewSlugRoute
+  '/$lang/federal-legislations/modifications/add/$slug': typeof LangLangAuthFederalLegislationsModificationsAddSlugRoute
+  '/$lang/federal-legislations/modifications/edit/$slug': typeof LangLangAuthFederalLegislationsModificationsEditSlugRoute
+  '/$lang/federal-legislations/modifications/view/$slug': typeof LangLangAuthFederalLegislationsModificationsViewSlugRoute
   '/$lang/local-legislations/modifications/add/$slug': typeof LangLangAuthLocalLegislationsModificationsAddSlugRoute
   '/$lang/local-legislations/modifications/edit/$slug': typeof LangLangAuthLocalLegislationsModificationsEditSlugRoute
   '/$lang/local-legislations/modifications/view/$slug': typeof LangLangAuthLocalLegislationsModificationsViewSlugRoute
@@ -201,16 +297,27 @@ export interface FileRoutesById {
   '/$lang/_lang/reset-password': typeof LangLangResetPasswordRoute
   '/$lang/_lang/': typeof LangLangIndexRoute
   '/$lang/_lang/_auth/dashboard': typeof LangLangAuthDashboardRoute
+  '/$lang/_lang/_auth/federal-legislations': typeof LangLangAuthFederalLegislationsRouteWithChildren
   '/$lang/_lang/_auth/glossary': typeof LangLangAuthGlossaryRoute
+  '/$lang/_lang/_auth/local-decisions': typeof LangLangAuthLocalDecisionsRouteWithChildren
+  '/$lang/_lang/_auth/local-legislations': typeof LangLangAuthLocalLegislationsRouteWithChildren
+  '/$lang/_lang/_auth/federal-legislations/add': typeof LangLangAuthFederalLegislationsAddRoute
   '/$lang/_lang/_auth/local-decisions/add': typeof LangLangAuthLocalDecisionsAddRoute
   '/$lang/_lang/_auth/local-legislations/add': typeof LangLangAuthLocalLegislationsAddRoute
+  '/$lang/_lang/_auth/federal-legislations/': typeof LangLangAuthFederalLegislationsIndexRoute
   '/$lang/_lang/_auth/local-decisions/': typeof LangLangAuthLocalDecisionsIndexRoute
   '/$lang/_lang/_auth/local-legislations/': typeof LangLangAuthLocalLegislationsIndexRoute
+  '/$lang/_lang/_auth/federal-legislations/edit/$slug': typeof LangLangAuthFederalLegislationsEditSlugRoute
+  '/$lang/_lang/_auth/federal-legislations/modifications/$slug': typeof LangLangAuthFederalLegislationsModificationsSlugRoute
+  '/$lang/_lang/_auth/federal-legislations/view/$slug': typeof LangLangAuthFederalLegislationsViewSlugRoute
   '/$lang/_lang/_auth/local-decisions/edit/$slug': typeof LangLangAuthLocalDecisionsEditSlugRoute
   '/$lang/_lang/_auth/local-decisions/view/$slug': typeof LangLangAuthLocalDecisionsViewSlugRoute
   '/$lang/_lang/_auth/local-legislations/edit/$slug': typeof LangLangAuthLocalLegislationsEditSlugRoute
   '/$lang/_lang/_auth/local-legislations/modifications/$slug': typeof LangLangAuthLocalLegislationsModificationsSlugRoute
   '/$lang/_lang/_auth/local-legislations/view/$slug': typeof LangLangAuthLocalLegislationsViewSlugRoute
+  '/$lang/_lang/_auth/federal-legislations/modifications/add/$slug': typeof LangLangAuthFederalLegislationsModificationsAddSlugRoute
+  '/$lang/_lang/_auth/federal-legislations/modifications/edit/$slug': typeof LangLangAuthFederalLegislationsModificationsEditSlugRoute
+  '/$lang/_lang/_auth/federal-legislations/modifications/view/$slug': typeof LangLangAuthFederalLegislationsModificationsViewSlugRoute
   '/$lang/_lang/_auth/local-legislations/modifications/add/$slug': typeof LangLangAuthLocalLegislationsModificationsAddSlugRoute
   '/$lang/_lang/_auth/local-legislations/modifications/edit/$slug': typeof LangLangAuthLocalLegislationsModificationsEditSlugRoute
   '/$lang/_lang/_auth/local-legislations/modifications/view/$slug': typeof LangLangAuthLocalLegislationsModificationsViewSlugRoute
@@ -225,16 +332,27 @@ export interface FileRouteTypes {
     | '/$lang/reset-password'
     | '/$lang/'
     | '/$lang/dashboard'
+    | '/$lang/federal-legislations'
     | '/$lang/glossary'
+    | '/$lang/local-decisions'
+    | '/$lang/local-legislations'
+    | '/$lang/federal-legislations/add'
     | '/$lang/local-decisions/add'
     | '/$lang/local-legislations/add'
+    | '/$lang/federal-legislations/'
     | '/$lang/local-decisions/'
     | '/$lang/local-legislations/'
+    | '/$lang/federal-legislations/edit/$slug'
+    | '/$lang/federal-legislations/modifications/$slug'
+    | '/$lang/federal-legislations/view/$slug'
     | '/$lang/local-decisions/edit/$slug'
     | '/$lang/local-decisions/view/$slug'
     | '/$lang/local-legislations/edit/$slug'
     | '/$lang/local-legislations/modifications/$slug'
     | '/$lang/local-legislations/view/$slug'
+    | '/$lang/federal-legislations/modifications/add/$slug'
+    | '/$lang/federal-legislations/modifications/edit/$slug'
+    | '/$lang/federal-legislations/modifications/view/$slug'
     | '/$lang/local-legislations/modifications/add/$slug'
     | '/$lang/local-legislations/modifications/edit/$slug'
     | '/$lang/local-legislations/modifications/view/$slug'
@@ -247,15 +365,23 @@ export interface FileRouteTypes {
     | '/$lang/reset-password'
     | '/$lang/dashboard'
     | '/$lang/glossary'
+    | '/$lang/federal-legislations/add'
     | '/$lang/local-decisions/add'
     | '/$lang/local-legislations/add'
+    | '/$lang/federal-legislations'
     | '/$lang/local-decisions'
     | '/$lang/local-legislations'
+    | '/$lang/federal-legislations/edit/$slug'
+    | '/$lang/federal-legislations/modifications/$slug'
+    | '/$lang/federal-legislations/view/$slug'
     | '/$lang/local-decisions/edit/$slug'
     | '/$lang/local-decisions/view/$slug'
     | '/$lang/local-legislations/edit/$slug'
     | '/$lang/local-legislations/modifications/$slug'
     | '/$lang/local-legislations/view/$slug'
+    | '/$lang/federal-legislations/modifications/add/$slug'
+    | '/$lang/federal-legislations/modifications/edit/$slug'
+    | '/$lang/federal-legislations/modifications/view/$slug'
     | '/$lang/local-legislations/modifications/add/$slug'
     | '/$lang/local-legislations/modifications/edit/$slug'
     | '/$lang/local-legislations/modifications/view/$slug'
@@ -269,16 +395,27 @@ export interface FileRouteTypes {
     | '/$lang/_lang/reset-password'
     | '/$lang/_lang/'
     | '/$lang/_lang/_auth/dashboard'
+    | '/$lang/_lang/_auth/federal-legislations'
     | '/$lang/_lang/_auth/glossary'
+    | '/$lang/_lang/_auth/local-decisions'
+    | '/$lang/_lang/_auth/local-legislations'
+    | '/$lang/_lang/_auth/federal-legislations/add'
     | '/$lang/_lang/_auth/local-decisions/add'
     | '/$lang/_lang/_auth/local-legislations/add'
+    | '/$lang/_lang/_auth/federal-legislations/'
     | '/$lang/_lang/_auth/local-decisions/'
     | '/$lang/_lang/_auth/local-legislations/'
+    | '/$lang/_lang/_auth/federal-legislations/edit/$slug'
+    | '/$lang/_lang/_auth/federal-legislations/modifications/$slug'
+    | '/$lang/_lang/_auth/federal-legislations/view/$slug'
     | '/$lang/_lang/_auth/local-decisions/edit/$slug'
     | '/$lang/_lang/_auth/local-decisions/view/$slug'
     | '/$lang/_lang/_auth/local-legislations/edit/$slug'
     | '/$lang/_lang/_auth/local-legislations/modifications/$slug'
     | '/$lang/_lang/_auth/local-legislations/view/$slug'
+    | '/$lang/_lang/_auth/federal-legislations/modifications/add/$slug'
+    | '/$lang/_lang/_auth/federal-legislations/modifications/edit/$slug'
+    | '/$lang/_lang/_auth/federal-legislations/modifications/view/$slug'
     | '/$lang/_lang/_auth/local-legislations/modifications/add/$slug'
     | '/$lang/_lang/_auth/local-legislations/modifications/edit/$slug'
     | '/$lang/_lang/_auth/local-legislations/modifications/view/$slug'
@@ -340,11 +477,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LangLangAuthRouteImport
       parentRoute: typeof LangLangRoute
     }
+    '/$lang/_lang/_auth/local-legislations': {
+      id: '/$lang/_lang/_auth/local-legislations'
+      path: '/local-legislations'
+      fullPath: '/$lang/local-legislations'
+      preLoaderRoute: typeof LangLangAuthLocalLegislationsRouteImport
+      parentRoute: typeof LangLangAuthRoute
+    }
+    '/$lang/_lang/_auth/local-decisions': {
+      id: '/$lang/_lang/_auth/local-decisions'
+      path: '/local-decisions'
+      fullPath: '/$lang/local-decisions'
+      preLoaderRoute: typeof LangLangAuthLocalDecisionsRouteImport
+      parentRoute: typeof LangLangAuthRoute
+    }
     '/$lang/_lang/_auth/glossary': {
       id: '/$lang/_lang/_auth/glossary'
       path: '/glossary'
       fullPath: '/$lang/glossary'
       preLoaderRoute: typeof LangLangAuthGlossaryRouteImport
+      parentRoute: typeof LangLangAuthRoute
+    }
+    '/$lang/_lang/_auth/federal-legislations': {
+      id: '/$lang/_lang/_auth/federal-legislations'
+      path: '/federal-legislations'
+      fullPath: '/$lang/federal-legislations'
+      preLoaderRoute: typeof LangLangAuthFederalLegislationsRouteImport
       parentRoute: typeof LangLangAuthRoute
     }
     '/$lang/_lang/_auth/dashboard': {
@@ -356,100 +514,208 @@ declare module '@tanstack/react-router' {
     }
     '/$lang/_lang/_auth/local-legislations/': {
       id: '/$lang/_lang/_auth/local-legislations/'
-      path: '/local-legislations'
+      path: '/'
       fullPath: '/$lang/local-legislations/'
       preLoaderRoute: typeof LangLangAuthLocalLegislationsIndexRouteImport
-      parentRoute: typeof LangLangAuthRoute
+      parentRoute: typeof LangLangAuthLocalLegislationsRoute
     }
     '/$lang/_lang/_auth/local-decisions/': {
       id: '/$lang/_lang/_auth/local-decisions/'
-      path: '/local-decisions'
+      path: '/'
       fullPath: '/$lang/local-decisions/'
       preLoaderRoute: typeof LangLangAuthLocalDecisionsIndexRouteImport
-      parentRoute: typeof LangLangAuthRoute
+      parentRoute: typeof LangLangAuthLocalDecisionsRoute
+    }
+    '/$lang/_lang/_auth/federal-legislations/': {
+      id: '/$lang/_lang/_auth/federal-legislations/'
+      path: '/'
+      fullPath: '/$lang/federal-legislations/'
+      preLoaderRoute: typeof LangLangAuthFederalLegislationsIndexRouteImport
+      parentRoute: typeof LangLangAuthFederalLegislationsRoute
     }
     '/$lang/_lang/_auth/local-legislations/add': {
       id: '/$lang/_lang/_auth/local-legislations/add'
-      path: '/local-legislations/add'
+      path: '/add'
       fullPath: '/$lang/local-legislations/add'
       preLoaderRoute: typeof LangLangAuthLocalLegislationsAddRouteImport
-      parentRoute: typeof LangLangAuthRoute
+      parentRoute: typeof LangLangAuthLocalLegislationsRoute
     }
     '/$lang/_lang/_auth/local-decisions/add': {
       id: '/$lang/_lang/_auth/local-decisions/add'
-      path: '/local-decisions/add'
+      path: '/add'
       fullPath: '/$lang/local-decisions/add'
       preLoaderRoute: typeof LangLangAuthLocalDecisionsAddRouteImport
-      parentRoute: typeof LangLangAuthRoute
+      parentRoute: typeof LangLangAuthLocalDecisionsRoute
+    }
+    '/$lang/_lang/_auth/federal-legislations/add': {
+      id: '/$lang/_lang/_auth/federal-legislations/add'
+      path: '/add'
+      fullPath: '/$lang/federal-legislations/add'
+      preLoaderRoute: typeof LangLangAuthFederalLegislationsAddRouteImport
+      parentRoute: typeof LangLangAuthFederalLegislationsRoute
     }
     '/$lang/_lang/_auth/local-legislations/view/$slug': {
       id: '/$lang/_lang/_auth/local-legislations/view/$slug'
-      path: '/local-legislations/view/$slug'
+      path: '/view/$slug'
       fullPath: '/$lang/local-legislations/view/$slug'
       preLoaderRoute: typeof LangLangAuthLocalLegislationsViewSlugRouteImport
-      parentRoute: typeof LangLangAuthRoute
+      parentRoute: typeof LangLangAuthLocalLegislationsRoute
     }
     '/$lang/_lang/_auth/local-legislations/modifications/$slug': {
       id: '/$lang/_lang/_auth/local-legislations/modifications/$slug'
-      path: '/local-legislations/modifications/$slug'
+      path: '/modifications/$slug'
       fullPath: '/$lang/local-legislations/modifications/$slug'
       preLoaderRoute: typeof LangLangAuthLocalLegislationsModificationsSlugRouteImport
-      parentRoute: typeof LangLangAuthRoute
+      parentRoute: typeof LangLangAuthLocalLegislationsRoute
     }
     '/$lang/_lang/_auth/local-legislations/edit/$slug': {
       id: '/$lang/_lang/_auth/local-legislations/edit/$slug'
-      path: '/local-legislations/edit/$slug'
+      path: '/edit/$slug'
       fullPath: '/$lang/local-legislations/edit/$slug'
       preLoaderRoute: typeof LangLangAuthLocalLegislationsEditSlugRouteImport
-      parentRoute: typeof LangLangAuthRoute
+      parentRoute: typeof LangLangAuthLocalLegislationsRoute
     }
     '/$lang/_lang/_auth/local-decisions/view/$slug': {
       id: '/$lang/_lang/_auth/local-decisions/view/$slug'
-      path: '/local-decisions/view/$slug'
+      path: '/view/$slug'
       fullPath: '/$lang/local-decisions/view/$slug'
       preLoaderRoute: typeof LangLangAuthLocalDecisionsViewSlugRouteImport
-      parentRoute: typeof LangLangAuthRoute
+      parentRoute: typeof LangLangAuthLocalDecisionsRoute
     }
     '/$lang/_lang/_auth/local-decisions/edit/$slug': {
       id: '/$lang/_lang/_auth/local-decisions/edit/$slug'
-      path: '/local-decisions/edit/$slug'
+      path: '/edit/$slug'
       fullPath: '/$lang/local-decisions/edit/$slug'
       preLoaderRoute: typeof LangLangAuthLocalDecisionsEditSlugRouteImport
-      parentRoute: typeof LangLangAuthRoute
+      parentRoute: typeof LangLangAuthLocalDecisionsRoute
+    }
+    '/$lang/_lang/_auth/federal-legislations/view/$slug': {
+      id: '/$lang/_lang/_auth/federal-legislations/view/$slug'
+      path: '/view/$slug'
+      fullPath: '/$lang/federal-legislations/view/$slug'
+      preLoaderRoute: typeof LangLangAuthFederalLegislationsViewSlugRouteImport
+      parentRoute: typeof LangLangAuthFederalLegislationsRoute
+    }
+    '/$lang/_lang/_auth/federal-legislations/modifications/$slug': {
+      id: '/$lang/_lang/_auth/federal-legislations/modifications/$slug'
+      path: '/modifications/$slug'
+      fullPath: '/$lang/federal-legislations/modifications/$slug'
+      preLoaderRoute: typeof LangLangAuthFederalLegislationsModificationsSlugRouteImport
+      parentRoute: typeof LangLangAuthFederalLegislationsRoute
+    }
+    '/$lang/_lang/_auth/federal-legislations/edit/$slug': {
+      id: '/$lang/_lang/_auth/federal-legislations/edit/$slug'
+      path: '/edit/$slug'
+      fullPath: '/$lang/federal-legislations/edit/$slug'
+      preLoaderRoute: typeof LangLangAuthFederalLegislationsEditSlugRouteImport
+      parentRoute: typeof LangLangAuthFederalLegislationsRoute
     }
     '/$lang/_lang/_auth/local-legislations/modifications/view/$slug': {
       id: '/$lang/_lang/_auth/local-legislations/modifications/view/$slug'
-      path: '/local-legislations/modifications/view/$slug'
+      path: '/modifications/view/$slug'
       fullPath: '/$lang/local-legislations/modifications/view/$slug'
       preLoaderRoute: typeof LangLangAuthLocalLegislationsModificationsViewSlugRouteImport
-      parentRoute: typeof LangLangAuthRoute
+      parentRoute: typeof LangLangAuthLocalLegislationsRoute
     }
     '/$lang/_lang/_auth/local-legislations/modifications/edit/$slug': {
       id: '/$lang/_lang/_auth/local-legislations/modifications/edit/$slug'
-      path: '/local-legislations/modifications/edit/$slug'
+      path: '/modifications/edit/$slug'
       fullPath: '/$lang/local-legislations/modifications/edit/$slug'
       preLoaderRoute: typeof LangLangAuthLocalLegislationsModificationsEditSlugRouteImport
-      parentRoute: typeof LangLangAuthRoute
+      parentRoute: typeof LangLangAuthLocalLegislationsRoute
     }
     '/$lang/_lang/_auth/local-legislations/modifications/add/$slug': {
       id: '/$lang/_lang/_auth/local-legislations/modifications/add/$slug'
-      path: '/local-legislations/modifications/add/$slug'
+      path: '/modifications/add/$slug'
       fullPath: '/$lang/local-legislations/modifications/add/$slug'
       preLoaderRoute: typeof LangLangAuthLocalLegislationsModificationsAddSlugRouteImport
-      parentRoute: typeof LangLangAuthRoute
+      parentRoute: typeof LangLangAuthLocalLegislationsRoute
+    }
+    '/$lang/_lang/_auth/federal-legislations/modifications/view/$slug': {
+      id: '/$lang/_lang/_auth/federal-legislations/modifications/view/$slug'
+      path: '/modifications/view/$slug'
+      fullPath: '/$lang/federal-legislations/modifications/view/$slug'
+      preLoaderRoute: typeof LangLangAuthFederalLegislationsModificationsViewSlugRouteImport
+      parentRoute: typeof LangLangAuthFederalLegislationsRoute
+    }
+    '/$lang/_lang/_auth/federal-legislations/modifications/edit/$slug': {
+      id: '/$lang/_lang/_auth/federal-legislations/modifications/edit/$slug'
+      path: '/modifications/edit/$slug'
+      fullPath: '/$lang/federal-legislations/modifications/edit/$slug'
+      preLoaderRoute: typeof LangLangAuthFederalLegislationsModificationsEditSlugRouteImport
+      parentRoute: typeof LangLangAuthFederalLegislationsRoute
+    }
+    '/$lang/_lang/_auth/federal-legislations/modifications/add/$slug': {
+      id: '/$lang/_lang/_auth/federal-legislations/modifications/add/$slug'
+      path: '/modifications/add/$slug'
+      fullPath: '/$lang/federal-legislations/modifications/add/$slug'
+      preLoaderRoute: typeof LangLangAuthFederalLegislationsModificationsAddSlugRouteImport
+      parentRoute: typeof LangLangAuthFederalLegislationsRoute
     }
   }
 }
 
-interface LangLangAuthRouteChildren {
-  LangLangAuthDashboardRoute: typeof LangLangAuthDashboardRoute
-  LangLangAuthGlossaryRoute: typeof LangLangAuthGlossaryRoute
+interface LangLangAuthFederalLegislationsRouteChildren {
+  LangLangAuthFederalLegislationsAddRoute: typeof LangLangAuthFederalLegislationsAddRoute
+  LangLangAuthFederalLegislationsIndexRoute: typeof LangLangAuthFederalLegislationsIndexRoute
+  LangLangAuthFederalLegislationsEditSlugRoute: typeof LangLangAuthFederalLegislationsEditSlugRoute
+  LangLangAuthFederalLegislationsModificationsSlugRoute: typeof LangLangAuthFederalLegislationsModificationsSlugRoute
+  LangLangAuthFederalLegislationsViewSlugRoute: typeof LangLangAuthFederalLegislationsViewSlugRoute
+  LangLangAuthFederalLegislationsModificationsAddSlugRoute: typeof LangLangAuthFederalLegislationsModificationsAddSlugRoute
+  LangLangAuthFederalLegislationsModificationsEditSlugRoute: typeof LangLangAuthFederalLegislationsModificationsEditSlugRoute
+  LangLangAuthFederalLegislationsModificationsViewSlugRoute: typeof LangLangAuthFederalLegislationsModificationsViewSlugRoute
+}
+
+const LangLangAuthFederalLegislationsRouteChildren: LangLangAuthFederalLegislationsRouteChildren =
+  {
+    LangLangAuthFederalLegislationsAddRoute:
+      LangLangAuthFederalLegislationsAddRoute,
+    LangLangAuthFederalLegislationsIndexRoute:
+      LangLangAuthFederalLegislationsIndexRoute,
+    LangLangAuthFederalLegislationsEditSlugRoute:
+      LangLangAuthFederalLegislationsEditSlugRoute,
+    LangLangAuthFederalLegislationsModificationsSlugRoute:
+      LangLangAuthFederalLegislationsModificationsSlugRoute,
+    LangLangAuthFederalLegislationsViewSlugRoute:
+      LangLangAuthFederalLegislationsViewSlugRoute,
+    LangLangAuthFederalLegislationsModificationsAddSlugRoute:
+      LangLangAuthFederalLegislationsModificationsAddSlugRoute,
+    LangLangAuthFederalLegislationsModificationsEditSlugRoute:
+      LangLangAuthFederalLegislationsModificationsEditSlugRoute,
+    LangLangAuthFederalLegislationsModificationsViewSlugRoute:
+      LangLangAuthFederalLegislationsModificationsViewSlugRoute,
+  }
+
+const LangLangAuthFederalLegislationsRouteWithChildren =
+  LangLangAuthFederalLegislationsRoute._addFileChildren(
+    LangLangAuthFederalLegislationsRouteChildren,
+  )
+
+interface LangLangAuthLocalDecisionsRouteChildren {
   LangLangAuthLocalDecisionsAddRoute: typeof LangLangAuthLocalDecisionsAddRoute
-  LangLangAuthLocalLegislationsAddRoute: typeof LangLangAuthLocalLegislationsAddRoute
   LangLangAuthLocalDecisionsIndexRoute: typeof LangLangAuthLocalDecisionsIndexRoute
-  LangLangAuthLocalLegislationsIndexRoute: typeof LangLangAuthLocalLegislationsIndexRoute
   LangLangAuthLocalDecisionsEditSlugRoute: typeof LangLangAuthLocalDecisionsEditSlugRoute
   LangLangAuthLocalDecisionsViewSlugRoute: typeof LangLangAuthLocalDecisionsViewSlugRoute
+}
+
+const LangLangAuthLocalDecisionsRouteChildren: LangLangAuthLocalDecisionsRouteChildren =
+  {
+    LangLangAuthLocalDecisionsAddRoute: LangLangAuthLocalDecisionsAddRoute,
+    LangLangAuthLocalDecisionsIndexRoute: LangLangAuthLocalDecisionsIndexRoute,
+    LangLangAuthLocalDecisionsEditSlugRoute:
+      LangLangAuthLocalDecisionsEditSlugRoute,
+    LangLangAuthLocalDecisionsViewSlugRoute:
+      LangLangAuthLocalDecisionsViewSlugRoute,
+  }
+
+const LangLangAuthLocalDecisionsRouteWithChildren =
+  LangLangAuthLocalDecisionsRoute._addFileChildren(
+    LangLangAuthLocalDecisionsRouteChildren,
+  )
+
+interface LangLangAuthLocalLegislationsRouteChildren {
+  LangLangAuthLocalLegislationsAddRoute: typeof LangLangAuthLocalLegislationsAddRoute
+  LangLangAuthLocalLegislationsIndexRoute: typeof LangLangAuthLocalLegislationsIndexRoute
   LangLangAuthLocalLegislationsEditSlugRoute: typeof LangLangAuthLocalLegislationsEditSlugRoute
   LangLangAuthLocalLegislationsModificationsSlugRoute: typeof LangLangAuthLocalLegislationsModificationsSlugRoute
   LangLangAuthLocalLegislationsViewSlugRoute: typeof LangLangAuthLocalLegislationsViewSlugRoute
@@ -458,30 +724,47 @@ interface LangLangAuthRouteChildren {
   LangLangAuthLocalLegislationsModificationsViewSlugRoute: typeof LangLangAuthLocalLegislationsModificationsViewSlugRoute
 }
 
+const LangLangAuthLocalLegislationsRouteChildren: LangLangAuthLocalLegislationsRouteChildren =
+  {
+    LangLangAuthLocalLegislationsAddRoute:
+      LangLangAuthLocalLegislationsAddRoute,
+    LangLangAuthLocalLegislationsIndexRoute:
+      LangLangAuthLocalLegislationsIndexRoute,
+    LangLangAuthLocalLegislationsEditSlugRoute:
+      LangLangAuthLocalLegislationsEditSlugRoute,
+    LangLangAuthLocalLegislationsModificationsSlugRoute:
+      LangLangAuthLocalLegislationsModificationsSlugRoute,
+    LangLangAuthLocalLegislationsViewSlugRoute:
+      LangLangAuthLocalLegislationsViewSlugRoute,
+    LangLangAuthLocalLegislationsModificationsAddSlugRoute:
+      LangLangAuthLocalLegislationsModificationsAddSlugRoute,
+    LangLangAuthLocalLegislationsModificationsEditSlugRoute:
+      LangLangAuthLocalLegislationsModificationsEditSlugRoute,
+    LangLangAuthLocalLegislationsModificationsViewSlugRoute:
+      LangLangAuthLocalLegislationsModificationsViewSlugRoute,
+  }
+
+const LangLangAuthLocalLegislationsRouteWithChildren =
+  LangLangAuthLocalLegislationsRoute._addFileChildren(
+    LangLangAuthLocalLegislationsRouteChildren,
+  )
+
+interface LangLangAuthRouteChildren {
+  LangLangAuthDashboardRoute: typeof LangLangAuthDashboardRoute
+  LangLangAuthFederalLegislationsRoute: typeof LangLangAuthFederalLegislationsRouteWithChildren
+  LangLangAuthGlossaryRoute: typeof LangLangAuthGlossaryRoute
+  LangLangAuthLocalDecisionsRoute: typeof LangLangAuthLocalDecisionsRouteWithChildren
+  LangLangAuthLocalLegislationsRoute: typeof LangLangAuthLocalLegislationsRouteWithChildren
+}
+
 const LangLangAuthRouteChildren: LangLangAuthRouteChildren = {
   LangLangAuthDashboardRoute: LangLangAuthDashboardRoute,
+  LangLangAuthFederalLegislationsRoute:
+    LangLangAuthFederalLegislationsRouteWithChildren,
   LangLangAuthGlossaryRoute: LangLangAuthGlossaryRoute,
-  LangLangAuthLocalDecisionsAddRoute: LangLangAuthLocalDecisionsAddRoute,
-  LangLangAuthLocalLegislationsAddRoute: LangLangAuthLocalLegislationsAddRoute,
-  LangLangAuthLocalDecisionsIndexRoute: LangLangAuthLocalDecisionsIndexRoute,
-  LangLangAuthLocalLegislationsIndexRoute:
-    LangLangAuthLocalLegislationsIndexRoute,
-  LangLangAuthLocalDecisionsEditSlugRoute:
-    LangLangAuthLocalDecisionsEditSlugRoute,
-  LangLangAuthLocalDecisionsViewSlugRoute:
-    LangLangAuthLocalDecisionsViewSlugRoute,
-  LangLangAuthLocalLegislationsEditSlugRoute:
-    LangLangAuthLocalLegislationsEditSlugRoute,
-  LangLangAuthLocalLegislationsModificationsSlugRoute:
-    LangLangAuthLocalLegislationsModificationsSlugRoute,
-  LangLangAuthLocalLegislationsViewSlugRoute:
-    LangLangAuthLocalLegislationsViewSlugRoute,
-  LangLangAuthLocalLegislationsModificationsAddSlugRoute:
-    LangLangAuthLocalLegislationsModificationsAddSlugRoute,
-  LangLangAuthLocalLegislationsModificationsEditSlugRoute:
-    LangLangAuthLocalLegislationsModificationsEditSlugRoute,
-  LangLangAuthLocalLegislationsModificationsViewSlugRoute:
-    LangLangAuthLocalLegislationsModificationsViewSlugRoute,
+  LangLangAuthLocalDecisionsRoute: LangLangAuthLocalDecisionsRouteWithChildren,
+  LangLangAuthLocalLegislationsRoute:
+    LangLangAuthLocalLegislationsRouteWithChildren,
 }
 
 const LangLangAuthRouteWithChildren = LangLangAuthRoute._addFileChildren(

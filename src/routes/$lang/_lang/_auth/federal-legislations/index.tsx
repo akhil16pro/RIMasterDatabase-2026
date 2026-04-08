@@ -31,19 +31,12 @@ import { useNavigate } from "@tanstack/react-router";
 import { SearchBox } from "@/components/ui/search";
 
 export const Route = createFileRoute(
-  "/$lang/_lang/_auth/local-legislations/modifications/$slug",
+  "/$lang/_lang/_auth/federal-legislations/",
 )({
   component: RouteComponent,
-  staticData: {
-    breadcrumb: (params: any) => ({
-      key: "modifications",
-      path: `/${params.lang}/local-legislations/modifications/${params.slug}`,
-    }),
-  },
 });
 
 function RouteComponent() {
-  const { slug } = Route.useParams();
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
 
@@ -51,32 +44,29 @@ function RouteComponent() {
 
   const [search, setSearch] = useState("");
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["local_legislations_modifications", slug, i18n.language],
-    enabled: !!userSession?.accessToken,
+  // const { data, isLoading, error, isRefetching } = useQuery({
+  //   queryKey: ["legislations", i18n.language],
+  //   enabled: !!userSession?.accessToken,
+  //   refetchOnMount: true,
+  //   refetchOnWindowFocus: true,
+  //   staleTime: 1000 * 60 * 60 * 24,
+  //   queryFn: async () => {
+  //     try {
+  //       const res = await apiClient
+  //         .get(i18n.language + `/local-legislation/list`)
+  //         .json<any>();
+  //       console.log("local_legislations_data", res?.data);
 
-    staleTime: 1000 * 60 * 60 * 24,
-    queryFn: async () => {
-      try {
-        const res = await apiClient
-          .get(i18n.language + `/modifications/list/${slug}`)
-          .json<any>();
-
-        console.log("local_legislations_modifications_data", res?.data);
-
-        return res?.data;
-      } catch (error) {
-        console.log("local_legislations_data_error", error);
-        return null;
-      }
-    },
-  });
+  //       return res?.data;
+  //     } catch (error) {
+  //       console.log("local_legislations_data_error", error);
+  //       return null;
+  //     }
+  //   },
+  // });
 
   return (
-    <DashboardLayout
-      isLoading={isLoading}
-      title={data?.title || t("modifications")}
-    >
+    <DashboardLayout isLoading={false} title={t("all_federal_legislations")}>
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -89,17 +79,13 @@ function RouteComponent() {
       >
         <div className="md:flex-1">
           <DefaultButton
-            title={t("add_modification")}
+            title={t("add_legislation")}
             variant="dark"
             icon={<Plus className="size-5" />}
             className=""
             onClick={() => {
               navigate({
-                to:
-                  "/" +
-                  i18n.language +
-                  "/local-legislations/modifications/add/" +
-                  slug,
+                to: "/" + i18n.language + "/federal-legislations/add",
               });
             }}
           />
@@ -113,12 +99,12 @@ function RouteComponent() {
         />
       </motion.div>
 
-      <PageTable search={search} slug={slug} />
+      <PageTable search={search} />
     </DashboardLayout>
   );
 }
 
-function PageTable({ search, slug }: { search: string; slug: string }) {
+function PageTable({ search }: { search: string }) {
   const { t, i18n } = useTranslation();
   const queryClient = useQueryClient();
   const userSession = useAtomValue(userSessionAtom);
@@ -129,8 +115,7 @@ function PageTable({ search, slug }: { search: string; slug: string }) {
 
   const { data, isLoading, error, isRefetching } = useQuery({
     queryKey: [
-      "local_legislations_modifications_table",
-      slug,
+      "federalLegislationTable",
       pagination.currentPage,
       i18n.language,
     ],
@@ -142,10 +127,10 @@ function PageTable({ search, slug }: { search: string; slug: string }) {
         const res = await apiClient
           .get(
             i18n.language +
-              `/modifications/table/${slug}?page=${pagination.currentPage}`,
+              `/federal-legislation/table?page=${pagination.currentPage}`,
           )
           .json<any>();
-        // console.log("LOCAL_LEGISLATION_TABLE_DATA", res?.data);
+        console.log("FEDERAL_LEGISLATION_TABLE_DATA", res?.data);
         return res?.data;
       } catch (error) {
         console.log("LOCAL_LEGISLATION_TABLE_DATA_ERROR", error);
@@ -157,14 +142,12 @@ function PageTable({ search, slug }: { search: string; slug: string }) {
   const toggleStatusMutation = useMutation({
     mutationFn: async ({ slug, status }: { slug: string; status: number }) => {
       return await apiClient
-        .post(`${i18n.language}/modifications/status/${slug}/${status}`)
+        .post(`${i18n.language}/federal-legislation/status/${slug}/${status}`)
         .json<any>();
     },
     onSuccess: (res: any) => {
       toast.success(res?.message || t("success"));
-      queryClient.invalidateQueries({
-        queryKey: ["local_legislations_modifications_table"],
-      });
+      queryClient.invalidateQueries({ queryKey: ["federalLegislationTable"] });
     },
     onError: (error: any) => {
       console.error(error);
@@ -184,7 +167,9 @@ function PageTable({ search, slug }: { search: string; slug: string }) {
           case "edit":
             ActionComponent = EditAction;
             break;
-
+          case "modifications":
+            ActionComponent = ModificationsAction;
+            break;
           case "delete":
             ActionComponent = DeleteAction;
             break;
@@ -243,7 +228,10 @@ function ViewAction({ slug }: { slug: string }) {
 
   const handleView = () => {
     navigate({
-      to: `/${i18n.language}/local-legislations/modifications/view/${slug}`,
+      to: `/${i18n.language}/federal-legislations/view/${slug}`,
+      params: {
+        slug: slug,
+      },
     });
   };
 
@@ -259,6 +247,31 @@ function ViewAction({ slug }: { slug: string }) {
   );
 }
 
+function ModificationsAction({ slug }: { slug: string }) {
+  const { t, i18n } = useTranslation();
+
+  const navigate = useNavigate();
+
+  const handleModification = () => {
+    navigate({
+      to: `/${i18n.language}/federal-legislations/modifications/${slug}`,
+      params: {
+        slug: slug,
+      },
+    });
+  };
+
+  return (
+    <DefaultButton
+      icon={<History className="size-4" stroke="url(#button_linear_amber)" />}
+      rounded={true}
+      iconGradient={"modification"}
+      toolTip={t("modifications")}
+      toolTipClass="modificationTip"
+      onClick={handleModification}
+    />
+  );
+}
 function EditAction({ slug }: { slug: string }) {
   const { t, i18n } = useTranslation();
 
@@ -266,7 +279,10 @@ function EditAction({ slug }: { slug: string }) {
 
   const handleEdit = () => {
     navigate({
-      to: `/${i18n.language}/local-legislations/modifications/edit/${slug}`,
+      to: `/${i18n.language}/federal-legislations/edit/${slug}`,
+      params: {
+        slug: slug,
+      },
     });
   };
 
@@ -304,7 +320,7 @@ function DeleteAction({
       setIsSubmitting(true);
       try {
         const res = await apiClient
-          .get(i18n.language + "/modifications/delete/" + value.slug)
+          .get(i18n.language + "/federal-legislation/delete/" + value.slug)
           .json<any>();
 
         if (res?.status) {
@@ -313,7 +329,7 @@ function DeleteAction({
           form.reset();
           toast.success(res?.message || t("success"));
           await queryClient.invalidateQueries({
-            queryKey: ["local_legislations_modifications_table"],
+            queryKey: ["federalLegislationTable"],
           });
           setTimeout(() => {
             setAnimationWait(true);
@@ -349,7 +365,7 @@ function DeleteAction({
         </DialogTrigger>
         <DialogContent className="lg:max-w-xl">
           <DialogHeader>
-            <DialogTitle>{t("delete_modification")}</DialogTitle>
+            <DialogTitle>{t("delete_federal_legislation")}</DialogTitle>
           </DialogHeader>
           <div className="flex">
             <p className=" text-lg font-secondary text-[var(--textColor)]">

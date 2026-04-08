@@ -31,13 +31,13 @@ import { userSessionAtom } from "@/store/atoms";
 import { useNavigate } from "@tanstack/react-router";
 
 export const Route = createFileRoute(
-  "/$lang/_lang/_auth/local-legislations/modifications/edit/$slug",
+  "/$lang/_lang/_auth/federal-legislations/edit/$slug",
 )({
   component: RouteComponent,
   staticData: {
     breadcrumb: (params: any) => ({
       key: "edit",
-      path: `/${params.lang}/local-legislations/modifications/edit/${params.slug}`,
+      path: `/${params.lang}/federal-legislations/edit/${params.slug}`,
     }),
   },
 });
@@ -54,31 +54,23 @@ function RouteComponent() {
   const [deletedFiles, setDeletedFiles] = useState<string[]>([]);
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["localLegislationModificationEditFormData", slug, i18n.language],
+    queryKey: ["federalLegislationFormData", slug, i18n.language],
     enabled: true,
     staleTime: 0,
     queryFn: async () => {
       try {
-        // const [createRes, editRes] = await Promise.all([
-        //   apiClient
-        //     .get(`${i18n.language}/modifications/create/${slug}`)
-        //     .json<any>(),
-        //   apiClient
-        //     .get(`${i18n.language}/modifications/edit/${slug}`)
-        //     .json<any>(),
-        // ]);
-        // console.log(createRes?.data, "createRes");
-        // console.log(editRes?.data, "editRes");
-        // return { ...createRes?.data, ...editRes?.data };
+        const [createRes, editRes] = await Promise.all([
+          apiClient
+            .get(`${i18n.language}/federal-legislation/create`)
+            .json<any>(),
+          apiClient
+            .get(`${i18n.language}/federal-legislation/edit/${slug}`)
+            .json<any>(),
+        ]);
 
-        const res = await apiClient
-          .get(i18n.language + `/modifications/edit/${slug}`)
-          .json<any>();
-        console.log("modification_edit_form_data", res?.data);
-
-        return res?.data;
+        return { ...createRes?.data, ...editRes?.data };
       } catch (error) {
-        console.log("local_legislation_form_data_error", error);
+        console.log("federal_legislation_form_data_error", error);
         return null;
       }
     },
@@ -88,12 +80,14 @@ function RouteComponent() {
     defaultValues: {
       lm_has_english_version: "2",
       local_government: userSession?.user?.userEmirateName || "",
-
+      lm_law_type_id: "",
+      lm_sector_id: "",
       lm_title: "",
       lm_title_arabic: "",
       lm_short_title: "",
       lm_short_title_arabic: "",
-
+      lm_description: "",
+      lm_description_arabic: "",
       lm_year: "",
       lm_issue_date: "",
       lm_effective_date: "",
@@ -111,12 +105,20 @@ function RouteComponent() {
       try {
         const formData = new FormData();
 
+        formData.append("lm_created_by", userSession?.user?.id || "");
         formData.append("lm_has_english_version", value.lm_has_english_version);
+        formData.append(
+          "local_government",
+          userSession?.user?.userEmirateId || "",
+        );
+        formData.append("lm_sector_id", value.lm_sector_id.toString());
+        formData.append("lm_law_type_id", value.lm_law_type_id.toString());
         formData.append("lm_title", value.lm_title);
         formData.append("lm_title_arabic", value.lm_title_arabic);
         formData.append("lm_short_title", value.lm_short_title);
         formData.append("lm_short_title_arabic", value.lm_short_title_arabic);
-
+        formData.append("lm_description", value.lm_description);
+        formData.append("lm_description_arabic", value.lm_description_arabic);
         formData.append("lm_year", value.lm_year.toString());
         formData.append("lm_issue_date", value.lm_issue_date);
         formData.append("lm_effective_date", value.lm_effective_date);
@@ -143,7 +145,7 @@ function RouteComponent() {
         }
 
         const res = await apiClient
-          .post(i18n.language + `/modifications/update/${slug}`, {
+          .post(i18n.language + `/federal-legislation/update/${slug}`, {
             headers: {
               "Content-Type": undefined,
             },
@@ -172,9 +174,20 @@ function RouteComponent() {
     if (data?.lawData) {
       form.setFieldValue(
         "lm_has_english_version",
-        data.lawData?.lm_has_english_version?.toString() || "2",
+        data.lawData?.lm_has_english_version.toString() || "2",
       );
-
+      form.setFieldValue(
+        "local_government",
+        userSession?.user?.userEmirateName || "",
+      );
+      form.setFieldValue(
+        "lm_law_type_id",
+        data?.lawData?.lm_law_type_id.toString() || "",
+      );
+      form.setFieldValue(
+        "lm_sector_id",
+        data?.lawData?.lm_sector_id.toString() || "",
+      );
       form.setFieldValue("lm_title", data?.lawData?.lm_title || "");
       form.setFieldValue(
         "lm_title_arabic",
@@ -185,10 +198,17 @@ function RouteComponent() {
         "lm_short_title_arabic",
         data?.lawData?.lm_short_title_arabic || "",
       );
-
-      form.setFieldValue("lm_year", data?.lawData?.lm_year?.toString() || "");
+      form.setFieldValue("lm_description", data?.lawData?.lm_description || "");
+      form.setFieldValue(
+        "lm_description_arabic",
+        data?.lawData?.lm_description_arabic || "",
+      );
+      form.setFieldValue("lm_year", data?.lawData?.lm_year.toString() || "");
       form.setFieldValue("lm_issue_date", data?.lawData?.lm_issue_date || "");
-
+      form.setFieldValue(
+        "lm_effective_date",
+        data?.lawData?.lm_effective_date || "",
+      );
       form.setFieldValue("lm_pdf_file", "");
       form.setFieldValue("lm_pdf_file_arabic", "");
       form.setFieldValue(
@@ -221,13 +241,7 @@ function RouteComponent() {
   };
 
   return (
-    <DashboardLayout
-      isLoading={isLoading}
-      title={
-        t("edit_governments_legislations") +
-        `<small>${data?.parentLaw?.label}</small>`
-      }
-    >
+    <DashboardLayout isLoading={isLoading} title={t("edit_legislation")}>
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -290,7 +304,85 @@ function RouteComponent() {
               )}
             />
           </div>
-
+          <form.Field
+            name="local_government"
+            children={(field) => (
+              <Input
+                id="local_government"
+                name="local_government"
+                value={field.state.value}
+                onChange={(e) => field.handleChange(e.target.value)}
+                label={t("local_government")}
+                error={field.state.meta.errors.length > 0 ? true : false}
+                errorMessage={field.state.meta.errors[0]}
+                disabled={true}
+              />
+            )}
+          />
+          <form.Field
+            name="lm_sector_id"
+            validators={{
+              onSubmit: ({ value }) => (!value ? t("required-field") : null),
+            }}
+            children={(field) => (
+              <Select
+                key={field.state.value}
+                value={field.state.value?.toString() || ""}
+                onValueChange={(e) => field.handleChange(e)}
+              >
+                <SelectTrigger
+                  label={t("sector")}
+                  hasValue={!!field.state.value}
+                  error={field.state.meta.errors.length > 0 ? true : false}
+                  errorMessage={field.state.meta.errors[0]}
+                >
+                  <SelectValue placeholder={t("select_sector")} />
+                </SelectTrigger>
+                <SelectContent>
+                  {data?.sectorList?.map((item: any) => (
+                    <SelectItem
+                      key={`sector-${item.value}`}
+                      value={item.value.toString()}
+                    >
+                      {item.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          />
+          <form.Field
+            name="lm_law_type_id"
+            validators={{
+              onSubmit: ({ value }) => (!value ? t("required-field") : null),
+            }}
+            children={(field) => (
+              <Select
+                key={field.state.value}
+                value={field.state.value?.toString() || ""}
+                onValueChange={(e) => field.handleChange(e)}
+              >
+                <SelectTrigger
+                  label={t("legislation_type")}
+                  hasValue={!!field.state.value}
+                  error={field.state.meta.errors.length > 0 ? true : false}
+                  errorMessage={field.state.meta.errors[0]}
+                >
+                  <SelectValue placeholder={t("select_legislation_type")} />
+                </SelectTrigger>
+                <SelectContent>
+                  {data?.lawTypeList?.map((item: any) => (
+                    <SelectItem
+                      key={`lawType-${item.value}`}
+                      value={item.value.toString()}
+                    >
+                      {item.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          />
           <form.Subscribe
             selector={(state) => state.values.lm_has_english_version}
             children={(hasEnglish) => (
@@ -393,6 +485,79 @@ function RouteComponent() {
             />
           </div>
 
+          <form.Subscribe
+            selector={(state) => state.values.lm_has_english_version}
+            children={(hasEnglish) => (
+              <AnimatePresence>
+                {hasEnglish === "1" && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="col-span-2 "
+                  >
+                    <form.Field
+                      name="lm_description"
+                      validators={{
+                        onSubmit: ({ value }) =>
+                          !value ? t("required-field") : null,
+                      }}
+                      children={(field) => (
+                        <div className="space-y-2 relative">
+                          <Label htmlFor="lm_description">
+                            {t("legislation_details_english")}
+                          </Label>
+                          <CKEditorCustom
+                            value={field.state.value}
+                            onChange={(data) => field.handleChange(data)}
+                          />
+                          {field.state.meta.errors ? (
+                            <Label
+                              htmlFor="lm_description"
+                              errorLabel={true}
+                              floating={true}
+                            >
+                              {field.state.meta.errors.join(", ")}
+                            </Label>
+                          ) : null}
+                        </div>
+                      )}
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            )}
+          />
+
+          <div className="col-span-2">
+            <form.Field
+              name="lm_description_arabic"
+              validators={{
+                onSubmit: ({ value }) => (!value ? t("required-field") : null),
+              }}
+              children={(field) => (
+                <div className="space-y-2 relative">
+                  <Label htmlFor="lm_description_arabic">
+                    {t("legislation_details_arabic")}
+                  </Label>
+                  <CKEditorCustom
+                    dir="rtl"
+                    value={field.state.value}
+                    onChange={(data) => field.handleChange(data)}
+                  />
+                  {field.state.meta.errors ? (
+                    <Label
+                      htmlFor="lm_description_arabic"
+                      errorLabel={true}
+                      floating={true}
+                    >
+                      {field.state.meta.errors.join(", ")}
+                    </Label>
+                  ) : null}
+                </div>
+              )}
+            />
+          </div>
           <form.Field
             name="lm_year"
             validators={{
@@ -425,141 +590,45 @@ function RouteComponent() {
               </Select>
             )}
           />
+          <div className="col-span-2 grid md:grid-cols-2 gap-x-8 gap-y-10 items-start">
+            <form.Field
+              name="lm_issue_date"
+              validators={{
+                onSubmit: ({ value }) => (!value ? t("required-field") : null),
+              }}
+              children={(field) => (
+                <Input
+                  type="date"
+                  id="lm_issue_date"
+                  name="lm_issue_date"
+                  value={field.state.value}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  label={t("issued_date")}
+                  error={field.state.meta.errors.length > 0 ? true : false}
+                  errorMessage={field.state.meta.errors[0]}
+                />
+              )}
+            />
 
-          <form.Field
-            name="lm_issue_date"
-            validators={{
-              onSubmit: ({ value }) => (!value ? t("required-field") : null),
-            }}
-            children={(field) => (
-              <Input
-                type="date"
-                id="lm_issue_date"
-                name="lm_issue_date"
-                value={field.state.value}
-                onChange={(e) => field.handleChange(e.target.value)}
-                label={t("issued_date")}
-                error={field.state.meta.errors.length > 0 ? true : false}
-                errorMessage={field.state.meta.errors[0]}
-              />
-            )}
-          />
-          <form.Subscribe
-            selector={(state) => state.values.lm_has_english_version}
-            children={(hasEnglish) => (
-              <AnimatePresence>
-                {hasEnglish === "1" && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
-                    exit={{ opacity: 0, height: 0 }}
-                    className="col-span-2 grid md:grid-cols-2 gap-x-8 gap-y-10 items-start"
-                  >
-                    <form.Field
-                      name="lm_gazette_number"
-                      validators={{
-                        onSubmit: ({ value }) =>
-                          !value ? t("required-field") : null,
-                      }}
-                      children={(field) => (
-                        <Input
-                          type="text"
-                          id="lm_gazette_number"
-                          name="lm_gazette_number"
-                          value={field.state.value}
-                          onChange={(e) => field.handleChange(e.target.value)}
-                          label={t("gazette_number")}
-                          error={
-                            field.state.meta.errors.length > 0 ? true : false
-                          }
-                          errorMessage={field.state.meta.errors[0]}
-                        />
-                      )}
-                    />
-                    <form.Field
-                      name="lm_gazette_title"
-                      validators={{
-                        onSubmit: ({ value }) =>
-                          !value ? t("required-field") : null,
-                      }}
-                      children={(field) => (
-                        <Input
-                          type="text"
-                          id="lm_gazette_title"
-                          name="lm_gazette_title"
-                          value={field.state.value}
-                          onChange={(e) => field.handleChange(e.target.value)}
-                          label={t("gazette_title_english")}
-                          error={
-                            field.state.meta.errors.length > 0 ? true : false
-                          }
-                          errorMessage={field.state.meta.errors[0]}
-                        />
-                      )}
-                    />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            )}
-          />
-          <form.Field
-            name="lm_gazette_number_arabic"
-            validators={{
-              onSubmit: ({ value }) => (!value ? t("required-field") : null),
-            }}
-            children={(field) => (
-              <Input
-                type="text"
-                id="lm_gazette_number_arabic"
-                name="lm_gazette_number_arabic"
-                value={field.state.value}
-                onChange={(e) => field.handleChange(e.target.value)}
-                label={t("gazette_number_arabic")}
-                error={field.state.meta.errors.length > 0 ? true : false}
-                errorMessage={field.state.meta.errors[0]}
-                dir="rtl"
-              />
-            )}
-          />
-
-          <form.Field
-            name="lm_gazette_title_arabic"
-            validators={{
-              onSubmit: ({ value }) => (!value ? t("required-field") : null),
-            }}
-            children={(field) => (
-              <Input
-                type="text"
-                id="lm_gazette_title_arabic"
-                name="lm_gazette_title_arabic"
-                value={field.state.value}
-                onChange={(e) => field.handleChange(e.target.value)}
-                label={t("gazette_title_arabic")}
-                error={field.state.meta.errors.length > 0 ? true : false}
-                errorMessage={field.state.meta.errors[0]}
-                dir="rtl"
-              />
-            )}
-          />
-          <form.Field
-            name="lm_official_gazette_issue_date"
-            validators={{
-              onSubmit: ({ value }) => (!value ? t("required-field") : null),
-            }}
-            children={(field) => (
-              <Input
-                type="date"
-                id="lm_official_gazette_issue_date"
-                name="lm_official_gazette_issue_date"
-                value={field.state.value}
-                onChange={(e) => field.handleChange(e.target.value)}
-                label={t("gazette_issue_date")}
-                error={field.state.meta.errors.length > 0 ? true : false}
-                errorMessage={field.state.meta.errors[0]}
-              />
-            )}
-          />
-
+            <form.Field
+              name="lm_effective_date"
+              validators={{
+                onSubmit: ({ value }) => (!value ? t("required-field") : null),
+              }}
+              children={(field) => (
+                <Input
+                  type="date"
+                  id="lm_effective_date"
+                  name="lm_effective_date"
+                  value={field.state.value}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  label={t("effective_date")}
+                  error={field.state.meta.errors.length > 0 ? true : false}
+                  errorMessage={field.state.meta.errors[0]}
+                />
+              )}
+            />
+          </div>
           <form.Subscribe
             selector={(state) => state.values.lm_has_english_version}
             children={(hasEnglish) => (
@@ -687,6 +756,123 @@ function RouteComponent() {
             )}
           />
 
+          <form.Subscribe
+            selector={(state) => state.values.lm_has_english_version}
+            children={(hasEnglish) => (
+              <AnimatePresence>
+                {hasEnglish === "1" && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="col-span-2 grid md:grid-cols-2 gap-x-8 gap-y-10 items-start"
+                  >
+                    <form.Field
+                      name="lm_gazette_number"
+                      validators={{
+                        onSubmit: ({ value }) =>
+                          !value ? t("required-field") : null,
+                      }}
+                      children={(field) => (
+                        <Input
+                          type="text"
+                          id="lm_gazette_number"
+                          name="lm_gazette_number"
+                          value={field.state.value}
+                          onChange={(e) => field.handleChange(e.target.value)}
+                          label={t("gazette_number")}
+                          error={
+                            field.state.meta.errors.length > 0 ? true : false
+                          }
+                          errorMessage={field.state.meta.errors[0]}
+                        />
+                      )}
+                    />
+                    <form.Field
+                      name="lm_gazette_title"
+                      validators={{
+                        onSubmit: ({ value }) =>
+                          !value ? t("required-field") : null,
+                      }}
+                      children={(field) => (
+                        <Input
+                          type="text"
+                          id="lm_gazette_title"
+                          name="lm_gazette_title"
+                          value={field.state.value}
+                          onChange={(e) => field.handleChange(e.target.value)}
+                          label={t("gazette_title_english")}
+                          error={
+                            field.state.meta.errors.length > 0 ? true : false
+                          }
+                          errorMessage={field.state.meta.errors[0]}
+                        />
+                      )}
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            )}
+          />
+
+          <form.Field
+            name="lm_gazette_number_arabic"
+            validators={{
+              onSubmit: ({ value }) => (!value ? t("required-field") : null),
+            }}
+            children={(field) => (
+              <Input
+                type="text"
+                id="lm_gazette_number_arabic"
+                name="lm_gazette_number_arabic"
+                value={field.state.value}
+                onChange={(e) => field.handleChange(e.target.value)}
+                label={t("gazette_number_arabic")}
+                error={field.state.meta.errors.length > 0 ? true : false}
+                errorMessage={field.state.meta.errors[0]}
+                dir="rtl"
+              />
+            )}
+          />
+
+          <form.Field
+            name="lm_gazette_title_arabic"
+            validators={{
+              onSubmit: ({ value }) => (!value ? t("required-field") : null),
+            }}
+            children={(field) => (
+              <Input
+                type="text"
+                id="lm_gazette_title_arabic"
+                name="lm_gazette_title_arabic"
+                value={field.state.value}
+                onChange={(e) => field.handleChange(e.target.value)}
+                label={t("gazette_title_arabic")}
+                error={field.state.meta.errors.length > 0 ? true : false}
+                errorMessage={field.state.meta.errors[0]}
+                dir="rtl"
+              />
+            )}
+          />
+          <form.Field
+            name="lm_official_gazette_issue_date"
+            validators={{
+              onSubmit: ({ value }) => (!value ? t("required-field") : null),
+            }}
+            children={(field) => (
+              <Input
+                type="date"
+                id="lm_official_gazette_issue_date"
+                name="lm_official_gazette_issue_date"
+                value={field.state.value}
+                onChange={(e) => field.handleChange(e.target.value)}
+                label={t("gazette_issue_date")}
+                error={field.state.meta.errors.length > 0 ? true : false}
+                errorMessage={field.state.meta.errors[0]}
+              />
+            )}
+          />
+
           <div className="col-span-full">
             <DefaultButton
               type="submit"
@@ -705,15 +891,13 @@ function RouteComponent() {
         open={thankYouPopup}
         setOpen={setThankYouPopup}
         title={t("updated_successfully")}
-        description={
-          data?.parentLaw?.success_message || t("law_updated_success_message")
-        }
+        description={t("law_updated_success_message")}
         onConfirm={() => {
           queryClient.invalidateQueries({
-            queryKey: ["localLegislationModificationFormData", slug],
+            queryKey: ["federalLegislationFormData"],
           });
           queryClient.invalidateQueries({
-            queryKey: ["local_legislations_modifications_table", slug],
+            queryKey: ["federalLegislationTable"],
           });
           // navigate({
           //   to: `/${i18n.language}/local-legislations`,

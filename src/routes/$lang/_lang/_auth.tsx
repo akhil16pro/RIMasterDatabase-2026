@@ -2,7 +2,8 @@ import { createFileRoute, redirect, Outlet } from "@tanstack/react-router";
 import { getDefaultStore } from "jotai";
 import { userSessionAtom } from "@/store/atoms";
 import { apiClient } from "@/api";
-import { NAV_CONFIG } from "@/lib/navigation";
+import { NAV_CONFIG, APP_ROLES } from "@/lib/navigation";
+import { toast } from "sonner";
 
 // const store = getDefaultStore();
 
@@ -66,7 +67,15 @@ export const Route = createFileRoute("/$lang/_lang/_auth")({
 
     // console.log(userSession, "userSession");
 
-    if (!userSession?.accessToken) {
+    const checkRole = APP_ROLES.includes(userSession?.user?.roles);
+
+    if (!checkRole) {
+      toast.error("Unauthorized or Invalid user role");
+    }
+
+    if (!userSession?.accessToken || !checkRole) {
+      store.set(userSessionAtom, null);
+      localStorage.removeItem("auth-session");
       throw redirect({
         to: "/$lang/login",
         params: { lang: params.lang },

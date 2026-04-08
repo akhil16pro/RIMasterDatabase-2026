@@ -1,3 +1,4 @@
+export const APP_ROLES = ["admin", "local_user", "federal_user"];
 
 export const APP_PERMISSIONS = {
   GLOBAL: ["admin", "local_user", "federal_user"],

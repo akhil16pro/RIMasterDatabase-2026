@@ -34,6 +34,12 @@ export const Route = createFileRoute(
   "/$lang/_lang/_auth/local-legislations/view/$slug",
 )({
   component: RouteComponent,
+  staticData: {
+    breadcrumb: (params: any) => ({
+      key: "view",
+      path: `/${params.lang}/local-legislations/view/${params.slug}`,
+    }),
+  },
 });
 
 function RouteComponent() {
@@ -70,10 +76,7 @@ function RouteComponent() {
   });
 
   return (
-    <DashboardLayout
-      isLoading={isLoading}
-      title={t("view_governments_legislations")}
-    >
+    <DashboardLayout isLoading={isLoading} title={t("view_legislation")}>
       <div className="grid md:grid-cols-2 gap-x-8 gap-y-10 items-start">
         <div className="inline-flex gap-5 text-black  text-[1.2rem] col-span-2">
           <Label className="text-black/70">{t("has_english")}</Label>

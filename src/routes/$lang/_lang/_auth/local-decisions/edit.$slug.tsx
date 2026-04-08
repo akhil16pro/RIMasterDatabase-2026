@@ -34,6 +34,12 @@ export const Route = createFileRoute(
   "/$lang/_lang/_auth/local-decisions/edit/$slug",
 )({
   component: RouteComponent,
+  staticData: {
+    breadcrumb: (params: any) => ({
+      key: "edit",
+      path: `/${params.lang}/local-decisions/edit/${params.slug}`,
+    }),
+  },
 });
 
 function RouteComponent() {

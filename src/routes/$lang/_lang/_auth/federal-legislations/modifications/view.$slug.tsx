@@ -31,13 +31,13 @@ import { userSessionAtom } from "@/store/atoms";
 import { useNavigate } from "@tanstack/react-router";
 
 export const Route = createFileRoute(
-  "/$lang/_lang/_auth/local-legislations/modifications/view/$slug",
+  "/$lang/_lang/_auth/federal-legislations/modifications/view/$slug",
 )({
   component: RouteComponent,
   staticData: {
     breadcrumb: (params: any) => ({
       key: "view",
-      path: `/${params.lang}/local-legislations/modifications/view/${params.slug}`,
+      path: `/${params.lang}/federal-legislations/modifications/view/${params.slug}`,
     }),
   },
 });
@@ -48,7 +48,11 @@ function RouteComponent() {
   const userSession = useAtomValue(userSessionAtom);
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["localLegislationModificationViewFormData", slug, i18n.language],
+    queryKey: [
+      "federalLegislationModificationViewFormData",
+      slug,
+      i18n.language,
+    ],
     enabled: true,
     staleTime: 0,
     queryFn: async () => {
@@ -56,11 +60,11 @@ function RouteComponent() {
         const res = await apiClient
           .get(i18n.language + `/modifications/edit/${slug}`)
           .json<any>();
-        console.log("modification_view_form_data", res?.data);
+        console.log("federal_modification_view_form_data", res?.data);
 
         return res?.data;
       } catch (error) {
-        console.log("modification_view_form_data_error", error);
+        console.log("federal_modification_view_form_data_error", error);
         return null;
       }
     },

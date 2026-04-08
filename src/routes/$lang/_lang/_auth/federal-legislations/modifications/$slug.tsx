@@ -6,11 +6,11 @@ import { apiClient } from "@/api";
 import { DefaultButton } from "@/components/ui/buttons";
 import { Input } from "@/components/ui/input";
 import { motion } from "motion/react";
-import DashboardTopbar from "@/components/layouts/DashboardTopbar";
+
 import DashboardLayout from "@/components/layouts/DashboardLayout";
 import { PenLine, Plus, Trash2, X, Eye, History } from "lucide-react";
 import { useState } from "react";
-import { cn } from "@/lib/utils";
+
 import { useForm } from "@tanstack/react-form";
 import {
   Dialog,
@@ -26,18 +26,18 @@ import { toast } from "sonner";
 import { useAtomValue } from "jotai";
 import { userSessionAtom } from "@/store/atoms";
 import { Pagination } from "@/components/ui/Pagination";
-import { useEffect } from "react";
+
 import { useNavigate } from "@tanstack/react-router";
 import { SearchBox } from "@/components/ui/search";
 
 export const Route = createFileRoute(
-  "/$lang/_lang/_auth/local-legislations/modifications/$slug",
+  "/$lang/_lang/_auth/federal-legislations/modifications/$slug",
 )({
   component: RouteComponent,
   staticData: {
     breadcrumb: (params: any) => ({
       key: "modifications",
-      path: `/${params.lang}/local-legislations/modifications/${params.slug}`,
+      path: `/${params.lang}/federal-legislations/modifications/${params.slug}`,
     }),
   },
 });
@@ -52,7 +52,7 @@ function RouteComponent() {
   const [search, setSearch] = useState("");
 
   const { data, isLoading } = useQuery({
-    queryKey: ["local_legislations_modifications", slug, i18n.language],
+    queryKey: ["federal_legislations_modifications", slug, i18n.language],
     enabled: !!userSession?.accessToken,
 
     staleTime: 1000 * 60 * 60 * 24,
@@ -62,11 +62,11 @@ function RouteComponent() {
           .get(i18n.language + `/modifications/list/${slug}`)
           .json<any>();
 
-        console.log("local_legislations_modifications_data", res?.data);
+        console.log("federal_legislations_modifications_data", res?.data);
 
         return res?.data;
       } catch (error) {
-        console.log("local_legislations_data_error", error);
+        console.log("federal_legislations_data_error", error);
         return null;
       }
     },
@@ -98,7 +98,7 @@ function RouteComponent() {
                 to:
                   "/" +
                   i18n.language +
-                  "/local-legislations/modifications/add/" +
+                  "/federal-legislations/modifications/add/" +
                   slug,
               });
             }}
@@ -129,7 +129,7 @@ function PageTable({ search, slug }: { search: string; slug: string }) {
 
   const { data, isLoading, error, isRefetching } = useQuery({
     queryKey: [
-      "local_legislations_modifications_table",
+      "federal_legislations_modifications_table",
       slug,
       pagination.currentPage,
       i18n.language,
@@ -145,10 +145,10 @@ function PageTable({ search, slug }: { search: string; slug: string }) {
               `/modifications/table/${slug}?page=${pagination.currentPage}`,
           )
           .json<any>();
-        // console.log("LOCAL_LEGISLATION_TABLE_DATA", res?.data);
+        // console.log("FEDERAL_LEGISLATION_TABLE_DATA", res?.data);
         return res?.data;
       } catch (error) {
-        console.log("LOCAL_LEGISLATION_TABLE_DATA_ERROR", error);
+        console.log("FEDERAL_LEGISLATION_TABLE_DATA_ERROR", error);
         return null;
       }
     },
@@ -163,7 +163,7 @@ function PageTable({ search, slug }: { search: string; slug: string }) {
     onSuccess: (res: any) => {
       toast.success(res?.message || t("success"));
       queryClient.invalidateQueries({
-        queryKey: ["local_legislations_modifications_table"],
+        queryKey: ["federal_legislations_modifications_table"],
       });
     },
     onError: (error: any) => {
@@ -243,7 +243,7 @@ function ViewAction({ slug }: { slug: string }) {
 
   const handleView = () => {
     navigate({
-      to: `/${i18n.language}/local-legislations/modifications/view/${slug}`,
+      to: `/${i18n.language}/federal-legislations/modifications/view/${slug}`,
     });
   };
 
@@ -266,7 +266,7 @@ function EditAction({ slug }: { slug: string }) {
 
   const handleEdit = () => {
     navigate({
-      to: `/${i18n.language}/local-legislations/modifications/edit/${slug}`,
+      to: `/${i18n.language}/federal-legislations/modifications/edit/${slug}`,
     });
   };
 
@@ -313,7 +313,7 @@ function DeleteAction({
           form.reset();
           toast.success(res?.message || t("success"));
           await queryClient.invalidateQueries({
-            queryKey: ["local_legislations_modifications_table"],
+            queryKey: ["federal_legislations_modifications_table"],
           });
           setTimeout(() => {
             setAnimationWait(true);

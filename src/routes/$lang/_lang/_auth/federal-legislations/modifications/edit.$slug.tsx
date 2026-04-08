@@ -31,13 +31,13 @@ import { userSessionAtom } from "@/store/atoms";
 import { useNavigate } from "@tanstack/react-router";
 
 export const Route = createFileRoute(
-  "/$lang/_lang/_auth/local-legislations/modifications/edit/$slug",
+  "/$lang/_lang/_auth/federal-legislations/modifications/edit/$slug",
 )({
   component: RouteComponent,
   staticData: {
     breadcrumb: (params: any) => ({
       key: "edit",
-      path: `/${params.lang}/local-legislations/modifications/edit/${params.slug}`,
+      path: `/${params.lang}/federal-legislations/modifications/edit/${params.slug}`,
     }),
   },
 });
@@ -54,7 +54,11 @@ function RouteComponent() {
   const [deletedFiles, setDeletedFiles] = useState<string[]>([]);
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["localLegislationModificationEditFormData", slug, i18n.language],
+    queryKey: [
+      "federalLegislationModificationEditFormData",
+      slug,
+      i18n.language,
+    ],
     enabled: true,
     staleTime: 0,
     queryFn: async () => {
@@ -74,11 +78,11 @@ function RouteComponent() {
         const res = await apiClient
           .get(i18n.language + `/modifications/edit/${slug}`)
           .json<any>();
-        console.log("modification_edit_form_data", res?.data);
+        console.log("federal_modification_edit_form_data", res?.data);
 
         return res?.data;
       } catch (error) {
-        console.log("local_legislation_form_data_error", error);
+        console.log("federal_legislation_form_data_error", error);
         return null;
       }
     },
@@ -710,10 +714,10 @@ function RouteComponent() {
         }
         onConfirm={() => {
           queryClient.invalidateQueries({
-            queryKey: ["localLegislationModificationFormData", slug],
+            queryKey: ["federalLegislationModificationEditFormData"],
           });
           queryClient.invalidateQueries({
-            queryKey: ["local_legislations_modifications_table", slug],
+            queryKey: ["federal_legislations_modifications_table"],
           });
           // navigate({
           //   to: `/${i18n.language}/local-legislations`,
