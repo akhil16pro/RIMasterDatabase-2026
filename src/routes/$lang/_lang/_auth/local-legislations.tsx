@@ -5,8 +5,8 @@ export const Route = createFileRoute("/$lang/_lang/_auth/local-legislations")({
   staticData: {
     breadcrumb: (params: any) => {
       return {
-        key: "local_legislations",
-        path: `/${params.lang}/local-legislations`,
+        key: "local_decisions",
+        path: `/${params.lang}/local-decisions`,
       };
     },
   },

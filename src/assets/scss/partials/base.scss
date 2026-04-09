@@ -228,7 +228,7 @@ input {
 
   &:has(.breadcrumbsWrap) {
     .contentBox {
-      padding-top: calc(var(--sidePadd) + 0.5rem);
+      padding-top: calc(var(--sidePadd) + 1rem);
     }
   }
 }

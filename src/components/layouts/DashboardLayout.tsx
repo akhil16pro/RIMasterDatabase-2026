@@ -128,6 +128,8 @@ export function Breadcrumbs() {
       return Array.isArray(result) ? result : [result];
     });
 
+  // console.log("breadcrumbs", breadcrumbs);
+
   return (
     breadcrumbs.length > 1 && (
       <motion.div
