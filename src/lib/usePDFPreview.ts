@@ -3,6 +3,7 @@ import { toast } from "sonner";
 import { apiClient } from "@/api";
 
 export const usePDFPreview = (slug: string, lang: string , type: "legislation" | "modification" | "decision") => {
+
   const query = useQuery({
     queryKey: ["getPDF", lang, slug],
     queryFn: async () => {
@@ -24,7 +25,6 @@ export const usePDFPreview = (slug: string, lang: string , type: "legislation" |
   });
 
   const handlePreview = async () => {
-
     const { data, isError } = await query.refetch();
 
     if (data instanceof Blob) {

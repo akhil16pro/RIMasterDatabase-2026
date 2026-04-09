@@ -1,14 +1,27 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { apiClient } from "@/api";
 
+import { DefaultButton } from "@/components/ui/buttons";
+import { Input } from "@/components/ui/input";
+import { AnimatePresence, motion } from "motion/react";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
-
+import DashboardTopbar from "@/components/layouts/DashboardTopbar";
+import { Plus } from "lucide-react";
 import { useState } from "react";
-
+import { cn } from "@/lib/utils";
+import { useForm } from "@tanstack/react-form";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "sonner";
-
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/Select";
+import { Label } from "@/components/ui/label";
 import { ThankYouPopup } from "@/components/ui/thankYouPopup";
 import { useEffect } from "react";
 
@@ -17,17 +30,10 @@ import { useAtomValue } from "jotai";
 import { userSessionAtom } from "@/store/atoms";
 import { useNavigate } from "@tanstack/react-router";
 import { CustomForm } from "@/components/form/CustomForm";
+import { usePDFPreview } from "@/lib/usePDFPreview";
 
-export const Route = createFileRoute("/$lang/_lang/_auth/local-decisions/add")({
+export const Route = createFileRoute("/$lang/_lang/_auth/testForm")({
   component: RouteComponent,
-  staticData: {
-    breadcrumb: (params: any) => {
-      return {
-        key: "add",
-        path: `/${params.lang}/local-decisions/add`,
-      };
-    },
-  },
 });
 
 function RouteComponent() {
@@ -37,6 +43,8 @@ function RouteComponent() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [thankYouPopup, setThankYouPopup] = useState(false);
+
+  const [deletedFiles, setDeletedFiles] = useState<string[]>([]);
 
   const [initialValues, setInitialValues] = useState({
     local_government: userSession?.user?.userEmirateName || "",
@@ -54,32 +62,38 @@ function RouteComponent() {
     dm_file_arabic: "",
   });
 
-  useEffect(() => {
-    if (userSession?.user) {
-      setInitialValues((prev) => ({
-        ...prev,
-        local_government: userSession?.user?.userEmirateName || "",
-      }));
-    }
-  }, [userSession]);
-
   const { data, isLoading, error } = useQuery({
-    queryKey: ["localDecisionFormData", i18n.language],
+    queryKey: ["formData", i18n.language],
     enabled: !!userSession?.accessToken,
     queryFn: async () => {
       try {
-        const res = await apiClient
-          .get(i18n.language + `/local-decision/create`)
-          .json<any>();
-        // console.log("local_decision_form_data", res?.data);
+        const [createRes, editRes] = await Promise.all([
+          apiClient.get(`${i18n.language}/local-decision/create`).json<any>(),
+          apiClient
+            .get(`${i18n.language}/local-decision/edit/1003`)
+            .json<any>(),
+        ]);
 
-        return res?.data;
+        // console.log({ ...createRes?.data, ...editRes?.data }, "data");
+
+        return { ...createRes?.data, ...editRes?.data };
       } catch (error) {
-        console.log("local_decision_form_data_error", error);
+        console.log("local_legislation_form_data_error", error);
         return null;
       }
     },
   });
+
+  const { preview: previewEN, isLoading: isLoadingEN } = usePDFPreview(
+    data?.decisionData?.dm_slug,
+    "en",
+    "decision",
+  );
+  const { preview: previewAR, isLoading: isLoadingAR } = usePDFPreview(
+    data?.decisionData?.dm_slug,
+    "ar",
+    "decision",
+  );
 
   const fields: FieldConfig[] = [
     {
@@ -165,7 +179,11 @@ function RouteComponent() {
       type: "file",
       accept: ".pdf",
       validators: {
-        onSubmit: ({ value }) => (!value ? t("required-field") : null),
+        onSubmit: ({ value }) => {
+          return data?.decisionData?.dm_file
+            ? deletedFiles.includes("dm_file") && !value && t("required-field")
+            : !value && t("required-field");
+        },
         onChange: ({ value }) => {
           if (!value) return null;
 
@@ -187,6 +205,15 @@ function RouteComponent() {
           return null;
         },
       },
+      preview: deletedFiles.includes("dm_file")
+        ? undefined
+        : data?.decisionData?.dm_file,
+
+      onClearPreview: () => {
+        setDeletedFiles((prev) => [...prev, "dm_file"]);
+      },
+      onClick: () => previewEN(),
+      isLoading: isLoadingEN,
     },
     {
       name: "dm_file_arabic",
@@ -194,7 +221,13 @@ function RouteComponent() {
       type: "file",
       accept: ".pdf",
       validators: {
-        onSubmit: ({ value }) => (!value ? t("required-field") : null),
+        onSubmit: ({ value }) => {
+          return data?.decisionData?.dm_file_arabic
+            ? deletedFiles.includes("dm_file_arabic") &&
+                !value &&
+                t("required-field")
+            : !value && t("required-field");
+        },
         onChange: ({ value }) => {
           if (!value) return null;
 
@@ -216,8 +249,38 @@ function RouteComponent() {
           return null;
         },
       },
+      preview: deletedFiles.includes("dm_file_arabic")
+        ? undefined
+        : data?.decisionData?.dm_file_arabic,
+
+      onClearPreview: () => {
+        setDeletedFiles((prev) => [...prev, "dm_file_arabic"]);
+      },
+      onClick: () => previewAR(),
+      isLoading: isLoadingAR,
     },
   ];
+
+  useEffect(() => {
+    if (data?.decisionData) {
+      setInitialValues({
+        local_government: userSession?.user?.userEmirateName || "",
+        dm_decision_type_id: data?.decisionData?.dm_decision_type_id,
+        dm_title: data?.decisionData?.dm_title,
+        dm_title_arabic: data?.decisionData?.dm_title_arabic,
+        dm_decision_date: data?.decisionData?.dm_decision_date,
+
+        dm_year: data?.decisionData?.dm_year,
+        dm_authority_title: data?.decisionData?.dm_authority_title,
+        dm_authority_title_arabic:
+          data?.decisionData?.dm_authority_title_arabic,
+        dm_details: data?.decisionData?.dm_details,
+        dm_details_arabic: data?.decisionData?.dm_details_arabic,
+        dm_file: null,
+        dm_file_arabic: null,
+      });
+    }
+  }, [data]);
 
   const handleStore = async (values) => {
     setIsSubmitting(true);
@@ -230,7 +293,7 @@ function RouteComponent() {
     });
     console.log("FormData content:", Object.fromEntries(formData.entries()));
     const res = await apiClient
-      .post(i18n.language + `/local-decision/store`, {
+      .post(i18n.language + "/local-decision/update/1003", {
         headers: {
           "Content-Type": undefined,
         },
@@ -238,12 +301,13 @@ function RouteComponent() {
       })
       .json<any>();
 
+    console.log(res, "local_decision_store_res");
     if (res?.status) {
       setIsSubmitting(false);
 
       toast.success(res?.message || t("success"));
       queryClient.invalidateQueries({
-        queryKey: ["localDecisionTable"],
+        queryKey: ["localLegislationTable"],
       });
       setTimeout(() => {
         setThankYouPopup(true);
@@ -252,9 +316,8 @@ function RouteComponent() {
   };
 
   return (
-    <DashboardLayout isLoading={isLoading} title={t("add_decision")}>
+    <DashboardLayout isLoading={isLoading} title={t("add_legislation")}>
       <CustomForm
-        key={"customFormAdd"}
         fields={fields}
         defaultValues={initialValues}
         onSubmit={handleStore}
@@ -263,7 +326,6 @@ function RouteComponent() {
         mode="add"
         isSubmitting={isSubmitting}
       />
-
       <ThankYouPopup
         type="success"
         open={thankYouPopup}
