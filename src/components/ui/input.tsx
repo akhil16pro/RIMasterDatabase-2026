@@ -24,6 +24,7 @@ function Input({
   disabled = false,
   isLoading = false,
   preview,
+  onClick,
   onClearPreview,
   readOnly = false,
   ...props
@@ -34,6 +35,7 @@ function Input({
   isLoading?: boolean;
   disabled?: boolean;
   preview?: string;
+  onClick?: () => void;
   onClearPreview?: () => void;
   readOnly?: boolean;
 }) {
@@ -47,7 +49,12 @@ function Input({
 
   return (
     <div className="relative">
-      <div className="group relative flex">
+      <div
+        className={cn(
+          "group relative flex",
+          isLoading && " cursor-not-allowed pointer-events-none",
+        )}
+      >
         {type === "textarea" ? (
           <textarea
             {...props}
@@ -147,7 +154,7 @@ function Input({
           </div>
         )}
 
-        {type === "file" && (
+        {type === "file" && !isLoading && (
           <div
             onClick={() => document.getElementById(inputId)?.click()}
             className="absolute ltr:right-0 rtl:left-0 top-[50%] translate-y-[-50%] cursor-pointer"
@@ -189,10 +196,15 @@ function Input({
         )}
       </div>
       {preview && (
-        <div className="mt-2 bg-muted-foreground/10  rounded-md flex  gap-2 w-full">
+        <div
+          className={cn(
+            "mt-2 bg-muted-foreground/10  rounded-md flex  gap-2 w-full",
+            isLoading && "opacity-50 cursor-not-allowed pointer-events-none",
+          )}
+        >
           <div
             className="flex items-center gap-2 flex-1 p-2 cursor-pointer"
-            onClick={() => window.open(preview, "_blank")}
+            onClick={onClick || (() => window.open(preview, "_blank"))}
           >
             <FileText className="size-5 text-muted-foreground" />
             <span className="text-muted-foreground text-sm line-clamp-1">

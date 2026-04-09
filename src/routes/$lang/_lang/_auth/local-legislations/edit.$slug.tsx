@@ -29,6 +29,7 @@ import CKEditorCustom from "@/components/ui/CKEditor";
 import { useAtomValue } from "jotai";
 import { userSessionAtom } from "@/store/atoms";
 import { useNavigate } from "@tanstack/react-router";
+import { usePDFPreview } from "@/lib/usePDFPreview";
 
 export const Route = createFileRoute(
   "/$lang/_lang/_auth/local-legislations/edit/$slug",
@@ -67,6 +68,8 @@ function RouteComponent() {
             .get(`${i18n.language}/local-legislation/edit/${slug}`)
             .json<any>(),
         ]);
+
+        console.log({ ...createRes?.data, ...editRes?.data }, "data");
 
         return { ...createRes?.data, ...editRes?.data };
       } catch (error) {
@@ -239,6 +242,40 @@ function RouteComponent() {
 
     setDeletedFiles((prev) => [...prev, previewKey]);
   };
+  const { preview: previewEN, isLoading: isLoadingEN } = usePDFPreview(
+    data?.lawData?.lm_slug,
+    "en",
+    "legislation",
+  );
+  const { preview: previewAR, isLoading: isLoadingAR } = usePDFPreview(
+    data?.lawData?.lm_slug,
+    "ar",
+    "legislation",
+  );
+
+  // const previewPDF = async (slug: string, fieldName: string, lang: string) => {
+  //   const { data, isLoading } = useQuery({
+  //     queryKey: ["getPDF", lang, slug],
+  //     enabled: !!userSession?.accessToken,
+
+  //     staleTime: 1000 * 60 * 60 * 24,
+  //     queryFn: async () => {
+  //       try {
+  //         const res = await apiClient
+  //           .get(`${lang}/legislation/file/${slug}`)
+  //           .json<any>();
+  //         console.log("getPDF_data", res?.data);
+
+  //         return res?.data;
+  //       } catch (error) {
+  //         console.log("getPDF_data_error", error);
+  //         return null;
+  //       }
+  //     },
+  //   });
+
+  //   return data?.file_url;
+  // };
 
   return (
     <DashboardLayout isLoading={isLoading} title={t("edit_legislation")}>
@@ -693,6 +730,8 @@ function RouteComponent() {
                             field.handleChange(null);
                             setDeletedFiles((prev) => [...prev, "lm_pdf_file"]);
                           }}
+                          onClick={previewEN}
+                          isLoading={isLoadingEN}
                         />
                       )}
                     />
@@ -752,6 +791,8 @@ function RouteComponent() {
                   field.handleChange(null);
                   setDeletedFiles((prev) => [...prev, "lm_pdf_file_arabic"]);
                 }}
+                onClick={previewAR}
+                isLoading={isLoadingAR}
               />
             )}
           />

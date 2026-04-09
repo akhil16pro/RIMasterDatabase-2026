@@ -33,10 +33,12 @@ import { useNavigate } from "@tanstack/react-router";
 export const Route = createFileRoute("/$lang/_lang/_auth/local-decisions/add")({
   component: RouteComponent,
   staticData: {
-    breadcrumb: (params: any) => ({
-      key: "add",
-      path: `/${params.lang}/local-decisions/add`,
-    }),
+    breadcrumb: (params: any) => {
+      return {
+        key: "add",
+        path: `/${params.lang}/local-decisions/add`,
+      };
+    },
   },
 });
 

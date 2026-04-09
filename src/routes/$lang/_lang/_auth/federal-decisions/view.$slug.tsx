@@ -29,16 +29,15 @@ import CKEditorCustom from "@/components/ui/CKEditor";
 import { useAtomValue } from "jotai";
 import { userSessionAtom } from "@/store/atoms";
 import { useNavigate } from "@tanstack/react-router";
-import { usePDFPreview } from "@/lib/usePDFPreview";
 
 export const Route = createFileRoute(
-  "/$lang/_lang/_auth/local-decisions/view/$slug",
+  "/$lang/_lang/_auth/federal-decisions/view/$slug",
 )({
   component: RouteComponent,
   staticData: {
     breadcrumb: (params: any) => ({
       key: "view",
-      path: `/${params.lang}/local-decisions/view/${params.slug}`,
+      path: `/${params.lang}/federal-decisions/view/${params.slug}`,
     }),
   },
 });
@@ -49,36 +48,26 @@ function RouteComponent() {
   const userSession = useAtomValue(userSessionAtom);
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["localViewDecisionFormData", slug, i18n.language],
+    queryKey: ["federalViewDecisionFormData", slug, i18n.language],
     enabled: true,
     staleTime: 0,
     queryFn: async () => {
       try {
         const [createRes, editRes] = await Promise.all([
-          apiClient.get(`${i18n.language}/local-decision/create`).json<any>(),
+          apiClient.get(`${i18n.language}/federal-decision/create`).json<any>(),
           apiClient
-            .get(`${i18n.language}/local-decision/edit/${slug}`)
+            .get(`${i18n.language}/federal-decision/edit/${slug}`)
             .json<any>(),
         ]);
 
         return { ...createRes?.data, ...editRes?.data };
       } catch (error) {
-        console.log("local_decision_form_data_error", error);
+        console.log("federal_decision_form_data_error", error);
         return null;
       }
     },
   });
 
-  const { preview: previewEN, isLoading: isLoadingEN } = usePDFPreview(
-    data?.decisionData?.dm_slug,
-    "en",
-    "decision",
-  );
-  const { preview: previewAR, isLoading: isLoadingAR } = usePDFPreview(
-    data?.decisionData?.dm_slug,
-    "ar",
-    "decision",
-  );
   return (
     <DashboardLayout isLoading={isLoading} title={t("view_decision")}>
       <div className="grid md:grid-cols-2 gap-x-8 gap-y-10 items-start">
@@ -191,8 +180,6 @@ function RouteComponent() {
           label={t("attachment_english")}
           disabled={true}
           preview={data?.decisionData?.dm_file}
-          onClick={previewEN}
-          isLoading={isLoadingEN}
         />
 
         <Input
@@ -201,8 +188,6 @@ function RouteComponent() {
           label={t("attachment_arabic")}
           disabled={true}
           preview={data?.decisionData?.dm_file_arabic}
-          onClick={previewAR}
-          isLoading={isLoadingAR}
         />
         <Input
           type="text"

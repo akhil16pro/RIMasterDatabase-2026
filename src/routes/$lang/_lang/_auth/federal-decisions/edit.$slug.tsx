@@ -29,16 +29,15 @@ import CKEditorCustom from "@/components/ui/CKEditor";
 import { useAtomValue } from "jotai";
 import { userSessionAtom } from "@/store/atoms";
 import { useNavigate } from "@tanstack/react-router";
-import { usePDFPreview } from "@/lib/usePDFPreview";
 
 export const Route = createFileRoute(
-  "/$lang/_lang/_auth/local-decisions/edit/$slug",
+  "/$lang/_lang/_auth/federal-decisions/edit/$slug",
 )({
   component: RouteComponent,
   staticData: {
     breadcrumb: (params: any) => ({
       key: "edit",
-      path: `/${params.lang}/local-decisions/edit/${params.slug}`,
+      path: `/${params.lang}/federal-decisions/edit/${params.slug}`,
     }),
   },
 });
@@ -55,21 +54,21 @@ function RouteComponent() {
   const [deletedFiles, setDeletedFiles] = useState<string[]>([]);
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["localEditDecisionFormData", slug, i18n.language],
+    queryKey: ["federalEditDecisionFormData", slug, i18n.language],
     enabled: true,
     staleTime: 0,
     queryFn: async () => {
       try {
         const [createRes, editRes] = await Promise.all([
-          apiClient.get(`${i18n.language}/local-decision/create`).json<any>(),
+          apiClient.get(`${i18n.language}/federal-decision/create`).json<any>(),
           apiClient
-            .get(`${i18n.language}/local-decision/edit/${slug}`)
+            .get(`${i18n.language}/federal-decision/edit/${slug}`)
             .json<any>(),
         ]);
 
         return { ...createRes?.data, ...editRes?.data };
       } catch (error) {
-        console.log("local_decision_form_data_error", error);
+        console.log("federal_decision_form_data_error", error);
         return null;
       }
     },
@@ -125,7 +124,7 @@ function RouteComponent() {
         }
 
         const res = await apiClient
-          .post(i18n.language + `/local-decision/update/${slug}`, {
+          .post(i18n.language + `/federal-decision/update/${slug}`, {
             headers: {
               "Content-Type": undefined,
             },
@@ -197,17 +196,6 @@ function RouteComponent() {
 
     setDeletedFiles((prev) => [...prev, previewKey]);
   };
-
-  const { preview: previewEN, isLoading: isLoadingEN } = usePDFPreview(
-    data?.decisionData?.dm_slug,
-    "en",
-    "decision",
-  );
-  const { preview: previewAR, isLoading: isLoadingAR } = usePDFPreview(
-    data?.decisionData?.dm_slug,
-    "ar",
-    "decision",
-  );
 
   return (
     <DashboardLayout isLoading={isLoading} title={t("edit_decision")}>
@@ -523,8 +511,6 @@ function RouteComponent() {
                   field.handleChange(null);
                   setDeletedFiles((prev) => [...prev, "dm_file"]);
                 }}
-                onClick={previewEN}
-                isLoading={isLoadingEN}
               />
             )}
           />
@@ -580,8 +566,6 @@ function RouteComponent() {
                   field.handleChange(null);
                   setDeletedFiles((prev) => [...prev, "dm_file_arabic"]);
                 }}
-                onClick={previewAR}
-                isLoading={isLoadingAR}
               />
             )}
           />
@@ -607,10 +591,10 @@ function RouteComponent() {
         description={t("decision_updated_success_message")}
         onConfirm={() => {
           queryClient.invalidateQueries({
-            queryKey: ["localEditDecisionFormData"],
+            queryKey: ["federalEditDecisionFormData"],
           });
           queryClient.invalidateQueries({
-            queryKey: ["localDecisionTable"],
+            queryKey: ["federalDecisionTable"],
           });
           // navigate({
           //   to: `/${i18n.language}/local-decisions`,

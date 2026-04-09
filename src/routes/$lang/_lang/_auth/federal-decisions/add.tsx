@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { AnimatePresence, motion } from "motion/react";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
 import DashboardTopbar from "@/components/layouts/DashboardTopbar";
-import { Pencil } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useForm } from "@tanstack/react-form";
@@ -29,22 +29,20 @@ import CKEditorCustom from "@/components/ui/CKEditor";
 import { useAtomValue } from "jotai";
 import { userSessionAtom } from "@/store/atoms";
 import { useNavigate } from "@tanstack/react-router";
-import { usePDFPreview } from "@/lib/usePDFPreview";
 
 export const Route = createFileRoute(
-  "/$lang/_lang/_auth/local-decisions/edit/$slug",
+  "/$lang/_lang/_auth/federal-decisions/add",
 )({
   component: RouteComponent,
   staticData: {
     breadcrumb: (params: any) => ({
-      key: "edit",
-      path: `/${params.lang}/local-decisions/edit/${params.slug}`,
+      key: "add",
+      path: `/${params.lang}/federal-decisions/add`,
     }),
   },
 });
 
 function RouteComponent() {
-  const { slug } = Route.useParams();
   const { t, i18n } = useTranslation();
   const userSession = useAtomValue(userSessionAtom);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -52,24 +50,19 @@ function RouteComponent() {
   const queryClient = useQueryClient();
   const [thankYouPopup, setThankYouPopup] = useState(false);
 
-  const [deletedFiles, setDeletedFiles] = useState<string[]>([]);
-
   const { data, isLoading, error } = useQuery({
-    queryKey: ["localEditDecisionFormData", slug, i18n.language],
-    enabled: true,
-    staleTime: 0,
+    queryKey: ["federalDecisionFormData", i18n.language],
+    enabled: !!userSession?.accessToken,
     queryFn: async () => {
       try {
-        const [createRes, editRes] = await Promise.all([
-          apiClient.get(`${i18n.language}/local-decision/create`).json<any>(),
-          apiClient
-            .get(`${i18n.language}/local-decision/edit/${slug}`)
-            .json<any>(),
-        ]);
+        const res = await apiClient
+          .get(i18n.language + `/federal-decision/create`)
+          .json<any>();
+        console.log("federal_decision_form_data", res?.data);
 
-        return { ...createRes?.data, ...editRes?.data };
+        return res?.data;
       } catch (error) {
-        console.log("local_decision_form_data_error", error);
+        console.log("federal_decision_form_data_error", error);
         return null;
       }
     },
@@ -87,8 +80,8 @@ function RouteComponent() {
       dm_authority_title_arabic: "",
       dm_details: "",
       dm_details_arabic: "",
-      dm_file: null,
-      dm_file_arabic: null,
+      dm_file: "",
+      dm_file_arabic: "",
     },
     onSubmit: async ({ value }) => {
       setIsSubmitting(true);
@@ -97,25 +90,24 @@ function RouteComponent() {
         const formData = new FormData();
 
         formData.append("dm_created_by", userSession?.user?.id || "");
+
         formData.append(
           "local_government",
           userSession?.user?.userEmirateId || "",
         );
-        formData.append(
-          "dm_decision_type_id",
-          value.dm_decision_type_id.toString() || "",
-        );
-        formData.append("dm_title", value.dm_title || "");
-        formData.append("dm_title_arabic", value.dm_title_arabic || "");
-        formData.append("dm_decision_date", value.dm_decision_date || "");
-        formData.append("dm_details", value.dm_details || "");
-        formData.append("dm_details_arabic", value.dm_details_arabic || "");
-        formData.append("dm_year", value.dm_year.toString() || "");
-        formData.append("dm_authority_title", value.dm_authority_title || "");
+        formData.append("dm_decision_type_id", value.dm_decision_type_id);
+        formData.append("dm_title", value.dm_title);
+        formData.append("dm_title_arabic", value.dm_title_arabic);
+        formData.append("dm_decision_date", value.dm_decision_date);
+
+        formData.append("dm_year", value.dm_year);
+        formData.append("dm_authority_title", value.dm_authority_title);
         formData.append(
           "dm_authority_title_arabic",
-          value.dm_authority_title_arabic || "",
+          value.dm_authority_title_arabic,
         );
+        formData.append("dm_details", value.dm_details);
+        formData.append("dm_details_arabic", value.dm_details_arabic);
 
         if (value.dm_file) {
           formData.append("dm_file", value.dm_file);
@@ -125,7 +117,7 @@ function RouteComponent() {
         }
 
         const res = await apiClient
-          .post(i18n.language + `/local-decision/update/${slug}`, {
+          .post(i18n.language + "/local-decision/store", {
             headers: {
               "Content-Type": undefined,
             },
@@ -133,11 +125,13 @@ function RouteComponent() {
           })
           .json<any>();
 
-        // console.log(res, "local_legislation_update_res");
+        // console.log(res, "local_decision_store_res");
         if (res?.status) {
-          // form.reset();
+          form.reset();
           toast.success(res?.message || t("success"));
-
+          queryClient.invalidateQueries({
+            queryKey: ["federalDecisionTable"],
+          });
           setTimeout(() => {
             setThankYouPopup(true);
           }, 150);
@@ -150,67 +144,10 @@ function RouteComponent() {
     },
   });
 
-  useEffect(() => {
-    if (data?.decisionData) {
-      form.setFieldValue(
-        "local_government",
-        userSession?.user?.userEmirateName || "",
-      );
-      form.setFieldValue(
-        "dm_decision_type_id",
-        data?.decisionData?.dm_decision_type_id.toString() || "",
-      );
-      form.setFieldValue("dm_title", data?.decisionData?.dm_title || "");
-      form.setFieldValue(
-        "dm_title_arabic",
-        data?.decisionData?.dm_title_arabic || "",
-      );
-      form.setFieldValue(
-        "dm_decision_date",
-        data?.decisionData?.dm_decision_date || "",
-      );
-      form.setFieldValue(
-        "dm_year",
-        data?.decisionData?.dm_year.toString() || "",
-      );
-      form.setFieldValue(
-        "dm_authority_title",
-        data?.decisionData?.dm_authority_title || "",
-      );
-      form.setFieldValue(
-        "dm_authority_title_arabic",
-        data?.decisionData?.dm_authority_title_arabic || "",
-      );
-      form.setFieldValue("dm_details", data?.decisionData?.dm_details || "");
-      form.setFieldValue(
-        "dm_details_arabic",
-        data?.decisionData?.dm_details_arabic || "",
-      );
-
-      form.setFieldValue("dm_file", "");
-      form.setFieldValue("dm_file_arabic", "");
-    }
-  }, [data, form, userSession]);
-
-  const handleClearFile = (fieldName: string, previewKey: string) => {
-    form.setFieldValue(fieldName as any, null);
-
-    setDeletedFiles((prev) => [...prev, previewKey]);
-  };
-
-  const { preview: previewEN, isLoading: isLoadingEN } = usePDFPreview(
-    data?.decisionData?.dm_slug,
-    "en",
-    "decision",
-  );
-  const { preview: previewAR, isLoading: isLoadingAR } = usePDFPreview(
-    data?.decisionData?.dm_slug,
-    "ar",
-    "decision",
-  );
+  // console.log(userSession);
 
   return (
-    <DashboardLayout isLoading={isLoading} title={t("edit_decision")}>
+    <DashboardLayout isLoading={isLoading} title={t("add_decision")}>
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -240,7 +177,6 @@ function RouteComponent() {
             }}
             children={(field) => (
               <Select
-                key={field.state.value}
                 value={field.state.value?.toString() || ""}
                 onValueChange={(e) => field.handleChange(e)}
               >
@@ -354,7 +290,8 @@ function RouteComponent() {
             }}
             children={(field) => (
               <Select
-                key={field.state.value}
+                id="dm_year"
+                name="dm_year"
                 value={field.state.value?.toString()}
                 onValueChange={(e) => field.handleChange(e)}
               >
@@ -475,20 +412,15 @@ function RouteComponent() {
           <form.Field
             name="dm_file"
             validators={{
-              onSubmit: ({ value }) => {
-                return data?.decisionData?.dm_file
-                  ? deletedFiles.includes("dm_file") &&
-                      !value &&
-                      t("required-field")
-                  : !value && t("required-field");
-              },
+              onSubmit: ({ value }) => (!value ? t("required-field") : null),
               onChange: ({ value }) => {
                 if (!value) return null;
+
+                // Ensure we have a File object
                 const file = value instanceof FileList ? value[0] : value;
+                if (!file || !(file instanceof File)) return null;
 
-                if (!(file instanceof File)) return null;
-
-                const fileName = file.name.toLowerCase();
+                const fileName = file.name.toLowerCase(); // Use file.name
                 const allowedExtensions = [".pdf"];
                 const isValid = allowedExtensions.some((ext) =>
                   fileName.endsWith(ext),
@@ -514,17 +446,6 @@ function RouteComponent() {
                 label={t("attachment_english")}
                 error={field.state.meta.errors.length > 0 ? true : false}
                 errorMessage={field.state.meta.errors[0]}
-                preview={
-                  deletedFiles.includes("dm_file")
-                    ? undefined
-                    : data?.decisionData?.dm_file
-                }
-                onClearPreview={() => {
-                  field.handleChange(null);
-                  setDeletedFiles((prev) => [...prev, "dm_file"]);
-                }}
-                onClick={previewEN}
-                isLoading={isLoadingEN}
               />
             )}
           />
@@ -532,20 +453,15 @@ function RouteComponent() {
           <form.Field
             name="dm_file_arabic"
             validators={{
-              onSubmit: ({ value }) => {
-                return data?.decisionData?.dm_file_arabic
-                  ? deletedFiles.includes("dm_file_arabic") &&
-                      !value &&
-                      t("required-field")
-                  : !value && t("required-field");
-              },
+              onSubmit: ({ value }) => (!value ? t("required-field") : null),
               onChange: ({ value }) => {
                 if (!value) return null;
+
+                // Ensure we have a File object
                 const file = value instanceof FileList ? value[0] : value;
+                if (!file || !(file instanceof File)) return null;
 
-                if (!(file instanceof File)) return null;
-
-                const fileName = file.name.toLowerCase();
+                const fileName = file.name.toLowerCase(); // Use file.name
                 const allowedExtensions = [".pdf"];
                 const isValid = allowedExtensions.some((ext) =>
                   fileName.endsWith(ext),
@@ -571,17 +487,6 @@ function RouteComponent() {
                 label={t("attachment_arabic")}
                 error={field.state.meta.errors.length > 0 ? true : false}
                 errorMessage={field.state.meta.errors[0]}
-                preview={
-                  deletedFiles.includes("dm_file_arabic")
-                    ? undefined
-                    : data?.decisionData?.dm_file_arabic
-                }
-                onClearPreview={() => {
-                  field.handleChange(null);
-                  setDeletedFiles((prev) => [...prev, "dm_file_arabic"]);
-                }}
-                onClick={previewAR}
-                isLoading={isLoadingAR}
               />
             )}
           />
@@ -590,9 +495,9 @@ function RouteComponent() {
             <DefaultButton
               type="submit"
               variant="dark"
-              title={t("update")}
+              title={t("submit")}
               onClick={form.handleSubmit}
-              icon={<Pencil className="size-5" />}
+              icon={<Plus className="size-5" />}
               isDisabled={isSubmitting}
               isLoading={isSubmitting}
             />
@@ -603,18 +508,12 @@ function RouteComponent() {
         type="success"
         open={thankYouPopup}
         setOpen={setThankYouPopup}
-        title={t("updated_successfully")}
-        description={t("decision_updated_success_message")}
+        title={t("submitted_successfully")}
+        description={t("decision_created_success_message")}
         onConfirm={() => {
-          queryClient.invalidateQueries({
-            queryKey: ["localEditDecisionFormData"],
+          navigate({
+            to: `/${i18n.language}/federal-decisions`,
           });
-          queryClient.invalidateQueries({
-            queryKey: ["localDecisionTable"],
-          });
-          // navigate({
-          //   to: `/${i18n.language}/local-decisions`,
-          // });
         }}
       />
     </DashboardLayout>
