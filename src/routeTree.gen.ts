@@ -16,6 +16,7 @@ import { Route as LangLangResetPasswordRouteImport } from './routes/$lang/_lang/
 import { Route as LangLangLoginRouteImport } from './routes/$lang/_lang/login'
 import { Route as LangLangForgotPasswordRouteImport } from './routes/$lang/_lang/forgot-password'
 import { Route as LangLangAuthRouteImport } from './routes/$lang/_lang/_auth'
+import { Route as LangLangAuthTestFormRouteImport } from './routes/$lang/_lang/_auth/testForm'
 import { Route as LangLangAuthGlossaryRouteImport } from './routes/$lang/_lang/_auth/glossary'
 import { Route as LangLangAuthDashboardRouteImport } from './routes/$lang/_lang/_auth/dashboard'
 import { Route as LangLangAuthLocalLegislationsRouteRouteImport } from './routes/$lang/_lang/_auth/local-legislations/route'
@@ -80,6 +81,11 @@ const LangLangForgotPasswordRoute = LangLangForgotPasswordRouteImport.update({
 const LangLangAuthRoute = LangLangAuthRouteImport.update({
   id: '/_auth',
   getParentRoute: () => LangLangRoute,
+} as any)
+const LangLangAuthTestFormRoute = LangLangAuthTestFormRouteImport.update({
+  id: '/testForm',
+  path: '/testForm',
+  getParentRoute: () => LangLangAuthRoute,
 } as any)
 const LangLangAuthGlossaryRoute = LangLangAuthGlossaryRouteImport.update({
   id: '/glossary',
@@ -273,6 +279,7 @@ export interface FileRoutesByFullPath {
   '/$lang/local-legislations': typeof LangLangAuthLocalLegislationsRouteRouteWithChildren
   '/$lang/dashboard': typeof LangLangAuthDashboardRoute
   '/$lang/glossary': typeof LangLangAuthGlossaryRoute
+  '/$lang/testForm': typeof LangLangAuthTestFormRoute
   '/$lang/federal-decisions/add': typeof LangLangAuthFederalDecisionsAddRoute
   '/$lang/federal-legislations/add': typeof LangLangAuthFederalLegislationsAddRoute
   '/$lang/local-decisions/add': typeof LangLangAuthLocalDecisionsAddRoute
@@ -306,6 +313,7 @@ export interface FileRoutesByTo {
   '/$lang/reset-password': typeof LangLangResetPasswordRoute
   '/$lang/dashboard': typeof LangLangAuthDashboardRoute
   '/$lang/glossary': typeof LangLangAuthGlossaryRoute
+  '/$lang/testForm': typeof LangLangAuthTestFormRoute
   '/$lang/federal-decisions/add': typeof LangLangAuthFederalDecisionsAddRoute
   '/$lang/federal-legislations/add': typeof LangLangAuthFederalLegislationsAddRoute
   '/$lang/local-decisions/add': typeof LangLangAuthLocalDecisionsAddRoute
@@ -346,6 +354,7 @@ export interface FileRoutesById {
   '/$lang/_lang/_auth/local-legislations': typeof LangLangAuthLocalLegislationsRouteRouteWithChildren
   '/$lang/_lang/_auth/dashboard': typeof LangLangAuthDashboardRoute
   '/$lang/_lang/_auth/glossary': typeof LangLangAuthGlossaryRoute
+  '/$lang/_lang/_auth/testForm': typeof LangLangAuthTestFormRoute
   '/$lang/_lang/_auth/federal-decisions/add': typeof LangLangAuthFederalDecisionsAddRoute
   '/$lang/_lang/_auth/federal-legislations/add': typeof LangLangAuthFederalLegislationsAddRoute
   '/$lang/_lang/_auth/local-decisions/add': typeof LangLangAuthLocalDecisionsAddRoute
@@ -386,6 +395,7 @@ export interface FileRouteTypes {
     | '/$lang/local-legislations'
     | '/$lang/dashboard'
     | '/$lang/glossary'
+    | '/$lang/testForm'
     | '/$lang/federal-decisions/add'
     | '/$lang/federal-legislations/add'
     | '/$lang/local-decisions/add'
@@ -419,6 +429,7 @@ export interface FileRouteTypes {
     | '/$lang/reset-password'
     | '/$lang/dashboard'
     | '/$lang/glossary'
+    | '/$lang/testForm'
     | '/$lang/federal-decisions/add'
     | '/$lang/federal-legislations/add'
     | '/$lang/local-decisions/add'
@@ -458,6 +469,7 @@ export interface FileRouteTypes {
     | '/$lang/_lang/_auth/local-legislations'
     | '/$lang/_lang/_auth/dashboard'
     | '/$lang/_lang/_auth/glossary'
+    | '/$lang/_lang/_auth/testForm'
     | '/$lang/_lang/_auth/federal-decisions/add'
     | '/$lang/_lang/_auth/federal-legislations/add'
     | '/$lang/_lang/_auth/local-decisions/add'
@@ -539,6 +551,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/$lang'
       preLoaderRoute: typeof LangLangAuthRouteImport
       parentRoute: typeof LangLangRoute
+    }
+    '/$lang/_lang/_auth/testForm': {
+      id: '/$lang/_lang/_auth/testForm'
+      path: '/testForm'
+      fullPath: '/$lang/testForm'
+      preLoaderRoute: typeof LangLangAuthTestFormRouteImport
+      parentRoute: typeof LangLangAuthRoute
     }
     '/$lang/_lang/_auth/glossary': {
       id: '/$lang/_lang/_auth/glossary'
@@ -877,6 +896,7 @@ interface LangLangAuthRouteChildren {
   LangLangAuthLocalLegislationsRouteRoute: typeof LangLangAuthLocalLegislationsRouteRouteWithChildren
   LangLangAuthDashboardRoute: typeof LangLangAuthDashboardRoute
   LangLangAuthGlossaryRoute: typeof LangLangAuthGlossaryRoute
+  LangLangAuthTestFormRoute: typeof LangLangAuthTestFormRoute
 }
 
 const LangLangAuthRouteChildren: LangLangAuthRouteChildren = {
@@ -890,6 +910,7 @@ const LangLangAuthRouteChildren: LangLangAuthRouteChildren = {
     LangLangAuthLocalLegislationsRouteRouteWithChildren,
   LangLangAuthDashboardRoute: LangLangAuthDashboardRoute,
   LangLangAuthGlossaryRoute: LangLangAuthGlossaryRoute,
+  LangLangAuthTestFormRoute: LangLangAuthTestFormRoute,
 }
 
 const LangLangAuthRouteWithChildren = LangLangAuthRoute._addFileChildren(

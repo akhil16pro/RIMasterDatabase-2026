@@ -38,7 +38,10 @@ const CKEditorCustom = ({
   const isRTL = dir === "rtl" ? "rtl" : i18n.language === "ar" ? "rtl" : "ltr";
 
   return (
-    <div className="ck-editor-wrapper prose-none" dir={isRTL ? "rtl" : "ltr"}>
+    <div
+      className="ck-editor-wrapper prose-none mb-0"
+      dir={isRTL ? "rtl" : "ltr"}
+    >
       <CKEditor
         editor={ClassicEditor}
         disabled={disabled || readOnly}

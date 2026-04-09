@@ -168,8 +168,6 @@ function RouteComponent() {
     },
   });
 
-  // console.log(userSession);
-
   return (
     <DashboardLayout isLoading={isLoading} title={t("add_legislation")}>
       <form
