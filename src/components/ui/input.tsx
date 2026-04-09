@@ -94,6 +94,7 @@ function Input({
               disabled &&
                 "opacity-50 cursor-not-allowed pointer-events-none pe-7",
               readOnly && "pointer-events-none",
+              readOnly && preview && "hidden",
               className,
             )}
             dir={type === "date" ? "ltr" : props?.dir || i18n.dir()}
@@ -154,7 +155,7 @@ function Input({
           </div>
         )}
 
-        {type === "file" && !isLoading && (
+        {type === "file" && !isLoading && !readOnly && (
           <div
             onClick={() => document.getElementById(inputId)?.click()}
             className="absolute ltr:right-0 rtl:left-0 top-[50%] translate-y-[-50%] cursor-pointer"

@@ -29,6 +29,7 @@ import CKEditorCustom from "@/components/ui/CKEditor";
 import { useAtomValue } from "jotai";
 import { userSessionAtom } from "@/store/atoms";
 import { useNavigate } from "@tanstack/react-router";
+import { usePDFPreview } from "@/lib/usePDFPreview";
 
 export const Route = createFileRoute(
   "/$lang/_lang/_auth/federal-decisions/edit/$slug",
@@ -197,6 +198,16 @@ function RouteComponent() {
     setDeletedFiles((prev) => [...prev, previewKey]);
   };
 
+  const { preview: previewEN, isLoading: isLoadingEN } = usePDFPreview(
+    data?.decisionData?.dm_slug,
+    "en",
+    "decision",
+  );
+  const { preview: previewAR, isLoading: isLoadingAR } = usePDFPreview(
+    data?.decisionData?.dm_slug,
+    "ar",
+    "decision",
+  );
   return (
     <DashboardLayout isLoading={isLoading} title={t("edit_decision")}>
       <form
@@ -511,6 +522,8 @@ function RouteComponent() {
                   field.handleChange(null);
                   setDeletedFiles((prev) => [...prev, "dm_file"]);
                 }}
+                onClick={previewEN}
+                isLoading={isLoadingEN}
               />
             )}
           />
@@ -566,6 +579,8 @@ function RouteComponent() {
                   field.handleChange(null);
                   setDeletedFiles((prev) => [...prev, "dm_file_arabic"]);
                 }}
+                onClick={previewAR}
+                isLoading={isLoadingAR}
               />
             )}
           />

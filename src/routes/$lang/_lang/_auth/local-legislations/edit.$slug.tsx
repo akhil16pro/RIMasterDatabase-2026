@@ -253,30 +253,6 @@ function RouteComponent() {
     "legislation",
   );
 
-  // const previewPDF = async (slug: string, fieldName: string, lang: string) => {
-  //   const { data, isLoading } = useQuery({
-  //     queryKey: ["getPDF", lang, slug],
-  //     enabled: !!userSession?.accessToken,
-
-  //     staleTime: 1000 * 60 * 60 * 24,
-  //     queryFn: async () => {
-  //       try {
-  //         const res = await apiClient
-  //           .get(`${lang}/legislation/file/${slug}`)
-  //           .json<any>();
-  //         console.log("getPDF_data", res?.data);
-
-  //         return res?.data;
-  //       } catch (error) {
-  //         console.log("getPDF_data_error", error);
-  //         return null;
-  //       }
-  //     },
-  //   });
-
-  //   return data?.file_url;
-  // };
-
   return (
     <DashboardLayout isLoading={isLoading} title={t("edit_legislation")}>
       <form

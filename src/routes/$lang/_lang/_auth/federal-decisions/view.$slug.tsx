@@ -1,19 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
-import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { apiClient } from "@/api";
-
-import { DefaultButton } from "@/components/ui/buttons";
 import { Input } from "@/components/ui/input";
-import { AnimatePresence, motion } from "motion/react";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
-import DashboardTopbar from "@/components/layouts/DashboardTopbar";
-import { Pencil } from "lucide-react";
-import { useState } from "react";
-import { cn } from "@/lib/utils";
-import { useForm } from "@tanstack/react-form";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { toast } from "sonner";
 import {
   Select,
   SelectContent,
@@ -22,13 +12,12 @@ import {
   SelectValue,
 } from "@/components/ui/Select";
 import { Label } from "@/components/ui/label";
-import { ThankYouPopup } from "@/components/ui/thankYouPopup";
-import { useEffect } from "react";
 
 import CKEditorCustom from "@/components/ui/CKEditor";
 import { useAtomValue } from "jotai";
 import { userSessionAtom } from "@/store/atoms";
-import { useNavigate } from "@tanstack/react-router";
+
+import { usePDFPreview } from "@/lib/usePDFPreview";
 
 export const Route = createFileRoute(
   "/$lang/_lang/_auth/federal-decisions/view/$slug",
@@ -67,6 +56,16 @@ function RouteComponent() {
       }
     },
   });
+  const { preview: previewEN, isLoading: isLoadingEN } = usePDFPreview(
+    data?.decisionData?.dm_slug,
+    "en",
+    "decision",
+  );
+  const { preview: previewAR, isLoading: isLoadingAR } = usePDFPreview(
+    data?.decisionData?.dm_slug,
+    "ar",
+    "decision",
+  );
 
   return (
     <DashboardLayout isLoading={isLoading} title={t("view_decision")}>
@@ -178,16 +177,20 @@ function RouteComponent() {
           type="file"
           accept=".pdf"
           label={t("attachment_english")}
-          disabled={true}
+          readOnly={true}
           preview={data?.decisionData?.dm_file}
+          onClick={previewEN}
+          isLoading={isLoadingEN}
         />
 
         <Input
           type="file"
           accept=".pdf"
           label={t("attachment_arabic")}
-          disabled={true}
+          readOnly={true}
           preview={data?.decisionData?.dm_file_arabic}
+          onClick={previewAR}
+          isLoading={isLoadingAR}
         />
         <Input
           type="text"

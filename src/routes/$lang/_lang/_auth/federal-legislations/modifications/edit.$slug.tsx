@@ -29,6 +29,7 @@ import CKEditorCustom from "@/components/ui/CKEditor";
 import { useAtomValue } from "jotai";
 import { userSessionAtom } from "@/store/atoms";
 import { useNavigate } from "@tanstack/react-router";
+import { usePDFPreview } from "@/lib/usePDFPreview";
 
 export const Route = createFileRoute(
   "/$lang/_lang/_auth/federal-legislations/modifications/edit/$slug",
@@ -236,6 +237,17 @@ function RouteComponent() {
 
     setDeletedFiles((prev) => [...prev, previewKey]);
   };
+
+  const { preview: previewEN, isLoading: isLoadingEN } = usePDFPreview(
+    data?.lawData?.lm_slug,
+    "en",
+    "legislation",
+  );
+  const { preview: previewAR, isLoading: isLoadingAR } = usePDFPreview(
+    data?.lawData?.lm_slug,
+    "ar",
+    "legislation",
+  );
 
   return (
     <DashboardLayout
@@ -641,6 +653,8 @@ function RouteComponent() {
                             field.handleChange(null);
                             setDeletedFiles((prev) => [...prev, "lm_pdf_file"]);
                           }}
+                          onClick={previewEN}
+                          isLoading={isLoadingEN}
                         />
                       )}
                     />
@@ -700,6 +714,8 @@ function RouteComponent() {
                   field.handleChange(null);
                   setDeletedFiles((prev) => [...prev, "lm_pdf_file_arabic"]);
                 }}
+                onClick={previewAR}
+                isLoading={isLoadingAR}
               />
             )}
           />
