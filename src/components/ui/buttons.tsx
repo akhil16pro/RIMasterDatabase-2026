@@ -42,35 +42,30 @@ export const DefaultButton = ({
 }) => {
   const ButtonContent = (
     <>
-      {isLoading ? (
-        <Spinner />
-      ) : (
-        <>
-          {icon && (
-            <span
-              className={cn(
-                "relative inline-block",
-                variant === "default" && "text-secondary",
-              )}
-            >
-              {icon}
-            </span>
+      {icon && (
+        <span
+          className={cn(
+            "relative inline-block",
+            variant === "default" && "text-secondary",
           )}
-          {title && (
-            <span
-              className={cn(
-                "relative text-base md:text-lg inline-block leading-[100%]",
-                size === "lg" && "text-[1.2rem] md:text-[1.3rem]",
-              )}
-            >
-              {title}
-            </span>
-          )}
-          {endContent && (
-            <span className="relative inline-block">{endContent}</span>
-          )}
-        </>
+        >
+          {icon}
+        </span>
       )}
+      {title && (
+        <span
+          className={cn(
+            "relative text-base md:text-lg inline-block leading-[100%]",
+            size === "lg" && "text-[1.2rem] md:text-[1.3rem]",
+          )}
+        >
+          {title}
+        </span>
+      )}
+      {endContent && (
+        <span className="relative inline-block">{endContent}</span>
+      )}
+      {isLoading && <Spinner />}
     </>
   );
 

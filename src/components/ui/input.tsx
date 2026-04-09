@@ -214,7 +214,7 @@ function Input({
           </div>
           {!readOnly && onClearPreview && (
             <div
-              className="group p-2 bg-[var(--brandRed)] rounded-r-md  flex items-center"
+              className="group p-2 bg-[var(--brandRed)] ltr:rounded-r-md rtl:rounded-l-md  flex items-center"
               onClick={onClearPreview}
             >
               <X className="size-4 text-white cursor-pointer group-hover:rotate-90 transition-all duration-300" />

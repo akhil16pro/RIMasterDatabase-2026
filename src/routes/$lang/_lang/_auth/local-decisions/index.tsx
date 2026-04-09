@@ -345,7 +345,6 @@ function DeleteAction({
               title={t("cancel")}
               onClick={() => setOpen(false)}
               icon={<X className="size-5" />}
-              isDisabled={isSubmitting}
               iconGradient="gray"
             />
             <DefaultButton
