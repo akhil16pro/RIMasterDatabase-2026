@@ -111,11 +111,11 @@ function RouteComponent() {
                       validators={{
                         onSubmit: ({ value }) =>
                           !value
-                            ? t("email-required")
+                            ? t("email_required")
                             : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
-                              ? t("email-invalid")
+                              ? t("email_invalid")
                               : value?.length > 100
-                                ? t("email-must-be-less-than-100-characters")
+                                ? t("email_must_be_less_than_100_characters")
                                 : null,
                       }}
                       children={(field) => (

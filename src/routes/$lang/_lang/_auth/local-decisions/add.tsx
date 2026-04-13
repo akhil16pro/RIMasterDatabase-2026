@@ -94,7 +94,7 @@ function RouteComponent() {
       type: "select",
       optionsKey: "decisionTypeList",
       validators: {
-        onSubmit: ({ value }) => (!value ? t("required-field") : null),
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
       },
     },
 
@@ -110,7 +110,7 @@ function RouteComponent() {
       label: t("decision_date"),
       type: "date",
       validators: {
-        onSubmit: ({ value }) => (!value ? t("required-field") : null),
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
       },
     },
     {
@@ -119,7 +119,7 @@ function RouteComponent() {
       type: "select",
       optionsKey: "yearList",
       validators: {
-        onSubmit: ({ value }) => (!value ? t("required-field") : null),
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
       },
     },
     {
@@ -127,7 +127,7 @@ function RouteComponent() {
       label: t("authority_title"),
       type: "text",
       validators: {
-        onSubmit: ({ value }) => (!value ? t("required-field") : null),
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
       },
     },
     {
@@ -136,7 +136,7 @@ function RouteComponent() {
       type: "text",
       dir: "rtl",
       validators: {
-        onSubmit: ({ value }) => (!value ? t("required-field") : null),
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
       },
     },
     {
@@ -145,7 +145,7 @@ function RouteComponent() {
       type: "editor",
       colSpan: 2,
       validators: {
-        onSubmit: ({ value }) => (!value ? t("required-field") : null),
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
       },
     },
     {
@@ -155,7 +155,7 @@ function RouteComponent() {
       colSpan: 2,
       dir: "rtl",
       validators: {
-        onSubmit: ({ value }) => (!value ? t("required-field") : null),
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
       },
     },
 
@@ -165,7 +165,7 @@ function RouteComponent() {
       type: "file",
       accept: ".pdf",
       validators: {
-        onSubmit: ({ value }) => (!value ? t("required-field") : null),
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
         onChange: ({ value }) => {
           if (!value) return null;
 
@@ -194,7 +194,7 @@ function RouteComponent() {
       type: "file",
       accept: ".pdf",
       validators: {
-        onSubmit: ({ value }) => (!value ? t("required-field") : null),
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
         onChange: ({ value }) => {
           if (!value) return null;
 

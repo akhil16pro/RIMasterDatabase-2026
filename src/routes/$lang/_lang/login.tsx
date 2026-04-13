@@ -170,11 +170,11 @@ function RouteComponent() {
                       validators={{
                         onSubmit: ({ value }) =>
                           !value
-                            ? t("email-required")
+                            ? t("email_required")
                             : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
-                              ? t("email-invalid")
+                              ? t("email_invalid")
                               : value?.length > 100
-                                ? t("email-must-be-less-than-100-characters")
+                                ? t("email_must_be_less_than_100_characters")
                                 : null,
                       }}
                       children={(field) => (
@@ -199,9 +199,9 @@ function RouteComponent() {
                       validators={{
                         onSubmit: ({ value }) =>
                           !value
-                            ? t("password-required")
+                            ? t("password_required")
                             : value?.length < 8
-                              ? t("password-must-be-at-least-8-characters")
+                              ? t("password_must_be_at_least_8_characters")
                               : null,
                       }}
                       children={(field) => (

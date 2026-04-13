@@ -221,7 +221,7 @@ function RouteComponent() {
       type: "select",
       optionsKey: "decisionTypeList",
       validators: {
-        onSubmit: ({ value }) => (!value ? t("required-field") : null),
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
       },
     },
 
@@ -237,7 +237,7 @@ function RouteComponent() {
       label: t("decision_date"),
       type: "date",
       validators: {
-        onSubmit: ({ value }) => (!value ? t("required-field") : null),
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
       },
     },
     {
@@ -246,7 +246,7 @@ function RouteComponent() {
       type: "select",
       optionsKey: "yearList",
       validators: {
-        onSubmit: ({ value }) => (!value ? t("required-field") : null),
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
       },
     },
     {
@@ -254,7 +254,7 @@ function RouteComponent() {
       label: t("authority_title"),
       type: "text",
       validators: {
-        onSubmit: ({ value }) => (!value ? t("required-field") : null),
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
       },
     },
     {
@@ -263,7 +263,7 @@ function RouteComponent() {
       type: "text",
       dir: "rtl",
       validators: {
-        onSubmit: ({ value }) => (!value ? t("required-field") : null),
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
       },
     },
     {
@@ -272,7 +272,7 @@ function RouteComponent() {
       type: "editor",
       colSpan: 2,
       validators: {
-        onSubmit: ({ value }) => (!value ? t("required-field") : null),
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
       },
     },
     {
@@ -282,7 +282,7 @@ function RouteComponent() {
       colSpan: 2,
       dir: "rtl",
       validators: {
-        onSubmit: ({ value }) => (!value ? t("required-field") : null),
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
       },
     },
 
@@ -294,8 +294,8 @@ function RouteComponent() {
       validators: {
         onSubmit: ({ value }) => {
           return data?.decisionData?.dm_file
-            ? deletedFiles.includes("dm_file") && !value && t("required-field")
-            : !value && t("required-field");
+            ? deletedFiles.includes("dm_file") && !value && t("required_field")
+            : !value && t("required_field");
         },
         onChange: ({ value }) => {
           if (!value) return null;
@@ -338,8 +338,8 @@ function RouteComponent() {
           return data?.decisionData?.dm_file_arabic
             ? deletedFiles.includes("dm_file_arabic") &&
                 !value &&
-                t("required-field")
-            : !value && t("required-field");
+                t("required_field")
+            : !value && t("required_field");
         },
         onChange: ({ value }) => {
           if (!value) return null;
@@ -404,7 +404,7 @@ function RouteComponent() {
         formData.append(key, value as string | Blob);
       }
     });
-    console.log("FormData content:", Object.fromEntries(formData.entries()));
+    // console.log("FormData content:", Object.fromEntries(formData.entries()));
     const res = await apiClient
       .post(i18n.language + `/federal-decision/update/${slug}`, {
         headers: {
@@ -464,7 +464,7 @@ function RouteComponent() {
           <form.Field
             name="dm_decision_type_id"
             validators={{
-              onSubmit: ({ value }) => (!value ? t("required-field") : null),
+              onSubmit: ({ value }) => (!value ? t("required_field") : null),
             }}
             children={(field) => (
               <Select
@@ -497,9 +497,9 @@ function RouteComponent() {
             name="dm_title"
             validators={{
               onChange: ({ value }) =>
-                !value ? t("required-field") : undefined,
+                !value ? t("required_field") : undefined,
 
-              onSubmit: ({ value }) => (!value ? t("required-field") : null),
+              onSubmit: ({ value }) => (!value ? t("required_field") : null),
             }}
             children={(field) => (
               <Input
@@ -520,9 +520,9 @@ function RouteComponent() {
             name="dm_title_arabic"
             validators={{
               onChange: ({ value }) =>
-                !value ? t("required-field") : undefined,
+                !value ? t("required_field") : undefined,
 
-              onSubmit: ({ value }) => (!value ? t("required-field") : null),
+              onSubmit: ({ value }) => (!value ? t("required_field") : null),
             }}
             children={(field) => (
               <Input
@@ -544,7 +544,7 @@ function RouteComponent() {
           <form.Field
             name="dm_decision_date"
             validators={{
-              onSubmit: ({ value }) => (!value ? t("required-field") : null),
+              onSubmit: ({ value }) => (!value ? t("required_field") : null),
             }}
             children={(field) => (
               <Input
@@ -563,7 +563,7 @@ function RouteComponent() {
           <form.Field
             name="dm_year"
             validators={{
-              onSubmit: ({ value }) => (!value ? t("required-field") : null),
+              onSubmit: ({ value }) => (!value ? t("required_field") : null),
             }}
             children={(field) => (
               <Select
@@ -596,7 +596,7 @@ function RouteComponent() {
           <form.Field
             name="dm_authority_title"
             validators={{
-              onSubmit: ({ value }) => (!value ? t("required-field") : null),
+              onSubmit: ({ value }) => (!value ? t("required_field") : null),
             }}
             children={(field) => (
               <Input
@@ -613,7 +613,7 @@ function RouteComponent() {
           <form.Field
             name="dm_authority_title_arabic"
             validators={{
-              onSubmit: ({ value }) => (!value ? t("required-field") : null),
+              onSubmit: ({ value }) => (!value ? t("required_field") : null),
             }}
             children={(field) => (
               <Input
@@ -632,7 +632,7 @@ function RouteComponent() {
             <form.Field
               name="dm_details"
               validators={{
-                onSubmit: ({ value }) => (!value ? t("required-field") : null),
+                onSubmit: ({ value }) => (!value ? t("required_field") : null),
               }}
               children={(field) => (
                 <div className="space-y-2 relative">
@@ -659,7 +659,7 @@ function RouteComponent() {
             <form.Field
               name="dm_details_arabic"
               validators={{
-                onSubmit: ({ value }) => (!value ? t("required-field") : null),
+                onSubmit: ({ value }) => (!value ? t("required_field") : null),
               }}
               children={(field) => (
                 <div className="space-y-2 relative">
@@ -692,8 +692,8 @@ function RouteComponent() {
                 return data?.decisionData?.dm_file
                   ? deletedFiles.includes("dm_file") &&
                       !value &&
-                      t("required-field")
-                  : !value && t("required-field");
+                      t("required_field")
+                  : !value && t("required_field");
               },
               onChange: ({ value }) => {
                 if (!value) return null;
@@ -749,8 +749,8 @@ function RouteComponent() {
                 return data?.decisionData?.dm_file_arabic
                   ? deletedFiles.includes("dm_file_arabic") &&
                       !value &&
-                      t("required-field")
-                  : !value && t("required-field");
+                      t("required_field")
+                  : !value && t("required_field");
               },
               onChange: ({ value }) => {
                 if (!value) return null;

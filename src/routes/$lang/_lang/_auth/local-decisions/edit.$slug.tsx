@@ -240,7 +240,7 @@ function RouteComponent() {
       type: "select",
       optionsKey: "decisionTypeList",
       validators: {
-        onSubmit: ({ value }) => (!value ? t("required-field") : null),
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
       },
     },
 
@@ -256,7 +256,7 @@ function RouteComponent() {
       label: t("decision_date"),
       type: "date",
       validators: {
-        onSubmit: ({ value }) => (!value ? t("required-field") : null),
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
       },
     },
     {
@@ -265,7 +265,7 @@ function RouteComponent() {
       type: "select",
       optionsKey: "yearList",
       validators: {
-        onSubmit: ({ value }) => (!value ? t("required-field") : null),
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
       },
     },
     {
@@ -273,7 +273,7 @@ function RouteComponent() {
       label: t("authority_title"),
       type: "text",
       validators: {
-        onSubmit: ({ value }) => (!value ? t("required-field") : null),
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
       },
     },
     {
@@ -282,7 +282,7 @@ function RouteComponent() {
       type: "text",
       dir: "rtl",
       validators: {
-        onSubmit: ({ value }) => (!value ? t("required-field") : null),
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
       },
     },
     {
@@ -291,7 +291,7 @@ function RouteComponent() {
       type: "editor",
       colSpan: 2,
       validators: {
-        onSubmit: ({ value }) => (!value ? t("required-field") : null),
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
       },
     },
     {
@@ -301,7 +301,7 @@ function RouteComponent() {
       colSpan: 2,
       dir: "rtl",
       validators: {
-        onSubmit: ({ value }) => (!value ? t("required-field") : null),
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
       },
     },
 
@@ -313,8 +313,8 @@ function RouteComponent() {
       validators: {
         onSubmit: ({ value }) => {
           return data?.decisionData?.dm_file
-            ? deletedFiles.includes("dm_file") && !value && t("required-field")
-            : !value && t("required-field");
+            ? deletedFiles.includes("dm_file") && !value && t("required_field")
+            : !value && t("required_field");
         },
         onChange: ({ value }) => {
           if (!value) return null;
@@ -357,8 +357,8 @@ function RouteComponent() {
           return data?.decisionData?.dm_file_arabic
             ? deletedFiles.includes("dm_file_arabic") &&
                 !value &&
-                t("required-field")
-            : !value && t("required-field");
+                t("required_field")
+            : !value && t("required_field");
         },
         onChange: ({ value }) => {
           if (!value) return null;

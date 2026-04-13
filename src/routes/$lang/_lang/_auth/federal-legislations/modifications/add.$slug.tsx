@@ -186,7 +186,7 @@ function RouteComponent() {
               name="lm_has_english_version"
               validators={{
                 onChange: ({ value }) =>
-                  !value ? t("required-field") : undefined,
+                  !value ? t("required_field") : undefined,
               }}
               children={(field) => (
                 <>
@@ -250,10 +250,10 @@ function RouteComponent() {
                       name="lm_title"
                       validators={{
                         onChange: ({ value }) =>
-                          !value ? t("required-field") : undefined,
+                          !value ? t("required_field") : undefined,
 
                         onSubmit: ({ value }) =>
-                          !value ? t("required-field") : null,
+                          !value ? t("required_field") : null,
                       }}
                       children={(field) => (
                         <Input
@@ -293,9 +293,9 @@ function RouteComponent() {
               name="lm_title_arabic"
               validators={{
                 onChange: ({ value }) =>
-                  !value ? t("required-field") : undefined,
+                  !value ? t("required_field") : undefined,
 
-                onSubmit: ({ value }) => (!value ? t("required-field") : null),
+                onSubmit: ({ value }) => (!value ? t("required_field") : null),
               }}
               children={(field) => (
                 <Input
@@ -333,7 +333,7 @@ function RouteComponent() {
           <form.Field
             name="lm_year"
             validators={{
-              onSubmit: ({ value }) => (!value ? t("required-field") : null),
+              onSubmit: ({ value }) => (!value ? t("required_field") : null),
             }}
             children={(field) => (
               <Select
@@ -366,7 +366,7 @@ function RouteComponent() {
           <form.Field
             name="lm_issue_date"
             validators={{
-              onSubmit: ({ value }) => (!value ? t("required-field") : null),
+              onSubmit: ({ value }) => (!value ? t("required_field") : null),
             }}
             children={(field) => (
               <Input
@@ -397,7 +397,7 @@ function RouteComponent() {
                       name="lm_gazette_number"
                       validators={{
                         onSubmit: ({ value }) =>
-                          !value ? t("required-field") : null,
+                          !value ? t("required_field") : null,
                       }}
                       children={(field) => (
                         <Input
@@ -418,7 +418,7 @@ function RouteComponent() {
                       name="lm_gazette_title"
                       validators={{
                         onSubmit: ({ value }) =>
-                          !value ? t("required-field") : null,
+                          !value ? t("required_field") : null,
                       }}
                       children={(field) => (
                         <Input
@@ -444,7 +444,7 @@ function RouteComponent() {
           <form.Field
             name="lm_gazette_number_arabic"
             validators={{
-              onSubmit: ({ value }) => (!value ? t("required-field") : null),
+              onSubmit: ({ value }) => (!value ? t("required_field") : null),
             }}
             children={(field) => (
               <Input
@@ -464,7 +464,7 @@ function RouteComponent() {
           <form.Field
             name="lm_gazette_title_arabic"
             validators={{
-              onSubmit: ({ value }) => (!value ? t("required-field") : null),
+              onSubmit: ({ value }) => (!value ? t("required_field") : null),
             }}
             children={(field) => (
               <Input
@@ -483,7 +483,7 @@ function RouteComponent() {
           <form.Field
             name="lm_official_gazette_issue_date"
             validators={{
-              onSubmit: ({ value }) => (!value ? t("required-field") : null),
+              onSubmit: ({ value }) => (!value ? t("required_field") : null),
             }}
             children={(field) => (
               <Input
@@ -514,7 +514,7 @@ function RouteComponent() {
                       name="lm_pdf_file"
                       validators={{
                         onSubmit: ({ value }) =>
-                          !value ? t("required-field") : null,
+                          !value ? t("required_field") : null,
                         onChange: ({ value }) => {
                           if (!value) return null;
 
@@ -565,7 +565,7 @@ function RouteComponent() {
           <form.Field
             name="lm_pdf_file_arabic"
             validators={{
-              onSubmit: ({ value }) => (!value ? t("required-field") : null),
+              onSubmit: ({ value }) => (!value ? t("required_field") : null),
               onChange: ({ value }) => {
                 if (!value) return null;
 

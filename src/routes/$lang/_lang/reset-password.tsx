@@ -147,7 +147,7 @@ function RouteComponent() {
                       name="password"
                       validators={{
                         onSubmit: ({ value }) => {
-                          if (!value) return t("password-required");
+                          if (!value) return t("password_required");
 
                           const result = zxcvbn(value);
 
@@ -199,12 +199,12 @@ function RouteComponent() {
                       validators={{
                         onSubmit: ({ value, fieldApi }) =>
                           !value
-                            ? t("password-required")
+                            ? t("password_required")
                             : value?.length < 8
-                              ? t("password-must-be-at-least-8-characters")
+                              ? t("password_must_be_at_least_8_characters")
                               : value !==
                                   fieldApi.form.getFieldValue("password")
-                                ? t("passwords-do-not-match")
+                                ? t("passwords_do_not_match")
                                 : null,
                       }}
                       children={(field) => (
