@@ -9,11 +9,12 @@ import { Input } from "@/components/ui/input";
 import { AnimatePresence, motion } from "motion/react";
 
 import { Link } from "@tanstack/react-router";
-import { settingsAtom } from "@/routes/__root";
+
 import { useAtomValue } from "jotai";
 import { useForm } from "@tanstack/react-form";
 import { useState } from "react";
 import { toast } from "sonner";
+import { settingsAtom } from "@/store/atoms";
 
 export const Route = createFileRoute("/$lang/_lang/forgot-password")({
   component: RouteComponent,

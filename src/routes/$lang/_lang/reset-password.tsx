@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { AnimatePresence, motion } from "motion/react";
 
 import { Link } from "@tanstack/react-router";
-import { settingsAtom } from "@/routes/__root";
+// import { settingsAtom } from "@/routes/__root";
 import { useAtomValue } from "jotai";
 import { useForm } from "@tanstack/react-form";
 import { toast } from "sonner";
@@ -18,6 +18,8 @@ import { z } from "zod";
 import { redirect } from "@tanstack/react-router";
 import { zxcvbn, zxcvbnOptions } from "@zxcvbn-ts/core";
 import * as zxcvbnCommonPackage from "@zxcvbn-ts/language-common";
+
+import { settingsAtom } from "@/store/atoms";
 
 type PasswordResetSearch = {
   code?: string;

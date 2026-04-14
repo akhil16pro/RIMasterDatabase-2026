@@ -15,9 +15,7 @@ import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
 
 import { useSetAtom, useAtomValue, getDefaultStore } from "jotai";
-import { userSessionAtom } from "@/store/atoms";
-
-import { settingsAtom } from "@/routes/__root";
+import { userSessionAtom, settingsAtom } from "@/store/atoms";
 
 import { useForm } from "@tanstack/react-form";
 
@@ -33,7 +31,6 @@ export const Route = createFileRoute("/$lang/_lang/login")({
     const stored = localStorage.getItem("auth-session");
     if (stored || userSession?.accessToken) {
       const parsed = JSON.parse(stored);
-      // console.log(userSession, parsed, "userSession");
 
       if (parsed?.accessToken || userSession?.accessToken) {
         throw redirect({
@@ -48,7 +45,6 @@ function RouteComponent() {
   const { t, i18n } = useTranslation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
-  // const recaptchaRef = useRef<ReCAPTCHA>(null);
 
   const setUserSession = useSetAtom(userSessionAtom);
 

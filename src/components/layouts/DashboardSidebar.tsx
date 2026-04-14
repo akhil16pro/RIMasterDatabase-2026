@@ -15,7 +15,7 @@ import { useState, useMemo, useEffect } from "react";
 import { apiClient } from "@/api";
 import { useQueryClient } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
-import { userSessionAtom } from "@/store/atoms";
+import { userSessionAtom, settingsAtom } from "@/store/atoms";
 import {
   Tooltip,
   TooltipContent,
@@ -24,7 +24,6 @@ import {
 } from "@/components/ui/tooltip";
 
 import { useMobile } from "@/hooks/use-mobile";
-import { settingsAtom } from "@/routes/__root";
 import { useAtomValue } from "jotai";
 import { AnimatePresence } from "motion/react";
 import { NAV_CONFIG } from "@/lib/navigation";

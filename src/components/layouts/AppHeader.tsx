@@ -5,15 +5,13 @@ import { Menu, X } from "lucide-react";
 import { useScroll, useMotionValueEvent, motion } from "motion/react";
 import { useState, useMemo } from "react";
 import { useAtom, useAtomValue } from "jotai";
-import { scrollDirectionAtom } from "@/store/atoms";
+import { scrollDirectionAtom, settingsAtom } from "@/store/atoms";
 import { apiClient } from "@/api";
-import { toast } from "sonner";
-import { useQueryClient } from "@tanstack/react-query";
+
 import { cn } from "@/lib/utils";
 
 import { useMobile } from "@/hooks/use-mobile";
 import { useQuery } from "@tanstack/react-query";
-import { settingsAtom } from "@/routes/__root";
 
 export default function AppHeader({ delay }: { delay: number }) {
   const { i18n, t } = useTranslation();

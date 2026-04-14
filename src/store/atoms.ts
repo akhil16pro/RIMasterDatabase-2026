@@ -21,3 +21,6 @@ export const userSessionAtom = atomWithStorage<UserSession | null>("auth-session
 
 // Your existing atom
 export const scrollDirectionAtom = atom<"up" | "down">("up");
+
+
+export const settingsAtom = atom(null);
