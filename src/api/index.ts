@@ -2,6 +2,7 @@
 import i18n from "@/lang";
 import ky from "ky";
 import { toast } from "sonner";
+import Cookies from "js-cookie";
 
 const apiClient = ky.create({
   prefixUrl: import.meta.env.VITE_API_URL,
@@ -14,14 +15,9 @@ const apiClient = ky.create({
    beforeRequest: [
       (request) => {
         request.headers.set('accept-language', i18n.language);
-        const stored = localStorage.getItem("auth-session");
-        if (stored) {
-          try {
-            const { accessToken } = JSON.parse(stored);
-            if (accessToken) request.headers.set('Authorization', `Bearer ${accessToken}`);
-          } catch (e) {
-            console.error("Session parse error", e);
-          }
+        const accessToken = Cookies.get("auth_token");
+        if (accessToken) {
+          request.headers.set('Authorization', `Bearer ${accessToken}`);
         }
       }
     ],
@@ -47,7 +43,8 @@ const apiClient = ky.create({
         }
 
         if (response.status === 401) {
-           localStorage.removeItem("auth-session");
+           Cookies.remove("auth_token");
+           sessionStorage.removeItem("auth-session");
            // window.location.href = `/${i18n.language}/login`;
         }
 

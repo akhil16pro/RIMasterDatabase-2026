@@ -49,12 +49,12 @@ export default function DashboardSidebar({ delay }: { delay: number }) {
   }, [i18n.language, userRole, t]);
 
   const [isMenuOpen, setIsMenuOpen] = useState(() => {
-    const savedState = localStorage.getItem("isMenuOpen");
+    const savedState = typeof window !== 'undefined' ? sessionStorage.getItem("isMenuOpen") : null;
     return savedState !== null ? JSON.parse(savedState) : false;
   });
 
   useEffect(() => {
-    localStorage.setItem("isMenuOpen", JSON.stringify(isMenuOpen));
+    sessionStorage.setItem("isMenuOpen", JSON.stringify(isMenuOpen));
   }, [isMenuOpen]);
 
   useEffect(() => {

@@ -13,6 +13,7 @@ import { AnimatePresence, motion } from "motion/react";
 
 import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
+import Cookies from "js-cookie";
 
 import { useSetAtom, useAtomValue, getDefaultStore } from "jotai";
 import { userSessionAtom, settingsAtom } from "@/store/atoms";
@@ -28,15 +29,11 @@ export const Route = createFileRoute("/$lang/_lang/login")({
 
   beforeLoad: async ({ location, params }) => {
     let userSession = store.get(userSessionAtom);
-    const stored = localStorage.getItem("auth-session");
-    if (stored || userSession?.accessToken) {
-      const parsed = JSON.parse(stored);
-
-      if (parsed?.accessToken || userSession?.accessToken) {
-        throw redirect({
-          to: `/${params.lang}/dashboard`,
-        });
-      }
+    const token = Cookies.get("auth_token");
+    if (token || userSession?.accessToken) {
+      throw redirect({
+        to: `/${params.lang}/dashboard`,
+      });
     }
   },
 });
@@ -94,13 +91,11 @@ function RouteComponent() {
   });
 
   const loginDir = (res: any) => {
-    localStorage.setItem(
-      "auth-session",
-      JSON.stringify({
-        accessToken: res?.access_token,
-        user: res?.user,
-      }),
-    );
+    Cookies.set("auth_token", res?.access_token, {
+      secure: true,
+      sameSite: "strict",
+      expires: 1,
+    });
     setUserSession({
       accessToken: res?.access_token,
       user: res?.user,

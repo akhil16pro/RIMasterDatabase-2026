@@ -4,6 +4,7 @@ import { userSessionAtom } from "@/store/atoms";
 import { apiClient } from "@/api";
 import { NAV_CONFIG, APP_ROLES } from "@/lib/navigation";
 import { toast } from "sonner";
+import Cookies from "js-cookie";
 
 // const store = getDefaultStore();
 
@@ -15,14 +16,26 @@ export const Route = createFileRoute("/$lang/_lang/_auth")({
     let userSession = store.get(userSessionAtom);
 
     const now = Date.now();
-    const DAY_IN_MS = 86400000;
+    const TOKEN_LIMIT = 2 * 60 * 60 * 1000;
+
+    const token = Cookies.get("auth_token");
+
+    if (!token) {
+      store.set(userSessionAtom, null);
+      sessionStorage.removeItem("auth-session");
+      throw redirect({
+        to: "/$lang/login",
+        params: { lang: params.lang },
+      });
+    }
 
     if (
       userSession?.lastVerified &&
-      now - userSession.lastVerified > DAY_IN_MS
+      now - userSession.lastVerified > TOKEN_LIMIT
     ) {
       store.set(userSessionAtom, null);
-      localStorage.removeItem("auth-session");
+      Cookies.remove("auth_token");
+      sessionStorage.removeItem("auth-session");
       throw redirect({
         to: "/$lang/login",
         params: { lang: params.lang },
@@ -41,13 +54,14 @@ export const Route = createFileRoute("/$lang/_lang/_auth")({
       if (apiUserData) {
         const stored =
           typeof window !== "undefined"
-            ? localStorage.getItem("auth-session")
+            ? sessionStorage.getItem("auth-session")
             : null;
         const parsedSession = stored ? JSON.parse(stored) : {};
 
         const updatedSession = {
           ...parsedSession,
           ...apiUserData,
+          accessToken: token,
           lang: params.lang,
           lastVerified: Date.now(),
         };
@@ -55,8 +69,6 @@ export const Route = createFileRoute("/$lang/_lang/_auth")({
         if (JSON.stringify(userSession) !== JSON.stringify(updatedSession)) {
           store.set(userSessionAtom, updatedSession);
           userSession = updatedSession;
-
-          localStorage.setItem("auth-session", JSON.stringify(updatedSession));
         }
         // console.log(apiUserData, "apiUserData");
       }
@@ -75,7 +87,8 @@ export const Route = createFileRoute("/$lang/_lang/_auth")({
 
     if (!userSession?.accessToken || !checkRole) {
       store.set(userSessionAtom, null);
-      localStorage.removeItem("auth-session");
+      Cookies.remove("auth_token");
+      sessionStorage.removeItem("auth-session");
       throw redirect({
         to: "/$lang/login",
         params: { lang: params.lang },

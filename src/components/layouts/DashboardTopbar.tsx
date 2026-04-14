@@ -23,6 +23,7 @@ import { userSessionAtom } from "@/store/atoms";
 import { useAtomValue } from "jotai";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "@/api";
+import Cookies from "js-cookie";
 import { toast } from "sonner";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
@@ -228,7 +229,8 @@ function LoginAvatar() {
     mutationFn: () => apiClient.get(`${i18n.language}/logout`).json(),
     onSettled: () => {
       setUserSession(null);
-      localStorage.removeItem("auth-session");
+      Cookies.remove("auth_token");
+      sessionStorage.removeItem("auth-session");
       queryClient.clear();
       router.navigate({
         to: "/$lang/login",

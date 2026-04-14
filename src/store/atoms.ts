@@ -1,23 +1,20 @@
 import { atom } from "jotai";
-// Import atomWithStorage for local storage persistence
-import { atomWithStorage } from "jotai/utils"; 
+// Import atomWithStorage and createJSONStorage for session storage
+import { atomWithStorage, createJSONStorage } from "jotai/utils";
 
 // 1. Define the interface based on your login response
 export interface UserSession {
-  token: string;
-  user: {
-    id: string;
-    email: string;
-    name: string;
-    role:string;
-    // Add other relevant fields...
-  };
+  accessToken?: string;
+  user?: any;
+  lastVerified?: number;
+  lang?: string;
+  [key: string]: any;
 }
 
 // 2. Create a persisted atom
-// "auth-session" is the key used in localStorage. 
-// null is the default value when the user is not logged in.
-export const userSessionAtom = atomWithStorage<UserSession | null>("auth-session", null);
+// Use sessionStorage for Jotai atom
+const storage = createJSONStorage<UserSession | null>(() => typeof window !== 'undefined' ? sessionStorage : ({} as any));
+export const userSessionAtom = atomWithStorage<UserSession | null>("auth-session", null, storage);
 
 // Your existing atom
 export const scrollDirectionAtom = atom<"up" | "down">("up");
