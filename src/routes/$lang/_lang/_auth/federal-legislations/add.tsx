@@ -58,7 +58,7 @@ function RouteComponent() {
         const res = await apiClient
           .get(i18n.language + `/federal-legislation/create`)
           .json<any>();
-        console.log("federal_legislation_form_data", res?.data);
+        // console.log("federal_legislation_form_data", res?.data);
 
         return res?.data;
       } catch (error) {

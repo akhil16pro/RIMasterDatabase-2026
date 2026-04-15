@@ -69,7 +69,7 @@ function RouteComponent() {
             .json<any>(),
         ]);
 
-        console.log({ ...createRes?.data, ...editRes?.data }, "data");
+        // console.log({ ...createRes?.data, ...editRes?.data }, "data");
 
         return { ...createRes?.data, ...editRes?.data };
       } catch (error) {

@@ -158,9 +158,10 @@ export const Table = ({
                         })}
                       </div>
                     ) : head.key === "title" ? (
-                      <span className="font-semibold text-lg leading-[80%]">
-                        {row[head.key]}
-                      </span>
+                      <span
+                        className="font-semibold text-lg leading-[80%]"
+                        dangerouslySetInnerHTML={{ __html: row[head.key] }}
+                      />
                     ) : (
                       row[head.key] || ""
                     )}
@@ -187,7 +188,7 @@ export const Table = ({
                     "px-4 py-4 text-base font-secondary text-center rounded-lg",
                   )}
                 >
-                  {t("no-data-available")}
+                  <div>{t("no-data-available")}</div>
                 </td>
               </motion.tr>
             )}
@@ -200,6 +201,7 @@ export const Table = ({
 
 function TD({ children, className, "data-label": dataLabel, ...props }: any) {
   const isMobile = useMobile();
+
   return (
     <td
       {...props}
@@ -212,7 +214,7 @@ function TD({ children, className, "data-label": dataLabel, ...props }: any) {
         className,
       )}
     >
-      <div>{children}</div>
+      {children}
     </td>
   );
 }

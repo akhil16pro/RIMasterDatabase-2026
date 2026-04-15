@@ -544,3 +544,15 @@ input {
     background-position: top left;
   }
 }
+
+.searchHighlight {
+  font-style: normal;
+  background: linear-gradient(
+    180deg,
+    var(--color-primary) 0%,
+    var(--color-secondary) 100%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}

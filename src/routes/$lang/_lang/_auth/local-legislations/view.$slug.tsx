@@ -62,11 +62,6 @@ function RouteComponent() {
             .get(`${i18n.language}/local-legislation/edit/${slug}`)
             .json<any>(),
         ]);
-        console.log(
-          "local_legislation_form_data",
-          createRes?.data,
-          editRes?.data,
-        );
 
         return { ...createRes?.data, ...editRes?.data };
       } catch (error) {

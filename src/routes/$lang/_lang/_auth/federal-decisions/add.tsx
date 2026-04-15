@@ -83,7 +83,7 @@ function RouteComponent() {
         const res = await apiClient
           .get(i18n.language + `/federal-decision/create`)
           .json<any>();
-        console.log("federal_decision_form_data", res?.data);
+        // console.log("federal_decision_form_data", res?.data);
 
         return res?.data;
       } catch (error) {

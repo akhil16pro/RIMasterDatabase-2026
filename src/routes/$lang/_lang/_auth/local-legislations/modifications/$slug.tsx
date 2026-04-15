@@ -62,7 +62,7 @@ function RouteComponent() {
           .get(i18n.language + `/modifications/list/${slug}`)
           .json<any>();
 
-        console.log("local_legislations_modifications_data", res?.data);
+        // console.log("local_legislations_modifications_data", res?.data);
 
         return res?.data;
       } catch (error) {

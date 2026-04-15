@@ -84,7 +84,7 @@ function RouteComponent() {
         const res = await apiClient
           .get(i18n.language + `/modifications/edit/${slug}`)
           .json<any>();
-        console.log("modification_edit_form_data", res?.data);
+        // console.log("modification_edit_form_data", res?.data);
 
         return res?.data;
       } catch (error) {

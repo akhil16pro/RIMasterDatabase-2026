@@ -71,7 +71,7 @@ function RouteComponent() {
         const res = await apiClient
           .get(i18n.language + `/federal-decision/edit/${slug}`)
           .json<any>();
-        console.log("federal_decision_edit_form_data", res?.data);
+        // console.log("federal_decision_edit_form_data", res?.data);
         return res?.data;
       } catch (error) {
         console.log("federal_decision_form_data_error", error);
