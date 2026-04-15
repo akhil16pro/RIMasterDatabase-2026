@@ -41,6 +41,7 @@ function RouteComponent() {
   const userSession = useAtomValue(userSessionAtom);
 
   const [search, setSearch] = useState("");
+  const [formSearch, setFormSearch] = useState("");
 
   // const { data, isLoading, error, isRefetching } = useQuery({
   //   queryKey: ["legislations", i18n.language],
@@ -95,12 +96,16 @@ function RouteComponent() {
         <SearchBox
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          onClear={() => setSearch("")}
+          onClear={() => {
+            setFormSearch("");
+            setSearch("");
+          }}
+          onSearch={setFormSearch}
           className="order-5 md:order-none"
         />
       </motion.div>
 
-      <PageTable search={search} />
+      <PageTable search={formSearch} />
     </DashboardLayout>
   );
 }
@@ -115,19 +120,29 @@ function PageTable({ search }: { search: string }) {
   });
 
   const { data, isLoading, error, isRefetching } = useQuery({
-    queryKey: ["localLegislationTable", pagination.currentPage, i18n.language],
+    queryKey: [
+      "localLegislationTable",
+      pagination.currentPage,
+      i18n.language,
+      search,
+    ],
     enabled: !!userSession?.accessToken,
     placeholderData: (previousData) => previousData,
     staleTime: 1000 * 60 * 5,
     queryFn: async () => {
       try {
+        const formData = new FormData();
+        formData.append("search", search || "");
+        formData.append("page", pagination?.currentPage);
         const res = await apiClient
-          .get(
-            i18n.language +
-              `/local-legislation/table?page=${pagination.currentPage}`,
-          )
+          .post(i18n.language + `/local-legislation/table`, {
+            headers: {
+              "Content-Type": undefined,
+            },
+            body: formData,
+          })
           .json<any>();
-        console.log("LOCAL_LEGISLATION_TABLE_DATA", res?.data);
+        // console.log("LOCAL_LEGISLATION_TABLE_DATA", res?.data);
         return res?.data;
       } catch (error) {
         console.log("LOCAL_LEGISLATION_TABLE_DATA_ERROR", error);

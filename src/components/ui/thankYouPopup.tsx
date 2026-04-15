@@ -9,7 +9,7 @@ import {
   DialogFooter,
   DialogClose,
 } from "@/components/ui/dialog";
-import { Check, X, AlertTriangle, Info, CircleX } from "lucide-react";
+import { Check, X, AlertTriangle, Info, CircleCheckBig } from "lucide-react";
 import { motion } from "framer-motion";
 import { DefaultButton } from "@/components/ui/buttons";
 function ThankYouPopup({
@@ -175,7 +175,7 @@ function ThankYouPopup({
                 setOpen(false);
                 onConfirm?.();
               }}
-              icon={<CircleX className="size-5" />}
+              icon={<CircleCheckBig className="size-5" />}
             />
           </motion.div>
         </DialogFooter>

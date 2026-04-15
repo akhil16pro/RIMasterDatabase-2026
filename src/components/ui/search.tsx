@@ -15,10 +15,11 @@ export const SearchBox = ({
   value,
   onChange,
   onClear,
+  onSearch,
   ...props
 }: {
   id?: string;
-  icon: React.ReactNode;
+  icon?: React.ReactNode;
   type?: "button" | "submit" | "reset";
   size?: "sm" | "md" | "lg" | "icon";
   className?: string;
@@ -28,6 +29,7 @@ export const SearchBox = ({
   value?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onClear?: () => void;
+  onSearch?: (value: string) => void;
 }) => {
   const inputId = id || useId();
   const { t } = useTranslation();
@@ -84,7 +86,18 @@ export const SearchBox = ({
           "font-secondary font-light text-[var(--textColor)] z-10 ",
           className,
         )}
-        onChange={onChange}
+        onChange={(e) => {
+          if (e.target.value.length > 0) {
+            onChange?.(e);
+          } else {
+            onClear?.();
+          }
+        }}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            onSearch?.(e.target.value);
+          }
+        }}
         {...props}
       />
       {value && (
