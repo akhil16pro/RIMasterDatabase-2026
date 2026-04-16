@@ -83,8 +83,8 @@ function RouteComponent() {
 
   return (
     <DashboardLayout isLoading={isLoading} title={t("view_legislation")}>
-      <div className="grid md:grid-cols-2 gap-x-8 gap-y-10 items-start">
-        <div className="inline-flex gap-5 text-black  text-[1.2rem] col-span-2">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10 items-start">
+        <div className="inline-flex gap-5 text-black  text-[1.2rem] col-span-full">
           <Label className="text-black/70">{t("has_english")}</Label>
           <RadioGroup
             className="flex gap-4"
@@ -163,7 +163,7 @@ function RouteComponent() {
           </SelectContent>
         </Select>
         {data?.lawData?.lm_has_english_version === 1 && (
-          <div className="col-span-2 grid md:grid-cols-2 gap-x-8 gap-y-10 items-start">
+          <div className="col-span-full grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10 items-start">
             <Input
               type="text"
               value={data?.lawData?.lm_title}
@@ -178,7 +178,7 @@ function RouteComponent() {
             />
           </div>
         )}
-        <div className="col-span-2 grid md:grid-cols-2 gap-x-8 gap-y-10 items-start">
+        <div className="col-span-full grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10 items-start">
           <Input
             type="text"
             value={data?.lawData?.lm_title_arabic}
@@ -196,7 +196,7 @@ function RouteComponent() {
         </div>
 
         {data?.lawData?.lm_has_english_version === 1 && (
-          <div className="col-span-2 space-y-2 relative">
+          <div className="col-span-full space-y-2 relative">
             <Label htmlFor="lm_description">
               {t("legislation_details_english")}
             </Label>
@@ -207,7 +207,7 @@ function RouteComponent() {
           </div>
         )}
 
-        <div className="col-span-2 space-y-2 relative">
+        <div className="col-span-full space-y-2 relative">
           <Label htmlFor="lm_description_arabic">
             {t("legislation_details_arabic")}
           </Label>
@@ -240,7 +240,7 @@ function RouteComponent() {
             ))}
           </SelectContent>
         </Select>
-        <div className="col-span-2 grid md:grid-cols-2 gap-x-8 gap-y-10 items-start">
+        <div className="col-span-full grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10 items-start">
           <Input
             type="date"
             value={data?.lawData?.lm_issue_date}

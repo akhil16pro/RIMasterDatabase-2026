@@ -1,5 +1,5 @@
 import * as React from "react";
-
+import { useMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import {
   Eye,
@@ -46,9 +46,9 @@ function Input({
   const inputId = id || useId();
 
   const fileName = preview?.split("/").pop();
-
+  const isMobile = useMobile();
   return (
-    <div className="relative">
+    <div className={cn("relative")}>
       <div
         className={cn(
           "group relative flex",

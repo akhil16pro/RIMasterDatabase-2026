@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { apiClient } from "@/api";
 
-export const usePDFPreview = (slug: string, lang: string , type: "legislation" | "modification" | "decision") => {
+export const usePDFPreview = (slug: string, lang: string , type: "legislation" | "modification" | "decision" | "international-treaty") => {
 
   const query = useQuery({
     queryKey: ["getPDF", lang, slug],

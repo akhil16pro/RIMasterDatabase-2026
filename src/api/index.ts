@@ -23,23 +23,38 @@ const apiClient = ky.create({
     ],
    afterResponse: [
       async (request, options, response) => {
-        // If the response is not 2xx
         if (!response.ok) {
-          let errorMessage = "error-occurred"; // Default translation key
-          
           try {
             const errorData = await response.json();
-            // If your API returns { message: "..." }, use it
-            if (errorData?.message) {
-              errorMessage = errorData.message;
+             if (errorData?.errors && typeof errorData.errors === 'object' && !Array.isArray(errorData.errors)) {
+              Object.values(errorData.errors).forEach((messages: any) => {
+                if (Array.isArray(messages)) {
+                  messages.forEach((msg: string) => {
+                    toast.error(i18n.t(msg));
+                  });
+                }
+              });
+              return;   
             }
-          } catch {
-            // Fallback if response isn't JSON
+
+            if (Array.isArray(errorData?.errors)) {
+              errorData.errors.forEach((error: string) => {
+                toast.error(i18n.t(error));
+              });
+              return;
+            }
+
+        
+            if (errorData?.message) {
+              toast.error(i18n.t(errorData.message));
+              return;
+            }
+
+          } catch (e) {
+             toast.error(i18n.t("error_occurred"));
           }
 
-          // Trigger the toast globally
-          // i18n.t() will translate the key if it exists in your JSON files
-          toast.error(i18n.t(errorMessage));
+          
         }
 
         if (response.status === 401) {

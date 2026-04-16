@@ -179,8 +179,8 @@ function RouteComponent() {
           form.handleSubmit();
         }}
       >
-        <div className="grid md:grid-cols-2 gap-x-8 gap-y-10 items-start">
-          <div className="inline-flex gap-5 text-black  text-[1.2rem] col-span-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10 items-start">
+          <div className="inline-flex gap-5 text-black  text-[1.2rem] col-span-full">
             <Label className="text-black/70">{t("has_english")}</Label>
             <form.Field
               name="lm_has_english_version"
@@ -324,7 +324,7 @@ function RouteComponent() {
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: "auto" }}
                     exit={{ opacity: 0, height: 0 }}
-                    className="col-span-2 grid md:grid-cols-2 gap-x-8 gap-y-10 items-start"
+                    className=" col-span-full grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10 items-start"
                   >
                     <form.Field
                       name="lm_title"
@@ -372,7 +372,7 @@ function RouteComponent() {
               </AnimatePresence>
             )}
           />
-          <div className="col-span-2 grid md:grid-cols-2 gap-x-8 gap-y-10 items-start">
+          <div className="col-span-full grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10 items-start">
             <form.Field
               name="lm_title_arabic"
               validators={{
@@ -426,7 +426,7 @@ function RouteComponent() {
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: "auto" }}
                     exit={{ opacity: 0, height: 0 }}
-                    className="col-span-2 "
+                    className="col-span-full "
                   >
                     <form.Field
                       name="lm_description"
@@ -461,7 +461,7 @@ function RouteComponent() {
             )}
           />
 
-          <div className="col-span-2">
+          <div className="col-span-full">
             <form.Field
               name="lm_description_arabic"
               validators={{
@@ -523,7 +523,7 @@ function RouteComponent() {
               </Select>
             )}
           />
-          <div className="col-span-2 grid md:grid-cols-2 gap-x-8 gap-y-10 items-start">
+          <div className="col-span-full grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10 items-start">
             <form.Field
               name="lm_issue_date"
               validators={{
@@ -677,7 +677,7 @@ function RouteComponent() {
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: "auto" }}
                     exit={{ opacity: 0, height: 0 }}
-                    className="col-span-2 grid md:grid-cols-2 gap-x-8 gap-y-10 items-start"
+                    className="col-span-full grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10 items-start"
                   >
                     <form.Field
                       name="lm_gazette_number"

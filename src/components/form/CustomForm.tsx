@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/Select";
 import { Label } from "@/components/ui/label";
 import { ThankYouPopup } from "@/components/ui/thankYouPopup";
+import { FileUpload } from "@/components/ui/FileUpload";
 
 import CKEditorCustom from "@/components/ui/CKEditor";
 
@@ -51,7 +52,7 @@ export function CustomForm({
         form.handleSubmit();
       }}
     >
-      <div className="grid md:grid-cols-2 gap-x-8 gap-y-10 items-start">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10 items-start">
         {fields.map((cfg) => (
           <form.Field
             key={cfg.name}
@@ -94,7 +95,7 @@ export function CustomForm({
                   <div
                     className={cn(
                       "space-y-2 relative",
-                      cfg.colSpan === 2 && "col-span-2",
+                      cfg.colSpan && `md:col-span-${cfg.colSpan}`,
                     )}
                   >
                     <Label>{cfg.label}</Label>
@@ -113,9 +114,36 @@ export function CustomForm({
                 );
               }
 
+              if (cfg.type === "upload") {
+                return (
+                  <div
+                    className={cn(
+                      "space-y-2 relative",
+                      cfg.colSpan && `md:col-span-${cfg.colSpan}`,
+                    )}
+                  >
+                    <Label>{cfg.label}</Label>
+                    <FileUpload
+                      multiple={cfg.multiple}
+                      accept={cfg.accept}
+                      onChange={(files) =>
+                        console.log("Current ready files:", files)
+                      }
+                    />
+                    {field.state.meta.errors ? (
+                      <Label errorLabel={true} floating={true}>
+                        {field.state.meta.errors.join(", ")}
+                      </Label>
+                    ) : null}
+                  </div>
+                );
+              }
+
               // 3. Handle Standard Inputs (Text, Date, File)
               return (
-                <div className={cn(cfg.colSpan === 2 && "col-span-2")}>
+                <div
+                  className={cn(cfg.colSpan && `md:col-span-${cfg.colSpan}`)}
+                >
                   <Input
                     type={cfg.type}
                     label={cfg.label}

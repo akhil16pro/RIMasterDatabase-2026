@@ -259,7 +259,7 @@ function LoginAvatar() {
             alt=""
             className="w-8 h-8 md:w-10 md:h-10 lg:w-11 lg:h-11 rounded-[5px] md:rounded-lg me-2 group-hover:scale-105 transition-all duration-300 bg-white object-cover"
           /> */}
-          <Avatar className="me-2 rounded-[5px] md:rounded-lg size-8 md:size-10 lg:size-11">
+          <Avatar size="sm" className="me-2 ">
             <AvatarImage
               src={userSession?.user?.photo}
               alt={userSession?.user?.name}
@@ -291,7 +291,15 @@ function LoginAvatar() {
           {t("settings")}
         </DropdownMenuLabel>
         <DropdownMenuSeparator className="bg-white/30" />
-        <DropdownMenuItem className="w-full text-[var(--textColor)] font-semibold md:text-[1rem] text-[.9rem] leading-[100%]  overflow-hidden text-ellipsis whitespace-nowrap hover:text-[var(--textColor)] flex gap-2">
+        <DropdownMenuItem
+          className="w-full text-[var(--textColor)] font-semibold md:text-[1rem] text-[.9rem] leading-[100%]  overflow-hidden text-ellipsis whitespace-nowrap hover:text-[var(--textColor)] flex gap-2"
+          onClick={() =>
+            router.navigate({
+              to: "/$lang/profile",
+              params: { lang: i18n.language },
+            })
+          }
+        >
           <User className=" h-4 w-4" />
           <span>{t("profile")}</span>
         </DropdownMenuItem>

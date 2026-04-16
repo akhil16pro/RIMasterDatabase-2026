@@ -259,6 +259,14 @@ function RouteComponent() {
       onClick: () => previewAR(),
       isLoading: isLoadingAR,
     },
+    {
+      name: "gallery",
+      label: t("gallery"),
+      type: "upload",
+      colSpan: 2,
+      multiple: true,
+      accept: ".jpg,.jpeg,.png",
+    },
   ];
 
   useEffect(() => {
