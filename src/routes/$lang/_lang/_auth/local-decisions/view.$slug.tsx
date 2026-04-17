@@ -164,7 +164,7 @@ function RouteComponent() {
       name: "dm_details",
       label: t("details_english"),
       type: "editor",
-      colSpan: 2,
+      className: "col-span-full",
       validators: {
         onSubmit: ({ value }) => (!value ? t("required_field") : null),
       },
@@ -173,7 +173,7 @@ function RouteComponent() {
       name: "dm_details_arabic",
       label: t("details_arabic"),
       type: "editor",
-      colSpan: 2,
+      className: "col-span-full",
       dir: "rtl",
       validators: {
         onSubmit: ({ value }) => (!value ? t("required_field") : null),

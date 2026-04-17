@@ -31,7 +31,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { SearchBox } from "@/components/ui/search";
 
 export const Route = createFileRoute(
-  "/$lang/_lang/_auth/international-treaties/",
+  "/$lang/_lang/_auth/international-treaty/",
 )({
   component: RouteComponent,
 });
@@ -86,7 +86,7 @@ function RouteComponent() {
             className=""
             onClick={() => {
               navigate({
-                to: "/" + i18n.language + "/international-treaties/add",
+                to: "/" + i18n.language + "/international-treaty/add",
               });
             }}
           />
@@ -238,7 +238,7 @@ function ViewAction({ slug }: { slug: string }) {
 
   const handleView = () => {
     navigate({
-      to: `/${i18n.language}/international-treaties/view/${slug}`,
+      to: `/${i18n.language}/international-treaty/view/${slug}`,
       params: {
         slug: slug,
       },
@@ -264,7 +264,7 @@ function EditAction({ slug }: { slug: string }) {
 
   const handleEdit = () => {
     navigate({
-      to: `/${i18n.language}/international-treaties/edit/${slug}`,
+      to: `/${i18n.language}/international-treaty/edit/${slug}`,
       params: {
         slug: slug,
       },

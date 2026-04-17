@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { AnimatePresence, motion } from "motion/react";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
 import DashboardTopbar from "@/components/layouts/DashboardTopbar";
-import { Plus, Trash2, Pencil } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useForm } from "@tanstack/react-form";
@@ -28,23 +28,19 @@ import CKEditorCustom from "@/components/ui/CKEditor";
 import { useAtomValue } from "jotai";
 import { userSessionAtom } from "@/store/atoms";
 import { useNavigate } from "@tanstack/react-router";
-import { usePDFPreview } from "@/lib/usePDFPreview";
-import { useEffect } from "react";
 
 export const Route = createFileRoute(
-  "/$lang/_lang/_auth/international-treaties/edit/$slug",
+  "/$lang/_lang/_auth/international-treaty/add",
 )({
   component: RouteComponent,
   staticData: {
     breadcrumb: (params: any) => ({
-      key: "edit",
-      path: `/${params.lang}/international-treaties/edit/${params.slug}`,
+      key: "add",
+      path: `/${params.lang}/international-treaty/add`,
     }),
   },
 });
-
 function RouteComponent() {
-  const { slug } = Route.useParams();
   const { t, i18n } = useTranslation();
   const userSession = useAtomValue(userSessionAtom);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -52,30 +48,17 @@ function RouteComponent() {
   const queryClient = useQueryClient();
   const [thankYouPopup, setThankYouPopup] = useState(false);
 
-  const [deletedFiles, setDeletedFiles] = useState<string[]>([]);
-
   const { data, isLoading, error } = useQuery({
-    queryKey: ["internationalTreatiesFormData", slug, i18n.language],
-    enabled: true,
-    staleTime: 0,
+    queryKey: ["internationalTreatiesFormData", i18n.language],
+    enabled: !!userSession?.accessToken,
     queryFn: async () => {
       try {
-        const [createRes, editRes] = await Promise.all([
-          apiClient
-            .get(`${i18n.language}/international-treaty/create`)
-            .json<any>(),
-          apiClient
-            .get(`${i18n.language}/international-treaty/edit/${slug}`)
-            .json<any>(),
-        ]);
+        const res = await apiClient
+          .get(i18n.language + `/international-treaty/create`)
+          .json<any>();
+        console.log("international_treaties_form_data", res?.data);
 
-        console.log(
-          "international_treaties_form_data",
-          editRes?.data,
-          "editRes?.data",
-        );
-
-        return { ...createRes?.data, ...editRes?.data };
+        return res?.data;
       } catch (error) {
         console.log("international_treaties_form_data_error", error);
         return null;
@@ -104,30 +87,29 @@ function RouteComponent() {
         const formData = new FormData();
 
         formData.append("it_created_by", userSession?.user?.id || "");
+        formData.append("it_sector_id", value.it_sector_id.toString() || "");
         formData.append(
           "it_treaty_type",
-          value?.it_treaty_type?.toString() || "",
+          value.it_treaty_type.toString() || "",
         );
-        formData.append("it_sector_id", value?.it_sector_id?.toString() || "");
-        formData.append(
-          "it_country_id",
-          value?.it_country_id?.toString() || "",
-        );
-        formData.append("it_title", value.it_title);
-        formData.append("it_title_arabic", value.it_title_arabic);
-        formData.append("it_treaty_date", value.it_treaty_date);
-        formData.append("it_treaty_year", value.it_treaty_year);
-        formData.append("it_expiry_date", value.it_expiry_date);
+
+        formData.append("it_country_id", value.it_country_id.toString() || "");
+        formData.append("it_title", value.it_title || "");
+        formData.append("it_title_arabic", value.it_title_arabic || "");
+        formData.append("it_treaty_date", value.it_treaty_date || "");
+        formData.append("it_treaty_year", value.it_treaty_year || "");
+        formData.append("it_expiry_date", value.it_expiry_date || "");
 
         if (value.it_attachment) {
           formData.append("it_attachment", value.it_attachment);
         }
+
         if (value.it_attachment_arabic) {
           formData.append("it_attachment_arabic", value.it_attachment_arabic);
         }
 
         const res = await apiClient
-          .post(i18n.language + `/international-treaty/update/${slug}`, {
+          .post(i18n.language + "/international-treaty/store", {
             headers: {
               "Content-Type": undefined,
             },
@@ -135,14 +117,20 @@ function RouteComponent() {
           })
           .json<any>();
 
-        console.log(res, "international_treaties_update_res");
+        console.log(res, "international_treaty_store_res");
         if (res?.status) {
-          // form.reset();
+          form.reset();
           toast.success(res?.message || t("success"));
-
+          queryClient.invalidateQueries({
+            queryKey: ["internationalTreatyTable"],
+          });
           setTimeout(() => {
             setThankYouPopup(true);
           }, 150);
+
+          // setTimeout(() => {
+          //   queryClient.invalidateQueries({ queryKey: ["glossaryTable"] });
+          // }, 100);
         }
       } catch (error) {
         console.error("Add request failed:", error);
@@ -152,65 +140,13 @@ function RouteComponent() {
     },
   });
 
-  useEffect(() => {
-    if (data?.treatyData) {
-      form.setFieldValue(
-        "it_treaty_type",
-        data.treatyData?.it_treaty_type?.toString() || "1",
-      );
-      if (data.treatyData?.it_treaty_type?.toString() === "1") {
-        form.setFieldValue(
-          "it_country_id",
-          data?.treatyData?.it_country_id?.toString() || "",
-        );
-      }
-      if (data.treatyData?.it_treaty_type?.toString() === "2") {
-        form.setFieldValue(
-          "it_sector_id",
-          data?.treatyData?.it_sector_id?.toString() || "",
-        );
-      }
-      form.setFieldValue("it_title", data?.treatyData?.it_title || "");
-      form.setFieldValue(
-        "it_title_arabic",
-        data?.treatyData?.it_title_arabic || "",
-      );
-      form.setFieldValue(
-        "it_treaty_date",
-        data?.treatyData?.it_treaty_date || "",
-      );
-      form.setFieldValue(
-        "it_treaty_year",
-        data?.treatyData?.it_treaty_year || "",
-      );
-      form.setFieldValue(
-        "it_expiry_date",
-        data?.treatyData?.it_expiry_date || "",
-      );
-      form.setFieldValue("it_attachment", "");
-      form.setFieldValue("it_attachment_arabic", "");
-    }
-  }, [data, form, userSession]);
-
-  const handleClearFile = (fieldName: string, previewKey: string) => {
-    form.setFieldValue(fieldName as any, null);
-
-    setDeletedFiles((prev) => [...prev, previewKey]);
-  };
-
-  const { preview: previewEN, isLoading: isLoadingEN } = usePDFPreview(
-    data?.treatyData?.it_slug,
-    "en",
-    "international-treaty",
-  );
-  const { preview: previewAR, isLoading: isLoadingAR } = usePDFPreview(
-    data?.treatyData?.it_slug,
-    "ar",
-    "international-treaty",
-  );
+  // console.log(userSession);
 
   return (
-    <DashboardLayout isLoading={isLoading} title={t("edit_treaty")}>
+    <DashboardLayout
+      isLoading={isLoading}
+      title={t("add_international_treaty")}
+    >
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -488,20 +424,15 @@ function RouteComponent() {
             <form.Field
               name="it_attachment"
               validators={{
-                onSubmit: ({ value }) => {
-                  return data?.treatyData?.it_attachment
-                    ? deletedFiles.includes("it_attachment") &&
-                        !value &&
-                        t("required_field")
-                    : !value && t("required_field");
-                },
+                onSubmit: ({ value }) => (!value ? t("required_field") : null),
                 onChange: ({ value }) => {
                   if (!value) return null;
+
+                  // Ensure we have a File object
                   const file = value instanceof FileList ? value[0] : value;
+                  if (!file || !(file instanceof File)) return null;
 
-                  if (!(file instanceof File)) return null;
-
-                  const fileName = file.name.toLowerCase();
+                  const fileName = file.name.toLowerCase(); // Use file.name
                   const allowedExtensions = [".pdf"];
                   const isValid = allowedExtensions.some((ext) =>
                     fileName.endsWith(ext),
@@ -518,25 +449,17 @@ function RouteComponent() {
               children={(field) => (
                 <Input
                   type="file"
+                  id="it_attachment"
+                  name="it_attachment"
                   accept=".pdf"
                   onChange={(e) => {
                     const file = e.target.files?.[0];
                     field.handleChange(file);
                   }}
+                  onBlur={field.handleBlur}
                   label={t("attachment_english")}
                   error={field.state.meta.errors.length > 0 ? true : false}
                   errorMessage={field.state.meta.errors[0]}
-                  preview={
-                    deletedFiles.includes("it_attachment")
-                      ? undefined
-                      : data?.treatyData?.it_attachment
-                  }
-                  onClearPreview={() => {
-                    field.handleChange(null);
-                    setDeletedFiles((prev) => [...prev, "it_attachment"]);
-                  }}
-                  onClick={previewEN}
-                  isLoading={isLoadingEN}
                 />
               )}
             />
@@ -544,20 +467,15 @@ function RouteComponent() {
             <form.Field
               name="it_attachment_arabic"
               validators={{
-                onSubmit: ({ value }) => {
-                  return data?.treatyData?.it_attachment_arabic
-                    ? deletedFiles.includes("it_attachment_arabic") &&
-                        !value &&
-                        t("required_field")
-                    : !value && t("required_field");
-                },
+                onSubmit: ({ value }) => (!value ? t("required_field") : null),
                 onChange: ({ value }) => {
                   if (!value) return null;
+
+                  // Ensure we have a File object
                   const file = value instanceof FileList ? value[0] : value;
+                  if (!file || !(file instanceof File)) return null;
 
-                  if (!(file instanceof File)) return null;
-
-                  const fileName = file.name.toLowerCase();
+                  const fileName = file.name.toLowerCase(); // Use file.name
                   const allowedExtensions = [".pdf"];
                   const isValid = allowedExtensions.some((ext) =>
                     fileName.endsWith(ext),
@@ -574,28 +492,17 @@ function RouteComponent() {
               children={(field) => (
                 <Input
                   type="file"
+                  id="it_attachment_arabic"
+                  name="it_attachment_arabic"
                   accept=".pdf"
                   onChange={(e) => {
                     const file = e.target.files?.[0];
                     field.handleChange(file);
                   }}
+                  onBlur={field.handleBlur}
                   label={t("attachment_arabic")}
                   error={field.state.meta.errors.length > 0 ? true : false}
                   errorMessage={field.state.meta.errors[0]}
-                  preview={
-                    deletedFiles.includes("it_attachment_arabic")
-                      ? undefined
-                      : data?.treatyData?.it_attachment_arabic
-                  }
-                  onClearPreview={() => {
-                    field.handleChange(null);
-                    setDeletedFiles((prev) => [
-                      ...prev,
-                      "it_attachment_arabic",
-                    ]);
-                  }}
-                  onClick={previewAR}
-                  isLoading={isLoadingAR}
                 />
               )}
             />
@@ -605,9 +512,9 @@ function RouteComponent() {
             <DefaultButton
               type="submit"
               variant="dark"
-              title={t("update")}
+              title={t("submit")}
               onClick={form.handleSubmit}
-              icon={<Pencil className="size-5" />}
+              icon={<Plus className="size-5" />}
               isDisabled={isSubmitting}
               isLoading={isSubmitting}
             />
@@ -618,18 +525,15 @@ function RouteComponent() {
         type="success"
         open={thankYouPopup}
         setOpen={setThankYouPopup}
-        title={t("updated_successfully")}
-        description={t("international_treaties_updated_success_message")}
+        title={t("submitted_successfully")}
+        description={t("treaty_created_success_message")}
         onConfirm={() => {
-          queryClient.invalidateQueries({
-            queryKey: ["internationalTreatiesFormData"],
-          });
           queryClient.invalidateQueries({
             queryKey: ["internationalTreatiesTable"],
           });
-          // navigate({
-          //   to: `/${i18n.language}/local-legislations`,
-          // });
+          navigate({
+            to: `/${i18n.language}/international-treaty`,
+          });
         }}
       />
     </DashboardLayout>

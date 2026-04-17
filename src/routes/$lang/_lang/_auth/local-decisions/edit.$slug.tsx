@@ -99,123 +99,6 @@ function RouteComponent() {
     },
   });
 
-  // const form = useForm({
-  //   defaultValues: {
-  //     local_government: userSession?.user?.userEmirateName || "",
-  //     dm_decision_type_id: "",
-  //     dm_title: "",
-  //     dm_title_arabic: "",
-  //     dm_decision_date: "",
-  //     dm_year: "",
-  //     dm_authority_title: "",
-  //     dm_authority_title_arabic: "",
-  //     dm_details: "",
-  //     dm_details_arabic: "",
-  //     dm_file: null,
-  //     dm_file_arabic: null,
-  //   },
-  //   onSubmit: async ({ value }) => {
-  //     setIsSubmitting(true);
-
-  //     try {
-  //       const formData = new FormData();
-
-  //       formData.append("dm_created_by", userSession?.user?.id || "");
-  //       formData.append(
-  //         "local_government",
-  //         userSession?.user?.userEmirateId || "",
-  //       );
-  //       formData.append(
-  //         "dm_decision_type_id",
-  //         value.dm_decision_type_id.toString() || "",
-  //       );
-  //       formData.append("dm_title", value.dm_title || "");
-  //       formData.append("dm_title_arabic", value.dm_title_arabic || "");
-  //       formData.append("dm_decision_date", value.dm_decision_date || "");
-  //       formData.append("dm_details", value.dm_details || "");
-  //       formData.append("dm_details_arabic", value.dm_details_arabic || "");
-  //       formData.append("dm_year", value.dm_year.toString() || "");
-  //       formData.append("dm_authority_title", value.dm_authority_title || "");
-  //       formData.append(
-  //         "dm_authority_title_arabic",
-  //         value.dm_authority_title_arabic || "",
-  //       );
-
-  //       if (value.dm_file) {
-  //         formData.append("dm_file", value.dm_file);
-  //       }
-  //       if (value.dm_file_arabic) {
-  //         formData.append("dm_file_arabic", value.dm_file_arabic);
-  //       }
-
-  //       const res = await apiClient
-  //         .post(i18n.language + `/local-decision/update/${slug}`, {
-  //           headers: {
-  //             "Content-Type": undefined,
-  //           },
-  //           body: formData,
-  //         })
-  //         .json<any>();
-
-  //       // console.log(res, "local_legislation_update_res");
-  //       if (res?.status) {
-  //         // form.reset();
-  //         toast.success(res?.message || t("success"));
-
-  //         setTimeout(() => {
-  //           setThankYouPopup(true);
-  //         }, 150);
-  //       }
-  //     } catch (error) {
-  //       console.error("Add request failed:", error);
-  //     } finally {
-  //       setIsSubmitting(false);
-  //     }
-  //   },
-  // });
-
-  // useEffect(() => {
-  //   if (data?.decisionData) {
-  //     form.setFieldValue(
-  //       "local_government",
-  //       userSession?.user?.userEmirateName || "",
-  //     );
-  //     form.setFieldValue(
-  //       "dm_decision_type_id",
-  //       data?.decisionData?.dm_decision_type_id.toString() || "",
-  //     );
-  //     form.setFieldValue("dm_title", data?.decisionData?.dm_title || "");
-  //     form.setFieldValue(
-  //       "dm_title_arabic",
-  //       data?.decisionData?.dm_title_arabic || "",
-  //     );
-  //     form.setFieldValue(
-  //       "dm_decision_date",
-  //       data?.decisionData?.dm_decision_date || "",
-  //     );
-  //     form.setFieldValue(
-  //       "dm_year",
-  //       data?.decisionData?.dm_year.toString() || "",
-  //     );
-  //     form.setFieldValue(
-  //       "dm_authority_title",
-  //       data?.decisionData?.dm_authority_title || "",
-  //     );
-  //     form.setFieldValue(
-  //       "dm_authority_title_arabic",
-  //       data?.decisionData?.dm_authority_title_arabic || "",
-  //     );
-  //     form.setFieldValue("dm_details", data?.decisionData?.dm_details || "");
-  //     form.setFieldValue(
-  //       "dm_details_arabic",
-  //       data?.decisionData?.dm_details_arabic || "",
-  //     );
-
-  //     form.setFieldValue("dm_file", "");
-  //     form.setFieldValue("dm_file_arabic", "");
-  //   }
-  // }, [data, form, userSession]);
-
   const { preview: previewEN, isLoading: isLoadingEN } = usePDFPreview(
     data?.decisionData?.dm_slug,
     "en",
@@ -289,7 +172,7 @@ function RouteComponent() {
       name: "dm_details",
       label: t("details_english"),
       type: "editor",
-      colSpan: 2,
+      className: "col-span-full",
       validators: {
         onSubmit: ({ value }) => (!value ? t("required_field") : null),
       },
@@ -298,7 +181,7 @@ function RouteComponent() {
       name: "dm_details_arabic",
       label: t("details_arabic"),
       type: "editor",
-      colSpan: 2,
+      className: "col-span-full",
       dir: "rtl",
       validators: {
         onSubmit: ({ value }) => (!value ? t("required_field") : null),

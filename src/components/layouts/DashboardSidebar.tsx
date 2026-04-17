@@ -36,6 +36,7 @@ export default function DashboardSidebar({ delay }: { delay: number }) {
   const userSession = useAtomValue(userSessionAtom);
 
   const userRole = userSession?.user?.roles;
+
   const mainNavItems = useMemo(() => {
     if (!userRole) return [];
 
@@ -43,13 +44,16 @@ export default function DashboardSidebar({ delay }: { delay: number }) {
       return item.roles?.includes(userRole);
     }).map((item) => ({
       ...item,
-      title: t(item.titleKey),
+      title: userRole === "admin" ? t(item.titleKey) : t(item.shortTitleKey),
       href: `/${currentLang}${item.href}`,
     }));
   }, [i18n.language, userRole, t]);
 
   const [isMenuOpen, setIsMenuOpen] = useState(() => {
-    const savedState = typeof window !== 'undefined' ? sessionStorage.getItem("isMenuOpen") : null;
+    const savedState =
+      typeof window !== "undefined"
+        ? sessionStorage.getItem("isMenuOpen")
+        : null;
     return savedState !== null ? JSON.parse(savedState) : false;
   });
 

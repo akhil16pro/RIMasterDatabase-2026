@@ -62,42 +62,39 @@ export function CustomForm({
               // 1. Handle Selects
               if (cfg.type === "select") {
                 return (
-                  <Select
-                    key={`${cfg.name}-${field.state.value}`}
-                    value={field.state.value?.toString()}
-                    onValueChange={field.handleChange}
-                  >
-                    <SelectTrigger
-                      label={cfg.label}
-                      error={field.state.meta.errors.length > 0}
-                      errorMessage={field.state.meta.errors[0]}
-                      readOnly={mode === "view"}
+                  <div className={cn(cfg?.className)}>
+                    <Select
+                      key={`${cfg.name}-${field.state.value}`}
+                      value={field.state.value?.toString()}
+                      onValueChange={field.handleChange}
                     >
-                      <SelectValue placeholder={t("select_option")} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {data?.[cfg.optionsKey!]?.map((item: any) => (
-                        <SelectItem
-                          key={item.value}
-                          value={item.value.toString()}
-                        >
-                          {item.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                      <SelectTrigger
+                        label={cfg.label}
+                        error={field.state.meta.errors.length > 0}
+                        errorMessage={field.state.meta.errors[0]}
+                        readOnly={mode === "view"}
+                      >
+                        <SelectValue placeholder={t("select_option")} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {data?.[cfg.optionsKey!]?.map((item: any) => (
+                          <SelectItem
+                            key={item.value}
+                            value={item.value.toString()}
+                          >
+                            {item.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 );
               }
 
               // 2. Handle CKEditor
               if (cfg.type === "editor") {
                 return (
-                  <div
-                    className={cn(
-                      "space-y-2 relative",
-                      cfg.colSpan && `md:col-span-${cfg.colSpan}`,
-                    )}
-                  >
+                  <div className={cn("space-y-2 relative", cfg?.className)}>
                     <Label>{cfg.label}</Label>
                     <CKEditorCustom
                       dir={cfg.dir}
@@ -116,12 +113,7 @@ export function CustomForm({
 
               if (cfg.type === "upload") {
                 return (
-                  <div
-                    className={cn(
-                      "space-y-2 relative",
-                      cfg.colSpan && `md:col-span-${cfg.colSpan}`,
-                    )}
-                  >
+                  <div className={cn("space-y-2 relative", cfg?.className)}>
                     <Label>{cfg.label}</Label>
                     <FileUpload
                       multiple={cfg.multiple}
@@ -141,9 +133,7 @@ export function CustomForm({
 
               // 3. Handle Standard Inputs (Text, Date, File)
               return (
-                <div
-                  className={cn(cfg.colSpan && `md:col-span-${cfg.colSpan}`)}
-                >
+                <div className={cn(cfg?.className)}>
                   <Input
                     type={cfg.type}
                     label={cfg.label}

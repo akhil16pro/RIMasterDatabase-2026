@@ -25,13 +25,13 @@ import { useForm } from "@tanstack/react-form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { AnimatePresence, motion } from "motion/react";
 export const Route = createFileRoute(
-  "/$lang/_lang/_auth/international-treaties/view/$slug",
+  "/$lang/_lang/_auth/international-treaty/view/$slug",
 )({
   component: RouteComponent,
   staticData: {
     breadcrumb: (params: any) => ({
       key: "view",
-      path: `/${params.lang}/federal-decisions/view/${params.slug}`,
+      path: `/${params.lang}/international-treaty/view/${params.slug}`,
     }),
   },
 });

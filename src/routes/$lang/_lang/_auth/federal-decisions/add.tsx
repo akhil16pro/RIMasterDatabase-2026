@@ -93,82 +93,6 @@ function RouteComponent() {
     },
   });
 
-  // const form = useForm({
-  //   defaultValues: {
-  //     local_government: userSession?.user?.userEmirateName || "",
-  //     dm_decision_type_id: "",
-  //     dm_title: "",
-  //     dm_title_arabic: "",
-  //     dm_decision_date: "",
-  //     dm_year: "",
-  //     dm_authority_title: "",
-  //     dm_authority_title_arabic: "",
-  //     dm_details: "",
-  //     dm_details_arabic: "",
-  //     dm_file: "",
-  //     dm_file_arabic: "",
-  //   },
-  //   onSubmit: async ({ value }) => {
-  //     setIsSubmitting(true);
-
-  //     try {
-  //       const formData = new FormData();
-
-  //       formData.append("dm_created_by", userSession?.user?.id || "");
-
-  //       formData.append(
-  //         "local_government",
-  //         userSession?.user?.userEmirateId || "",
-  //       );
-  //       formData.append("dm_decision_type_id", value.dm_decision_type_id);
-  //       formData.append("dm_title", value.dm_title);
-  //       formData.append("dm_title_arabic", value.dm_title_arabic);
-  //       formData.append("dm_decision_date", value.dm_decision_date);
-
-  //       formData.append("dm_year", value.dm_year);
-  //       formData.append("dm_authority_title", value.dm_authority_title);
-  //       formData.append(
-  //         "dm_authority_title_arabic",
-  //         value.dm_authority_title_arabic,
-  //       );
-  //       formData.append("dm_details", value.dm_details);
-  //       formData.append("dm_details_arabic", value.dm_details_arabic);
-
-  //       if (value.dm_file) {
-  //         formData.append("dm_file", value.dm_file);
-  //       }
-  //       if (value.dm_file_arabic) {
-  //         formData.append("dm_file_arabic", value.dm_file_arabic);
-  //       }
-
-  //       const res = await apiClient
-  //         .post(i18n.language + "/local-decision/store", {
-  //           headers: {
-  //             "Content-Type": undefined,
-  //           },
-  //           body: formData,
-  //         })
-  //         .json<any>();
-
-  //       // console.log(res, "local_decision_store_res");
-  //       if (res?.status) {
-  //         form.reset();
-  //         toast.success(res?.message || t("success"));
-  //         queryClient.invalidateQueries({
-  //           queryKey: ["federalDecisionTable"],
-  //         });
-  //         setTimeout(() => {
-  //           setThankYouPopup(true);
-  //         }, 150);
-  //       }
-  //     } catch (error) {
-  //       console.error("Add request failed:", error);
-  //     } finally {
-  //       setIsSubmitting(false);
-  //     }
-  //   },
-  // });
-
   const fields: FieldConfig[] = [
     {
       name: "local_government",
@@ -231,7 +155,7 @@ function RouteComponent() {
       name: "dm_details",
       label: t("details_english"),
       type: "editor",
-      colSpan: 2,
+      className: "col-span-full",
       validators: {
         onSubmit: ({ value }) => (!value ? t("required_field") : null),
       },
@@ -240,7 +164,7 @@ function RouteComponent() {
       name: "dm_details_arabic",
       label: t("details_arabic"),
       type: "editor",
-      colSpan: 2,
+      className: "col-span-full",
       dir: "rtl",
       validators: {
         onSubmit: ({ value }) => (!value ? t("required_field") : null),
