@@ -70,7 +70,7 @@ export const Route = createFileRoute("/$lang/_lang/_auth")({
           store.set(userSessionAtom, updatedSession);
           userSession = updatedSession;
         }
-        // console.log(apiUserData, "apiUserData");
+        console.log(apiUserData, "apiUserData");
       }
     } catch (e) {
       console.error("Auth hydration error", e);

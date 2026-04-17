@@ -218,12 +218,14 @@ input {
     padding-inline-start: 6rem;
     border-radius: 0px;
     --off: 0.5rem;
+    padding-inline-start: calc(24px + 2rem + (var(--sidePadd) * 2));
   }
   @media only screen and (max-width: rem(767)) {
     // border-radius: 10px;
     --sidePadd: 0.8rem;
     --sideBar: 17rem;
-    padding-inline-start: var(--sideBar);
+
+    padding-inline-start: calc(24px + 1rem + (var(--sidePadd) * 2));
   }
 
   &:has(.breadcrumbsWrap) {

@@ -9,7 +9,7 @@ const AvatarContext = React.createContext<{ size?: "sm" | "lg" }>({});
 interface AvatarImageProps extends React.ComponentPropsWithoutRef<
   typeof AvatarPrimitive.Image
 > {
-  isloading?: boolean;
+  isLoading?: boolean;
 }
 
 const Avatar = React.forwardRef<
@@ -36,12 +36,12 @@ Avatar.displayName = AvatarPrimitive.Root.displayName;
 const AvatarImage = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Image>,
   React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Image>
->(({ className, ...props }, ref) => {
+>(({ className, isLoading, ...props }, ref) => {
   const { size } = React.useContext(AvatarContext);
 
   return (
     <>
-      {props.isloading ? (
+      {isLoading ? (
         <div className="absolute inset-0 flex items-center justify-center bg-muted ">
           <RefreshCw
             className="size-9 animate-spin text-muted-foreground"
