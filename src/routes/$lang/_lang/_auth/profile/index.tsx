@@ -304,104 +304,140 @@ function RouteComponent() {
                 <form.Field
                   name="new_password"
                   validators={{
+                    onChange: ({ value }) => {
+                      if (
+                        value.length <
+                        Number(import.meta.env?.PASSWORDLIMITE || 8)
+                      )
+                        return t(
+                          `password_must_be_at_least_${Number(import.meta.env?.PASSWORDLIMITE || 8)}_characters`,
+                        );
+                      if (!/[a-z]/.test(value) || !/[A-Z]/.test(value))
+                        return t("password_must_include_mixed_case");
+                      if (!/[0-9]/.test(value))
+                        return t("password_must_include_numbers");
+                      if (!/[!@#$%^&*(),.?":{}|<>]/.test(value))
+                        return t("password_must_include_symbols");
+                    },
                     onSubmit: ({ value }) => {
                       if (!value) return t("password_required");
+                      if (
+                        value.length <
+                        Number(import.meta.env?.PASSWORDLIMITE || 8)
+                      )
+                        return t(
+                          `password_must_be_at_least_${Number(import.meta.env?.PASSWORDLIMITE || 8)}_characters`,
+                        );
+                      if (!/[a-z]/.test(value) || !/[A-Z]/.test(value))
+                        return t("password_must_include_mixed_case");
+                      if (!/[0-9]/.test(value))
+                        return t("password_must_include_numbers");
+                      if (!/[!@#$%^&*(),.?":{}|<>]/.test(value))
+                        return t("password_must_include_symbols");
 
                       const result = zxcvbn(value);
-
                       if (result.score < 3) {
                         return result.feedback.warning
                           ? t(result.feedback.warning)
-                          : t("password-is-too-weak");
+                          : t("password_is_too_weak");
                       }
-
                       return null;
                     },
                   }}
-                  children={(field) => (
-                    <div className="flex flex-col relative ">
-                      <Input
-                        id="new_password"
-                        name="new_password"
-                        value={field.state.value}
-                        onChange={(e) => field.handleChange(e.target.value)}
-                        type="password"
-                        label={t("new_password")}
-                        className=""
-                        error={
-                          field.state.meta.errors.length > 0 ? true : false
-                        }
-                        errorMessage={t(field.state.meta.errors[0])}
-                      />
-                      {field.state.value && (
-                        <div className=" absolute inset-0 overflow-hidden opacity-50 flex items-end pointer-events-none">
-                          <div
-                            className={`h-[2px] transition-all duration-300 ${
-                              zxcvbn(field.state.value).score <= 1
-                                ? "bg-red-500"
-                                : zxcvbn(field.state.value).score === 2
-                                  ? "bg-yellow-500"
-                                  : "bg-green-500"
-                            }`}
-                            style={{
-                              width: `${(zxcvbn(field.state.value).score + 1) * 20}%`,
-                            }}
-                          />
-                        </div>
-                      )}
-                    </div>
-                  )}
+                  children={(field) => {
+                    const strength = zxcvbn(field.state.value || "");
+                    return (
+                      <div className="flex flex-col relative ">
+                        <Input
+                          id="new_password"
+                          name="new_password"
+                          value={field.state.value}
+                          onChange={(e) => field.handleChange(e.target.value)}
+                          type="password"
+                          label={t("new_password")}
+                          className=""
+                          error={
+                            field.state.meta.errors.length > 0 ? true : false
+                          }
+                          errorMessage={
+                            field.state.meta.errors[0]
+                              ? t(field.state.meta.errors[0] as string)
+                              : ""
+                          }
+                        />
+                        {field.state.value && (
+                          <div className=" absolute inset-0 overflow-hidden opacity-50 flex items-end pointer-events-none">
+                            <div
+                              className={`h-[2px] transition-all duration-300 ${
+                                strength.score <= 1
+                                  ? "bg-red-500"
+                                  : strength.score === 2
+                                    ? "bg-yellow-500"
+                                    : "bg-green-500"
+                              }`}
+                              style={{
+                                width: `${(strength.score + 1) * 20}%`,
+                              }}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    );
+                  }}
                 />
                 <form.Field
                   name="new_password_confirmation"
                   validators={{
-                    onSubmit: ({ value, fieldApi }) =>
-                      !value
-                        ? t("password_required")
-                        : value?.length < 8
-                          ? t("password_must_be_at_least_8_characters")
-                          : value !==
-                              fieldApi.form.getFieldValue("new_password")
-                            ? t("passwords_do_not_match")
-                            : null,
+                    onChange: ({ value, fieldApi }) => {
+                      if (!value) return t("password_required");
+                      if (
+                        value !== fieldApi.form.getFieldValue("new_password")
+                      ) {
+                        return t("passwords_do_not_match");
+                      }
+                      return null;
+                    },
                   }}
-                  children={(field) => (
-                    <div className="flex flex-col relative ">
-                      <Input
-                        id="new_password_confirmation"
-                        name="new_password_confirmation"
-                        value={field.state.value}
-                        onChange={(e) => field.handleChange(e.target.value)}
-                        type="password"
-                        label={t("confirm_password")}
-                        className=""
-                        error={
-                          field.state.meta.errors.length > 0 ? true : false
-                        }
-                        errorMessage={
-                          field.state.meta.errors[0]
-                            ? t(field.state.meta.errors[0] as string)
-                            : ""
-                        }
-                      />
-                      {field.state.value && (
-                        <div className=" absolute inset-0 overflow-hidden opacity-50 flex items-end pointer-events-none">
-                          <div
-                            className={`h-[2px] transition-all duration-300 ${
-                              zxcvbn(field.state.value).score <= 1
-                                ? "bg-red-500"
-                                : zxcvbn(field.state.value).score === 2
-                                  ? "bg-yellow-500"
-                                  : "bg-green-500"
-                            }`}
-                            style={{
-                              width: `${(zxcvbn(field.state.value).score + 1) * 20}%`,
-                            }}
-                          />
-                        </div>
-                      )}
-                    </div>
-                  )}
+                  children={(field) => {
+                    const strength = zxcvbn(field.state.value || "");
+                    return (
+                      <div className="flex flex-col relative ">
+                        <Input
+                          id="new_password_confirmation"
+                          name="new_password_confirmation"
+                          value={field.state.value}
+                          onChange={(e) => field.handleChange(e.target.value)}
+                          type="password"
+                          label={t("confirm_password")}
+                          className=""
+                          error={
+                            field.state.meta.errors.length > 0 ? true : false
+                          }
+                          errorMessage={
+                            field.state.meta.errors[0]
+                              ? t(field.state.meta.errors[0] as string)
+                              : ""
+                          }
+                        />
+                        {field.state.value && (
+                          <div className=" absolute inset-0 overflow-hidden opacity-50 flex items-end pointer-events-none">
+                            <div
+                              className={`h-[2px] transition-all duration-300 ${
+                                strength.score <= 1
+                                  ? "bg-red-500"
+                                  : strength.score === 2
+                                    ? "bg-yellow-500"
+                                    : "bg-green-500"
+                              }`}
+                              style={{
+                                width: `${(strength.score + 1) * 20}%`,
+                              }}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    );
+                  }}
                 />
 
                 <div className="flex gap-2 ">
