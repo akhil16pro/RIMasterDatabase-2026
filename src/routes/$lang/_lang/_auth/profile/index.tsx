@@ -14,7 +14,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useState } from "react";
 import { useForm } from "@tanstack/react-form";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { zxcvbn, zxcvbnOptions } from "@zxcvbn-ts/core";
 import * as zxcvbnCommonPackage from "@zxcvbn-ts/language-common";
 import { Plus, RefreshCw, Camera, KeySquare } from "lucide-react";

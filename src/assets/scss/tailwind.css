@@ -19,6 +19,8 @@
   --color-border-300-rgb: 229 231 234;
   --color-border-600-rgb: 204 208 213;
   --color-danger-rgb: 255 90 90;
+  --color-danger-100-rgb: 237 190 190;
+
   --color-danger-600-rgb: 216 53 61;
   --color-warning-rgb: 255 164 84;
   --color-warning-600-rgb: 200 121 0;
@@ -55,6 +57,7 @@
   --color-border-600: rgba(var(--color-border-600-rgb) / 1);
 
   --color-danger: rgba(var(--color-danger-rgb) / 1);
+  --color-danger-100: rgba(var(--color-danger-100-rgb) / 1);
   --color-danger-600: rgba(var(--color-danger-600-rgb) / 1);
 
   --color-warning: rgba(var(--color-warning-rgb) / 1);

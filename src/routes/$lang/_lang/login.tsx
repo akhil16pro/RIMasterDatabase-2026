@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { AnimatePresence, motion } from "motion/react";
 
 import { Link } from "@tanstack/react-router";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import Cookies from "js-cookie";
 
 import { useSetAtom, useAtomValue, getDefaultStore } from "jotai";

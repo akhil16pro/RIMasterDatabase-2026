@@ -1,7 +1,7 @@
 // @/api.ts
 import i18n from "@/lang";
 import ky from "ky";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import Cookies from "js-cookie";
 
 const apiClient = ky.create({

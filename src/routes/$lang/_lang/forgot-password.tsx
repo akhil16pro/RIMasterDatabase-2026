@@ -13,7 +13,7 @@ import { Link } from "@tanstack/react-router";
 import { useAtomValue } from "jotai";
 import { useForm } from "@tanstack/react-form";
 import { useState } from "react";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { settingsAtom } from "@/store/atoms";
 
 export const Route = createFileRoute("/$lang/_lang/forgot-password")({

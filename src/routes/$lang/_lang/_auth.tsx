@@ -3,7 +3,7 @@ import { getDefaultStore } from "jotai";
 import { userSessionAtom } from "@/store/atoms";
 import { apiClient } from "@/api";
 import { NAV_CONFIG, APP_ROLES } from "@/lib/navigation";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import Cookies from "js-cookie";
 
 // const store = getDefaultStore();

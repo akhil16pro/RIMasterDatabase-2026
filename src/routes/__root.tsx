@@ -59,7 +59,9 @@ function RootComponent() {
     <React.Fragment>
       <title>{globalData?.settings?.title || t("logo-text")}</title>
       <Outlet />
-      <Toaster />
+      <Toaster
+        position={i18n.language === "ar" ? "bottom-left" : "bottom-right"}
+      />
     </React.Fragment>
   );
 }

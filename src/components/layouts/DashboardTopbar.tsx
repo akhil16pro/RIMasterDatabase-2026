@@ -24,7 +24,7 @@ import { useAtomValue } from "jotai";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "@/api";
 import Cookies from "js-cookie";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 import { DefaultButton } from "@/components/ui/buttons";

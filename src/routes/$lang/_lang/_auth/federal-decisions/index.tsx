@@ -21,7 +21,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Table } from "@/components/ui/Table";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 
 import { useAtomValue } from "jotai";
 import { userSessionAtom } from "@/store/atoms";

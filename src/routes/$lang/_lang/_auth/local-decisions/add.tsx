@@ -7,7 +7,7 @@ import DashboardLayout from "@/components/layouts/DashboardLayout";
 
 import { useState } from "react";
 
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 
 import { ThankYouPopup } from "@/components/ui/thankYouPopup";
 import { useEffect } from "react";

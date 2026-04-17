@@ -12,7 +12,7 @@ import { Link } from "@tanstack/react-router";
 // import { settingsAtom } from "@/routes/__root";
 import { useAtomValue } from "jotai";
 import { useForm } from "@tanstack/react-form";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { useState } from "react";
 import { z } from "zod";
 import { redirect } from "@tanstack/react-router";

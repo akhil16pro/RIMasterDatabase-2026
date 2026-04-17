@@ -460,20 +460,64 @@ input {
 }
 
 [data-sonner-toast][data-styled="true"] {
+  --normal-border: transparent;
+  border: none;
+}
+[dir="ltr"] [data-sonner-toast][data-styled="true"] {
   --normal-bg: linear-gradient(
     45deg,
-    var(--color-primary) 15%,
-    var(--color-secondary) 120%
+    var(--color-success-600) 15%,
+    var(--color-success-100) 120%
   );
-  --normal-border: hsl(from var(--color-white) h s l / 0.5);
 }
-[data-sonner-toast][data-styled="true"][data-type="error"] {
-  --normal-bg: var(--brandRed);
-  --normal-border: var(--brandRed);
+[dir="rtl"] [data-sonner-toast][data-styled="true"] {
+  --normal-bg: linear-gradient(
+    -45deg,
+    var(--color-success-600) 15%,
+    var(--color-success-100) 120%
+  );
 }
-[data-sonner-toast][data-styled="true"][data-type="warning"] {
-  --normal-bg: var(--brandYellow);
-  --normal-border: var(--brandYellow);
+[dir="ltr"] [data-sonner-toast][data-styled="true"][data-type="error"] {
+  --normal-bg: linear-gradient(
+    45deg,
+    var(--color-danger) 15%,
+    var(--color-danger-100) 120%
+  );
+}
+[dir="rtl"] [data-sonner-toast][data-styled="true"][data-type="error"] {
+  --normal-bg: linear-gradient(
+    -45deg,
+    var(--color-danger) 15%,
+    var(--color-danger-100) 120%
+  );
+}
+[dir="ltr"] [data-sonner-toast][data-styled="true"][data-type="info"] {
+  --normal-bg: linear-gradient(
+    45deg,
+    var(--color-primary) 0%,
+    var(--color-secondary) 150%
+  );
+}
+[dir="rtl"] [data-sonner-toast][data-styled="true"][data-type="info"] {
+  --normal-bg: linear-gradient(
+    -45deg,
+    var(--color-primary) 0%,
+    var(--color-secondary) 150%
+  );
+}
+[dir="ltr"] [data-sonner-toast][data-styled="true"][data-type="warning"] {
+  --normal-bg: linear-gradient(
+    45deg,
+    var(--color-warning-600) 0%,
+    var(--color-warning) 100%
+  );
+}
+[dir="rtl"] [data-sonner-toast][data-styled="true"][data-type="warning"] {
+  --normal-bg: linear-gradient(
+    -45deg,
+    var(--color-warning-600) 0%,
+    var(--color-warning) 100%
+  );
 }
 
 [data-radix-popper-content-wrapper] svg {

@@ -21,8 +21,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Table } from "@/components/ui/Table";
-import { toast } from "sonner";
-
+import { toast } from "@/lib/toast";
+import parse from "html-react-parser";
 import { useAtomValue } from "jotai";
 import { userSessionAtom } from "@/store/atoms";
 import { Pagination } from "@/components/ui/Pagination";
@@ -156,7 +156,7 @@ function PageTable({ search }: { search: string }) {
         .json<any>();
     },
     onSuccess: (res: any) => {
-      toast.success(res?.message || t("success"));
+      toast.success(res?.message);
       queryClient.invalidateQueries({ queryKey: ["localDecisionTable"] });
     },
     onError: (error: any) => {
@@ -205,7 +205,10 @@ function PageTable({ search }: { search: string }) {
             userSession?.user?.roles.includes("admin")
               ? (slug: string, value: boolean) => {
                   const status = value === true ? 1 : 3;
-                  toggleStatusMutation.mutate({ slug, status });
+                  toggleStatusMutation.mutate({
+                    slug,
+                    status,
+                  });
                 }
               : undefined
           }

@@ -6,7 +6,7 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useForm } from "@tanstack/react-form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import {
   Select,
   SelectContent,

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { apiClient } from "@/api";
 
 export const usePDFPreview = (slug: string, lang: string , type: "legislation" | "modification" | "decision" | "international-treaty") => {
