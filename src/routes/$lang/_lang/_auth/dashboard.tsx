@@ -134,7 +134,7 @@ function MinistryCard({
           <img
             src={userSession?.user?.entity_image || "/entityPlaceholder.png"}
             alt={userSession?.user?.entity_title}
-            className=" h-20 md:h-24 xl:h-27 2xl:h-33 w-auto"
+            className=" h-20 md:h-24 xl:h-27 2xl:h-33 w-auto aspect-[4/2] object-contain"
           />
         </div>
       )}

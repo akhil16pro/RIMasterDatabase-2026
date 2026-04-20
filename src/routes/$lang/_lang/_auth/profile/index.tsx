@@ -185,9 +185,9 @@ function RouteComponent() {
               <h1 className="text-4xl font-semibold text-white ">
                 {userSession?.user?.name}
               </h1>
-              <p className="text-xl text-white ">
+              {/* <p className="text-xl text-white ">
                 {userSession?.user?.designation}
-              </p>
+              </p> */}
             </div>
           </div>
         </motion.div>

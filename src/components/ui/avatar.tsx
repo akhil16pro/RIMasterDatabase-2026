@@ -77,21 +77,30 @@ AvatarImage.displayName = AvatarPrimitive.Image.displayName;
 const AvatarFallback = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Fallback>,
   React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Fallback>
->(({ className, children, ...props }, ref) => (
-  <AvatarPrimitive.Fallback
-    ref={ref}
-    className={cn(
-      "flex h-full w-full items-center justify-center  text-primary",
+>(({ className, children, ...props }, ref) => {
+  const { size } = React.useContext(AvatarContext);
+  return (
+    <AvatarPrimitive.Fallback
+      ref={ref}
+      className={cn(
+        "flex h-full w-full items-center justify-center  text-primary",
 
-      className,
-    )}
-    {...props}
-  >
-    <i className="not-italic bg-[linear-gradient(270deg,#022EE4_0%,#03CBFF_100%)] bg-clip-text text-transparent">
-      {children}
-    </i>
-  </AvatarPrimitive.Fallback>
-));
+        className,
+      )}
+      {...props}
+    >
+      <i
+        className={cn(
+          "not-italic bg-[linear-gradient(270deg,#022EE4_0%,#03CBFF_100%)] bg-clip-text text-transparent ",
+          size === "sm" && "text-[1.2rem] font-semibold",
+          size === "lg" && "text-[3rem] font-regular",
+        )}
+      >
+        {children}
+      </i>
+    </AvatarPrimitive.Fallback>
+  );
+});
 AvatarFallback.displayName = AvatarPrimitive.Fallback.displayName;
 
 export { Avatar, AvatarImage, AvatarFallback };
