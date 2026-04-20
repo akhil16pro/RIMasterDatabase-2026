@@ -75,13 +75,18 @@ function RouteComponent() {
         >
           <section className="w-full relative ">
             <motion.div
-              className="container mx-auto relative z-10 "
+              className="container mx-auto relative z-10 flex flex-col items-center justify-center gap-4 md:gap-8"
               initial={{ opacity: 0, y: 100, scaleY: 1.1, skewY: 1.5 }}
               animate={{ opacity: 1, y: 0, scaleY: 1, skewY: 0 }}
               exit={{ opacity: 0, y: 50, scaleY: 1.1, skewY: 1.5 }}
               transition={{ duration: 0.8, delay: 0.5 }}
             >
-              <div className="flex flex-col lg:flex-row rounded-[20px] overflow-hidden  min-h-[75vh] px-5 md:px-0">
+              <img
+                src="/loginLogo.svg"
+                alt=""
+                className=" object-contain xl:h-[5rem] lg:h-[6rem] md:h-[5rem] h-[4rem] w-auto"
+              />
+              <div className="flex flex-col lg:flex-row rounded-[20px] overflow-hidden  min-h-[75vh] px-5 md:px-0 w-full">
                 <Link
                   to={"/" + i18n.language}
                   className="flex-2/4 bg-[linear-gradient(190deg,#020355_-20.47%,#304FD0_90%)] p-10 px-[10%] flex flex-col items-center justify-center md:gap-8 gap-5"
