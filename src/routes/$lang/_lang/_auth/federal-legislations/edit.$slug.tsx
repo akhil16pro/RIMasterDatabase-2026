@@ -80,7 +80,7 @@ function RouteComponent() {
   const form = useForm({
     defaultValues: {
       lm_has_english_version: "2",
-      local_government: userSession?.user?.userEmirateName || "",
+      // local_government: userSession?.user?.userEmirateName || "",
       lm_law_type_id: "",
       lm_sector_id: "",
       lm_title: "",
@@ -108,10 +108,10 @@ function RouteComponent() {
 
         formData.append("lm_created_by", userSession?.user?.id || "");
         formData.append("lm_has_english_version", value.lm_has_english_version);
-        formData.append(
-          "local_government",
-          userSession?.user?.userEmirateId || "",
-        );
+        // formData.append(
+        //   "local_government",
+        //   userSession?.user?.userEmirateId || "",
+        // );
         formData.append("lm_sector_id", value.lm_sector_id.toString());
         formData.append("lm_law_type_id", value.lm_law_type_id.toString());
         formData.append("lm_title", value.lm_title);
@@ -316,7 +316,7 @@ function RouteComponent() {
               )}
             />
           </div>
-          <form.Field
+          {/* <form.Field
             name="local_government"
             children={(field) => (
               <Input
@@ -330,7 +330,7 @@ function RouteComponent() {
                 disabled={true}
               />
             )}
-          />
+          /> */}
           <form.Field
             name="lm_sector_id"
             validators={{

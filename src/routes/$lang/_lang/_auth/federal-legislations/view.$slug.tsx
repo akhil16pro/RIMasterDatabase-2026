@@ -111,12 +111,12 @@ function RouteComponent() {
           </RadioGroup>
         </div>
 
-        <Input
+        {/* <Input
           value={userSession?.user?.userEmirateName || ""}
           label={t("local_government")}
           disabled={true}
           readOnly={true}
-        />
+        /> */}
         <Select
           key={data?.lawData?.lm_sector_id}
           value={data?.lawData?.lm_sector_id?.toString() || ""}

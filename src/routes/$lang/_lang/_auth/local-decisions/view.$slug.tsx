@@ -49,7 +49,7 @@ function RouteComponent() {
   const userSession = useAtomValue(userSessionAtom);
 
   const [initialValues, setInitialValues] = useState({
-    local_government: userSession?.user?.userEmirateName || "",
+    // local_government: userSession?.user?.userEmirateName || "",
     dm_decision_type_id: "",
     dm_title: "",
     dm_title_arabic: "",
@@ -68,7 +68,7 @@ function RouteComponent() {
     if (userSession?.user) {
       setInitialValues((prev) => ({
         ...prev,
-        local_government: userSession?.user?.userEmirateName || "",
+        // local_government: userSession?.user?.userEmirateName || "",
       }));
     }
   }, [userSession]);
@@ -103,12 +103,12 @@ function RouteComponent() {
   );
 
   const fields: FieldConfig[] = [
-    {
-      name: "local_government",
-      label: t("local_government"),
-      type: "text",
-      disabled: true,
-    },
+    // {
+    //   name: "local_government",
+    //   label: t("local_government"),
+    //   type: "text",
+    //   disabled: true,
+    // },
     {
       name: "dm_decision_type_id",
       label: t("decision_type"),
@@ -203,7 +203,7 @@ function RouteComponent() {
   useEffect(() => {
     if (data?.decisionData) {
       setInitialValues({
-        local_government: userSession?.user?.userEmirateName || "",
+        // local_government: userSession?.user?.userEmirateName || "",
         dm_decision_type_id: data?.decisionData?.dm_decision_type_id,
         dm_title: data?.decisionData?.dm_title,
         dm_title_arabic: data?.decisionData?.dm_title_arabic,
