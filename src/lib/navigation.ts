@@ -59,7 +59,7 @@ export const NAV_CONFIG = [
     },
     {
     key: "international-treaty",
-    titleKey: "international-treaty",
+    titleKey: "international_treaties",
     shortTitleKey : "treaty",
     href:  "/international-treaty",
     roles: APP_PERMISSIONS.FEDERAL_ONLY,
