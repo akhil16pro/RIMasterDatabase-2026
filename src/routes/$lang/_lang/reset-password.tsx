@@ -113,28 +113,30 @@ function RouteComponent() {
         >
           <section className="w-full relative ">
             <motion.div
-              className="container mx-auto relative z-10 flex flex-col items-center justify-center gap-4 md:gap-8"
+              className="container mx-auto relative z-10 flex flex-col items-center justify-center gap-4 md:gap-14"
               initial={{ opacity: 0, y: 100, scaleY: 1.1, skewY: 1.5 }}
               animate={{ opacity: 1, y: 0, scaleY: 1, skewY: 0 }}
               exit={{ opacity: 0, y: 50, scaleY: 1.1, skewY: 1.5 }}
               transition={{ duration: 0.8, delay: 0.5 }}
             >
-              <img
-                src="/loginLogo.svg"
-                alt=""
-                className=" object-contain xl:h-[5rem] lg:h-[6rem] md:h-[5rem] h-[4rem] w-auto"
-              />
-              <div className="flex flex-col lg:flex-row rounded-[20px] overflow-hidden  min-h-[75vh] px-5 md:px-0 w-full">
+              <Link to={"/" + i18n.language} className="flex">
+                <img
+                  src="/loginLogo.svg"
+                  alt=""
+                  className=" object-contain xl:h-[5rem] lg:h-[6rem] md:h-[5rem] h-[4rem] w-auto"
+                />
+              </Link>
+              <div className="flex flex-col lg:flex-row rounded-[20px] overflow-hidden  min-h-auto xl:min-h-[55vh] px-5 md:px-0 w-full xl:w-[75%] ">
                 <Link
                   to={"/" + i18n.language}
                   className="flex-2/4 bg-[linear-gradient(190deg,#020355_-20.47%,#304FD0_90%)] p-10 px-[10%] flex flex-col items-center justify-center md:gap-8 gap-5"
                 >
                   <img
                     src={"/logoShape.svg"}
-                    alt="Regulatory Intelligence Logo"
-                    className="h-auto object-contain lg:w-[5rem] md:w-[5rem] w-[4rem]"
+                    alt={settings?.settings?.title || t("logo-text")}
+                    className="h-auto object-contain lg:w-[4.2rem] md:w-[5rem] w-[4rem]"
                   />
-                  <div className="font-medium text-[2.2rem] md:text-[2.7rem] lg:text-[2.45rem]    text-text/80 relative block bg-gradient-to-r from-white to-secondary bg-clip-text text-transparent  leading-[100%] text-center tracking-[.42px]">
+                  <div className="font-medium text-[2.2rem] md:text-[2.7rem] lg:text-[2rem] text-text/80 relative block bg-gradient-to-r from-white to-secondary bg-clip-text text-transparent  leading-[100%] text-center tracking-[.42px]">
                     {settings?.settings?.title || t("logo-text")}
                   </div>
                 </Link>
