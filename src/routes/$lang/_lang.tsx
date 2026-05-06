@@ -1,5 +1,6 @@
 // import GlobalError from "@/components/layouts/GlobalError";
 import NotFoundLayout from "@/components/layouts/NotFoundLayout";
+
 import i18n from "@/lang";
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 

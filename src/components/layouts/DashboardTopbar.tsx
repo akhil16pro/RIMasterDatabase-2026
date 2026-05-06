@@ -248,6 +248,7 @@ function LoginAvatar() {
     const newUrl = `/${pathSegments.join("/")}`;
 
     router.navigate({ to: newUrl });
+    queryClient.invalidateQueries({ queryKey: ["globalInfo", newLang] });
     queryClient.invalidateQueries({ queryKey: ["userInfo"] });
   };
   return (

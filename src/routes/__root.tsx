@@ -6,7 +6,7 @@ import { Toaster } from "@/components/ui/sonner";
 import "lenis/dist/lenis.css";
 import { useTranslation } from "react-i18next";
 // import GlobalError from "@/components/layouts/GlobalError";
-import { atom, useSetAtom } from "jotai";
+import { atom, useSetAtom, useAtom } from "jotai";
 import { useQuery } from "@tanstack/react-query";
 import { settingsAtom } from "@/store/atoms";
 
@@ -18,10 +18,10 @@ export const Route = createRootRoute({
 
 function RootComponent() {
   const { t, i18n } = useTranslation();
-  const setSettings = useSetAtom(settingsAtom);
+  const [settings, setSettings] = useAtom(settingsAtom);
 
   const { data: globalData, isLoading } = useQuery({
-    queryKey: ["global-init", i18n.language],
+    queryKey: ["globalInfo", i18n.language],
     staleTime: Infinity,
     queryFn: async () => {
       const [settingsRes, transRes] = await Promise.allSettled([
@@ -29,14 +29,16 @@ function RootComponent() {
         apiClient.get(`${i18n.language}/get-translation`).json(),
       ]);
 
-      const settings =
-        settingsRes.status === "fulfilled" ? settingsRes.value?.data : null;
+      const settingsData =
+        settingsRes.status === "fulfilled"
+          ? settingsRes.value?.data?.settings
+          : null;
       const translations =
         transRes.status === "fulfilled"
           ? transRes.value?.data?.translations
           : null;
 
-      if (settings) setSettings(settings);
+      if (settingsData) setSettings(settingsData);
       if (translations) {
         i18n.addResourceBundle(
           i18n.language,
@@ -57,7 +59,7 @@ function RootComponent() {
 
   return (
     <React.Fragment>
-      <title>{globalData?.settings?.title || t("logo-text")}</title>
+      <title>{settings?.title || t("logo-text")}</title>
       <Outlet />
       <Toaster
         position={i18n.language === "ar" ? "bottom-left" : "bottom-right"}

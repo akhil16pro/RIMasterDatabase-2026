@@ -88,7 +88,7 @@ export default function AppHeader({ delay }: { delay: number }) {
                     src={
                       i18n.language === "en" ? "/logo-en.png" : "/logo-ar.png"
                     }
-                    alt={settings?.settings?.title || t("logo-text")}
+                    alt={settings?.title || t("logo-text")}
                     className="h-full object-contain w-auto"
                   />
                 </Link>

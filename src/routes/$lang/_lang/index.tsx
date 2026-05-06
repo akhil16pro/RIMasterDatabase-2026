@@ -1,4 +1,5 @@
 import AppHeader from "@/components/layouts/AppHeader";
+import AppFooter from "@/components/layouts/AppFooter";
 import { apiClient } from "@/api";
 import RoteError from "@/components/layouts/RoteError";
 import RouteLoader from "@/components/layouts/RouteLoader";
@@ -42,10 +43,13 @@ function RouteComponent() {
       ) : error ? (
         <RoteError key="error" />
       ) : (
-        <div className="flex flex-col items-center justify-center w-full min-h-screen flex-1">
-          <AppHeader delay={1} />
-          <HomeBanner data={data} />
-        </div>
+        <>
+          <div className="flex flex-col items-center justify-center w-full min-h-screen flex-1">
+            <AppHeader delay={1} />
+            <HomeBanner data={data} />
+          </div>
+          <AppFooter delay={0.7} />
+        </>
       )}
     </AnimatePresence>
   );

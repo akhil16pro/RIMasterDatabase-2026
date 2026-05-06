@@ -15,6 +15,7 @@ import { useForm } from "@tanstack/react-form";
 import { useState } from "react";
 import { toast } from "@/lib/toast";
 import { settingsAtom } from "@/store/atoms";
+import AppFooter from "@/components/layouts/AppFooter";
 
 export const Route = createFileRoute("/$lang/_lang/forgot-password")({
   component: RouteComponent,
@@ -73,7 +74,7 @@ function RouteComponent() {
           key="login-content"
           className="flex flex-col items-center justify-center w-full h-full flex-1"
         >
-          <section className="w-full relative ">
+          <section className="w-full relative flex-1 flex items-center justify-center ">
             <motion.div
               className="container mx-auto relative z-10 flex flex-col items-center justify-center gap-4 md:gap-14"
               initial={{ opacity: 0, y: 100, scaleY: 1.1, skewY: 1.5 }}
@@ -94,12 +95,12 @@ function RouteComponent() {
                   className="flex-2/4 bg-[linear-gradient(190deg,#020355_-20.47%,#304FD0_90%)] p-10 px-[10%] flex flex-col items-center justify-center md:gap-8 gap-5"
                 >
                   <img
-                    src={"/logoShape.svg"}
-                    alt={settings?.settings?.title || t("logo-text")}
+                    src={settings?.logo || "/logoShape.svg"}
+                    alt={settings?.title || t("logo-text")}
                     className="h-auto object-contain lg:w-[4.2rem] md:w-[5rem] w-[4rem]"
                   />
                   <div className="font-medium text-[2.2rem] md:text-[2.7rem] lg:text-[2rem] text-text/80 relative block bg-gradient-to-r from-white to-secondary bg-clip-text text-transparent  leading-[100%] text-center tracking-[.42px]">
-                    {settings?.settings?.title || t("logo-text")}
+                    {settings?.title || t("logo-text")}
                   </div>
                 </Link>
                 <div className="flex-2/3 bg-white p-5 md:p-10 flex flex-col justify-center gap-5">
@@ -168,6 +169,7 @@ function RouteComponent() {
               </div>
             </motion.div>
           </section>
+          <AppFooter delay={0.7} />
         </div>
       )}
     </AnimatePresence>

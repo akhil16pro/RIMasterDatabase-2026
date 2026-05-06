@@ -103,11 +103,14 @@ export default function DashboardSidebar({ delay }: { delay: number }) {
                   delay: 0.1,
                 }}
                 className={cn(
-                  "absolute top-1/2 -translate-y-1/2 inline-block font-bold lg:text-[1.25rem] md:text-[1.1rem] text-[.9rem] leading-none w-[5rem] md:w-[5rem]  tracking-[0.03em] bg-clip-text text-transparent inset-x-[2.3rem] md:inset-x-[2.9rem] lg:inset-x-[3.8rem]",
+                  "absolute top-1/2 -translate-y-1/2 inline-block font-bold lg:text-[1.25rem] md:text-[1.1rem] text-[.9rem] leading-none   tracking-[0.03em] bg-clip-text text-transparent inset-x-[2.3rem] md:inset-x-[2.9rem] lg:inset-x-[3.8rem]",
                   "bg-[linear-gradient(90deg,#FFF_0%,#03CBFF_80%)]",
+                  i18n.language === "en"
+                    ? "w-[5rem] md:w-[5rem]"
+                    : "w-[5rem] md:w-[6rem]",
                 )}
               >
-                {settings?.settings?.title || t("logo-text")}
+                {settings?.title || t("logo-text")}
               </motion.span>
             </Link>
           </div>
