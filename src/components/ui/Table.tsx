@@ -14,6 +14,8 @@ interface TableProps extends React.ComponentPropsWithoutRef<typeof motion.div> {
   tableData: any[];
   translator?: any;
   pageStartIndex?: number;
+  statistics?: any[];
+  onStatusToggle?: (slug: string, value: boolean) => void;
 }
 
 export const Table = ({
@@ -23,6 +25,7 @@ export const Table = ({
   translator,
   onStatusToggle,
   pageStartIndex = 1,
+  statistics,
 
   ...rest
 }: TableProps) => {
@@ -33,6 +36,64 @@ export const Table = ({
 
   return (
     <div {...rest} className={cn("flex-1 w-full overflow-hidden", className)}>
+      {statistics && (
+        <div className="flex gap-1 w-full justify-end mb-1 md:mb-0">
+          {statistics?.approved != "0" && (
+            <motion.div
+              initial={{ opacity: 0, x: i18n.language === "ar" ? -40 : 40 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: i18n.language === "ar" ? 40 : -40 }}
+              transition={{
+                delay: 0,
+                duration: 0.5,
+                ease: "easeInOut",
+              }}
+              className="flex  px-2 gap-1 items-center"
+            >
+              <div className="font-bold text-white bg-[var(--color-success)] px-[8px] py-[2px] rounded-[5px] text-[14px] leading-[100%]">
+                {statistics?.approved}
+              </div>
+              <span className="font-medium">{t("approved")}</span>
+            </motion.div>
+          )}
+          {statistics?.draft != "0" && (
+            <motion.div
+              initial={{ opacity: 0, x: i18n.language === "ar" ? -40 : 40 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: i18n.language === "ar" ? 40 : -40 }}
+              transition={{
+                delay: 0.1,
+                duration: 0.5,
+                ease: "easeInOut",
+              }}
+              className="flex  px-2 gap-1 items-center"
+            >
+              <div className="font-bold text-white bg-[var(--color-danger)] px-[8px] py-[2px] rounded-[5px] text-[14px] leading-[100%]">
+                {statistics?.draft}
+              </div>
+              <span className="font-medium">{t("draft")}</span>
+            </motion.div>
+          )}
+          {statistics?.submitted != "0" && (
+            <motion.div
+              initial={{ opacity: 0, x: i18n.language === "ar" ? -40 : 40 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: i18n.language === "ar" ? 40 : -40 }}
+              transition={{
+                delay: 0.2,
+                duration: 0.5,
+                ease: "easeInOut",
+              }}
+              className="flex  px-2 gap-1 items-center"
+            >
+              <div className="font-bold text-white bg-[var(--color-warning)] px-[8px] py-[2px] rounded-[5px] text-[14px] leading-[100%]">
+                {statistics?.submitted}
+              </div>
+              <span className="font-medium">{t("submitted")}</span>
+            </motion.div>
+          )}
+        </div>
+      )}
       <table
         className={cn(
           "w-full text-[var(--textColor)] border-separate border-spacing-y-2",

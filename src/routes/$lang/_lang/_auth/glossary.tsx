@@ -119,10 +119,10 @@ function RouteComponent() {
           />
 
           <UploadExcelModal />
-          <DefaultButton
+          {/* <DefaultButton
             title={t("guideline")}
             icon={<BookOpenText className="size-5" />}
-          />
+          /> */}
         </motion.div>
       )}
 
@@ -212,6 +212,7 @@ function PageTable() {
           tableHead={data?.table_headers}
           tableData={processedTableData}
           translator={data?.translator}
+          statistics={data?.statistics}
           onStatusToggle={
             userSession?.user?.roles.includes("admin")
               ? (slug: string, value: boolean) => {
