@@ -34,7 +34,7 @@ import BarChart from "@/components/ui/BarChart";
 import { cn } from "@/lib/utils";
 
 import { useAtomValue } from "jotai";
-import { userSessionAtom } from "@/store/atoms";
+import { userSessionAtom, settingsAtom } from "@/store/atoms";
 
 import { MultiSelect } from "@/components/ui/multi-select";
 
@@ -52,7 +52,7 @@ export const Route = createFileRoute("/$lang/_lang/_auth/dashboard")({
 
 function RouteComponent() {
   const { t, i18n } = useTranslation();
-
+  const settings = useAtomValue(settingsAtom);
   const userSession = useAtomValue(userSessionAtom);
 
   const { data, isLoading, error, isRefetching } = useQuery({
@@ -86,7 +86,7 @@ function RouteComponent() {
       error={error}
       title={
         userSession?.user?.roles?.includes("admin")
-          ? t("overview")
+          ? settings?.title || t("overview")
           : userSession?.user?.entity_title
       }
       lastLogin={true}

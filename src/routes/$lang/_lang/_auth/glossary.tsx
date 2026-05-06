@@ -94,7 +94,8 @@ function RouteComponent() {
       title={t("glossary")}
       campaign={data?.campaign}
     >
-      {isCampaignActive && data?.campaign && (
+      {((isCampaignActive && data?.campaign) ||
+        userSession?.user?.roles.includes("admin")) && (
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -110,7 +111,7 @@ function RouteComponent() {
           </div>
 
           <DefaultButton
-            title={t("download_excel_template")}
+            title={t("download_glossary_template")}
             icon={<Download className="size-5" />}
             onClick={() => {
               window.open(data?.campaign?.url, "_blank");
@@ -912,13 +913,13 @@ function UploadExcelModal() {
         <DialogTrigger asChild>
           <DefaultButton
             className=""
-            title={t("upload_excel")}
+            title={t("upload_glossary")}
             icon={<Upload className="size-5" />}
           />
         </DialogTrigger>
         <DialogContent className="lg:max-w-2xl">
           <DialogHeader>
-            <DialogTitle>{t("upload_excel")}</DialogTitle>
+            <DialogTitle>{t("upload_glossary")}</DialogTitle>
           </DialogHeader>
 
           <form.Field
@@ -945,7 +946,7 @@ function UploadExcelModal() {
                   const file = e.target.files?.[0]; // Get the actual File object
                   field.handleChange(file);
                 }}
-                label={t("file")}
+                // label={t("file")}
                 className=""
                 type="file"
                 error={field.state.meta.errors.length > 0 ? true : false}
@@ -959,7 +960,7 @@ function UploadExcelModal() {
             <DefaultButton
               type="submit"
               variant="dark"
-              title={t("upload_file")}
+              title={t("submit")}
               onClick={form.handleSubmit}
               icon={<Plus className="size-5" />}
               isDisabled={isSubmitting}
