@@ -50,7 +50,7 @@ export const Table = ({
               }}
               className="flex  px-2 gap-1 items-center"
             >
-              <div className="font-bold text-white bg-[var(--color-success)] px-[8px] py-[2px] rounded-[5px] text-[14px] leading-[100%]">
+              <div className="font-bold text-white bg-[linear-gradient(80deg,var(--color-success-100),var(--color-success-600))] px-[8px] py-[2px] rounded-[5px] text-[14px] leading-[100%]">
                 {statistics?.approved}
               </div>
               <span className="font-medium">{t("approved")}</span>
@@ -68,13 +68,13 @@ export const Table = ({
               }}
               className="flex  px-2 gap-1 items-center"
             >
-              <div className="font-bold text-white bg-[var(--color-danger)] px-[8px] py-[2px] rounded-[5px] text-[14px] leading-[100%]">
+              <div className="font-bold text-white bg-[linear-gradient(80deg,var(--color-danger-100)_0%,var(--color-danger)_100%)] px-[8px] py-[2px] rounded-[5px] text-[14px] leading-[100%]">
                 {statistics?.draft}
               </div>
               <span className="font-medium">{t("draft")}</span>
             </motion.div>
           )}
-          {statistics?.submitted != "0" && (
+          {statistics?.total != "0" && (
             <motion.div
               initial={{ opacity: 0, x: i18n.language === "ar" ? -40 : 40 }}
               animate={{ opacity: 1, x: 0 }}
@@ -86,10 +86,10 @@ export const Table = ({
               }}
               className="flex  px-2 gap-1 items-center"
             >
-              <div className="font-bold text-white bg-[var(--color-warning)] px-[8px] py-[2px] rounded-[5px] text-[14px] leading-[100%]">
-                {statistics?.submitted}
+              <div className="font-bold text-white bg-[linear-gradient(80deg,var(--color-secondary)_0%,var(--color-primary)_100%)] px-[8px] py-[2px] rounded-[5px] text-[14px] leading-[100%]">
+                {statistics?.total}
               </div>
-              <span className="font-medium">{t("submitted")}</span>
+              <span className="font-medium">{t("total")}</span>
             </motion.div>
           )}
         </div>
