@@ -86,8 +86,7 @@ export default function DashboardSidebar({ delay }: { delay: number }) {
                 className=" object-contain lg:h-[5rem] md:h-[4rem] h-[3rem] w-auto"
               />
 
-              <motion.span
-                key="sidebar-logo-text"
+              <motion.div
                 initial={false}
                 animate={{
                   opacity: !isMenuOpen ? 1 : 0,
@@ -103,15 +102,21 @@ export default function DashboardSidebar({ delay }: { delay: number }) {
                   delay: 0.1,
                 }}
                 className={cn(
-                  "absolute top-1/2 -translate-y-1/2 inline-block font-bold lg:text-[1.25rem] md:text-[1.1rem] text-[.9rem] leading-none   tracking-[0.03em] bg-clip-text text-transparent inset-x-[2.3rem] md:inset-x-[2.9rem] lg:inset-x-[3.8rem]",
+                  "absolute top-1/2 -translate-y-1/2 inline-block font-bold    tracking-[0.03em] bg-clip-text text-transparent inset-x-[2.3rem] md:inset-x-[2.9rem] lg:inset-x-[3.8rem]",
                   "bg-[linear-gradient(90deg,#FFF_0%,#03CBFF_80%)]",
-                  i18n.language === "en"
-                    ? "w-[5rem] md:w-[5rem]"
-                    : "w-[5rem] md:w-[6rem]",
+                  "lg:text-[1.5rem] md:text-[1.3rem] text-[1rem]",
+                  currentLang === "en"
+                    ? "w-[5rem] md:w-[6rem]  leading-none"
+                    : "w-[5rem] md:w-[7rem]  leading-[105%]",
                 )}
               >
-                {settings?.title || t("logo-text")}
-              </motion.span>
+                <span
+                  className="flex flex-col"
+                  key={`sidebar-logo-text-${currentLang}`}
+                >
+                  {settings?.title || t("logo-text")}
+                </span>
+              </motion.div>
             </Link>
           </div>
 
@@ -125,7 +130,7 @@ export default function DashboardSidebar({ delay }: { delay: number }) {
                 strokeWidth={1}
                 stroke="url(#dashboard_linear)"
               />
-            ) : i18n.language === "en" ? (
+            ) : currentLang === "en" ? (
               <CircleChevronRight
                 className="text-secondary md:size-9 lg:size-10"
                 strokeWidth={1}

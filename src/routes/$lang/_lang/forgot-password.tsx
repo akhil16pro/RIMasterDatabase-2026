@@ -16,7 +16,7 @@ import { useState } from "react";
 import { toast } from "@/lib/toast";
 import { settingsAtom } from "@/store/atoms";
 import AppFooter from "@/components/layouts/AppFooter";
-
+import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/$lang/_lang/forgot-password")({
   component: RouteComponent,
 });
@@ -97,7 +97,11 @@ function RouteComponent() {
                   <img
                     src={settings?.logo || "/logoShape.svg"}
                     alt={settings?.title || t("logo-text")}
-                    className="h-auto object-contain lg:w-[4.2rem] md:w-[5rem] w-[4rem]"
+                    className={cn(
+                      settings?.logo
+                        ? "h-[5.5rem] md:h-[6rem] lg:h-[6rem]"
+                        : "h-auto object-contain lg:w-[4.2rem] md:w-[5rem] w-[4rem]",
+                    )}
                   />
                   <div className="font-medium text-[2.2rem] md:text-[2.7rem] lg:text-[2rem] text-text/80 relative block bg-gradient-to-r from-white to-secondary bg-clip-text text-transparent  leading-[100%] text-center tracking-[.42px]">
                     {settings?.title || t("logo-text")}

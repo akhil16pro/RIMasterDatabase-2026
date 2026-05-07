@@ -197,7 +197,7 @@ function PageTable({ search }: { search: string }) {
       }),
     }));
   }, [data?.table_values, i18n.language]);
-
+  console.log(data);
   return (
     <>
       {data && (
@@ -206,6 +206,7 @@ function PageTable({ search }: { search: string }) {
           tableHead={data?.table_headers}
           tableData={processedTableData}
           translator={data?.translator}
+          statistics={data?.statistics}
           onStatusToggle={
             userSession?.user?.roles.includes("admin")
               ? (slug: string, value: boolean) => {

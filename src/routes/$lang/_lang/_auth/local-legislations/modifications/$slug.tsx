@@ -209,6 +209,7 @@ function PageTable({ search, slug }: { search: string; slug: string }) {
           tableHead={data?.table_headers}
           tableData={processedTableData}
           translator={data?.translator}
+          statistics={data?.statistics}
           onStatusToggle={
             userSession?.user?.roles.includes("admin")
               ? (slug: string, value: boolean) => {

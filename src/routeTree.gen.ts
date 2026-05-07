@@ -19,6 +19,7 @@ import { Route as LangLangAuthRouteImport } from './routes/$lang/_lang/_auth'
 import { Route as LangLangAuthTestFormRouteImport } from './routes/$lang/_lang/_auth/testForm'
 import { Route as LangLangAuthGlossaryRouteImport } from './routes/$lang/_lang/_auth/glossary'
 import { Route as LangLangAuthDashboardRouteImport } from './routes/$lang/_lang/_auth/dashboard'
+import { Route as LangLangAuthCampaignRouteImport } from './routes/$lang/_lang/_auth/campaign'
 import { Route as LangLangAuthProfileRouteRouteImport } from './routes/$lang/_lang/_auth/profile/route'
 import { Route as LangLangAuthLocalLegislationsRouteRouteImport } from './routes/$lang/_lang/_auth/local-legislations/route'
 import { Route as LangLangAuthLocalDecisionsRouteRouteImport } from './routes/$lang/_lang/_auth/local-decisions/route'
@@ -102,6 +103,11 @@ const LangLangAuthGlossaryRoute = LangLangAuthGlossaryRouteImport.update({
 const LangLangAuthDashboardRoute = LangLangAuthDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => LangLangAuthRoute,
+} as any)
+const LangLangAuthCampaignRoute = LangLangAuthCampaignRouteImport.update({
+  id: '/campaign',
+  path: '/campaign',
   getParentRoute: () => LangLangAuthRoute,
 } as any)
 const LangLangAuthProfileRouteRoute =
@@ -328,6 +334,7 @@ export interface FileRoutesByFullPath {
   '/$lang/local-decisions': typeof LangLangAuthLocalDecisionsRouteRouteWithChildren
   '/$lang/local-legislations': typeof LangLangAuthLocalLegislationsRouteRouteWithChildren
   '/$lang/profile': typeof LangLangAuthProfileRouteRouteWithChildren
+  '/$lang/campaign': typeof LangLangAuthCampaignRoute
   '/$lang/dashboard': typeof LangLangAuthDashboardRoute
   '/$lang/glossary': typeof LangLangAuthGlossaryRoute
   '/$lang/testForm': typeof LangLangAuthTestFormRoute
@@ -367,6 +374,7 @@ export interface FileRoutesByTo {
   '/$lang/forgot-password': typeof LangLangForgotPasswordRoute
   '/$lang/login': typeof LangLangLoginRoute
   '/$lang/reset-password': typeof LangLangResetPasswordRoute
+  '/$lang/campaign': typeof LangLangAuthCampaignRoute
   '/$lang/dashboard': typeof LangLangAuthDashboardRoute
   '/$lang/glossary': typeof LangLangAuthGlossaryRoute
   '/$lang/testForm': typeof LangLangAuthTestFormRoute
@@ -415,6 +423,7 @@ export interface FileRoutesById {
   '/$lang/_lang/_auth/local-decisions': typeof LangLangAuthLocalDecisionsRouteRouteWithChildren
   '/$lang/_lang/_auth/local-legislations': typeof LangLangAuthLocalLegislationsRouteRouteWithChildren
   '/$lang/_lang/_auth/profile': typeof LangLangAuthProfileRouteRouteWithChildren
+  '/$lang/_lang/_auth/campaign': typeof LangLangAuthCampaignRoute
   '/$lang/_lang/_auth/dashboard': typeof LangLangAuthDashboardRoute
   '/$lang/_lang/_auth/glossary': typeof LangLangAuthGlossaryRoute
   '/$lang/_lang/_auth/testForm': typeof LangLangAuthTestFormRoute
@@ -463,6 +472,7 @@ export interface FileRouteTypes {
     | '/$lang/local-decisions'
     | '/$lang/local-legislations'
     | '/$lang/profile'
+    | '/$lang/campaign'
     | '/$lang/dashboard'
     | '/$lang/glossary'
     | '/$lang/testForm'
@@ -502,6 +512,7 @@ export interface FileRouteTypes {
     | '/$lang/forgot-password'
     | '/$lang/login'
     | '/$lang/reset-password'
+    | '/$lang/campaign'
     | '/$lang/dashboard'
     | '/$lang/glossary'
     | '/$lang/testForm'
@@ -549,6 +560,7 @@ export interface FileRouteTypes {
     | '/$lang/_lang/_auth/local-decisions'
     | '/$lang/_lang/_auth/local-legislations'
     | '/$lang/_lang/_auth/profile'
+    | '/$lang/_lang/_auth/campaign'
     | '/$lang/_lang/_auth/dashboard'
     | '/$lang/_lang/_auth/glossary'
     | '/$lang/_lang/_auth/testForm'
@@ -658,6 +670,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/$lang/dashboard'
       preLoaderRoute: typeof LangLangAuthDashboardRouteImport
+      parentRoute: typeof LangLangAuthRoute
+    }
+    '/$lang/_lang/_auth/campaign': {
+      id: '/$lang/_lang/_auth/campaign'
+      path: '/campaign'
+      fullPath: '/$lang/campaign'
+      preLoaderRoute: typeof LangLangAuthCampaignRouteImport
       parentRoute: typeof LangLangAuthRoute
     }
     '/$lang/_lang/_auth/profile': {
@@ -1070,6 +1089,7 @@ interface LangLangAuthRouteChildren {
   LangLangAuthLocalDecisionsRouteRoute: typeof LangLangAuthLocalDecisionsRouteRouteWithChildren
   LangLangAuthLocalLegislationsRouteRoute: typeof LangLangAuthLocalLegislationsRouteRouteWithChildren
   LangLangAuthProfileRouteRoute: typeof LangLangAuthProfileRouteRouteWithChildren
+  LangLangAuthCampaignRoute: typeof LangLangAuthCampaignRoute
   LangLangAuthDashboardRoute: typeof LangLangAuthDashboardRoute
   LangLangAuthGlossaryRoute: typeof LangLangAuthGlossaryRoute
   LangLangAuthTestFormRoute: typeof LangLangAuthTestFormRoute
@@ -1087,6 +1107,7 @@ const LangLangAuthRouteChildren: LangLangAuthRouteChildren = {
   LangLangAuthLocalLegislationsRouteRoute:
     LangLangAuthLocalLegislationsRouteRouteWithChildren,
   LangLangAuthProfileRouteRoute: LangLangAuthProfileRouteRouteWithChildren,
+  LangLangAuthCampaignRoute: LangLangAuthCampaignRoute,
   LangLangAuthDashboardRoute: LangLangAuthDashboardRoute,
   LangLangAuthGlossaryRoute: LangLangAuthGlossaryRoute,
   LangLangAuthTestFormRoute: LangLangAuthTestFormRoute,

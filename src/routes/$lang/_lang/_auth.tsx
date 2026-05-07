@@ -70,14 +70,11 @@ export const Route = createFileRoute("/$lang/_lang/_auth")({
           store.set(userSessionAtom, updatedSession);
           userSession = updatedSession;
         }
-        // console.log(apiUserData, "apiUserData");
       }
     } catch (e) {
       console.error("Auth hydration error", e);
       userSession = null;
     }
-
-    // console.log(userSession, "userSession");
 
     const checkRole = APP_ROLES.includes(userSession?.user?.roles);
 
@@ -107,8 +104,6 @@ export const Route = createFileRoute("/$lang/_lang/_auth")({
       : pathname;
 
     const activeRequirement = NAV_CONFIG.find((item) => {
-      // Matches if the current simplified path starts with the config href
-      // e.g., "/dashboard" matches item.href === "/dashboard"
       return currentPath.startsWith(item.href);
     });
 
@@ -122,9 +117,8 @@ export const Route = createFileRoute("/$lang/_lang/_auth")({
           `Access Denied: ${roleToVerify} cannot access ${pathname}`,
         );
 
-        // Redirect to a safe "Entry" page or Login
         throw redirect({
-          to: "/$lang/login", // Or a generic landing page
+          to: "/$lang/login",
           params: { lang: params.lang },
         });
       }

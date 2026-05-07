@@ -37,7 +37,40 @@ export const Table = ({
   return (
     <div {...rest} className={cn("flex-1 w-full overflow-hidden", className)}>
       {statistics && (
-        <div className="flex gap-1 w-full justify-end mb-1 md:mb-0">
+        <div className={cn("flex gap-1 w-full justify-end mb-1 md:mb-0")}>
+          {statistics?.map((stat: any, index: number) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, x: i18n.language === "ar" ? -40 : 40 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: i18n.language === "ar" ? 40 : -40 }}
+              transition={{
+                delay: 0.05 * index + 0.05,
+                duration: 0.3,
+                ease: "easeInOut",
+              }}
+              className={cn("flex px-2 gap-1 items-center")}
+            >
+              <div
+                className={cn(
+                  "px-[8px] py-[2px] rounded-[5px] text-[14px] leading-[100%]",
+                  "font-bold text-white",
+                  "bg-[linear-gradient(80deg,var(--color-secondary)_0%,var(--color-primary)_100%)]",
+                  stat.key == "total" &&
+                    "bg-[linear-gradient(80deg,var(--color-secondary)_0%,var(--color-primary)_100%)]",
+                  stat.key == "draft" &&
+                    "bg-[linear-gradient(80deg,var(--color-danger-100)_0%,var(--color-danger)_100%)]",
+                  stat.key == "approved" &&
+                    "bg-[linear-gradient(80deg,var(--color-success-100)_0%,var(--color-success-600)_100%)]",
+                )}
+              >
+                {stat?.value}
+              </div>
+              <span className="font-medium">{stat?.title}</span>
+            </motion.div>
+          ))}
+
+          {/* 
           {statistics?.approved != "0" && (
             <motion.div
               initial={{ opacity: 0, x: i18n.language === "ar" ? -40 : 40 }}
@@ -48,15 +81,21 @@ export const Table = ({
                 duration: 0.5,
                 ease: "easeInOut",
               }}
-              className="flex  px-2 gap-1 items-center"
+              className={cn("flex px-2 gap-1 items-center")}
             >
-              <div className="font-bold text-white bg-[linear-gradient(80deg,var(--color-success-100),var(--color-success-600))] px-[8px] py-[2px] rounded-[5px] text-[14px] leading-[100%]">
+              <div
+                className={cn(
+                  "px-[8px] py-[2px] rounded-[5px] text-[14px] leading-[100%]",
+                  "font-bold text-white",
+                  "bg-[linear-gradient(80deg,var(--color-success-100)_0%,var(--color-success-600)_100%)] ",
+                )}
+              >
                 {statistics?.approved}
               </div>
               <span className="font-medium">{t("approved")}</span>
             </motion.div>
           )}
-          {statistics?.draft != "0" && (
+          {statistics?.draft && (
             <motion.div
               initial={{ opacity: 0, x: i18n.language === "ar" ? -40 : 40 }}
               animate={{ opacity: 1, x: 0 }}
@@ -91,7 +130,7 @@ export const Table = ({
               </div>
               <span className="font-medium">{t("total")}</span>
             </motion.div>
-          )}
+          )} */}
         </div>
       )}
       <table
