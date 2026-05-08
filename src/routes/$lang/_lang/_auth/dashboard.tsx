@@ -256,11 +256,14 @@ function PerformingEntitiesCard({ delay, data }: { delay: number; data: any }) {
                   options={data?.entities}
                   onValueChange={setSelectedValues}
                   defaultValue={selectedValues}
-                  responsive={true}
+                  responsive={{
+                    mobile: { maxCount: 1, compactMode: true },
+                    tablet: { maxCount: 1, compactMode: true },
+                    desktop: { maxCount: 1, compactMode: true },
+                  }}
                   placeholder={t("all_entity")}
                   searchPlaceholder={t("search_entity")}
                   hideSelectAll={true}
-                  maxCount={3}
                 />
               </div>
             </div>
