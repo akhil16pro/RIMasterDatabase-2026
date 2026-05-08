@@ -260,6 +260,7 @@ function PerformingEntitiesCard({ delay, data }: { delay: number; data: any }) {
                   placeholder={t("all_entity")}
                   searchPlaceholder={t("search_entity")}
                   hideSelectAll={true}
+                  maxCount={3}
                 />
               </div>
             </div>
