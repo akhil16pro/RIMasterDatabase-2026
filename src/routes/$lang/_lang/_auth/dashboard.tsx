@@ -44,6 +44,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/Select";
+import { useCallback } from "react";
+
 export const Route = createFileRoute("/$lang/_lang/_auth/dashboard")({
   component: RouteComponent,
   staticData: {
@@ -222,7 +224,7 @@ function PerformingEntitiesCard({ delay, data }: { delay: number; data: any }) {
   const [entity, setEntity] = useState([]);
   const [category, setCategory] = useState(1);
   const [entityType, setEntityType] = useState(null);
-  // const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
 
   const { data: barData, isLoading } = useQuery({
     queryKey: [
@@ -250,7 +252,32 @@ function PerformingEntitiesCard({ delay, data }: { delay: number; data: any }) {
 
   const isAdmin = userSession?.user?.roles?.includes("admin");
 
-  // console.log(data);
+  const { data: entityData } = useQuery({
+    queryKey: ["dashboardEntityData", entityType, i18n.language],
+    queryFn: async () => {
+      const res = await apiClient
+        .get(i18n.language + `/get_entity_by_type/${entityType}`)
+        .json<any>();
+
+      // console.log(res?.data, "ENTITY DATA");
+      return res?.data;
+    },
+    enabled: !!entityType,
+  });
+
+  const entityChange = useCallback((value: any) => {
+    setEntityType(value);
+    setEntity([]);
+  }, []);
+  // useEffect(() => {
+  //   if (entityType !== null) {
+  //     queryClient.invalidateQueries({
+  //       queryKey: ["dashboardEntityData", entityType, i18n.language],
+  //     });
+  //   }
+  // }, [entityType, i18n.language, queryClient]);
+
+  console.log(data, " data");
   return (
     <div className="w-full flex flex-col gap-4 lg:gap-3 flex-1">
       <motion.div
@@ -299,7 +326,9 @@ function PerformingEntitiesCard({ delay, data }: { delay: number; data: any }) {
               <div className="flex w-full md:w-auto min-w-[200px]">
                 <Select
                   value={entityType ? entityType?.toString() : ""}
-                  onValueChange={(val) => setEntityType(val)}
+                  onValueChange={(val) => {
+                    entityChange(val);
+                  }}
                 >
                   <SelectTrigger
                     // label={t("entity_types")}
@@ -321,10 +350,10 @@ function PerformingEntitiesCard({ delay, data }: { delay: number; data: any }) {
                 </Select>
               </div>
             )}
-            {data?.entities && (
+            {entityData?.entities && (
               <div className="flex w-full md:w-auto">
                 <MultiSelect
-                  options={data?.entities}
+                  options={entityData?.entities}
                   onValueChange={setEntity}
                   defaultValue={entity}
                   responsive={{

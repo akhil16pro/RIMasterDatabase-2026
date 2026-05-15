@@ -5,6 +5,7 @@ import {
   XCircle,
   ChevronDown,
   XIcon,
+  X,
   WandSparkles,
 } from "lucide-react";
 
@@ -994,16 +995,17 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                         }
                       }}
                       aria-label={`Clear all ${selectedValues.length} selected options`}
-                      className="flex items-center justify-center h-4 w-4 mx-2 cursor-pointer text-muted-foreground hover:text-[var(--textColor)] focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1 rounded-sm"
+                      // className="flex items-center justify-center h-4 w-4 mx-2 cursor-pointer text-muted-foreground hover:text-[var(--textColor)] focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1 rounded-sm"
+                      className="hover:bg-black/5 rounded-full p-1 cursor-pointer outline-none pointer-events-auto text-[var(--textColor)] ms-1"
                     >
-                      <XIcon className="h-4 w-4" />
+                      <X className="h-3 w-3 opacity-50 hover:opacity-100" />
                     </div>
-                    <Separator
+                    {/* <Separator
                       orientation="vertical"
                       className="flex min-h-6 h-full"
-                    />
+                    /> */}
                     <ChevronDown
-                      className="h-4 mx-2 cursor-pointer text-muted-foreground"
+                      className="h-4 w-4  cursor-pointer text-[var(--textColor)] opacity-50"
                       aria-hidden="true"
                     />
                   </div>
@@ -1013,7 +1015,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                   <span className="text-[1.2rem] text-muted-foreground ">
                     {placeholder}
                   </span>
-                  <ChevronDown className="h-4 cursor-pointer text-muted-foreground me-2" />
+                  <ChevronDown className="h-4 w-4 cursor-pointer text-[var(--textColor)] opacity-50 me-2" />
                 </div>
               )}
             </Button>

@@ -86,7 +86,7 @@ export const SelectTrigger = React.forwardRef<
           <div
             className={cn(
               "absolute top-1/2 -translate-y-1/2 z-10 flex items-center justify-center transition-all",
-              "ltr:right-4 rtl:left-4", // Position it just to the left of the Chevron
+              "ltr:right-[18px] rtl:left-[18px]", // Position it just to the left of the Chevron
             )}
           >
             <span
