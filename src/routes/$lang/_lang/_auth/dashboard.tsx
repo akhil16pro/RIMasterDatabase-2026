@@ -37,7 +37,13 @@ import { useAtomValue } from "jotai";
 import { userSessionAtom, settingsAtom } from "@/store/atoms";
 
 import { MultiSelect } from "@/components/ui/multi-select";
-
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/Select";
 export const Route = createFileRoute("/$lang/_lang/_auth/dashboard")({
   component: RouteComponent,
   staticData: {
@@ -213,16 +219,26 @@ function PerformingEntitiesCard({ delay, data }: { delay: number; data: any }) {
   const { t, i18n } = useTranslation();
   const userSession = useAtomValue(userSessionAtom);
   // const [theme, setTheme] = useState("all");
-  const [selectedValues, setSelectedValues] = useState([]);
+  const [entity, setEntity] = useState([]);
+  const [category, setCategory] = useState(1);
+  const [entityType, setEntityType] = useState(null);
   // const queryClient = useQueryClient();
 
   const { data: barData, isLoading } = useQuery({
-    queryKey: ["dashboardGraphData", selectedValues, i18n.language],
+    queryKey: [
+      "dashboardGraphData",
+      entity,
+      category,
+      entityType,
+      i18n.language,
+    ],
     queryFn: async () => {
       const res = await apiClient
         .post(i18n.language + "/get_usergraph_data", {
           json: {
-            entity_id: selectedValues,
+            entity_id: entity,
+            type_of_category: category,
+            entity_type_id: entityType,
           },
         })
         .json<any>();
@@ -234,6 +250,7 @@ function PerformingEntitiesCard({ delay, data }: { delay: number; data: any }) {
 
   const isAdmin = userSession?.user?.roles?.includes("admin");
 
+  // console.log(data);
   return (
     <div className="w-full flex flex-col gap-4 lg:gap-3 flex-1">
       <motion.div
@@ -249,13 +266,67 @@ function PerformingEntitiesCard({ delay, data }: { delay: number; data: any }) {
             </SectionTitle>
           </div>
 
-          {isAdmin && (
-            <div className="flex gap-2 justify-end   md:flex-1 w-full md:w-auto">
+          <div className="flex flex-wrap gap-4 justify-end   md:flex-1 w-full md:w-auto">
+            {data?.categories && (
+              <div className="flex w-full md:w-auto min-w-[200px]">
+                <Select
+                  value={category?.toString()}
+                  onValueChange={(e) => {
+                    // console.log("category", e);
+                    setCategory(e);
+                  }}
+                >
+                  <SelectTrigger
+                    // label={t("category")}
+                    hasValue={!!category}
+                  >
+                    <SelectValue placeholder={t("select_category")} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {data?.categories?.map((item: any) => (
+                      <SelectItem
+                        key={`category-${item.value}`}
+                        value={item.value.toString()}
+                      >
+                        {item.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+            {data?.entityTypes && (
+              <div className="flex w-full md:w-auto min-w-[200px]">
+                <Select
+                  value={entityType ? entityType?.toString() : ""}
+                  onValueChange={(val) => setEntityType(val)}
+                >
+                  <SelectTrigger
+                    // label={t("entity_types")}
+                    hasValue={!!entityType}
+                    onClear={() => setEntityType(null)}
+                  >
+                    <SelectValue placeholder={t("select_entity_type")} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {data?.entityTypes?.map((item: any) => (
+                      <SelectItem
+                        key={`entity_type-${item.value}`}
+                        value={item.value.toString()}
+                      >
+                        {item.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+            {data?.entities && (
               <div className="flex w-full md:w-auto">
                 <MultiSelect
                   options={data?.entities}
-                  onValueChange={setSelectedValues}
-                  defaultValue={selectedValues}
+                  onValueChange={setEntity}
+                  defaultValue={entity}
                   responsive={{
                     mobile: { maxCount: 1, compactMode: true },
                     tablet: { maxCount: 1, compactMode: true },
@@ -266,8 +337,8 @@ function PerformingEntitiesCard({ delay, data }: { delay: number; data: any }) {
                   hideSelectAll={true}
                 />
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </motion.div>
       <BarChart data={barData?.entityData} isLoading={isLoading} />

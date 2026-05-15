@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as SelectPrimitive from "@radix-ui/react-select";
-import { Check, ChevronDown, ChevronUp, Loader2 } from "lucide-react";
+import { Check, ChevronDown, ChevronUp, Loader2, X } from "lucide-react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -22,6 +22,7 @@ interface SelectTriggerProps extends React.ComponentPropsWithoutRef<
   hasValue?: boolean;
   readOnly?: boolean;
   dir?: "ltr" | "rtl";
+  onClear?: () => void;
 }
 
 export const SelectTrigger = React.forwardRef<
@@ -39,11 +40,25 @@ export const SelectTrigger = React.forwardRef<
       hasValue,
       dir,
       readOnly,
+      onClear,
       ...props
     },
     ref,
   ) => {
     const errorId = React.useId();
+    const handleClear = (
+      e: React.MouseEvent | React.PointerEvent | React.KeyboardEvent,
+    ) => {
+      e.preventDefault();
+      e.stopPropagation();
+      onClear?.();
+    };
+
+    const onKeyDown = (e: React.KeyboardEvent) => {
+      if (e.key === "Enter" || e.key === " ") {
+        handleClear(e);
+      }
+    };
 
     return (
       <div className="group relative flex w-full">
@@ -59,13 +74,33 @@ export const SelectTrigger = React.forwardRef<
           {...props}
           dir={dir}
         >
-          {children}
+          <div className="truncate">{children}</div>
+
           {!readOnly && (
             <SelectPrimitive.Icon asChild>
               <ChevronDown className="h-4 w-4 opacity-50 shrink-0" />
             </SelectPrimitive.Icon>
           )}
         </SelectPrimitive.Trigger>
+        {!readOnly && hasValue && onClear && (
+          <div
+            className={cn(
+              "absolute top-1/2 -translate-y-1/2 z-10 flex items-center justify-center transition-all",
+              "ltr:right-4 rtl:left-4", // Position it just to the left of the Chevron
+            )}
+          >
+            <span
+              role="button"
+              tabIndex={0}
+              onClick={handleClear}
+              onMouseDown={(e) => e.stopPropagation()} // Stop Radix from focusing/opening
+              className="hover:bg-black/5 rounded-full p-1 cursor-pointer outline-none pointer-events-auto"
+              aria-label="Clear selection"
+            >
+              <X className="h-3 w-3 opacity-50 hover:opacity-100" />
+            </span>
+          </div>
+        )}
 
         {label && (
           <label

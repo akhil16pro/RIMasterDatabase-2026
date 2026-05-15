@@ -61,7 +61,7 @@ export default function BarChart({
   }, [data, updateHeights]);
 
   return (
-    <div className="barChart w-full h-full grid grid-flow-row md:grid-cols-10  gap-4 relative ps-0 md:ps-10">
+    <div className="barChart w-full md:h-full grid grid-flow-row md:grid-cols-10  gap-4 relative ps-0 md:ps-10 md:min-h-[280px]">
       {!isMobile && (
         <div
           className="bgLayer absolute left-0 top-0 w-full z-0  flex flex-col justify-between pointer-events-none "
