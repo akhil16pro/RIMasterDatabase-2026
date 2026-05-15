@@ -38,7 +38,13 @@ import { useAtomValue } from "jotai";
 import { userSessionAtom } from "@/store/atoms";
 import { Pagination } from "@/components/ui/Pagination";
 import { useEffect } from "react";
-
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/Select";
 export const Route = createFileRoute("/$lang/_lang/_auth/glossary")({
   component: RouteComponent,
   staticData: {
@@ -67,7 +73,7 @@ function RouteComponent() {
         const res = await apiClient
           .get(i18n.language + `/glossary`)
           .json<any>();
-        // console.log("GLOSSARY_DATA", res?.data);
+        console.log("GLOSSARY_DATA", res?.data);
 
         return res?.data;
       } catch (error) {
@@ -85,6 +91,27 @@ function RouteComponent() {
   campaignEndDate.setHours(23, 59, 59, 999);
 
   const isCampaignActive = campaignStartDate <= now && campaignEndDate >= now;
+
+  const handleDownloadTemplate = async () => {
+    try {
+      const response = await apiClient
+        .get(i18n.language + `/glossary/download-excel-template`)
+        .blob();
+
+      const url = window.URL.createObjectURL(response);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "template.xlsx");
+      document.body.appendChild(link);
+      link.click();
+
+      link.parentNode?.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error: any) {
+      toast.error(error?.message || t("download_failed"));
+    }
+  };
 
   return (
     <DashboardLayout
@@ -107,15 +134,13 @@ function RouteComponent() {
           className="flex flex-wrap md:justify-end gap-2"
         >
           <div className="md:flex-1">
-            <AddModal />
+            <AddModal data={data} />
           </div>
 
           <DefaultButton
             title={t("download_glossary_template")}
             icon={<Download className="size-5" />}
-            onClick={() => {
-              window.open(data?.campaign?.url, "_blank");
-            }}
+            onClick={handleDownloadTemplate}
           />
 
           <UploadExcelModal />
@@ -252,7 +277,7 @@ function ViewAction({ slug }: { slug: string }) {
       const res = await apiClient
         .get(i18n.language + "/glossary/edit/" + slug)
         .json<any>();
-      // console.log(res?.data, "dsf");
+      console.log(res?.data, "view data");
       setLoading(false);
       setOpen(true);
       return res?.data;
@@ -260,6 +285,10 @@ function ViewAction({ slug }: { slug: string }) {
     enabled: loading,
     staleTime: 0,
   });
+
+  const userSession = useAtomValue(userSessionAtom);
+
+  const isAdmin = userSession?.user?.roles?.includes("admin");
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -283,6 +312,54 @@ function ViewAction({ slug }: { slug: string }) {
             <DialogTitle>{t("glossary_details")}</DialogTitle>
           </DialogHeader>
           <div className="grid md:grid-cols-2 gap-x-8 gap-y-7 items-start">
+            <div className="grid md:grid-cols-2 gap-x-8 gap-y-7 col-span-2 ">
+              <Select
+                key={data?.glossaryData?.sector}
+                value={data?.glossaryData?.sector.toString() || ""}
+              >
+                <SelectTrigger
+                  label={t("sector")}
+                  hasValue={!!data?.glossaryData?.sector}
+                  readOnly={true}
+                >
+                  <SelectValue placeholder={t("select_sector")} />
+                </SelectTrigger>
+                <SelectContent>
+                  {data?.sectorList?.map((item: any) => (
+                    <SelectItem
+                      key={`sector-${item.value}`}
+                      value={item.value.toString()}
+                    >
+                      {item.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {isAdmin && (
+                <Select
+                  key={data?.glossaryData?.entity_id}
+                  value={data?.glossaryData?.entity_id?.toString() || ""}
+                >
+                  <SelectTrigger
+                    label={t("entity")}
+                    hasValue={!!data?.glossaryData?.entity_id}
+                    readOnly={true}
+                  >
+                    <SelectValue placeholder={t("select_entity")} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {data?.entityList?.map((item: any) => (
+                      <SelectItem
+                        key={`sector-${item.value}`}
+                        value={item.value.toString()}
+                      >
+                        {item.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            </div>
             <Input
               id="title"
               name="title"
@@ -683,7 +760,7 @@ function DeleteAction({
   );
 }
 
-function AddModal() {
+function AddModal({ data }: { data: any }) {
   const { t, i18n } = useTranslation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [open, setOpen] = useState(false);
@@ -691,8 +768,12 @@ function AddModal() {
 
   const userSession = useAtomValue(userSessionAtom);
 
+  const isAdmin = userSession?.user?.roles?.includes("admin");
+
   const form = useForm({
     defaultValues: {
+      sector_id: "",
+      entity_id: "",
       title: "",
       title_arabic: "",
       description: "",
@@ -701,14 +782,19 @@ function AddModal() {
     onSubmit: async ({ value }) => {
       setIsSubmitting(true);
       try {
+        const formData = new FormData();
+        formData.append("sector_id", value.sector_id || "");
+        formData.append("entity_id", value.entity_id || "");
+        formData.append("title", value.title);
+        formData.append("title_arabic", value.title_arabic);
+        formData.append("description", value.description);
+        formData.append("description_arabic", value.description_arabic);
         const res = await apiClient
           .post(i18n.language + "/glossary/create", {
-            json: {
-              title: value.title,
-              title_arabic: value.title_arabic,
-              description: value.description,
-              description_arabic: value.description_arabic,
+            headers: {
+              "Content-Type": undefined,
             },
+            body: formData,
           })
           .json<any>();
 
@@ -751,6 +837,83 @@ function AddModal() {
             <DialogTitle>{t("add_glossary")}</DialogTitle>
           </DialogHeader>
           <div className="grid md:grid-cols-2 gap-x-8 gap-y-7 items-start">
+            <div className="grid md:grid-cols-2 gap-x-8 gap-y-7 col-span-2 ">
+              <form.Field
+                name="sector_id"
+                validators={{
+                  onSubmit: ({ value }) =>
+                    !value ? t("required_field") : null,
+                }}
+                children={(field) => (
+                  <Select
+                    id="sector_id"
+                    name="sector_id"
+                    value={field.state.value?.toString() || ""}
+                    onValueChange={(e) => field.handleChange(e)}
+                  >
+                    <SelectTrigger
+                      label={t("sector")}
+                      hasValue={!!field.state.value}
+                      error={field.state.meta.errors.length > 0 ? true : false}
+                      errorMessage={field.state.meta.errors[0]}
+                      onClear={() => field.handleChange(null)}
+                    >
+                      <SelectValue placeholder={t("select_sector")} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {data?.sectorList?.map((item: any) => (
+                        <SelectItem
+                          key={`sector-${item.value}`}
+                          value={item.value.toString()}
+                        >
+                          {item.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              {isAdmin && (
+                <form.Field
+                  name="entity_id"
+                  validators={{
+                    onSubmit: ({ value }) =>
+                      !value ? t("required_field") : null,
+                  }}
+                  children={(field) => (
+                    <Select
+                      id="entity_id"
+                      name="entity_id"
+                      value={field.state.value?.toString() || ""}
+                      onValueChange={(e) => field.handleChange(e)}
+                    >
+                      <SelectTrigger
+                        label={t("entity")}
+                        hasValue={!!field.state.value}
+                        error={
+                          field.state.meta.errors.length > 0 ? true : false
+                        }
+                        errorMessage={field.state.meta.errors[0]}
+                        onClear={() => field.handleChange(null)}
+                      >
+                        <SelectValue placeholder={t("select_entity")} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {data?.entities?.map((item: any) => (
+                          <SelectItem
+                            key={`sector-${item.value}`}
+                            value={item.value.toString()}
+                          >
+                            {item.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+              )}
+            </div>
+
             <form.Field
               name="title"
               validators={{
