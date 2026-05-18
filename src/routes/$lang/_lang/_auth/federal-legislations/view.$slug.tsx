@@ -273,7 +273,7 @@ function RouteComponent() {
         </Select>
         <Input
           type="text"
-          value={data?.lawData?.lm_legislation_number}
+          value={data?.lawData?.lm_number}
           label={t("legislation_number")}
           readOnly={true}
         />
@@ -353,6 +353,12 @@ function RouteComponent() {
           type="date"
           value={data?.lawData?.lm_official_gazette_issue_date}
           label={t("official_gazette_date")}
+          readOnly={true}
+        />
+        <Input
+          type="date"
+          value={data?.lawData?.lm_official_gazette_publish_date}
+          label={t("official_gazette_publish_date")}
           readOnly={true}
         />
         <Input

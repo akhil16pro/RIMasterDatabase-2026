@@ -91,12 +91,13 @@ function RouteComponent() {
       lm_description_arabic: "",
       lm_year: "",
       lm_has_modifications: "2",
-      lm_legislation_number: "",
+      lm_number: "",
       lm_issue_date: "",
       lm_effective_date: "",
       lm_gazette_number: "",
       lm_gazette_number_arabic: "",
       lm_official_gazette_issue_date: "",
+      lm_official_gazette_publish_date: "",
       lm_gazette_title: "",
       lm_gazette_title_arabic: "",
       lm_pdf_file: null,
@@ -124,7 +125,7 @@ function RouteComponent() {
         formData.append("lm_description_arabic", value.lm_description_arabic);
         formData.append("lm_year", value.lm_year.toString());
         formData.append("lm_has_modifications", value.lm_has_modifications);
-        formData.append("lm_legislation_number", value.lm_legislation_number);
+        formData.append("lm_number", value.lm_number);
         formData.append("lm_issue_date", value.lm_issue_date);
         formData.append("lm_effective_date", value.lm_effective_date);
         formData.append("lm_gazette_number", value.lm_gazette_number);
@@ -135,6 +136,10 @@ function RouteComponent() {
         formData.append(
           "lm_official_gazette_issue_date",
           value.lm_official_gazette_issue_date,
+        );
+        formData.append(
+          "lm_official_gazette_publish_date",
+          value.lm_official_gazette_publish_date,
         );
         formData.append("lm_gazette_title", value.lm_gazette_title);
         formData.append(
@@ -213,10 +218,7 @@ function RouteComponent() {
         "lm_has_modifications",
         data?.lawData?.lm_has_modifications?.toString() || "2",
       );
-      form.setFieldValue(
-        "lm_legislation_number",
-        data?.lawData?.lm_legislation_number || "",
-      );
+      form.setFieldValue("lm_number", data?.lawData?.lm_number || "");
       form.setFieldValue("lm_issue_date", data?.lawData?.lm_issue_date || "");
       form.setFieldValue(
         "lm_effective_date",
@@ -235,6 +237,10 @@ function RouteComponent() {
       form.setFieldValue(
         "lm_official_gazette_issue_date",
         data?.lawData?.lm_official_gazette_issue_date || "",
+      );
+      form.setFieldValue(
+        "lm_official_gazette_publish_date",
+        data?.lawData?.lm_official_gazette_publish_date || "",
       );
       form.setFieldValue(
         "lm_gazette_title",
@@ -673,15 +679,15 @@ function RouteComponent() {
           />
 
           <form.Field
-            name="lm_legislation_number"
+            name="lm_number"
             validators={{
               onSubmit: ({ value }) => (!value ? t("required_field") : null),
             }}
             children={(field) => (
               <Input
                 type="text"
-                id="lm_legislation_number"
-                name="lm_legislation_number"
+                id="lm_number"
+                name="lm_number"
                 value={field.state.value}
                 onChange={(e) => field.handleChange(e.target.value)}
                 label={t("legislation_number")}
@@ -972,6 +978,25 @@ function RouteComponent() {
                 value={field.state.value}
                 onChange={(e) => field.handleChange(e.target.value)}
                 label={t("official_gazette_date")}
+                error={field.state.meta.errors.length > 0 ? true : false}
+                errorMessage={field.state.meta.errors[0]}
+              />
+            )}
+          />
+
+          <form.Field
+            name="lm_official_gazette_publish_date"
+            validators={{
+              onSubmit: ({ value }) => (!value ? t("required_field") : null),
+            }}
+            children={(field) => (
+              <Input
+                type="date"
+                id="lm_official_gazette_publish_date"
+                name="lm_official_gazette_publish_date"
+                value={field.state.value}
+                onChange={(e) => field.handleChange(e.target.value)}
+                label={t("official_gazette_publish_date")}
                 error={field.state.meta.errors.length > 0 ? true : false}
                 errorMessage={field.state.meta.errors[0]}
               />

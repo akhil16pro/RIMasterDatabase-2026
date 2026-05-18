@@ -92,11 +92,14 @@ function RouteComponent() {
       lm_description: "",
       lm_description_arabic: "",
       lm_year: "",
+      lm_has_modifications: "2",
+      lm_number: "",
       lm_issue_date: "",
       lm_effective_date: "",
       lm_gazette_number: "",
       lm_gazette_number_arabic: "",
       lm_official_gazette_issue_date: "",
+      lm_official_gazette_publish_date: "",
       lm_gazette_title: "",
       lm_gazette_title_arabic: "",
       lm_pdf_file: null,
@@ -123,6 +126,8 @@ function RouteComponent() {
         formData.append("lm_description", value.lm_description);
         formData.append("lm_description_arabic", value.lm_description_arabic);
         formData.append("lm_year", value.lm_year.toString());
+        formData.append("lm_number", value.lm_number);
+        formData.append("lm_has_modifications", value.lm_has_modifications);
         formData.append("lm_issue_date", value.lm_issue_date);
         formData.append("lm_effective_date", value.lm_effective_date);
         formData.append("lm_gazette_number", value.lm_gazette_number);
@@ -133,6 +138,10 @@ function RouteComponent() {
         formData.append(
           "lm_official_gazette_issue_date",
           value.lm_official_gazette_issue_date,
+        );
+        formData.append(
+          "lm_official_gazette_publish_date",
+          value.lm_official_gazette_publish_date,
         );
         formData.append("lm_gazette_title", value.lm_gazette_title);
         formData.append(
@@ -207,6 +216,11 @@ function RouteComponent() {
         data?.lawData?.lm_description_arabic || "",
       );
       form.setFieldValue("lm_year", data?.lawData?.lm_year.toString() || "");
+      form.setFieldValue(
+        "lm_has_modifications",
+        data?.lawData?.lm_has_modifications?.toString() || "2",
+      );
+      form.setFieldValue("lm_number", data?.lawData?.lm_number || "");
       form.setFieldValue("lm_issue_date", data?.lawData?.lm_issue_date || "");
       form.setFieldValue(
         "lm_effective_date",
@@ -225,6 +239,10 @@ function RouteComponent() {
       form.setFieldValue(
         "lm_official_gazette_issue_date",
         data?.lawData?.lm_official_gazette_issue_date || "",
+      );
+      form.setFieldValue(
+        "lm_official_gazette_publish_date",
+        data?.lawData?.lm_official_gazette_publish_date || "",
       );
       form.setFieldValue(
         "lm_gazette_title",
@@ -423,7 +441,7 @@ function RouteComponent() {
                           type="text"
                           value={field.state.value}
                           onChange={(e) => field.handleChange(e.target.value)}
-                          label={t("legislation_title_english")}
+                          label={t("legislation_full_title_english")}
                           error={
                             field.state.meta.isTouched &&
                             field.state.meta.errors.length > 0
@@ -469,7 +487,7 @@ function RouteComponent() {
                   name="lm_title_arabic"
                   value={field.state.value}
                   onChange={(e) => field.handleChange(e.target.value)}
-                  label={t("legislation_title_arabic")}
+                  label={t("legislation_full_title_arabic")}
                   error={
                     field.state.meta.isTouched &&
                     field.state.meta.errors.length > 0
@@ -571,6 +589,62 @@ function RouteComponent() {
               )}
             />
           </div>
+          <div className="inline-flex gap-5 text-black  text-[1.2rem] col-span-full ">
+            <Label className="text-black/70">
+              {t("legislation_modifications")}
+            </Label>
+            <form.Field
+              name="lm_has_modifications"
+              validators={{
+                onChange: ({ value }) =>
+                  !value ? t("required_field") : undefined,
+              }}
+              children={(field) => (
+                <>
+                  <RadioGroup
+                    className="flex gap-4"
+                    value={field.state.value}
+                    onValueChange={(val) => field.handleChange(val)}
+                    defaultValue="2"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem
+                        value="1"
+                        id="lm_has_modifications_yes"
+                        error={field.state.meta.errors.length > 0}
+                      />
+                      <Label
+                        normalLabel={true}
+                        htmlFor="lm_has_modifications_yes"
+                        className="cursor-pointer"
+                      >
+                        {t("yes")}
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem
+                        value="2"
+                        id="lm_has_modifications_no"
+                        error={field.state.meta.errors.length > 0}
+                      />
+                      <Label
+                        normalLabel={true}
+                        htmlFor="lm_has_modifications_no"
+                        className="cursor-pointer"
+                      >
+                        {t("no")}
+                      </Label>
+                    </div>
+                  </RadioGroup>
+                  {field.state.meta.errors.length > 0 && (
+                    <Label errorLabel={true}>
+                      {field.state.meta.errors[0] || t("invalid-field")}
+                    </Label>
+                  )}
+                </>
+              )}
+            />
+          </div>
           <form.Field
             name="lm_year"
             validators={{
@@ -601,6 +675,24 @@ function RouteComponent() {
                   ))}
                 </SelectContent>
               </Select>
+            )}
+          />
+          <form.Field
+            name="lm_number"
+            validators={{
+              onSubmit: ({ value }) => (!value ? t("required_field") : null),
+            }}
+            children={(field) => (
+              <Input
+                type="text"
+                id="lm_number"
+                name="lm_number"
+                value={field.state.value}
+                onChange={(e) => field.handleChange(e.target.value)}
+                label={t("legislation_number")}
+                error={field.state.meta.errors.length > 0 ? true : false}
+                errorMessage={field.state.meta.errors[0]}
+              />
             )}
           />
           <div className="col-span-full grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10 items-start">
@@ -692,7 +784,7 @@ function RouteComponent() {
                             const file = e.target.files?.[0];
                             field.handleChange(file);
                           }}
-                          label={t("attachment_english")}
+                          label={t("legislation_file_english")}
                           error={
                             field.state.meta.errors.length > 0 ? true : false
                           }
@@ -755,7 +847,7 @@ function RouteComponent() {
                   const file = e.target.files?.[0];
                   field.handleChange(file);
                 }}
-                label={t("attachment_arabic")}
+                label={t("legislation_file_arabic")}
                 error={field.state.meta.errors.length > 0 ? true : false}
                 errorMessage={field.state.meta.errors[0]}
                 preview={
@@ -797,7 +889,7 @@ function RouteComponent() {
                           name="lm_gazette_number"
                           value={field.state.value}
                           onChange={(e) => field.handleChange(e.target.value)}
-                          label={t("gazette_number")}
+                          label={t("official_gazette_number")}
                           error={
                             field.state.meta.errors.length > 0 ? true : false
                           }
@@ -818,7 +910,7 @@ function RouteComponent() {
                           name="lm_gazette_title"
                           value={field.state.value}
                           onChange={(e) => field.handleChange(e.target.value)}
-                          label={t("gazette_title_english")}
+                          label={t("official_gazette_title_english")}
                           error={
                             field.state.meta.errors.length > 0 ? true : false
                           }
@@ -844,7 +936,7 @@ function RouteComponent() {
                 name="lm_gazette_number_arabic"
                 value={field.state.value}
                 onChange={(e) => field.handleChange(e.target.value)}
-                label={t("gazette_number_arabic")}
+                label={t("official_gazette_number_arabic")}
                 error={field.state.meta.errors.length > 0 ? true : false}
                 errorMessage={field.state.meta.errors[0]}
                 dir="rtl"
@@ -864,7 +956,7 @@ function RouteComponent() {
                 name="lm_gazette_title_arabic"
                 value={field.state.value}
                 onChange={(e) => field.handleChange(e.target.value)}
-                label={t("gazette_title_arabic")}
+                label={t("official_gazette_title_arabic")}
                 error={field.state.meta.errors.length > 0 ? true : false}
                 errorMessage={field.state.meta.errors[0]}
                 dir="rtl"
@@ -883,7 +975,25 @@ function RouteComponent() {
                 name="lm_official_gazette_issue_date"
                 value={field.state.value}
                 onChange={(e) => field.handleChange(e.target.value)}
-                label={t("gazette_issue_date")}
+                label={t("official_gazette_issue_date")}
+                error={field.state.meta.errors.length > 0 ? true : false}
+                errorMessage={field.state.meta.errors[0]}
+              />
+            )}
+          />
+          <form.Field
+            name="lm_official_gazette_publish_date"
+            validators={{
+              onSubmit: ({ value }) => (!value ? t("required_field") : null),
+            }}
+            children={(field) => (
+              <Input
+                type="date"
+                id="lm_official_gazette_publish_date"
+                name="lm_official_gazette_publish_date"
+                value={field.state.value}
+                onChange={(e) => field.handleChange(e.target.value)}
+                label={t("official_gazette_publish_date")}
                 error={field.state.meta.errors.length > 0 ? true : false}
                 errorMessage={field.state.meta.errors[0]}
               />

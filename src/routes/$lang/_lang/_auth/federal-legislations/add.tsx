@@ -82,7 +82,7 @@ function RouteComponent() {
       lm_description_arabic: "",
       lm_year: "",
       lm_has_modifications: "2",
-      lm_legislation_number: "",
+      lm_number: "",
       lm_issue_date: "",
       lm_effective_date: "",
       lm_pdf_file: "",
@@ -115,7 +115,7 @@ function RouteComponent() {
         formData.append("lm_description", value.lm_description);
         formData.append("lm_description_arabic", value.lm_description_arabic);
         formData.append("lm_year", value.lm_year);
-        formData.append("lm_legislation_number", value.lm_legislation_number);
+        formData.append("lm_number", value.lm_number);
         formData.append("lm_has_modifications", value.lm_has_modifications);
         formData.append("lm_issue_date", value.lm_issue_date);
         formData.append("lm_effective_date", value.lm_effective_date);
@@ -590,15 +590,15 @@ function RouteComponent() {
             )}
           />
           <form.Field
-            name="lm_legislation_number"
+            name="lm_number"
             validators={{
               onSubmit: ({ value }) => (!value ? t("required_field") : null),
             }}
             children={(field) => (
               <Input
                 type="text"
-                id="lm_legislation_number"
-                name="lm_legislation_number"
+                id="lm_number"
+                name="lm_number"
                 value={field.state.value}
                 onChange={(e) => field.handleChange(e.target.value)}
                 label={t("legislation_number")}

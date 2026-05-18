@@ -167,7 +167,7 @@ function RouteComponent() {
             <Input
               type="text"
               value={data?.lawData?.lm_title}
-              label={t("legislation_title_english")}
+              label={t("legislation_full_title_english")}
               readOnly={true}
             />
             <Input
@@ -182,7 +182,7 @@ function RouteComponent() {
           <Input
             type="text"
             value={data?.lawData?.lm_title_arabic}
-            label={t("legislation_title_arabic")}
+            label={t("legislation_full_title_arabic")}
             dir="rtl"
             readOnly={true}
           />
@@ -217,7 +217,38 @@ function RouteComponent() {
             readOnly={true}
           />
         </div>
-
+        <div className="inline-flex gap-5 text-black  text-[1.2rem] col-span-full">
+          <Label className="text-black/70">
+            {t("legislation_modifications")}
+          </Label>
+          <RadioGroup
+            className="flex gap-4"
+            value={data?.lawData?.lm_has_modifications?.toString()}
+            defaultValue={data?.lawData?.lm_has_modifications?.toString()}
+            disabled={true}
+          >
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="1" id="lm_has_modifications_yes" />
+              <Label
+                normalLabel={true}
+                htmlFor="lm_has_modifications_yes"
+                className="cursor-pointer"
+              >
+                {t("yes")}
+              </Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="2" id="lm_has_modifications_no" />
+              <Label
+                normalLabel={true}
+                htmlFor="lm_has_modifications_no"
+                className="cursor-pointer"
+              >
+                {t("no")}
+              </Label>
+            </div>
+          </RadioGroup>
+        </div>
         <Select
           key={data?.lawData?.lm_year}
           value={data?.lawData?.lm_year?.toString()}
@@ -240,6 +271,12 @@ function RouteComponent() {
             ))}
           </SelectContent>
         </Select>
+        <Input
+          type="text"
+          value={data?.lawData?.lm_number}
+          label={t("legislation_number")}
+          readOnly={true}
+        />
         <div className="col-span-full grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10 items-start">
           <Input
             type="date"
@@ -259,7 +296,7 @@ function RouteComponent() {
           <Input
             type="file"
             accept=".pdf"
-            label={t("attachment_english")}
+            label={t("legislation_file_english")}
             preview={data?.lawData?.lm_pdf_file}
             readOnly={true}
             onClick={previewEN}
@@ -270,7 +307,7 @@ function RouteComponent() {
         <Input
           type="file"
           accept=".pdf"
-          label={t("attachment_arabic")}
+          label={t("legislation_file_arabic")}
           preview={data?.lawData?.lm_pdf_file_arabic}
           readOnly={true}
           onClick={previewAR}
@@ -282,14 +319,14 @@ function RouteComponent() {
             <Input
               type="text"
               value={data?.lawData?.lm_gazette_number}
-              label={t("gazette_number")}
+              label={t("official_gazette_number")}
               readOnly={true}
             />
 
             <Input
               type="text"
               value={data?.lawData?.lm_gazette_title}
-              label={t("gazette_title_english")}
+              label={t("official_gazette_title_english")}
               readOnly={true}
             />
           </>
@@ -298,7 +335,7 @@ function RouteComponent() {
         <Input
           type="text"
           value={data?.lawData?.lm_gazette_number_arabic}
-          label={t("gazette_number_arabic")}
+          label={t("official_gazette_number_arabic")}
           readOnly={true}
           dir="rtl"
         />
@@ -306,7 +343,7 @@ function RouteComponent() {
         <Input
           type="text"
           value={data?.lawData?.lm_gazette_title_arabic}
-          label={t("gazette_title_arabic")}
+          label={t("official_gazette_title_arabic")}
           readOnly={true}
           dir="rtl"
         />
@@ -314,7 +351,14 @@ function RouteComponent() {
         <Input
           type="date"
           value={data?.lawData?.lm_official_gazette_issue_date}
-          label={t("gazette_issue_date")}
+          label={t("official_gazette_issue_date")}
+          readOnly={true}
+        />
+
+        <Input
+          type="date"
+          value={data?.lawData?.lm_official_gazette_publish_date}
+          label={t("official_gazette_publish_date")}
           readOnly={true}
         />
         <Input
