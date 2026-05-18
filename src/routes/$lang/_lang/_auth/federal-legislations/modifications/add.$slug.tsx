@@ -260,7 +260,7 @@ function RouteComponent() {
                           type="text"
                           value={field.state.value}
                           onChange={(e) => field.handleChange(e.target.value)}
-                          label={t("legislation_title_english")}
+                          label={t("legislation_full_title_english")}
                           error={
                             field.state.meta.isTouched &&
                             field.state.meta.errors.length > 0
@@ -302,7 +302,7 @@ function RouteComponent() {
                   type="text"
                   value={field.state.value}
                   onChange={(e) => field.handleChange(e.target.value)}
-                  label={t("legislation_title_arabic")}
+                  label={t("legislation_full_title_arabic")}
                   error={
                     field.state.meta.isTouched &&
                     field.state.meta.errors.length > 0
@@ -406,7 +406,7 @@ function RouteComponent() {
                           name="lm_gazette_number"
                           value={field.state.value}
                           onChange={(e) => field.handleChange(e.target.value)}
-                          label={t("gazette_number")}
+                          label={t("official_gazette_number")}
                           error={
                             field.state.meta.errors.length > 0 ? true : false
                           }
@@ -427,7 +427,7 @@ function RouteComponent() {
                           name="lm_gazette_title"
                           value={field.state.value}
                           onChange={(e) => field.handleChange(e.target.value)}
-                          label={t("gazette_title_english")}
+                          label={t("official_gazette_title_english")}
                           error={
                             field.state.meta.errors.length > 0 ? true : false
                           }
@@ -453,7 +453,7 @@ function RouteComponent() {
                 name="lm_gazette_number_arabic"
                 value={field.state.value}
                 onChange={(e) => field.handleChange(e.target.value)}
-                label={t("gazette_number_arabic")}
+                label={t("official_gazette_number_arabic")}
                 error={field.state.meta.errors.length > 0 ? true : false}
                 errorMessage={field.state.meta.errors[0]}
                 dir="rtl"
@@ -473,7 +473,7 @@ function RouteComponent() {
                 name="lm_gazette_title_arabic"
                 value={field.state.value}
                 onChange={(e) => field.handleChange(e.target.value)}
-                label={t("gazette_title_arabic")}
+                label={t("official_gazette_title_arabic")}
                 error={field.state.meta.errors.length > 0 ? true : false}
                 errorMessage={field.state.meta.errors[0]}
                 dir="rtl"
@@ -492,7 +492,7 @@ function RouteComponent() {
                 name="lm_official_gazette_issue_date"
                 value={field.state.value}
                 onChange={(e) => field.handleChange(e.target.value)}
-                label={t("gazette_issue_date")}
+                label={t("official_gazette_date")}
                 error={field.state.meta.errors.length > 0 ? true : false}
                 errorMessage={field.state.meta.errors[0]}
               />
@@ -548,7 +548,7 @@ function RouteComponent() {
                             field.handleChange(file);
                           }}
                           onBlur={field.handleBlur}
-                          label={t("attachment_english")}
+                          label={t("legislation_file_english")}
                           error={
                             field.state.meta.errors.length > 0 ? true : false
                           }
@@ -598,7 +598,7 @@ function RouteComponent() {
                   field.handleChange(file);
                 }}
                 onBlur={field.handleBlur}
-                label={t("attachment_arabic")}
+                label={t("legislation_file_arabic")}
                 error={field.state.meta.errors.length > 0 ? true : false}
                 errorMessage={field.state.meta.errors[0]}
               />
