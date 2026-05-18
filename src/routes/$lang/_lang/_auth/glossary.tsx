@@ -315,7 +315,7 @@ function ViewAction({ slug }: { slug: string }) {
             <div className="grid md:grid-cols-2 gap-x-8 gap-y-7 col-span-2 ">
               <Select
                 key={data?.glossaryData?.sector}
-                value={data?.glossaryData?.sector.toString() || ""}
+                value={data?.glossaryData?.sector?.toString() || ""}
               >
                 <SelectTrigger
                   label={t("sector")}
@@ -328,7 +328,7 @@ function ViewAction({ slug }: { slug: string }) {
                   {data?.sectorList?.map((item: any) => (
                     <SelectItem
                       key={`sector-${item.value}`}
-                      value={item.value.toString()}
+                      value={item.value?.toString()}
                     >
                       {item.label}
                     </SelectItem>
@@ -348,10 +348,10 @@ function ViewAction({ slug }: { slug: string }) {
                     <SelectValue placeholder={t("select_entity")} />
                   </SelectTrigger>
                   <SelectContent>
-                    {data?.entityList?.map((item: any) => (
+                    {data?.entities?.map((item: any) => (
                       <SelectItem
                         key={`sector-${item.value}`}
-                        value={item.value.toString()}
+                        value={item.value?.toString()}
                       >
                         {item.label}
                       </SelectItem>
@@ -411,7 +411,7 @@ function ViewAction({ slug }: { slug: string }) {
               isLoading={isLoading}
               readOnly
             />
-            <Input
+            {/* <Input
               id="entity_name"
               name="entity_name"
               value={data?.glossaryData?.entity_info?.title}
@@ -419,9 +419,9 @@ function ViewAction({ slug }: { slug: string }) {
               type="text"
               isLoading={isLoading}
               readOnly
-            />
+            /> */}
 
-            <div className="inline-flex gap-2 text-[var(--textColor)] text-[1.2rem]">
+            <div className="inline-flex gap-2 text-[var(--textColor)] text-[1.2rem] col-span-2">
               <label
                 className="text-muted-foreground"
                 aria-describedby={undefined}
@@ -468,6 +468,7 @@ function EditAction({ slug }: { slug: string }) {
   const queryClient = useQueryClient();
   const userSession = useAtomValue(userSessionAtom);
 
+  const isAdmin = userSession?.user?.roles?.includes("admin");
   const { data, isLoading } = useQuery({
     queryKey: ["glossaryEdit", slug],
     queryFn: async () => {
@@ -484,6 +485,8 @@ function EditAction({ slug }: { slug: string }) {
 
   const form = useForm({
     defaultValues: {
+      sector_id: "",
+      entity_id: "",
       title: "",
       title_arabic: "",
       description: "",
@@ -492,17 +495,22 @@ function EditAction({ slug }: { slug: string }) {
     onSubmit: async ({ value }) => {
       setIsSubmitting(true);
       try {
+        const formData = new FormData();
+        formData.append("sector_id", value.sector_id || "");
+        if (isAdmin) {
+          formData.append("entity_id", value.entity_id || "");
+        }
+        formData.append("title", value.title);
+        formData.append("title_arabic", value.title_arabic);
+        formData.append("description", value.description);
+        formData.append("description_arabic", value.description_arabic);
+
         const res = await apiClient
           .post(i18n.language + "/glossary/update/" + slug, {
             headers: {
-              Authorization: `Bearer ${userSession?.accessToken}`,
+              "Content-Type": undefined,
             },
-            json: {
-              title: value.title,
-              title_arabic: value.title_arabic,
-              description: value.description,
-              description_arabic: value.description_arabic,
-            },
+            body: formData,
           })
           .json();
 
@@ -524,6 +532,8 @@ function EditAction({ slug }: { slug: string }) {
 
   useEffect(() => {
     if (data?.glossaryData) {
+      form.setFieldValue("sector_id", data.glossaryData?.sector || "");
+      form.setFieldValue("entity_id", data.glossaryData?.entity_id || "");
       form.setFieldValue("title", data.glossaryData?.title || "");
       form.setFieldValue("title_arabic", data.glossaryData?.title_arabic || "");
       form.setFieldValue("description", data.glossaryData?.description || "");
@@ -557,6 +567,82 @@ function EditAction({ slug }: { slug: string }) {
             <DialogTitle>{t("edit_glossary")}</DialogTitle>
           </DialogHeader>
           <div className="grid md:grid-cols-2 gap-x-8 gap-y-7 items-start">
+            <div className="grid md:grid-cols-2 gap-x-8 gap-y-7 col-span-2 ">
+              <form.Field
+                name="sector_id"
+                validators={{
+                  onSubmit: ({ value }) =>
+                    !value ? t("required_field") : null,
+                }}
+                children={(field) => (
+                  <Select
+                    id="sector_id"
+                    name="sector_id"
+                    value={field.state.value?.toString() || ""}
+                    onValueChange={(e) => field.handleChange(e)}
+                  >
+                    <SelectTrigger
+                      label={t("sector")}
+                      hasValue={!!field.state.value}
+                      error={field.state.meta.errors.length > 0 ? true : false}
+                      errorMessage={field.state.meta.errors[0]}
+                      onClear={() => field.handleChange(null)}
+                    >
+                      <SelectValue placeholder={t("select_sector")} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {data?.sectorList?.map((item: any) => (
+                        <SelectItem
+                          key={`sector-${item.value}`}
+                          value={item.value?.toString()}
+                        >
+                          {item.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              {isAdmin && (
+                <form.Field
+                  name="entity_id"
+                  validators={{
+                    onSubmit: ({ value }) =>
+                      !value ? t("required_field") : null,
+                  }}
+                  children={(field) => (
+                    <Select
+                      id="entity_id"
+                      name="entity_id"
+                      value={field.state.value?.toString() || ""}
+                      onValueChange={(e) => field.handleChange(e)}
+                    >
+                      <SelectTrigger
+                        label={t("entity")}
+                        hasValue={!!field.state.value}
+                        error={
+                          field.state.meta.errors.length > 0 ? true : false
+                        }
+                        errorMessage={field.state.meta.errors[0]}
+                        onClear={() => field.handleChange(null)}
+                      >
+                        <SelectValue placeholder={t("select_entity")} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {data?.entities?.map((item: any) => (
+                          <SelectItem
+                            key={`sector-${item.value}`}
+                            value={item.value?.toString()}
+                          >
+                            {item.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+              )}
+            </div>
             <form.Field
               name="title"
               validators={{
@@ -784,7 +870,9 @@ function AddModal({ data }: { data: any }) {
       try {
         const formData = new FormData();
         formData.append("sector_id", value.sector_id || "");
-        formData.append("entity_id", value.entity_id || "");
+        if (isAdmin) {
+          formData.append("entity_id", value.entity_id || "");
+        }
         formData.append("title", value.title);
         formData.append("title_arabic", value.title_arabic);
         formData.append("description", value.description);
@@ -864,7 +952,7 @@ function AddModal({ data }: { data: any }) {
                       {data?.sectorList?.map((item: any) => (
                         <SelectItem
                           key={`sector-${item.value}`}
-                          value={item.value.toString()}
+                          value={item.value?.toString()}
                         >
                           {item.label}
                         </SelectItem>
@@ -902,7 +990,7 @@ function AddModal({ data }: { data: any }) {
                         {data?.entities?.map((item: any) => (
                           <SelectItem
                             key={`sector-${item.value}`}
-                            value={item.value.toString()}
+                            value={item.value?.toString()}
                           >
                             {item.label}
                           </SelectItem>
