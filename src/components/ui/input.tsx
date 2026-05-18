@@ -47,6 +47,7 @@ function Input({
 
   const fileName = preview?.split("/").pop();
   const isMobile = useMobile();
+
   return (
     <div className={cn("relative")}>
       <div

@@ -197,7 +197,7 @@ function PageTable({ search }: { search: string }) {
       }),
     }));
   }, [data?.table_values, i18n.language]);
-  console.log(data);
+
   return (
     <>
       {data && (

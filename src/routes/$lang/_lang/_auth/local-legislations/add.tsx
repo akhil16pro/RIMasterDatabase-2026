@@ -29,7 +29,7 @@ import CKEditorCustom from "@/components/ui/CKEditor";
 import { useAtomValue } from "jotai";
 import { userSessionAtom } from "@/store/atoms";
 import { useNavigate } from "@tanstack/react-router";
-
+import { LegislationForm } from "@/components/form/LegislationForm";
 export const Route = createFileRoute(
   "/$lang/_lang/_auth/local-legislations/add",
 )({
@@ -102,10 +102,7 @@ function RouteComponent() {
 
         formData.append("lm_created_by", userSession?.user?.id || "");
         formData.append("lm_has_english_version", value.lm_has_english_version);
-        // formData.append(
-        //   "local_government",
-        //   userSession?.user?.userEmirateId || "",
-        // );
+
         formData.append("lm_sector_id", value.lm_sector_id);
         formData.append("lm_law_type_id", value.lm_law_type_id);
         formData.append("lm_title", value.lm_title);
@@ -154,7 +151,6 @@ function RouteComponent() {
           })
           .json<any>();
 
-        // console.log(res, "local_legislation_store_res");
         if (res?.status) {
           form.reset();
           toast.success(res?.message || t("success"));
@@ -164,10 +160,6 @@ function RouteComponent() {
           setTimeout(() => {
             setThankYouPopup(true);
           }, 150);
-
-          // setTimeout(() => {
-          //   queryClient.invalidateQueries({ queryKey: ["glossaryTable"] });
-          // }, 100);
         }
       } catch (error) {
         console.error("Add request failed:", error);
@@ -177,9 +169,66 @@ function RouteComponent() {
     },
   });
 
+  const [initialValues, setInitialValues] = useState({
+    lm_has_english_version: "2",
+    lm_law_type_id: "",
+    lm_sector_id: "",
+    lm_title: "",
+    lm_title_arabic: "",
+    lm_short_title: "",
+    lm_short_title_arabic: "",
+    lm_description: "",
+    lm_description_arabic: "",
+    lm_year: "",
+    lm_has_modifications: "2",
+    lm_number: "",
+    lm_issue_date: "",
+    lm_effective_date: "",
+    lm_pdf_file: "",
+    lm_pdf_file_arabic: "",
+    lm_gazette_number: "",
+    lm_gazette_number_arabic: "",
+    lm_official_gazette_issue_date: "",
+    lm_official_gazette_publish_date: "",
+    lm_gazette_title: "",
+    lm_gazette_title_arabic: "",
+  });
+
+  const handleStore = async (values) => {
+    setIsSubmitting(true);
+    const formData = new FormData();
+
+    Object.entries(values).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        formData.append(key, value as string | Blob);
+      }
+    });
+    console.log("FormData content:", Object.fromEntries(formData.entries()));
+    const res = await apiClient
+      .post(i18n.language + `/local-legislation/store`, {
+        headers: {
+          "Content-Type": undefined,
+        },
+        body: formData,
+      })
+      .json<any>();
+
+    if (res?.status) {
+      setIsSubmitting(false);
+
+      toast.success(res?.message || t("success"));
+      queryClient.invalidateQueries({
+        queryKey: ["localLegislationTable"],
+      });
+      setTimeout(() => {
+        setThankYouPopup(true);
+      }, 150);
+    }
+  };
+
   return (
     <DashboardLayout isLoading={isLoading} title={t("add_legislation")}>
-      <form
+      {/* <form
         onSubmit={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -241,21 +290,7 @@ function RouteComponent() {
               )}
             />
           </div>
-          {/* <form.Field
-            name="local_government"
-            children={(field) => (
-              <Input
-                id="local_government"
-                name="local_government"
-                value={field.state.value}
-                onChange={(e) => field.handleChange(e.target.value)}
-                label={t("local_government")}
-                error={field.state.meta.errors.length > 0 ? true : false}
-                errorMessage={field.state.meta.errors[0]}
-                disabled={true}
-              />
-            )}
-          /> */}
+
           <form.Field
             name="lm_sector_id"
             validators={{
@@ -896,7 +931,14 @@ function RouteComponent() {
             />
           </div>
         </div>
-      </form>
+      </form> */}
+      <LegislationForm
+        mode="add"
+        initialValues={initialValues}
+        data={data}
+        onSubmit={handleStore}
+        isSubmitting={isSubmitting}
+      />
       <ThankYouPopup
         type="success"
         open={thankYouPopup}

@@ -30,6 +30,7 @@ import { useAtomValue } from "jotai";
 import { userSessionAtom } from "@/store/atoms";
 import { useNavigate } from "@tanstack/react-router";
 import { usePDFPreview } from "@/lib/usePDFPreview";
+import { LegislationForm } from "@/components/form/LegislationForm";
 
 export const Route = createFileRoute(
   "/$lang/_lang/_auth/federal-legislations/view/$slug",
@@ -81,9 +82,74 @@ function RouteComponent() {
     "legislation",
   );
 
+  const [initialValues, setInitialValues] = useState({
+    lm_has_english_version: "2",
+    lm_law_type_id: "",
+    lm_sector_id: "",
+    lm_title: "",
+    lm_title_arabic: "",
+    lm_short_title: "",
+    lm_short_title_arabic: "",
+    lm_description: "",
+    lm_description_arabic: "",
+    lm_year: "",
+    lm_has_modifications: "2",
+    lm_number: "",
+    lm_issue_date: "",
+    lm_effective_date: "",
+    lm_pdf_file: "",
+    lm_pdf_file_arabic: "",
+    lm_gazette_number: "",
+    lm_gazette_number_arabic: "",
+    lm_official_gazette_issue_date: "",
+    lm_official_gazette_publish_date: "",
+    lm_gazette_title: "",
+    lm_gazette_title_arabic: "",
+  });
+  useEffect(() => {
+    if (userSession?.user) {
+      setInitialValues((prev) => ({
+        ...prev,
+      }));
+    }
+  }, [userSession]);
+
+  useEffect(() => {
+    if (data?.lawData) {
+      setInitialValues({
+        lm_has_english_version:
+          data.lawData?.lm_has_english_version?.toString() || "2",
+        lm_law_type_id: data?.lawData?.lm_law_type_id?.toString() || "",
+        lm_sector_id: data?.lawData?.lm_sector_id?.toString() || "",
+        lm_title: data?.lawData?.lm_title,
+        lm_title_arabic: data?.lawData?.lm_title_arabic,
+        lm_short_title: data?.lawData?.lm_short_title,
+        lm_short_title_arabic: data?.lawData?.lm_short_title_arabic,
+        lm_description: data?.lawData?.lm_description,
+        lm_description_arabic: data?.lawData?.lm_description_arabic,
+        lm_year: data?.lawData?.lm_year?.toString() || "",
+        lm_has_modifications:
+          data?.lawData?.lm_has_modifications?.toString() || "2",
+        lm_number: data?.lawData?.lm_number,
+        lm_issue_date: data?.lawData?.lm_issue_date,
+        lm_effective_date: data?.lawData?.lm_effective_date,
+        lm_pdf_file: null,
+        lm_pdf_file_arabic: null,
+        lm_gazette_number: data?.lawData?.lm_gazette_number,
+        lm_gazette_number_arabic: data?.lawData?.lm_gazette_number_arabic,
+        lm_official_gazette_issue_date:
+          data?.lawData?.lm_official_gazette_issue_date,
+        lm_official_gazette_publish_date:
+          data?.lawData?.lm_official_gazette_publish_date,
+        lm_gazette_title: data?.lawData?.lm_gazette_title,
+        lm_gazette_title_arabic: data?.lawData?.lm_gazette_title_arabic,
+      });
+    }
+  }, [data]);
+
   return (
     <DashboardLayout isLoading={isLoading} title={t("view_legislation")}>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10 items-start">
+      {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10 items-start">
         <div className="inline-flex gap-5 text-black  text-[1.2rem] col-span-full">
           <Label className="text-black/70">{t("has_english")}</Label>
           <RadioGroup
@@ -111,12 +177,6 @@ function RouteComponent() {
           </RadioGroup>
         </div>
 
-        {/* <Input
-          value={userSession?.user?.userEmirateName || ""}
-          label={t("local_government")}
-          disabled={true}
-          readOnly={true}
-        /> */}
         <Select
           key={data?.lawData?.lm_sector_id}
           value={data?.lawData?.lm_sector_id?.toString() || ""}
@@ -367,7 +427,16 @@ function RouteComponent() {
           label={t("submitted_by")}
           readOnly={true}
         />
-      </div>
+      </div> */}
+      <LegislationForm
+        mode="view"
+        initialValues={initialValues}
+        data={data}
+        previewEN={previewEN}
+        previewAR={previewAR}
+        isLoadingEN={isLoadingEN}
+        isLoadingAR={isLoadingAR}
+      />
     </DashboardLayout>
   );
 }

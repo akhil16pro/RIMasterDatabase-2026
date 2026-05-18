@@ -30,6 +30,7 @@ import { useAtomValue } from "jotai";
 import { userSessionAtom } from "@/store/atoms";
 import { useNavigate } from "@tanstack/react-router";
 import { usePDFPreview } from "@/lib/usePDFPreview";
+import { LegislationForm } from "@/components/form/LegislationForm";
 
 export const Route = createFileRoute(
   "/$lang/_lang/_auth/federal-legislations/edit/$slug",
@@ -80,7 +81,6 @@ function RouteComponent() {
   const form = useForm({
     defaultValues: {
       lm_has_english_version: "2",
-      // local_government: userSession?.user?.userEmirateName || "",
       lm_law_type_id: "",
       lm_sector_id: "",
       lm_title: "",
@@ -111,10 +111,7 @@ function RouteComponent() {
 
         formData.append("lm_created_by", userSession?.user?.id || "");
         formData.append("lm_has_english_version", value.lm_has_english_version);
-        // formData.append(
-        //   "local_government",
-        //   userSession?.user?.userEmirateId || "",
-        // );
+
         formData.append("lm_sector_id", value.lm_sector_id.toString());
         formData.append("lm_law_type_id", value.lm_law_type_id.toString());
         formData.append("lm_title", value.lm_title);
@@ -270,9 +267,105 @@ function RouteComponent() {
     "legislation",
   );
 
+  const [initialValues, setInitialValues] = useState({
+    lm_has_english_version: "2",
+    lm_law_type_id: "",
+    lm_sector_id: "",
+    lm_title: "",
+    lm_title_arabic: "",
+    lm_short_title: "",
+    lm_short_title_arabic: "",
+    lm_description: "",
+    lm_description_arabic: "",
+    lm_year: "",
+    lm_has_modifications: "2",
+    lm_number: "",
+    lm_issue_date: "",
+    lm_effective_date: "",
+    lm_pdf_file: "",
+    lm_pdf_file_arabic: "",
+    lm_gazette_number: "",
+    lm_gazette_number_arabic: "",
+    lm_official_gazette_issue_date: "",
+    lm_official_gazette_publish_date: "",
+    lm_gazette_title: "",
+    lm_gazette_title_arabic: "",
+  });
+  useEffect(() => {
+    if (userSession?.user) {
+      setInitialValues((prev) => ({
+        ...prev,
+        // local_government: userSession?.user?.userEmirateName || "",
+      }));
+    }
+  }, [userSession]);
+
+  useEffect(() => {
+    if (data?.lawData) {
+      setInitialValues({
+        lm_has_english_version:
+          data.lawData?.lm_has_english_version?.toString() || "2",
+        lm_law_type_id: data?.lawData?.lm_law_type_id?.toString() || "",
+        lm_sector_id: data?.lawData?.lm_sector_id?.toString() || "",
+        lm_title: data?.lawData?.lm_title,
+        lm_title_arabic: data?.lawData?.lm_title_arabic,
+        lm_short_title: data?.lawData?.lm_short_title,
+        lm_short_title_arabic: data?.lawData?.lm_short_title_arabic,
+        lm_description: data?.lawData?.lm_description,
+        lm_description_arabic: data?.lawData?.lm_description_arabic,
+        lm_year: data?.lawData?.lm_year?.toString() || "",
+        lm_has_modifications:
+          data?.lawData?.lm_has_modifications?.toString() || "2",
+        lm_number: data?.lawData?.lm_number,
+        lm_issue_date: data?.lawData?.lm_issue_date,
+        lm_effective_date: data?.lawData?.lm_effective_date,
+        lm_pdf_file: null,
+        lm_pdf_file_arabic: null,
+        lm_gazette_number: data?.lawData?.lm_gazette_number,
+        lm_gazette_number_arabic: data?.lawData?.lm_gazette_number_arabic,
+        lm_official_gazette_issue_date:
+          data?.lawData?.lm_official_gazette_issue_date,
+        lm_official_gazette_publish_date:
+          data?.lawData?.lm_official_gazette_publish_date,
+        lm_gazette_title: data?.lawData?.lm_gazette_title,
+        lm_gazette_title_arabic: data?.lawData?.lm_gazette_title_arabic,
+      });
+    }
+  }, [data]);
+
+  const handleStore = async (values) => {
+    setIsSubmitting(true);
+    const formData = new FormData();
+
+    Object.entries(values).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        formData.append(key, value as string | Blob);
+      }
+    });
+    console.log("FormData content:", Object.fromEntries(formData.entries()));
+    const res = await apiClient
+      .post(i18n.language + `/federal-legislation/update/${slug}`, {
+        headers: {
+          "Content-Type": undefined,
+        },
+        body: formData,
+      })
+      .json<any>();
+
+    if (res?.status) {
+      setIsSubmitting(false);
+
+      toast.success(res?.message || t("success"));
+
+      setTimeout(() => {
+        setThankYouPopup(true);
+      }, 150);
+    }
+  };
+
   return (
     <DashboardLayout isLoading={isLoading} title={t("edit_legislation")}>
-      <form
+      {/* <form
         onSubmit={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -334,21 +427,7 @@ function RouteComponent() {
               )}
             />
           </div>
-          {/* <form.Field
-            name="local_government"
-            children={(field) => (
-              <Input
-                id="local_government"
-                name="local_government"
-                value={field.state.value}
-                onChange={(e) => field.handleChange(e.target.value)}
-                label={t("local_government")}
-                error={field.state.meta.errors.length > 0 ? true : false}
-                errorMessage={field.state.meta.errors[0]}
-                disabled={true}
-              />
-            )}
-          /> */}
+        
           <form.Field
             name="lm_sector_id"
             validators={{
@@ -1015,7 +1094,19 @@ function RouteComponent() {
             />
           </div>
         </div>
-      </form>
+      </form> */}
+
+      <LegislationForm
+        mode="edit"
+        initialValues={initialValues}
+        data={data}
+        onSubmit={handleStore}
+        isSubmitting={isSubmitting}
+        previewEN={previewEN}
+        previewAR={previewAR}
+        isLoadingEN={isLoadingEN}
+        isLoadingAR={isLoadingAR}
+      />
       <ThankYouPopup
         type="success"
         open={thankYouPopup}
@@ -1029,9 +1120,6 @@ function RouteComponent() {
           queryClient.invalidateQueries({
             queryKey: ["federalLegislationTable"],
           });
-          // navigate({
-          //   to: `/${i18n.language}/local-legislations`,
-          // });
         }}
       />
     </DashboardLayout>
