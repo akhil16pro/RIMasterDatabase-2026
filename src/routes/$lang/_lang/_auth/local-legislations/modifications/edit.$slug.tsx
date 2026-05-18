@@ -831,10 +831,10 @@ function RouteComponent() {
         }
         onConfirm={() => {
           queryClient.invalidateQueries({
-            queryKey: ["localLegislationModificationFormData", slug],
+            queryKey: ["localLegislationModificationFormData"],
           });
           queryClient.invalidateQueries({
-            queryKey: ["local_legislations_modifications_table", slug],
+            queryKey: ["local_legislations_modifications_table"],
           });
           navigate({
             to: `/${i18n.language}/local-legislations/modifications/${parentSlug}`,
