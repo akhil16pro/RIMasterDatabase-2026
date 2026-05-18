@@ -62,12 +62,6 @@ function RouteComponent() {
             .json<any>(),
         ]);
 
-        console.log(
-          "international_treaties_form_data",
-          editRes?.data,
-          "editRes?.data",
-        );
-
         return { ...createRes?.data, ...editRes?.data };
       } catch (error) {
         console.log("international_treaties_form_data_error", error);
@@ -232,7 +226,7 @@ function RouteComponent() {
           id="it_expiry_date"
           name="it_expiry_date"
           value={data?.treatyData?.it_expiry_date}
-          label={t("expiry_date")}
+          label={t("treaty_expiry_date")}
           readOnly={true}
         />
 
@@ -240,7 +234,7 @@ function RouteComponent() {
           <Input
             type="file"
             accept=".pdf"
-            label={t("attachment_english")}
+            label={t("treaty_file_english")}
             preview={data?.treatyData?.it_attachment}
             onClick={previewEN}
             isLoading={isLoadingEN}
@@ -250,7 +244,7 @@ function RouteComponent() {
           <Input
             type="file"
             accept=".pdf"
-            label={t("attachment_arabic")}
+            label={t("treaty_file_arabic")}
             preview={data?.treatyData?.it_attachment_arabic}
             onClick={previewAR}
             isLoading={isLoadingAR}

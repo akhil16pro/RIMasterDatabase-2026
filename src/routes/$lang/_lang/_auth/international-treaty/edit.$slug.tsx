@@ -69,12 +69,6 @@ function RouteComponent() {
             .json<any>(),
         ]);
 
-        console.log(
-          "international_treaties_form_data",
-          editRes?.data,
-          "editRes?.data",
-        );
-
         return { ...createRes?.data, ...editRes?.data };
       } catch (error) {
         console.log("international_treaties_form_data_error", error);
@@ -135,7 +129,7 @@ function RouteComponent() {
           })
           .json<any>();
 
-        console.log(res, "international_treaties_update_res");
+        // console.log(res, "international_treaties_update_res");
         if (res?.status) {
           // form.reset();
           toast.success(res?.message || t("success"));
@@ -474,7 +468,7 @@ function RouteComponent() {
                     name="it_expiry_date"
                     value={field.state.value}
                     onChange={(e) => field.handleChange(e.target.value)}
-                    label={t("expiry_date")}
+                    label={t("treaty_expiry_date")}
                     error={field.state.meta.errors.length > 0 ? true : false}
                     errorMessage={field.state.meta.errors[0]}
                     min={treatyDateValue}
@@ -523,7 +517,7 @@ function RouteComponent() {
                     const file = e.target.files?.[0];
                     field.handleChange(file);
                   }}
-                  label={t("attachment_english")}
+                  label={t("treaty_file_english")}
                   error={field.state.meta.errors.length > 0 ? true : false}
                   errorMessage={field.state.meta.errors[0]}
                   preview={
@@ -579,7 +573,7 @@ function RouteComponent() {
                     const file = e.target.files?.[0];
                     field.handleChange(file);
                   }}
-                  label={t("attachment_arabic")}
+                  label={t("treaty_file_arabic")}
                   error={field.state.meta.errors.length > 0 ? true : false}
                   errorMessage={field.state.meta.errors[0]}
                   preview={

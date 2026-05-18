@@ -41,6 +41,7 @@ function RouteComponent() {
   const [initialValues, setInitialValues] = useState({
     // local_government: userSession?.user?.userEmirateName || "",
     dm_decision_type_id: "",
+    dm_federal_court_id: "",
     dm_title: "",
     dm_title_arabic: "",
     dm_decision_date: "",
@@ -52,6 +53,8 @@ function RouteComponent() {
     dm_details_arabic: "",
     dm_file: "",
     dm_file_arabic: "",
+    dm_emirate_id: "",
+    dm_decision_number: "",
   });
 
   useEffect(() => {
@@ -99,8 +102,17 @@ function RouteComponent() {
     //   disabled: true,
     // },
     {
+      name: "dm_federal_court_id",
+      label: t("federal_court"),
+      type: "select",
+      optionsKey: "decisionTypeList",
+      validators: {
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
+      },
+    },
+    {
       name: "dm_decision_type_id",
-      label: t("decision_type"),
+      label: t("court_decision_type"),
       type: "select",
       optionsKey: "decisionTypeList",
       validators: {
@@ -108,50 +120,62 @@ function RouteComponent() {
       },
     },
 
-    { name: "dm_title", label: t("legislation_title_english"), type: "text" },
+    {
+      name: "dm_title",
+      label: t("court_decision_title_english"),
+      type: "text",
+    },
     {
       name: "dm_title_arabic",
-      label: t("legislation_title_arabic"),
+      label: t("court_decision_title_arabic"),
       type: "text",
       dir: "rtl",
     },
     {
       name: "dm_decision_date",
-      label: t("decision_date"),
+      label: t("court_decision_date"),
       type: "date",
       validators: {
         onSubmit: ({ value }) => (!value ? t("required_field") : null),
       },
     },
     {
+      name: "dm_decision_number",
+      label: t("court_decision_number"),
+      type: "text",
+      validators: {
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
+      },
+    },
+    {
       name: "dm_year",
-      label: t("decision_year"),
+      label: t("court_decision_year"),
       type: "select",
       optionsKey: "yearList",
       validators: {
         onSubmit: ({ value }) => (!value ? t("required_field") : null),
       },
     },
-    {
-      name: "dm_authority_title",
-      label: t("authority_title"),
-      type: "text",
-      validators: {
-        onSubmit: ({ value }) => (!value ? t("required_field") : null),
-      },
-    },
-    {
-      name: "dm_authority_title_arabic",
-      label: t("authority_title_arabic"),
-      type: "text",
-      dir: "rtl",
-      validators: {
-        onSubmit: ({ value }) => (!value ? t("required_field") : null),
-      },
-    },
+    // {
+    //   name: "dm_authority_title",
+    //   label: t("authority_title"),
+    //   type: "text",
+    //   validators: {
+    //     onSubmit: ({ value }) => (!value ? t("required_field") : null),
+    //   },
+    // },
+    // {
+    //   name: "dm_authority_title_arabic",
+    //   label: t("authority_title_arabic"),
+    //   type: "text",
+    //   dir: "rtl",
+    //   validators: {
+    //     onSubmit: ({ value }) => (!value ? t("required_field") : null),
+    //   },
+    // },
     {
       name: "dm_details",
-      label: t("details_english"),
+      label: t("court_decision_details_english"),
       type: "editor",
       className: "col-span-full",
       validators: {
@@ -160,7 +184,7 @@ function RouteComponent() {
     },
     {
       name: "dm_details_arabic",
-      label: t("details_arabic"),
+      label: t("court_decision_details_arabic"),
       type: "editor",
       className: "col-span-full",
       dir: "rtl",
@@ -171,7 +195,7 @@ function RouteComponent() {
 
     {
       name: "dm_file",
-      label: t("attachment"),
+      label: t("court_decision_file_english"),
       type: "file",
       accept: ".pdf",
       preview: data?.decisionData?.dm_file,
@@ -180,12 +204,21 @@ function RouteComponent() {
     },
     {
       name: "dm_file_arabic",
-      label: t("attachment_arabic"),
+      label: t("court_decision_file_arabic"),
       type: "file",
       accept: ".pdf",
       preview: data?.decisionData?.dm_file_arabic,
       onClick: () => previewAR(),
       isLoading: isLoadingAR,
+    },
+    {
+      name: "dm_emirate_id",
+      label: t("location"),
+      type: "select",
+      optionsKey: "decisionTypeList",
+      validators: {
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
+      },
     },
   ];
 
