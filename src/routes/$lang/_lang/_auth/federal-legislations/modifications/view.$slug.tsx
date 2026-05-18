@@ -19,9 +19,9 @@ import { Label } from "@/components/ui/label";
 
 import { useAtomValue } from "jotai";
 import { userSessionAtom } from "@/store/atoms";
-
+import { useState, useEffect } from "react";
 import { usePDFPreview } from "@/lib/usePDFPreview";
-
+import { LegislationModificationForm } from "@/components/form/LegislationModificationForm";
 export const Route = createFileRoute(
   "/$lang/_lang/_auth/federal-legislations/modifications/view/$slug",
 )({
@@ -86,6 +86,60 @@ function RouteComponent() {
     "legislation",
   );
 
+  const [initialValues, setInitialValues] = useState({
+    lm_has_english_version: "2",
+    local_government: userSession?.user?.userEmirateName || "",
+    lm_title: "",
+    lm_title_arabic: "",
+    lm_short_title: "",
+    lm_short_title_arabic: "",
+    lm_year: "",
+    lm_issue_date: "",
+    lm_effective_date: "",
+    lm_gazette_number: "",
+    lm_gazette_number_arabic: "",
+    lm_official_gazette_issue_date: "",
+    lm_gazette_title: "",
+    lm_gazette_title_arabic: "",
+    lm_pdf_file: null,
+    lm_pdf_file_arabic: null,
+    lm_official_gazette_publish_date: "",
+  });
+  useEffect(() => {
+    if (userSession?.user) {
+      setInitialValues((prev) => ({
+        ...prev,
+        // local_government: userSession?.user?.userEmirateName || "",
+      }));
+    }
+  }, [userSession]);
+
+  useEffect(() => {
+    if (data?.lawData) {
+      setInitialValues({
+        lm_has_english_version:
+          data.lawData?.lm_has_english_version?.toString() || "2",
+        local_government: userSession?.user?.userEmirateName || "",
+        lm_title: data.lawData?.lm_title || "",
+        lm_title_arabic: data.lawData?.lm_title_arabic || "",
+        lm_short_title: data.lawData?.lm_short_title || "",
+        lm_short_title_arabic: data.lawData?.lm_short_title_arabic || "",
+        lm_year: data.lawData?.lm_year?.toString() || "",
+        lm_issue_date: data.lawData?.lm_issue_date || "",
+        lm_effective_date: data.lawData?.lm_effective_date || "",
+        lm_gazette_number: data.lawData?.lm_gazette_number || "",
+        lm_gazette_number_arabic: data.lawData?.lm_gazette_number_arabic || "",
+        lm_official_gazette_issue_date:
+          data.lawData?.lm_official_gazette_issue_date || "",
+        lm_gazette_title: data.lawData?.lm_gazette_title || "",
+        lm_gazette_title_arabic: data.lawData?.lm_gazette_title_arabic || "",
+        lm_pdf_file: null,
+        lm_pdf_file_arabic: null,
+        lm_official_gazette_publish_date:
+          data.lawData?.lm_official_gazette_publish_date || "",
+      });
+    }
+  }, [data]);
   return (
     <DashboardLayout
       isLoading={isLoading}
@@ -93,7 +147,16 @@ function RouteComponent() {
         t("view_modification") + `<small>${data?.parentLaw?.label}</small>`
       }
     >
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10 items-start">
+      <LegislationModificationForm
+        mode="view"
+        initialValues={initialValues}
+        data={data}
+        previewEN={previewEN}
+        previewAR={previewAR}
+        isLoadingEN={isLoadingEN}
+        isLoadingAR={isLoadingAR}
+      />
+      {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10 items-start">
         <div className="inline-flex gap-5 text-black  text-[1.2rem] col-span-full">
           <Label className="text-black/70">{t("has_english")}</Label>
           <RadioGroup
@@ -252,7 +315,7 @@ function RouteComponent() {
           label={t("submitted_by")}
           readOnly={true}
         />
-      </div>
+      </div> */}
     </DashboardLayout>
   );
 }

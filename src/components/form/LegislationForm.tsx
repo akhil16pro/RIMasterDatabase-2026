@@ -15,7 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/Select";
 import { Label } from "@/components/ui/label";
-import { ThankYouPopup } from "@/components/ui/thankYouPopup";
+
 import { FileUpload } from "@/components/ui/FileUpload";
 import { AnimatePresence, motion } from "motion/react";
 

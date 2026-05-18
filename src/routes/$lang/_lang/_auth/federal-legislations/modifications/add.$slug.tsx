@@ -27,7 +27,7 @@ import { ThankYouPopup } from "@/components/ui/thankYouPopup";
 import { useAtomValue } from "jotai";
 import { userSessionAtom } from "@/store/atoms";
 import { useNavigate } from "@tanstack/react-router";
-
+import { LegislationModificationForm } from "@/components/form/LegislationModificationForm";
 export const Route = createFileRoute(
   "/$lang/_lang/_auth/federal-legislations/modifications/add/$slug",
 )({
@@ -75,104 +75,154 @@ function RouteComponent() {
     },
   });
 
-  const form = useForm({
-    defaultValues: {
-      lm_has_english_version: "2",
-      lm_title: "",
-      lm_title_arabic: "",
-      lm_short_title: "",
-      lm_short_title_arabic: "",
-      lm_description: "",
-      lm_description_arabic: "",
-      lm_year: "",
-      lm_issue_date: "",
-      lm_effective_date: "",
-      lm_pdf_file: "",
-      lm_pdf_file_arabic: "",
-      lm_gazette_number: "",
-      lm_gazette_number_arabic: "",
-      lm_official_gazette_issue_date: "",
-      lm_gazette_title: "",
-      lm_gazette_title_arabic: "",
-    },
-    onSubmit: async ({ value }) => {
-      setIsSubmitting(true);
+  // const form = useForm({
+  //   defaultValues: {
+  //     lm_has_english_version: "2",
+  //     lm_title: "",
+  //     lm_title_arabic: "",
+  //     lm_short_title: "",
+  //     lm_short_title_arabic: "",
+  //     lm_description: "",
+  //     lm_description_arabic: "",
+  //     lm_year: "",
+  //     lm_issue_date: "",
+  //     lm_effective_date: "",
+  //     lm_pdf_file: "",
+  //     lm_pdf_file_arabic: "",
+  //     lm_gazette_number: "",
+  //     lm_gazette_number_arabic: "",
+  //     lm_official_gazette_issue_date: "",
+  //     lm_gazette_title: "",
+  //     lm_gazette_title_arabic: "",
+  //   },
+  //   onSubmit: async ({ value }) => {
+  //     setIsSubmitting(true);
 
-      try {
-        const formData = new FormData();
+  //     try {
+  //       const formData = new FormData();
 
-        formData.append("lm_created_by", userSession?.user?.id || "");
-        formData.append("lm_has_english_version", value.lm_has_english_version);
+  //       formData.append("lm_created_by", userSession?.user?.id || "");
+  //       formData.append("lm_has_english_version", value.lm_has_english_version);
 
-        formData.append("lm_title", value.lm_title);
-        formData.append("lm_title_arabic", value.lm_title_arabic);
-        formData.append("lm_short_title", value.lm_short_title);
-        formData.append("lm_short_title_arabic", value.lm_short_title_arabic);
-        formData.append("lm_description", value.lm_description);
-        formData.append("lm_description_arabic", value.lm_description_arabic);
-        formData.append("lm_year", value.lm_year);
-        formData.append("lm_issue_date", value.lm_issue_date);
-        formData.append("lm_effective_date", value.lm_effective_date);
-        formData.append("lm_gazette_number", value.lm_gazette_number);
-        formData.append(
-          "lm_gazette_number_arabic",
-          value.lm_gazette_number_arabic,
-        );
-        formData.append(
-          "lm_official_gazette_issue_date",
-          value.lm_official_gazette_issue_date,
-        );
-        formData.append("lm_gazette_title", value.lm_gazette_title);
-        formData.append(
-          "lm_gazette_title_arabic",
-          value.lm_gazette_title_arabic,
-        );
+  //       formData.append("lm_title", value.lm_title);
+  //       formData.append("lm_title_arabic", value.lm_title_arabic);
+  //       formData.append("lm_short_title", value.lm_short_title);
+  //       formData.append("lm_short_title_arabic", value.lm_short_title_arabic);
+  //       formData.append("lm_description", value.lm_description);
+  //       formData.append("lm_description_arabic", value.lm_description_arabic);
+  //       formData.append("lm_year", value.lm_year);
+  //       formData.append("lm_issue_date", value.lm_issue_date);
+  //       formData.append("lm_effective_date", value.lm_effective_date);
+  //       formData.append("lm_gazette_number", value.lm_gazette_number);
+  //       formData.append(
+  //         "lm_gazette_number_arabic",
+  //         value.lm_gazette_number_arabic,
+  //       );
+  //       formData.append(
+  //         "lm_official_gazette_issue_date",
+  //         value.lm_official_gazette_issue_date,
+  //       );
+  //       formData.append("lm_gazette_title", value.lm_gazette_title);
+  //       formData.append(
+  //         "lm_gazette_title_arabic",
+  //         value.lm_gazette_title_arabic,
+  //       );
 
-        if (value.lm_pdf_file) {
-          formData.append("lm_pdf_file", value.lm_pdf_file);
-        }
-        if (value.lm_pdf_file_arabic) {
-          formData.append("lm_pdf_file_arabic", value.lm_pdf_file_arabic);
-        }
+  //       if (value.lm_pdf_file) {
+  //         formData.append("lm_pdf_file", value.lm_pdf_file);
+  //       }
+  //       if (value.lm_pdf_file_arabic) {
+  //         formData.append("lm_pdf_file_arabic", value.lm_pdf_file_arabic);
+  //       }
 
-        const res = await apiClient
-          .post(i18n.language + "/modifications/store/" + slug, {
-            headers: {
-              "Content-Type": undefined,
-            },
-            body: formData,
-          })
-          .json<any>();
+  //       const res = await apiClient
+  //         .post(i18n.language + "/modifications/store/" + slug, {
+  //           headers: {
+  //             "Content-Type": undefined,
+  //           },
+  //           body: formData,
+  //         })
+  //         .json<any>();
 
-        // console.log(res, "local_legislation_store_res");
-        if (res?.status) {
-          form.reset();
-          toast.success(res?.message || t("success"));
-          queryClient.invalidateQueries({
-            queryKey: ["federal_legislations_modifications_table", slug],
-          });
-          setTimeout(() => {
-            setThankYouPopup(true);
-          }, 150);
+  //       // console.log(res, "local_legislation_store_res");
+  //       if (res?.status) {
+  //         form.reset();
+  //         toast.success(res?.message || t("success"));
+  //         queryClient.invalidateQueries({
+  //           queryKey: ["federal_legislations_modifications_table", slug],
+  //         });
+  //         setTimeout(() => {
+  //           setThankYouPopup(true);
+  //         }, 150);
 
-          // setTimeout(() => {
-          //   queryClient.invalidateQueries({ queryKey: ["glossaryTable"] });
-          // }, 100);
-        }
-      } catch (error) {
-        console.error("Add request failed:", error);
-      } finally {
-        setIsSubmitting(false);
-      }
-    },
+  //       }
+  //     } catch (error) {
+  //       console.error("Add request failed:", error);
+  //     } finally {
+  //       setIsSubmitting(false);
+  //     }
+  //   },
+  // });
+
+  const [initialValues, setInitialValues] = useState({
+    lm_has_english_version: "2",
+    lm_title: "",
+    lm_title_arabic: "",
+    lm_short_title: "",
+    lm_short_title_arabic: "",
+    lm_description: "",
+    lm_description_arabic: "",
+    lm_year: "",
+    lm_issue_date: "",
+    lm_effective_date: "",
+    lm_pdf_file: "",
+    lm_pdf_file_arabic: "",
+    lm_gazette_number: "",
+    lm_gazette_number_arabic: "",
+    lm_official_gazette_issue_date: "",
+    lm_gazette_title: "",
+    lm_gazette_title_arabic: "",
+    lm_official_gazette_publish_date: "",
   });
+
+  const handleStore = async (values) => {
+    setIsSubmitting(true);
+    const formData = new FormData();
+
+    Object.entries(values).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        formData.append(key, value as string | Blob);
+      }
+    });
+    console.log("FormData content:", Object.fromEntries(formData.entries()));
+    const res = await apiClient
+      .post(i18n.language + `/modifications/store/` + slug, {
+        headers: {
+          "Content-Type": undefined,
+        },
+        body: formData,
+      })
+      .json<any>();
+
+    if (res?.status) {
+      setIsSubmitting(false);
+
+      toast.success(res?.message || t("success"));
+      queryClient.invalidateQueries({
+        queryKey: ["federal_legislations_modifications_table", slug],
+      });
+      setTimeout(() => {
+        setThankYouPopup(true);
+      }, 150);
+    }
+  };
 
   return (
     <DashboardLayout
       isLoading={isLoading}
       title={t("add_modification") + `<small>${data?.label}</small>`}
     >
-      <form
+      {/* <form
         onSubmit={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -617,7 +667,14 @@ function RouteComponent() {
             />
           </div>
         </div>
-      </form>
+      </form> */}
+      <LegislationModificationForm
+        mode="add"
+        initialValues={initialValues}
+        data={data}
+        onSubmit={handleStore}
+        isSubmitting={isSubmitting}
+      />
       <ThankYouPopup
         type="success"
         open={thankYouPopup}

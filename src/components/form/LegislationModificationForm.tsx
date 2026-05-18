@@ -1,14 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useTranslation } from "react-i18next";
-import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
-import { apiClient } from "@/api";
-
 import { DefaultButton } from "@/components/ui/buttons";
 import { Input } from "@/components/ui/input";
-import { AnimatePresence, motion } from "motion/react";
-import DashboardLayout from "@/components/layouts/DashboardLayout";
-import DashboardTopbar from "@/components/layouts/DashboardTopbar";
-import { Pencil } from "lucide-react";
+
+import { Plus, Pencil } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useForm } from "@tanstack/react-form";
@@ -22,330 +15,46 @@ import {
   SelectValue,
 } from "@/components/ui/Select";
 import { Label } from "@/components/ui/label";
-import { ThankYouPopup } from "@/components/ui/thankYouPopup";
-import { useEffect } from "react";
-
-import CKEditorCustom from "@/components/ui/CKEditor";
-import { useAtomValue } from "jotai";
-import { userSessionAtom } from "@/store/atoms";
-import { useNavigate } from "@tanstack/react-router";
-import { usePDFPreview } from "@/lib/usePDFPreview";
-import { LegislationModificationForm } from "@/components/form/LegislationModificationForm";
-
-export const Route = createFileRoute(
-  "/$lang/_lang/_auth/local-legislations/modifications/edit/$slug",
-)({
-  component: RouteComponent,
-
-  staticData: {
-    breadcrumb: (params: any, search: any) => {
-      return [
-        {
-          key: "modifications",
-          path: `/${params.lang}/local-legislations/modifications/${search?.parentSlug}`,
-        },
-        {
-          key: "edit",
-          path: `/${params.lang}/local-legislations/modifications/edit/${params.slug}`,
-        },
-      ];
-    },
-  },
-});
-
-function RouteComponent() {
-  const { slug } = Route.useParams();
-  const { parentSlug } = Route.useSearch();
-  const { t, i18n } = useTranslation();
-  const userSession = useAtomValue(userSessionAtom);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
-  const [thankYouPopup, setThankYouPopup] = useState(false);
-
+import { AnimatePresence, motion } from "motion/react";
+import { useTranslation } from "react-i18next";
+interface LegislationModificationFormProps {
+  initialValues: any;
+  onSubmit: (values: any) => Promise<void>;
+  data: any;
+  isSubmitting: boolean;
+  mode: "add" | "edit" | "view";
+  previewEN?: string;
+  previewAR?: string;
+  isLoadingEN?: boolean;
+  isLoadingAR?: boolean;
+}
+export function LegislationModificationForm({
+  initialValues,
+  onSubmit,
+  data,
+  isSubmitting,
+  mode,
+  previewEN,
+  previewAR,
+  isLoadingEN,
+  isLoadingAR,
+}: LegislationModificationFormProps) {
+  const { t } = useTranslation();
   const [deletedFiles, setDeletedFiles] = useState<string[]>([]);
-
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["localLegislationModificationEditFormData", slug, i18n.language],
-    enabled: true,
-    staleTime: 0,
-    queryFn: async () => {
-      try {
-        // const [createRes, editRes] = await Promise.all([
-        //   apiClient
-        //     .get(`${i18n.language}/modifications/create/${slug}`)
-        //     .json<any>(),
-        //   apiClient
-        //     .get(`${i18n.language}/modifications/edit/${slug}`)
-        //     .json<any>(),
-        // ]);
-        // console.log(createRes?.data, "createRes");
-        // console.log(editRes?.data, "editRes");
-        // return { ...createRes?.data, ...editRes?.data };
-
-        const res = await apiClient
-          .get(i18n.language + `/modifications/edit/${slug}`)
-          .json<any>();
-        // console.log("modification_edit_form_data", res?.data);
-
-        return res?.data;
-      } catch (error) {
-        console.log("local_legislation_form_data_error", error);
-        return null;
-      }
-    },
+  const form = useForm({
+    defaultValues: initialValues,
+    onSubmit: async ({ value }) => await onSubmit(value),
   });
 
-  // const form = useForm({
-  //   defaultValues: {
-  //     lm_has_english_version: "2",
-  //     local_government: userSession?.user?.userEmirateName || "",
+  const handleClearFile = (fieldName: string, previewKey: string) => {
+    form.setFieldValue(fieldName as any, null);
 
-  //     lm_title: "",
-  //     lm_title_arabic: "",
-  //     lm_short_title: "",
-  //     lm_short_title_arabic: "",
-
-  //     lm_year: "",
-  //     lm_issue_date: "",
-  //     lm_effective_date: "",
-  //     lm_gazette_number: "",
-  //     lm_gazette_number_arabic: "",
-  //     lm_official_gazette_issue_date: "",
-  //     lm_gazette_title: "",
-  //     lm_gazette_title_arabic: "",
-  //     lm_pdf_file: null,
-  //     lm_pdf_file_arabic: null,
-  //   },
-  //   onSubmit: async ({ value }) => {
-  //     setIsSubmitting(true);
-
-  //     try {
-  //       const formData = new FormData();
-
-  //       formData.append("lm_has_english_version", value.lm_has_english_version);
-  //       formData.append("lm_title", value.lm_title);
-  //       formData.append("lm_title_arabic", value.lm_title_arabic);
-  //       formData.append("lm_short_title", value.lm_short_title);
-  //       formData.append("lm_short_title_arabic", value.lm_short_title_arabic);
-
-  //       formData.append("lm_year", value.lm_year.toString());
-  //       formData.append("lm_issue_date", value.lm_issue_date);
-  //       formData.append("lm_effective_date", value.lm_effective_date);
-  //       formData.append("lm_gazette_number", value.lm_gazette_number);
-  //       formData.append(
-  //         "lm_gazette_number_arabic",
-  //         value.lm_gazette_number_arabic,
-  //       );
-  //       formData.append(
-  //         "lm_official_gazette_issue_date",
-  //         value.lm_official_gazette_issue_date,
-  //       );
-  //       formData.append("lm_gazette_title", value.lm_gazette_title);
-  //       formData.append(
-  //         "lm_gazette_title_arabic",
-  //         value.lm_gazette_title_arabic,
-  //       );
-
-  //       if (value.lm_pdf_file) {
-  //         formData.append("lm_pdf_file", value.lm_pdf_file);
-  //       }
-  //       if (value.lm_pdf_file_arabic) {
-  //         formData.append("lm_pdf_file_arabic", value.lm_pdf_file_arabic);
-  //       }
-
-  //       const res = await apiClient
-  //         .post(i18n.language + `/modifications/update/${slug}`, {
-  //           headers: {
-  //             "Content-Type": undefined,
-  //           },
-  //           body: formData,
-  //         })
-  //         .json<any>();
-
-  //       if (res?.status) {
-  //         // form.reset();
-  //         toast.success(res?.message || t("success"));
-
-  //         setTimeout(() => {
-  //           setThankYouPopup(true);
-  //         }, 150);
-  //       }
-  //     } catch (error) {
-  //       console.error("Add request failed:", error);
-  //     } finally {
-  //       setIsSubmitting(false);
-  //     }
-  //   },
-  // });
-
-  // useEffect(() => {
-  //   if (data?.lawData) {
-  //     form.setFieldValue(
-  //       "lm_has_english_version",
-  //       data.lawData?.lm_has_english_version?.toString() || "2",
-  //     );
-
-  //     form.setFieldValue("lm_title", data?.lawData?.lm_title || "");
-  //     form.setFieldValue(
-  //       "lm_title_arabic",
-  //       data?.lawData?.lm_title_arabic || "",
-  //     );
-  //     form.setFieldValue("lm_short_title", data?.lawData?.lm_short_title || "");
-  //     form.setFieldValue(
-  //       "lm_short_title_arabic",
-  //       data?.lawData?.lm_short_title_arabic || "",
-  //     );
-
-  //     form.setFieldValue("lm_year", data?.lawData?.lm_year?.toString() || "");
-  //     form.setFieldValue("lm_issue_date", data?.lawData?.lm_issue_date || "");
-
-  //     form.setFieldValue("lm_pdf_file", "");
-  //     form.setFieldValue("lm_pdf_file_arabic", "");
-  //     form.setFieldValue(
-  //       "lm_gazette_number",
-  //       data?.lawData?.lm_gazette_number || "",
-  //     );
-  //     form.setFieldValue(
-  //       "lm_gazette_number_arabic",
-  //       data?.lawData?.lm_gazette_number_arabic || "",
-  //     );
-  //     form.setFieldValue(
-  //       "lm_official_gazette_issue_date",
-  //       data?.lawData?.lm_official_gazette_issue_date || "",
-  //     );
-  //     form.setFieldValue(
-  //       "lm_gazette_title",
-  //       data?.lawData?.lm_gazette_title || "",
-  //     );
-  //     form.setFieldValue(
-  //       "lm_gazette_title_arabic",
-  //       data?.lawData?.lm_gazette_title_arabic || "",
-  //     );
-  //   }
-  // }, [data, form, userSession]);
-
-  // const handleClearFile = (fieldName: string, previewKey: string) => {
-  //   form.setFieldValue(fieldName as any, null);
-
-  //   setDeletedFiles((prev) => [...prev, previewKey]);
-  // };
-  const { preview: previewEN, isLoading: isLoadingEN } = usePDFPreview(
-    data?.lawData?.lm_slug,
-    "en",
-    "legislation",
-  );
-  const { preview: previewAR, isLoading: isLoadingAR } = usePDFPreview(
-    data?.lawData?.lm_slug,
-    "ar",
-    "legislation",
-  );
-
-  const [initialValues, setInitialValues] = useState({
-    lm_has_english_version: "2",
-    local_government: userSession?.user?.userEmirateName || "",
-    lm_title: "",
-    lm_title_arabic: "",
-    lm_short_title: "",
-    lm_short_title_arabic: "",
-    lm_year: "",
-    lm_issue_date: "",
-    lm_effective_date: "",
-    lm_gazette_number: "",
-    lm_gazette_number_arabic: "",
-    lm_official_gazette_issue_date: "",
-    lm_gazette_title: "",
-    lm_gazette_title_arabic: "",
-    lm_pdf_file: null,
-    lm_pdf_file_arabic: null,
-    lm_official_gazette_publish_date: "",
-  });
-  useEffect(() => {
-    if (userSession?.user) {
-      setInitialValues((prev) => ({
-        ...prev,
-        // local_government: userSession?.user?.userEmirateName || "",
-      }));
-    }
-  }, [userSession]);
-
-  useEffect(() => {
-    if (data?.lawData) {
-      setInitialValues({
-        lm_has_english_version:
-          data.lawData?.lm_has_english_version?.toString() || "2",
-        local_government: userSession?.user?.userEmirateName || "",
-        lm_title: data.lawData?.lm_title || "",
-        lm_title_arabic: data.lawData?.lm_title_arabic || "",
-        lm_short_title: data.lawData?.lm_short_title || "",
-        lm_short_title_arabic: data.lawData?.lm_short_title_arabic || "",
-        lm_year: data.lawData?.lm_year?.toString() || "",
-        lm_issue_date: data.lawData?.lm_issue_date || "",
-        lm_effective_date: data.lawData?.lm_effective_date || "",
-        lm_gazette_number: data.lawData?.lm_gazette_number || "",
-        lm_gazette_number_arabic: data.lawData?.lm_gazette_number_arabic || "",
-        lm_official_gazette_issue_date:
-          data.lawData?.lm_official_gazette_issue_date || "",
-        lm_gazette_title: data.lawData?.lm_gazette_title || "",
-        lm_gazette_title_arabic: data.lawData?.lm_gazette_title_arabic || "",
-        lm_pdf_file: null,
-        lm_pdf_file_arabic: null,
-        lm_official_gazette_publish_date:
-          data.lawData?.lm_official_gazette_publish_date || "",
-      });
-    }
-  }, [data]);
-
-  const handleStore = async (values) => {
-    setIsSubmitting(true);
-    const formData = new FormData();
-
-    Object.entries(values).forEach(([key, value]) => {
-      if (value !== undefined && value !== null) {
-        formData.append(key, value as string | Blob);
-      }
-    });
-    console.log("FormData content:", Object.fromEntries(formData.entries()));
-    const res = await apiClient
-      .post(i18n.language + `/modifications/update/${slug}`, {
-        headers: {
-          "Content-Type": undefined,
-        },
-        body: formData,
-      })
-      .json<any>();
-
-    if (res?.status) {
-      setIsSubmitting(false);
-
-      toast.success(res?.message || t("success"));
-
-      setTimeout(() => {
-        setThankYouPopup(true);
-      }, 150);
-    }
+    setDeletedFiles((prev) => [...prev, previewKey]);
   };
 
   return (
-    <DashboardLayout
-      isLoading={isLoading}
-      title={
-        t("edit_governments_legislations") +
-        `<small>${data?.parentLaw?.label}</small>`
-      }
-    >
-      <LegislationModificationForm
-        mode="edit"
-        initialValues={initialValues}
-        data={data}
-        onSubmit={handleStore}
-        isSubmitting={isSubmitting}
-        previewEN={previewEN}
-        previewAR={previewAR}
-        isLoadingEN={isLoadingEN}
-        isLoadingAR={isLoadingAR}
-      />
-      {/* <form
+    <>
+      <form
         onSubmit={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -368,6 +77,7 @@ function RouteComponent() {
                     value={field.state.value}
                     onValueChange={(val) => field.handleChange(val)}
                     defaultValue="2"
+                    disabled={mode === "view" && true}
                   >
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem
@@ -417,7 +127,7 @@ function RouteComponent() {
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: "auto" }}
                     exit={{ opacity: 0, height: 0 }}
-                    className="col-span-full grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10 items-start"
+                    className=" col-span-full grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10 items-start"
                   >
                     <form.Field
                       name="lm_title"
@@ -435,13 +145,14 @@ function RouteComponent() {
                           type="text"
                           value={field.state.value}
                           onChange={(e) => field.handleChange(e.target.value)}
-                          label={t("legislation_title_english")}
+                          label={t("legislation_full_title_english")}
                           error={
                             field.state.meta.isTouched &&
                             field.state.meta.errors.length > 0
                           }
                           errorMessage={field.state.meta.errors[0]}
                           onBlur={field.handleBlur}
+                          readOnly={mode === "view" && true}
                         />
                       )}
                     />
@@ -457,6 +168,7 @@ function RouteComponent() {
                           label={t("legislation_short_title_english")}
                           error={field.state.meta.errors.length > 0}
                           errorMessage={field.state.meta.errors[0]}
+                          readOnly={mode === "view" && true}
                         />
                       )}
                     />
@@ -481,7 +193,7 @@ function RouteComponent() {
                   name="lm_title_arabic"
                   value={field.state.value}
                   onChange={(e) => field.handleChange(e.target.value)}
-                  label={t("legislation_title_arabic")}
+                  label={t("legislation_full_title_arabic")}
                   error={
                     field.state.meta.isTouched &&
                     field.state.meta.errors.length > 0
@@ -489,6 +201,7 @@ function RouteComponent() {
                   errorMessage={field.state.meta.errors[0]}
                   onBlur={field.handleBlur}
                   dir="rtl"
+                  readOnly={mode === "view" && true}
                 />
               )}
             />
@@ -505,6 +218,7 @@ function RouteComponent() {
                   error={field.state.meta.errors.length > 0 ? true : false}
                   errorMessage={field.state.meta.errors[0]}
                   dir="rtl"
+                  readOnly={mode === "view" && true}
                 />
               )}
             />
@@ -517,7 +231,9 @@ function RouteComponent() {
             }}
             children={(field) => (
               <Select
-                key={field.state.value}
+                key={`lm_year-${field.state.value}`}
+                id="lm_year"
+                name="lm_year"
                 value={field.state.value?.toString()}
                 onValueChange={(e) => field.handleChange(e)}
               >
@@ -526,6 +242,8 @@ function RouteComponent() {
                   hasValue={!!field.state.value}
                   error={field.state.meta.errors.length > 0 ? true : false}
                   errorMessage={field.state.meta.errors[0]}
+                  readOnly={mode === "view" && true}
+                  disabled={mode === "view" && true}
                 >
                   <SelectValue placeholder={t("select_legislation_year")} />
                 </SelectTrigger>
@@ -558,9 +276,11 @@ function RouteComponent() {
                 label={t("issued_date")}
                 error={field.state.meta.errors.length > 0 ? true : false}
                 errorMessage={field.state.meta.errors[0]}
+                readOnly={mode === "view" && true}
               />
             )}
           />
+
           <form.Subscribe
             selector={(state) => state.values.lm_has_english_version}
             children={(hasEnglish) => (
@@ -585,11 +305,12 @@ function RouteComponent() {
                           name="lm_gazette_number"
                           value={field.state.value}
                           onChange={(e) => field.handleChange(e.target.value)}
-                          label={t("gazette_number")}
+                          label={t("official_gazette_number")}
                           error={
                             field.state.meta.errors.length > 0 ? true : false
                           }
                           errorMessage={field.state.meta.errors[0]}
+                          readOnly={mode === "view" && true}
                         />
                       )}
                     />
@@ -606,11 +327,12 @@ function RouteComponent() {
                           name="lm_gazette_title"
                           value={field.state.value}
                           onChange={(e) => field.handleChange(e.target.value)}
-                          label={t("gazette_title_english")}
+                          label={t("official_gazette_title_english")}
                           error={
                             field.state.meta.errors.length > 0 ? true : false
                           }
                           errorMessage={field.state.meta.errors[0]}
+                          readOnly={mode === "view" && true}
                         />
                       )}
                     />
@@ -619,6 +341,7 @@ function RouteComponent() {
               </AnimatePresence>
             )}
           />
+
           <form.Field
             name="lm_gazette_number_arabic"
             validators={{
@@ -631,10 +354,11 @@ function RouteComponent() {
                 name="lm_gazette_number_arabic"
                 value={field.state.value}
                 onChange={(e) => field.handleChange(e.target.value)}
-                label={t("gazette_number_arabic")}
+                label={t("official_gazette_number_arabic")}
                 error={field.state.meta.errors.length > 0 ? true : false}
                 errorMessage={field.state.meta.errors[0]}
                 dir="rtl"
+                readOnly={mode === "view" && true}
               />
             )}
           />
@@ -651,10 +375,11 @@ function RouteComponent() {
                 name="lm_gazette_title_arabic"
                 value={field.state.value}
                 onChange={(e) => field.handleChange(e.target.value)}
-                label={t("gazette_title_arabic")}
+                label={t("official_gazette_title_arabic")}
                 error={field.state.meta.errors.length > 0 ? true : false}
                 errorMessage={field.state.meta.errors[0]}
                 dir="rtl"
+                readOnly={mode === "view" && true}
               />
             )}
           />
@@ -670,9 +395,29 @@ function RouteComponent() {
                 name="lm_official_gazette_issue_date"
                 value={field.state.value}
                 onChange={(e) => field.handleChange(e.target.value)}
-                label={t("gazette_issue_date")}
+                label={t("official_gazette_date")}
                 error={field.state.meta.errors.length > 0 ? true : false}
                 errorMessage={field.state.meta.errors[0]}
+                readOnly={mode === "view" && true}
+              />
+            )}
+          />
+          <form.Field
+            name="lm_official_gazette_publish_date"
+            validators={{
+              onSubmit: ({ value }) => (!value ? t("required_field") : null),
+            }}
+            children={(field) => (
+              <Input
+                type="date"
+                id="lm_official_gazette_publish_date"
+                name="lm_official_gazette_publish_date"
+                value={field.state.value}
+                onChange={(e) => field.handleChange(e.target.value)}
+                label={t("official_gazette_publish_date")}
+                error={field.state.meta.errors.length > 0 ? true : false}
+                errorMessage={field.state.meta.errors[0]}
+                readOnly={mode === "view" && true}
               />
             )}
           />
@@ -692,20 +437,25 @@ function RouteComponent() {
                       name="lm_pdf_file"
                       validators={{
                         onSubmit: ({ value }) => {
-                          return data?.lawData?.lm_pdf_file
-                            ? deletedFiles.includes("lm_pdf_file") &&
-                                !value &&
-                                t("required_field")
-                            : !value && t("required_field");
+                          if (mode === "edit") {
+                            return data?.lawData?.lm_pdf_file
+                              ? deletedFiles.includes("lm_pdf_file") &&
+                                  !value &&
+                                  t("required_field")
+                              : !value && t("required_field");
+                          } else {
+                            return !value ? t("required_field") : null;
+                          }
                         },
                         onChange: ({ value }) => {
                           if (!value) return null;
+
+                          // Ensure we have a File object
                           const file =
                             value instanceof FileList ? value[0] : value;
+                          if (!file || !(file instanceof File)) return null;
 
-                          if (!(file instanceof File)) return null;
-
-                          const fileName = file.name.toLowerCase();
+                          const fileName = file.name.toLowerCase(); // Use file.name
                           const allowedExtensions = [".pdf"];
                           const isValid = allowedExtensions.some((ext) =>
                             fileName.endsWith(ext),
@@ -722,12 +472,15 @@ function RouteComponent() {
                       children={(field) => (
                         <Input
                           type="file"
+                          id="lm_pdf_file"
+                          name="lm_pdf_file"
                           accept=".pdf"
                           onChange={(e) => {
                             const file = e.target.files?.[0];
                             field.handleChange(file);
                           }}
-                          label={t("attachment_english")}
+                          onBlur={field.handleBlur}
+                          label={t("legislation_file_english")}
                           error={
                             field.state.meta.errors.length > 0 ? true : false
                           }
@@ -743,6 +496,7 @@ function RouteComponent() {
                           }}
                           onClick={previewEN}
                           isLoading={isLoadingEN}
+                          readOnly={mode === "view" && true}
                         />
                       )}
                     />
@@ -756,19 +510,24 @@ function RouteComponent() {
             name="lm_pdf_file_arabic"
             validators={{
               onSubmit: ({ value }) => {
-                return (
-                  deletedFiles.includes("lm_pdf_file_arabic") &&
-                  !value &&
-                  t("required_field")
-                );
+                if (mode === "edit") {
+                  return (
+                    deletedFiles.includes("lm_pdf_file_arabic") &&
+                    !value &&
+                    t("required_field")
+                  );
+                } else {
+                  return !value ? t("required_field") : null;
+                }
               },
               onChange: ({ value }) => {
                 if (!value) return null;
+
+                // Ensure we have a File object
                 const file = value instanceof FileList ? value[0] : value;
+                if (!file || !(file instanceof File)) return null;
 
-                if (!(file instanceof File)) return null;
-
-                const fileName = file.name.toLowerCase();
+                const fileName = file.name.toLowerCase(); // Use file.name
                 const allowedExtensions = [".pdf"];
                 const isValid = allowedExtensions.some((ext) =>
                   fileName.endsWith(ext),
@@ -785,12 +544,15 @@ function RouteComponent() {
             children={(field) => (
               <Input
                 type="file"
+                id="lm_pdf_file_arabic"
+                name="lm_pdf_file_arabic"
                 accept=".pdf"
                 onChange={(e) => {
                   const file = e.target.files?.[0];
                   field.handleChange(file);
                 }}
-                label={t("attachment_arabic")}
+                onBlur={field.handleBlur}
+                label={t("legislation_file_arabic")}
                 error={field.state.meta.errors.length > 0 ? true : false}
                 errorMessage={field.state.meta.errors[0]}
                 preview={
@@ -804,43 +566,31 @@ function RouteComponent() {
                 }}
                 onClick={previewAR}
                 isLoading={isLoadingAR}
+                readOnly={mode === "view" && true}
               />
             )}
           />
 
-          <div className="col-span-full">
-            <DefaultButton
-              type="submit"
-              variant="dark"
-              title={t("update")}
-              onClick={form.handleSubmit}
-              icon={<Pencil className="size-5" />}
-              isDisabled={isSubmitting}
-              isLoading={isSubmitting}
-            />
-          </div>
+          {mode !== "view" && (
+            <div className="col-span-full">
+              <DefaultButton
+                type="submit"
+                isDisabled={isSubmitting}
+                isLoading={isSubmitting}
+                variant="dark"
+                title={mode === "add" ? t("submit") : t("update")}
+                icon={
+                  mode === "add" ? (
+                    <Plus className="size-5" />
+                  ) : (
+                    <Pencil className="size-5" />
+                  )
+                }
+              />
+            </div>
+          )}
         </div>
-      </form> */}
-      <ThankYouPopup
-        type="success"
-        open={thankYouPopup}
-        setOpen={setThankYouPopup}
-        title={t("updated_successfully")}
-        description={
-          data?.parentLaw?.success_message || t("law_updated_success_message")
-        }
-        onConfirm={() => {
-          queryClient.invalidateQueries({
-            queryKey: ["localLegislationModificationFormData", slug],
-          });
-          queryClient.invalidateQueries({
-            queryKey: ["local_legislations_modifications_table", slug],
-          });
-          navigate({
-            to: `/${i18n.language}/local-legislations/modifications/${parentSlug}`,
-          });
-        }}
-      />
-    </DashboardLayout>
+      </form>
+    </>
   );
 }
