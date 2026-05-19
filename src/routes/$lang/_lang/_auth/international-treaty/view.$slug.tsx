@@ -24,6 +24,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useForm } from "@tanstack/react-form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { AnimatePresence, motion } from "motion/react";
+import { CustomForm } from "@/components/form/CustomForm";
 export const Route = createFileRoute(
   "/$lang/_lang/_auth/international-treaty/view/$slug",
 )({
@@ -80,10 +81,229 @@ function RouteComponent() {
     "ar",
     "international-treaty",
   );
+  const [initialValues, setInitialValues] = useState({
+    it_treaty_type: "1",
+    it_sector_id: "",
+    it_country_id: "",
 
+    it_title: "",
+    it_title_arabic: "",
+    it_treaty_date: "",
+    it_treaty_year: "",
+    it_expiry_date: "",
+    it_attachment: "",
+    it_attachment_arabic: "",
+  });
+
+  const fields: FieldConfig[] = [
+    {
+      name: "it_treaty_type",
+      label: t("treaty_type"),
+      type: "radio",
+      optionsKey: "treatyTypeList",
+      validators: {
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
+      },
+    },
+    {
+      name: "it_sector_id",
+      label: t("sector"),
+      type: "select",
+      optionsKey: "sectorList",
+      validators: {
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
+      },
+      condition: {
+        key: "it_treaty_type",
+        value: "2",
+      },
+    },
+    {
+      name: "it_country_id",
+      label: t("country"),
+      type: "select",
+      optionsKey: "countryList",
+      validators: {
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
+      },
+      condition: {
+        key: "it_treaty_type",
+        value: "1",
+      },
+    },
+
+    {
+      name: "it_title",
+      label: t("title_english"),
+      type: "text",
+      validators: {
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
+      },
+    },
+    {
+      name: "it_title_arabic",
+      label: t("title_arabic"),
+      type: "text",
+      validators: {
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
+      },
+    },
+    {
+      name: "it_treaty_date",
+      label: t("treaty_date"),
+      type: "date",
+      validators: {
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
+      },
+      onChange: (field: any) => {
+        field.form.setFieldValue("it_expiry_date", "");
+      },
+    },
+    {
+      name: "it_treaty_year",
+      label: t("treaty_year"),
+      type: "select",
+      optionsKey: "yearList",
+      validators: {
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
+      },
+    },
+    {
+      name: "it_expiry_date",
+      label: t("treaty_expiry_date"),
+      type: "date",
+      validators: {
+        onChange: ({ value, fieldApi }) => {
+          if (!value) return null;
+          const selectedDate = new Date(value);
+          const treatyDate = new Date(
+            fieldApi.form.getFieldValue("it_treaty_date"),
+          );
+          if (treatyDate >= selectedDate) {
+            return t(
+              "the_expiry_date_must_be_after_or_equal_to_the_treaty_date",
+            );
+          }
+          return null;
+        },
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
+      },
+      valueEffect: {
+        key: "it_treaty_date",
+      },
+    },
+    {
+      name: "it_attachment",
+      label: t("treaty_file_english"),
+      type: "file",
+      validators: {
+        onSubmit: ({ value }) => {
+          return data?.treatyData?.it_attachment
+            ? deletedFiles.includes("it_attachment") &&
+                !value &&
+                t("required_field")
+            : !value && t("required_field");
+        },
+        onChange: ({ value }) => {
+          if (!value) return null;
+          const file = value instanceof FileList ? value[0] : value;
+
+          if (!(file instanceof File)) return null;
+
+          const fileName = file.name.toLowerCase();
+          const allowedExtensions = [".pdf"];
+          const isValid = allowedExtensions.some((ext) =>
+            fileName.endsWith(ext),
+          );
+
+          if (!isValid) return t("file_must_be_pdf");
+
+          const maxSize = 5 * 1024 * 1024; // 5MB
+          if (file.size > maxSize) return t("file_too_large");
+
+          return null;
+        },
+      },
+      preview: deletedFiles.includes("it_attachment")
+        ? undefined
+        : data?.treatyData?.it_attachment,
+
+      onClearPreview: () => {
+        setDeletedFiles((prev) => [...prev, "it_attachment"]);
+      },
+      onClick: () => previewEN(),
+      isLoading: isLoadingEN,
+    },
+    {
+      name: "it_attachment_arabic",
+      label: t("treaty_file_arabic"),
+      type: "file",
+      validators: {
+        onSubmit: ({ value }) => {
+          return data?.treatyData?.it_attachment_arabic
+            ? deletedFiles.includes("it_attachment_arabic") &&
+                !value &&
+                t("required_field")
+            : !value && t("required_field");
+        },
+        onChange: ({ value }) => {
+          if (!value) return null;
+          const file = value instanceof FileList ? value[0] : value;
+
+          if (!(file instanceof File)) return null;
+
+          const fileName = file.name.toLowerCase();
+          const allowedExtensions = [".pdf"];
+          const isValid = allowedExtensions.some((ext) =>
+            fileName.endsWith(ext),
+          );
+
+          if (!isValid) return t("file_must_be_pdf");
+
+          const maxSize = 5 * 1024 * 1024; // 5MB
+          if (file.size > maxSize) return t("file_too_large");
+
+          return null;
+        },
+      },
+      preview: deletedFiles.includes("it_attachment_arabic")
+        ? undefined
+        : data?.treatyData?.it_attachment_arabic,
+
+      onClearPreview: () => {
+        setDeletedFiles((prev) => [...prev, "it_attachment_arabic"]);
+      },
+      onClick: () => previewAR(),
+      isLoading: isLoadingAR,
+    },
+  ];
+
+  useEffect(() => {
+    if (data?.treatyData) {
+      setInitialValues({
+        it_treaty_type: data?.treatyData?.it_treaty_type?.toString() || "1",
+        it_sector_id: data?.treatyData?.it_sector_id?.toString() || "",
+        it_country_id: data?.treatyData?.it_country_id?.toString() || "",
+
+        it_title: data?.treatyData?.it_title || "",
+        it_title_arabic: data?.treatyData?.it_title_arabic || "",
+        it_treaty_date: data?.treatyData?.it_treaty_date || "",
+        it_treaty_year: data?.treatyData?.it_treaty_year?.toString() || "",
+        it_expiry_date: data?.treatyData?.it_expiry_date || "",
+        it_attachment: null,
+        it_attachment_arabic: null,
+      });
+    }
+  }, [data]);
   return (
     <DashboardLayout isLoading={isLoading} title={t("view_treaty")}>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10 items-start">
+      <CustomForm
+        fields={fields}
+        defaultValues={initialValues}
+        data={data}
+        mode="view"
+      />
+      {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10 items-start">
         <div className="flex gap-5 text-black  text-[1.2rem] col-span-full w-full">
           <Label className="text-black/70">{t("treaty_type")}</Label>
           <RadioGroup
@@ -251,7 +471,7 @@ function RouteComponent() {
             readOnly={true}
           />
         </div>
-      </div>
+      </div> */}
     </DashboardLayout>
   );
 }

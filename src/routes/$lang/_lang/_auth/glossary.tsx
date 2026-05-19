@@ -73,7 +73,7 @@ function RouteComponent() {
         const res = await apiClient
           .get(i18n.language + `/glossary`)
           .json<any>();
-        console.log("GLOSSARY_DATA", res?.data);
+        // console.log("GLOSSARY_DATA", res?.data);
 
         return res?.data;
       } catch (error) {

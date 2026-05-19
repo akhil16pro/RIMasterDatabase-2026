@@ -30,6 +30,7 @@ import { userSessionAtom } from "@/store/atoms";
 import { useNavigate } from "@tanstack/react-router";
 import { usePDFPreview } from "@/lib/usePDFPreview";
 import { useEffect } from "react";
+import { CustomForm } from "@/components/form/CustomForm";
 
 export const Route = createFileRoute(
   "/$lang/_lang/_auth/international-treaty/edit/$slug",
@@ -77,114 +78,112 @@ function RouteComponent() {
     },
   });
 
-  const form = useForm({
-    defaultValues: {
-      it_treaty_type: "1",
-      it_sector_id: "",
-      it_country_id: "",
+  // const form = useForm({
+  //   defaultValues: {
+  //     it_treaty_type: "1",
+  //     it_sector_id: "",
+  //     it_country_id: "",
 
-      it_title: "",
-      it_title_arabic: "",
-      it_treaty_date: "",
-      it_treaty_year: "",
-      it_expiry_date: "",
-      it_attachment: "",
-      it_attachment_arabic: "",
-    },
-    onSubmit: async ({ value }) => {
-      setIsSubmitting(true);
+  //     it_title: "",
+  //     it_title_arabic: "",
+  //     it_treaty_date: "",
+  //     it_treaty_year: "",
+  //     it_expiry_date: "",
+  //     it_attachment: "",
+  //     it_attachment_arabic: "",
+  //   },
+  //   onSubmit: async ({ value }) => {
+  //     setIsSubmitting(true);
 
-      try {
-        const formData = new FormData();
+  //     try {
+  //       const formData = new FormData();
 
-        formData.append("it_created_by", userSession?.user?.id || "");
-        formData.append(
-          "it_treaty_type",
-          value?.it_treaty_type?.toString() || "",
-        );
-        formData.append("it_sector_id", value?.it_sector_id?.toString() || "");
-        formData.append(
-          "it_country_id",
-          value?.it_country_id?.toString() || "",
-        );
-        formData.append("it_title", value.it_title);
-        formData.append("it_title_arabic", value.it_title_arabic);
-        formData.append("it_treaty_date", value.it_treaty_date);
-        formData.append("it_treaty_year", value.it_treaty_year);
-        formData.append("it_expiry_date", value.it_expiry_date);
+  //       formData.append("it_created_by", userSession?.user?.id || "");
+  //       formData.append(
+  //         "it_treaty_type",
+  //         value?.it_treaty_type?.toString() || "",
+  //       );
+  //       formData.append("it_sector_id", value?.it_sector_id?.toString() || "");
+  //       formData.append(
+  //         "it_country_id",
+  //         value?.it_country_id?.toString() || "",
+  //       );
+  //       formData.append("it_title", value.it_title);
+  //       formData.append("it_title_arabic", value.it_title_arabic);
+  //       formData.append("it_treaty_date", value.it_treaty_date);
+  //       formData.append("it_treaty_year", value.it_treaty_year);
+  //       formData.append("it_expiry_date", value.it_expiry_date);
 
-        if (value.it_attachment) {
-          formData.append("it_attachment", value.it_attachment);
-        }
-        if (value.it_attachment_arabic) {
-          formData.append("it_attachment_arabic", value.it_attachment_arabic);
-        }
+  //       if (value.it_attachment) {
+  //         formData.append("it_attachment", value.it_attachment);
+  //       }
+  //       if (value.it_attachment_arabic) {
+  //         formData.append("it_attachment_arabic", value.it_attachment_arabic);
+  //       }
 
-        const res = await apiClient
-          .post(i18n.language + `/international-treaty/update/${slug}`, {
-            headers: {
-              "Content-Type": undefined,
-            },
-            body: formData,
-          })
-          .json<any>();
+  //       const res = await apiClient
+  //         .post(i18n.language + `/international-treaty/update/${slug}`, {
+  //           headers: {
+  //             "Content-Type": undefined,
+  //           },
+  //           body: formData,
+  //         })
+  //         .json<any>();
 
-        // console.log(res, "international_treaties_update_res");
-        if (res?.status) {
-          // form.reset();
-          toast.success(res?.message || t("success"));
+  //       if (res?.status) {
+  //         toast.success(res?.message || t("success"));
 
-          setTimeout(() => {
-            setThankYouPopup(true);
-          }, 150);
-        }
-      } catch (error) {
-        console.error("Add request failed:", error);
-      } finally {
-        setIsSubmitting(false);
-      }
-    },
-  });
+  //         setTimeout(() => {
+  //           setThankYouPopup(true);
+  //         }, 150);
+  //       }
+  //     } catch (error) {
+  //       console.error("Add request failed:", error);
+  //     } finally {
+  //       setIsSubmitting(false);
+  //     }
+  //   },
+  // });
 
-  useEffect(() => {
-    if (data?.treatyData) {
-      form.setFieldValue(
-        "it_treaty_type",
-        data.treatyData?.it_treaty_type?.toString() || "1",
-      );
-      if (data.treatyData?.it_treaty_type?.toString() === "1") {
-        form.setFieldValue(
-          "it_country_id",
-          data?.treatyData?.it_country_id?.toString() || "",
-        );
-      }
-      if (data.treatyData?.it_treaty_type?.toString() === "2") {
-        form.setFieldValue(
-          "it_sector_id",
-          data?.treatyData?.it_sector_id?.toString() || "",
-        );
-      }
-      form.setFieldValue("it_title", data?.treatyData?.it_title || "");
-      form.setFieldValue(
-        "it_title_arabic",
-        data?.treatyData?.it_title_arabic || "",
-      );
-      form.setFieldValue(
-        "it_treaty_date",
-        data?.treatyData?.it_treaty_date || "",
-      );
-      form.setFieldValue(
-        "it_treaty_year",
-        data?.treatyData?.it_treaty_year || "",
-      );
-      form.setFieldValue(
-        "it_expiry_date",
-        data?.treatyData?.it_expiry_date || "",
-      );
-      form.setFieldValue("it_attachment", "");
-      form.setFieldValue("it_attachment_arabic", "");
-    }
-  }, [data, form, userSession]);
+  // useEffect(() => {
+  //   if (data?.treatyData) {
+  //     form.setFieldValue(
+  //       "it_treaty_type",
+  //       data.treatyData?.it_treaty_type?.toString() || "1",
+  //     );
+  //     if (data.treatyData?.it_treaty_type?.toString() === "1") {
+  //       form.setFieldValue(
+  //         "it_country_id",
+  //         data?.treatyData?.it_country_id?.toString() || "",
+  //       );
+  //     }
+  //     if (data.treatyData?.it_treaty_type?.toString() === "2") {
+  //       form.setFieldValue(
+  //         "it_sector_id",
+  //         data?.treatyData?.it_sector_id?.toString() || "",
+  //       );
+  //     }
+  //     form.setFieldValue("it_title", data?.treatyData?.it_title || "");
+  //     form.setFieldValue(
+  //       "it_title_arabic",
+  //       data?.treatyData?.it_title_arabic || "",
+  //     );
+  //     form.setFieldValue(
+  //       "it_treaty_date",
+  //       data?.treatyData?.it_treaty_date || "",
+  //     );
+  //     form.setFieldValue(
+  //       "it_treaty_year",
+  //       data?.treatyData?.it_treaty_year || "",
+  //     );
+  //     form.setFieldValue(
+  //       "it_expiry_date",
+  //       data?.treatyData?.it_expiry_date || "",
+  //     );
+  //     form.setFieldValue("it_attachment", "");
+  //     form.setFieldValue("it_attachment_arabic", "");
+  //   }
+  // }, [data, form, userSession]);
 
   const handleClearFile = (fieldName: string, previewKey: string) => {
     form.setFieldValue(fieldName as any, null);
@@ -203,9 +202,265 @@ function RouteComponent() {
     "international-treaty",
   );
 
+  const [initialValues, setInitialValues] = useState({
+    it_treaty_type: "1",
+    it_sector_id: "",
+    it_country_id: "",
+
+    it_title: "",
+    it_title_arabic: "",
+    it_treaty_date: "",
+    it_treaty_year: "",
+    it_expiry_date: "",
+    it_attachment: "",
+    it_attachment_arabic: "",
+  });
+
+  const fields: FieldConfig[] = [
+    {
+      name: "it_treaty_type",
+      label: t("treaty_type"),
+      type: "radio",
+      optionsKey: "treatyTypeList",
+      validators: {
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
+      },
+    },
+    {
+      name: "it_sector_id",
+      label: t("sector"),
+      type: "select",
+      optionsKey: "sectorList",
+      validators: {
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
+      },
+      condition: {
+        key: "it_treaty_type",
+        value: "2",
+      },
+    },
+    {
+      name: "it_country_id",
+      label: t("country"),
+      type: "select",
+      optionsKey: "countryList",
+      validators: {
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
+      },
+      condition: {
+        key: "it_treaty_type",
+        value: "1",
+      },
+    },
+
+    {
+      name: "it_title",
+      label: t("title_english"),
+      type: "text",
+      validators: {
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
+      },
+    },
+    {
+      name: "it_title_arabic",
+      label: t("title_arabic"),
+      type: "text",
+      validators: {
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
+      },
+    },
+    {
+      name: "it_treaty_date",
+      label: t("treaty_date"),
+      type: "date",
+      validators: {
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
+      },
+      onChange: (field: any) => {
+        field.form.setFieldValue("it_expiry_date", "");
+      },
+    },
+    {
+      name: "it_treaty_year",
+      label: t("treaty_year"),
+      type: "select",
+      optionsKey: "yearList",
+      validators: {
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
+      },
+    },
+    {
+      name: "it_expiry_date",
+      label: t("treaty_expiry_date"),
+      type: "date",
+      validators: {
+        onChange: ({ value, fieldApi }) => {
+          if (!value) return null;
+          const selectedDate = new Date(value);
+          const treatyDate = new Date(
+            fieldApi.form.getFieldValue("it_treaty_date"),
+          );
+          if (treatyDate >= selectedDate) {
+            return t(
+              "the_expiry_date_must_be_after_or_equal_to_the_treaty_date",
+            );
+          }
+          return null;
+        },
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
+      },
+      valueEffect: {
+        key: "it_treaty_date",
+      },
+    },
+    {
+      name: "it_attachment",
+      label: t("treaty_file_english"),
+      type: "file",
+      validators: {
+        onSubmit: ({ value }) => {
+          return data?.treatyData?.it_attachment
+            ? deletedFiles.includes("it_attachment") &&
+                !value &&
+                t("required_field")
+            : !value && t("required_field");
+        },
+        onChange: ({ value }) => {
+          if (!value) return null;
+          const file = value instanceof FileList ? value[0] : value;
+
+          if (!(file instanceof File)) return null;
+
+          const fileName = file.name.toLowerCase();
+          const allowedExtensions = [".pdf"];
+          const isValid = allowedExtensions.some((ext) =>
+            fileName.endsWith(ext),
+          );
+
+          if (!isValid) return t("file_must_be_pdf");
+
+          const maxSize = 5 * 1024 * 1024; // 5MB
+          if (file.size > maxSize) return t("file_too_large");
+
+          return null;
+        },
+      },
+      preview: deletedFiles.includes("it_attachment")
+        ? undefined
+        : data?.treatyData?.it_attachment,
+
+      onClearPreview: () => {
+        setDeletedFiles((prev) => [...prev, "it_attachment"]);
+      },
+      onClick: () => previewEN(),
+      isLoading: isLoadingEN,
+    },
+    {
+      name: "it_attachment_arabic",
+      label: t("treaty_file_arabic"),
+      type: "file",
+      validators: {
+        onSubmit: ({ value }) => {
+          return data?.treatyData?.it_attachment_arabic
+            ? deletedFiles.includes("it_attachment_arabic") &&
+                !value &&
+                t("required_field")
+            : !value && t("required_field");
+        },
+        onChange: ({ value }) => {
+          if (!value) return null;
+          const file = value instanceof FileList ? value[0] : value;
+
+          if (!(file instanceof File)) return null;
+
+          const fileName = file.name.toLowerCase();
+          const allowedExtensions = [".pdf"];
+          const isValid = allowedExtensions.some((ext) =>
+            fileName.endsWith(ext),
+          );
+
+          if (!isValid) return t("file_must_be_pdf");
+
+          const maxSize = 5 * 1024 * 1024; // 5MB
+          if (file.size > maxSize) return t("file_too_large");
+
+          return null;
+        },
+      },
+      preview: deletedFiles.includes("it_attachment_arabic")
+        ? undefined
+        : data?.treatyData?.it_attachment_arabic,
+
+      onClearPreview: () => {
+        setDeletedFiles((prev) => [...prev, "it_attachment_arabic"]);
+      },
+      onClick: () => previewAR(),
+      isLoading: isLoadingAR,
+    },
+  ];
+
+  const handleStore = async (values) => {
+    setIsSubmitting(true);
+    const formData = new FormData();
+
+    Object.entries(values).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        formData.append(key, value as string | Blob);
+      }
+    });
+    console.log("FormData content:", Object.fromEntries(formData.entries()));
+    const res = await apiClient
+      .post(i18n.language + `/international-treaty/update/${slug}`, {
+        headers: {
+          "Content-Type": undefined,
+        },
+        body: formData,
+      })
+      .json<any>();
+
+    if (res?.status) {
+      setIsSubmitting(false);
+
+      toast.success(res?.message || t("success"));
+      queryClient.invalidateQueries({
+        queryKey: ["internationalTreatyTable"],
+      });
+      setTimeout(() => {
+        setThankYouPopup(true);
+      }, 150);
+    }
+  };
+
+  useEffect(() => {
+    if (data?.treatyData) {
+      setInitialValues({
+        it_treaty_type: data?.treatyData?.it_treaty_type?.toString() || "1",
+        it_sector_id: data?.treatyData?.it_sector_id?.toString() || "",
+        it_country_id: data?.treatyData?.it_country_id?.toString() || "",
+
+        it_title: data?.treatyData?.it_title || "",
+        it_title_arabic: data?.treatyData?.it_title_arabic || "",
+        it_treaty_date: data?.treatyData?.it_treaty_date || "",
+        it_treaty_year: data?.treatyData?.it_treaty_year?.toString() || "",
+        it_expiry_date: data?.treatyData?.it_expiry_date || "",
+        it_attachment: null,
+        it_attachment_arabic: null,
+      });
+    }
+  }, [data]);
+
   return (
     <DashboardLayout isLoading={isLoading} title={t("edit_treaty")}>
-      <form
+      <CustomForm
+        key={data?.decisionData?.updated_at || "customFormLoading"}
+        fields={fields}
+        defaultValues={initialValues}
+        onSubmit={handleStore}
+        data={data}
+        mode="edit"
+        isSubmitting={isSubmitting}
+      />
+      {/* <form
         onSubmit={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -607,7 +862,7 @@ function RouteComponent() {
             />
           </div>
         </div>
-      </form>
+      </form> */}
       <ThankYouPopup
         type="success"
         open={thankYouPopup}

@@ -1,6 +1,6 @@
 import { DefaultButton } from "@/components/ui/buttons";
 import { Input } from "@/components/ui/input";
-
+import { useTranslation } from "react-i18next";
 import { Plus, Pencil } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -17,7 +17,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { ThankYouPopup } from "@/components/ui/thankYouPopup";
 import { FileUpload } from "@/components/ui/FileUpload";
-
+import { AnimatePresence, motion } from "motion/react";
 import CKEditorCustom from "@/components/ui/CKEditor";
 
 interface CustomFormProps {
@@ -26,7 +26,6 @@ interface CustomFormProps {
   onSubmit: (values: any) => Promise<void>;
   data: any;
   isSubmitting: boolean;
-  t: any;
   mode: "add" | "edit" | "view";
 }
 
@@ -36,14 +35,14 @@ export function CustomForm({
   onSubmit,
   data,
   isSubmitting,
-  t,
+
   mode,
 }: CustomFormProps) {
   const form = useForm({
     defaultValues,
     onSubmit: async ({ value }) => await onSubmit(value),
   });
-
+  const { t } = useTranslation();
   return (
     <form
       onSubmit={(e) => {
@@ -54,119 +53,46 @@ export function CustomForm({
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10 items-start">
         {fields.map((cfg) => (
-          <form.Field
-            key={cfg.name}
-            name={cfg.name as any}
-            validators={cfg.validators}
-            children={(field) => {
-              // 1. Handle Selects
-              if (cfg.type === "select") {
-                return (
-                  <div className={cn(cfg?.className)}>
-                    <Select
-                      key={`${cfg.name}-${field.state.value}`}
-                      value={field.state.value?.toString()}
-                      onValueChange={field.handleChange}
-                    >
-                      <SelectTrigger
-                        label={cfg.label}
-                        error={field.state.meta.errors.length > 0}
-                        errorMessage={field.state.meta.errors[0]}
-                        readOnly={mode === "view"}
-                      >
-                        <SelectValue placeholder={t("select_option")} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {data?.[cfg.optionsKey!]?.map((item: any) => (
-                          <SelectItem
-                            key={item.value}
-                            value={item.value.toString()}
-                          >
-                            {item.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                );
-              }
-
-              // 2. Handle CKEditor
-              if (cfg.type === "editor") {
-                return (
-                  <div className={cn("space-y-2 relative", cfg?.className)}>
-                    <Label>{cfg.label}</Label>
-                    <CKEditorCustom
-                      dir={cfg.dir}
-                      value={field.state.value}
-                      onChange={field.handleChange}
-                      readOnly={mode === "view"}
-                    />
-                    {field.state.meta.errors ? (
-                      <Label errorLabel={true} floating={true}>
-                        {field.state.meta.errors.join(", ")}
-                      </Label>
-                    ) : null}
-                  </div>
-                );
-              }
-
-              if (cfg.type === "upload") {
-                return (
-                  <div className={cn("space-y-2 relative", cfg?.className)}>
-                    <Label>{cfg.label}</Label>
-                    <FileUpload
-                      multiple={cfg.multiple}
-                      accept={cfg.accept}
-                      onChange={(files) =>
-                        console.log("Current ready files:", files)
-                      }
-                    />
-                    {field.state.meta.errors ? (
-                      <Label errorLabel={true} floating={true}>
-                        {field.state.meta.errors.join(", ")}
-                      </Label>
-                    ) : null}
-                  </div>
-                );
-              }
-
-              // 3. Handle Standard Inputs (Text, Date, File)
-              return (
-                <div className={cn(cfg?.className)}>
-                  <Input
-                    type={cfg.type}
-                    label={cfg.label}
-                    value={cfg.type !== "file" ? field.state.value : undefined}
-                    accept={cfg.type === "file" ? cfg.accept : undefined}
-                    onChange={(e) => {
-                      const val =
-                        cfg.type === "file"
-                          ? e.target.files?.[0]
-                          : e.target.value;
-                      field.handleChange(val);
-                    }}
-                    disabled={cfg.disabled}
-                    dir={cfg.dir}
-                    error={field.state.meta.errors.length > 0}
-                    errorMessage={field.state.meta.errors[0]}
-                    onClick={cfg.onClick}
-                    isLoading={cfg.isLoading}
-                    preview={cfg.preview}
-                    onClearPreview={() => {
-                      field.handleChange(null);
-                      cfg.onClearPreview?.();
-                    }}
-                    readOnly={mode === "view"}
-                  />
-                </div>
-              );
-            }}
-          />
+          <>
+            {cfg.type === "radio" ? (
+              <RadioButtonComponent
+                form={form}
+                cfg={cfg}
+                data={data}
+                mode={mode}
+                key={`${cfg.name}-radio`}
+              />
+            ) : cfg.condition ? (
+              <form.Subscribe
+                key={`${cfg.name}-condition`}
+                selector={(state) => state.values[cfg?.condition.key]}
+                children={(value) => (
+                  <AnimatePresence>
+                    {value === cfg?.condition.value && (
+                      <InputComponent
+                        form={form}
+                        cfg={cfg}
+                        data={data}
+                        mode={mode}
+                      />
+                    )}
+                  </AnimatePresence>
+                )}
+              />
+            ) : (
+              <InputComponent
+                form={form}
+                cfg={cfg}
+                data={data}
+                mode={mode}
+                key={`${cfg.name}-inputNormal`}
+              />
+            )}
+          </>
         ))}
 
         {mode !== "view" && (
-          <div className="col-span-full">
+          <div className="col-span-full" key="submit-button">
             <DefaultButton
               type="submit"
               variant="dark"
@@ -187,6 +113,236 @@ export function CustomForm({
     </form>
   );
 }
+
+const InputComponent = ({
+  form,
+  cfg,
+  data,
+  mode,
+}: {
+  form: any;
+  cfg: any;
+  data: any;
+  mode: any;
+}) => {
+  const { t } = useTranslation();
+  return (
+    <form.Field
+      key={cfg.name}
+      name={cfg.name as any}
+      validators={cfg.validators}
+      children={(field) => {
+        // 1. Handle Selects
+        if (cfg.type === "select") {
+          return (
+            <div className={cn(cfg?.className)} key={`${field.name}-select`}>
+              <Select
+                key={`${cfg.name}-${field.state.value}`}
+                value={field.state.value?.toString()}
+                onValueChange={field.handleChange}
+              >
+                <SelectTrigger
+                  label={cfg.label}
+                  error={field.state.meta.errors.length > 0}
+                  errorMessage={field.state.meta.errors[0]}
+                  readOnly={mode === "view"}
+                >
+                  <SelectValue placeholder={t("select_option")} />
+                </SelectTrigger>
+                <SelectContent>
+                  {data?.[cfg.optionsKey!]?.map((item: any) => (
+                    <SelectItem
+                      key={`${cfg.name}-${item.value}`}
+                      value={item.value.toString()}
+                    >
+                      {item.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          );
+        }
+
+        // 2. Handle CKEditor
+        if (cfg.type === "editor") {
+          return (
+            <div
+              className={cn("space-y-2 relative", cfg?.className)}
+              key={`${field.name}-editor`}
+            >
+              <Label>{cfg.label}</Label>
+              <CKEditorCustom
+                dir={cfg.dir}
+                value={field.state.value}
+                onChange={field.handleChange}
+                readOnly={mode === "view"}
+              />
+              {field.state.meta.errors ? (
+                <Label errorLabel={true} floating={true}>
+                  {field.state.meta.errors.join(", ")}
+                </Label>
+              ) : null}
+            </div>
+          );
+        }
+
+        if (cfg.type === "upload") {
+          return (
+            <div
+              className={cn("space-y-2 relative", cfg?.className)}
+              key={`${field.name}-upload`}
+            >
+              <Label>{cfg.label}</Label>
+              <FileUpload
+                multiple={cfg.multiple}
+                accept={cfg.accept}
+                onChange={(files) => console.log("Current ready files:", files)}
+              />
+              {field.state.meta.errors ? (
+                <Label errorLabel={true} floating={true}>
+                  {field.state.meta.errors.join(", ")}
+                </Label>
+              ) : null}
+            </div>
+          );
+        }
+
+        if (cfg.valueEffect) {
+          return (
+            <div
+              className={cn(cfg?.className)}
+              key={`${field.name}-valueEffect`}
+            >
+              <ValueEffectComponent
+                field={field}
+                form={form}
+                cfg={cfg}
+                data={data}
+                mode={mode}
+                t={t}
+              />
+            </div>
+          );
+        }
+
+        // 3. Handle Standard Inputs (Text, Date, File)
+        return (
+          <div className={cn(cfg?.className)} key={`${field.name}-input`}>
+            <Input
+              type={cfg.type}
+              label={cfg.label}
+              value={cfg.type !== "file" ? field.state.value : undefined}
+              accept={cfg.type === "file" ? cfg.accept : undefined}
+              onChange={(e) => {
+                const val =
+                  cfg.type === "file" ? e.target.files?.[0] : e.target.value;
+                field.handleChange(val);
+                cfg.onChange?.(field);
+              }}
+              disabled={cfg.disabled}
+              dir={cfg.dir}
+              error={field.state.meta.errors.length > 0}
+              errorMessage={field.state.meta.errors[0]}
+              onClick={cfg.onClick}
+              isLoading={cfg.isLoading}
+              preview={cfg.preview}
+              onClearPreview={() => {
+                field.handleChange(null);
+                cfg.onClearPreview?.();
+              }}
+              readOnly={mode === "view"}
+            />
+          </div>
+        );
+      }}
+    />
+  );
+};
+
+const ValueEffectComponent = ({ field, form, cfg, data, mode, t }: any) => {
+  return (
+    <form.Subscribe selector={(state) => state.values[cfg?.valueEffect.key]}>
+      {(value) => (
+        <Input
+          type={cfg.type}
+          label={cfg.label}
+          value={cfg.type !== "file" ? field.state.value : undefined}
+          accept={cfg.type === "file" ? cfg.accept : undefined}
+          onChange={(e) => {
+            const val =
+              cfg.type === "file" ? e.target.files?.[0] : e.target.value;
+            field.handleChange(val);
+            cfg.onChange?.(field);
+          }}
+          disabled={cfg.disabled}
+          dir={cfg.dir}
+          error={field.state.meta.errors.length > 0}
+          errorMessage={field.state.meta.errors[0]}
+          onClick={cfg.onClick}
+          isLoading={cfg.isLoading}
+          preview={cfg.preview}
+          onClearPreview={() => {
+            field.handleChange(null);
+            cfg.onClearPreview?.();
+          }}
+          readOnly={mode === "view"}
+          min={value}
+        />
+      )}
+    </form.Subscribe>
+  );
+};
+
+const RadioButtonComponent = ({ form, cfg, data, mode }: any) => {
+  return (
+    <>
+      <div className="flex gap-5 text-black  text-[1.2rem] col-span-full w-full">
+        <Label className="text-black/70">{cfg.label}</Label>
+
+        <form.Field
+          key={cfg.name}
+          name={cfg.name as any}
+          validators={cfg.validators}
+          children={(field) => {
+            return (
+              <div
+                className={cn(cfg?.className)}
+                key={`${field.name}-radioItem`}
+              >
+                <RadioGroup
+                  className="flex gap-col-4 gap-row-1 flex-wrap"
+                  value={field.state.value?.toString()}
+                  onValueChange={field.handleChange}
+                >
+                  {data?.[cfg.optionsKey!]?.map((item: any) => (
+                    <div
+                      key={`${field.name}-radioItem-${item.value}`}
+                      className="flex items-center space-x-2"
+                    >
+                      <RadioGroupItem
+                        value={item.value.toString()}
+                        id={item.value.toString()}
+                      />
+                      <Label htmlFor={item.value.toString()}>
+                        {item.label}
+                      </Label>
+                    </div>
+                  ))}
+                </RadioGroup>
+                {field.state.meta.errors ? (
+                  <Label errorLabel={true} floating={true}>
+                    {field.state.meta.errors.join(", ")}
+                  </Label>
+                ) : null}
+              </div>
+            );
+          }}
+        />
+      </div>
+    </>
+  );
+};
 
 export interface FieldConfig {
   name: string;
