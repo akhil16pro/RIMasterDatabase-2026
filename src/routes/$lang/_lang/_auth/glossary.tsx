@@ -277,7 +277,7 @@ function ViewAction({ slug }: { slug: string }) {
       const res = await apiClient
         .get(i18n.language + "/glossary/edit/" + slug)
         .json<any>();
-      console.log(res?.data, "view data");
+      // console.log(res?.data, "view data");
       setLoading(false);
       setOpen(true);
       return res?.data;
@@ -312,54 +312,6 @@ function ViewAction({ slug }: { slug: string }) {
             <DialogTitle>{t("glossary_details")}</DialogTitle>
           </DialogHeader>
           <div className="grid md:grid-cols-2 gap-x-8 gap-y-7 items-start">
-            <div className="grid md:grid-cols-2 gap-x-8 gap-y-7 col-span-2 ">
-              <Select
-                key={data?.glossaryData?.sector}
-                value={data?.glossaryData?.sector?.toString() || ""}
-              >
-                <SelectTrigger
-                  label={t("sector")}
-                  hasValue={!!data?.glossaryData?.sector}
-                  readOnly={true}
-                >
-                  <SelectValue placeholder={t("select_sector")} />
-                </SelectTrigger>
-                <SelectContent>
-                  {data?.sectorList?.map((item: any) => (
-                    <SelectItem
-                      key={`sector-${item.value}`}
-                      value={item.value?.toString()}
-                    >
-                      {item.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {isAdmin && (
-                <Select
-                  key={data?.glossaryData?.entity_id}
-                  value={data?.glossaryData?.entity_id?.toString() || ""}
-                >
-                  <SelectTrigger
-                    label={t("entity")}
-                    hasValue={!!data?.glossaryData?.entity_id}
-                    readOnly={true}
-                  >
-                    <SelectValue placeholder={t("select_entity")} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {data?.entities?.map((item: any) => (
-                      <SelectItem
-                        key={`sector-${item.value}`}
-                        value={item.value?.toString()}
-                      >
-                        {item.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            </div>
             <Input
               id="title"
               name="title"
@@ -401,7 +353,74 @@ function ViewAction({ slug }: { slug: string }) {
               isLoading={isLoading}
               readOnly
             />
-
+            <Select
+              key={data?.glossaryData?.classification_id}
+              value={data?.glossaryData?.classification_id?.toString() || ""}
+            >
+              <SelectTrigger
+                label={t("classification")}
+                hasValue={!!data?.glossaryData?.classification_id}
+                readOnly={true}
+              >
+                <SelectValue placeholder={t("select_classification")} />
+              </SelectTrigger>
+              <SelectContent>
+                {data?.classificationList?.map((item: any) => (
+                  <SelectItem
+                    key={`classification-${item.value}`}
+                    value={item.value?.toString()}
+                  >
+                    {item.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select
+              key={data?.glossaryData?.sector}
+              value={data?.glossaryData?.sector?.toString() || ""}
+            >
+              <SelectTrigger
+                label={t("sector")}
+                hasValue={!!data?.glossaryData?.sector}
+                readOnly={true}
+              >
+                <SelectValue placeholder={t("select_sector")} />
+              </SelectTrigger>
+              <SelectContent>
+                {data?.sectorList?.map((item: any) => (
+                  <SelectItem
+                    key={`sector-${item.value}`}
+                    value={item.value?.toString()}
+                  >
+                    {item.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {isAdmin && (
+              <Select
+                key={data?.glossaryData?.entity_id}
+                value={data?.glossaryData?.entity_id?.toString() || ""}
+              >
+                <SelectTrigger
+                  label={t("entity")}
+                  hasValue={!!data?.glossaryData?.entity_id}
+                  readOnly={true}
+                >
+                  <SelectValue placeholder={t("select_entity")} />
+                </SelectTrigger>
+                <SelectContent>
+                  {data?.entities?.map((item: any) => (
+                    <SelectItem
+                      key={`sector-${item.value}`}
+                      value={item.value?.toString()}
+                    >
+                      {item.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
             <Input
               id="created_by"
               name="created_by"
@@ -487,6 +506,7 @@ function EditAction({ slug }: { slug: string }) {
     defaultValues: {
       sector_id: "",
       entity_id: "",
+      classification_id: "",
       title: "",
       title_arabic: "",
       description: "",
@@ -500,6 +520,7 @@ function EditAction({ slug }: { slug: string }) {
         if (isAdmin) {
           formData.append("entity_id", value.entity_id || "");
         }
+        formData.append("classification_id", value.classification_id || "");
         formData.append("title", value.title);
         formData.append("title_arabic", value.title_arabic);
         formData.append("description", value.description);
@@ -534,6 +555,10 @@ function EditAction({ slug }: { slug: string }) {
     if (data?.glossaryData) {
       form.setFieldValue("sector_id", data.glossaryData?.sector || "");
       form.setFieldValue("entity_id", data.glossaryData?.entity_id || "");
+      form.setFieldValue(
+        "classification_id",
+        data.glossaryData?.classification_id || "",
+      );
       form.setFieldValue("title", data.glossaryData?.title || "");
       form.setFieldValue("title_arabic", data.glossaryData?.title_arabic || "");
       form.setFieldValue("description", data.glossaryData?.description || "");
@@ -567,82 +592,6 @@ function EditAction({ slug }: { slug: string }) {
             <DialogTitle>{t("edit_glossary")}</DialogTitle>
           </DialogHeader>
           <div className="grid md:grid-cols-2 gap-x-8 gap-y-7 items-start">
-            <div className="grid md:grid-cols-2 gap-x-8 gap-y-7 col-span-2 ">
-              <form.Field
-                name="sector_id"
-                validators={{
-                  onSubmit: ({ value }) =>
-                    !value ? t("required_field") : null,
-                }}
-                children={(field) => (
-                  <Select
-                    id="sector_id"
-                    name="sector_id"
-                    value={field.state.value?.toString() || ""}
-                    onValueChange={(e) => field.handleChange(e)}
-                  >
-                    <SelectTrigger
-                      label={t("sector")}
-                      hasValue={!!field.state.value}
-                      error={field.state.meta.errors.length > 0 ? true : false}
-                      errorMessage={field.state.meta.errors[0]}
-                      onClear={() => field.handleChange(null)}
-                    >
-                      <SelectValue placeholder={t("select_sector")} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {data?.sectorList?.map((item: any) => (
-                        <SelectItem
-                          key={`sector-${item.value}`}
-                          value={item.value?.toString()}
-                        >
-                          {item.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-              {isAdmin && (
-                <form.Field
-                  name="entity_id"
-                  validators={{
-                    onSubmit: ({ value }) =>
-                      !value ? t("required_field") : null,
-                  }}
-                  children={(field) => (
-                    <Select
-                      id="entity_id"
-                      name="entity_id"
-                      value={field.state.value?.toString() || ""}
-                      onValueChange={(e) => field.handleChange(e)}
-                    >
-                      <SelectTrigger
-                        label={t("entity")}
-                        hasValue={!!field.state.value}
-                        error={
-                          field.state.meta.errors.length > 0 ? true : false
-                        }
-                        errorMessage={field.state.meta.errors[0]}
-                        onClear={() => field.handleChange(null)}
-                      >
-                        <SelectValue placeholder={t("select_entity")} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {data?.entities?.map((item: any) => (
-                          <SelectItem
-                            key={`sector-${item.value}`}
-                            value={item.value?.toString()}
-                          >
-                            {item.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
-                />
-              )}
-            </div>
             <form.Field
               name="title"
               validators={{
@@ -723,6 +672,111 @@ function EditAction({ slug }: { slug: string }) {
                 />
               )}
             />
+            <form.Field
+              name="classification_id"
+              validators={{
+                onSubmit: ({ value }) => (!value ? t("required_field") : null),
+              }}
+              children={(field) => (
+                <Select
+                  id="classification_id"
+                  name="classification_id"
+                  value={field.state.value?.toString() || ""}
+                  onValueChange={(e) => field.handleChange(e)}
+                >
+                  <SelectTrigger
+                    label={t("classification")}
+                    hasValue={!!field.state.value}
+                    error={field.state.meta.errors.length > 0 ? true : false}
+                    errorMessage={field.state.meta.errors[0]}
+                    onClear={() => field.handleChange(null)}
+                  >
+                    <SelectValue placeholder={t("select_classification")} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {data?.classificationList?.map((item: any) => (
+                      <SelectItem
+                        key={`classification-${item.value}`}
+                        value={item.value?.toString()}
+                      >
+                        {item.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            <form.Field
+              name="sector_id"
+              validators={{
+                onSubmit: ({ value }) => (!value ? t("required_field") : null),
+              }}
+              children={(field) => (
+                <Select
+                  id="sector_id"
+                  name="sector_id"
+                  value={field.state.value?.toString() || ""}
+                  onValueChange={(e) => field.handleChange(e)}
+                >
+                  <SelectTrigger
+                    label={t("sector")}
+                    hasValue={!!field.state.value}
+                    error={field.state.meta.errors.length > 0 ? true : false}
+                    errorMessage={field.state.meta.errors[0]}
+                    onClear={() => field.handleChange(null)}
+                  >
+                    <SelectValue placeholder={t("select_sector")} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {data?.sectorList?.map((item: any) => (
+                      <SelectItem
+                        key={`sector-${item.value}`}
+                        value={item.value?.toString()}
+                      >
+                        {item.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            {isAdmin && (
+              <form.Field
+                name="entity_id"
+                validators={{
+                  onSubmit: ({ value }) =>
+                    !value ? t("required_field") : null,
+                }}
+                children={(field) => (
+                  <Select
+                    id="entity_id"
+                    name="entity_id"
+                    value={field.state.value?.toString() || ""}
+                    onValueChange={(e) => field.handleChange(e)}
+                  >
+                    <SelectTrigger
+                      label={t("entity")}
+                      hasValue={!!field.state.value}
+                      error={field.state.meta.errors.length > 0 ? true : false}
+                      errorMessage={field.state.meta.errors[0]}
+                      onClear={() => field.handleChange(null)}
+                    >
+                      <SelectValue placeholder={t("select_entity")} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {data?.entities?.map((item: any) => (
+                        <SelectItem
+                          key={`sector-${item.value}`}
+                          value={item.value?.toString()}
+                        >
+                          {item.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            )}
             <div className="inline-flex gap-2 text-[var(--textColor)] text-[1.2rem]">
               <label className="text-muted-foreground">{t("status")}</label>
               <div className="flex gap-1 items-center">
@@ -860,6 +914,7 @@ function AddModal({ data }: { data: any }) {
     defaultValues: {
       sector_id: "",
       entity_id: "",
+      classification_id: "",
       title: "",
       title_arabic: "",
       description: "",
@@ -873,6 +928,7 @@ function AddModal({ data }: { data: any }) {
         if (isAdmin) {
           formData.append("entity_id", value.entity_id || "");
         }
+        formData.append("classification_id", value.classification_id || "");
         formData.append("title", value.title);
         formData.append("title_arabic", value.title_arabic);
         formData.append("description", value.description);
@@ -925,83 +981,6 @@ function AddModal({ data }: { data: any }) {
             <DialogTitle>{t("add_glossary")}</DialogTitle>
           </DialogHeader>
           <div className="grid md:grid-cols-2 gap-x-8 gap-y-7 items-start">
-            <div className="grid md:grid-cols-2 gap-x-8 gap-y-7 col-span-2 ">
-              <form.Field
-                name="sector_id"
-                validators={{
-                  onSubmit: ({ value }) =>
-                    !value ? t("required_field") : null,
-                }}
-                children={(field) => (
-                  <Select
-                    id="sector_id"
-                    name="sector_id"
-                    value={field.state.value?.toString() || ""}
-                    onValueChange={(e) => field.handleChange(e)}
-                  >
-                    <SelectTrigger
-                      label={t("sector")}
-                      hasValue={!!field.state.value}
-                      error={field.state.meta.errors.length > 0 ? true : false}
-                      errorMessage={field.state.meta.errors[0]}
-                      onClear={() => field.handleChange(null)}
-                    >
-                      <SelectValue placeholder={t("select_sector")} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {data?.sectorList?.map((item: any) => (
-                        <SelectItem
-                          key={`sector-${item.value}`}
-                          value={item.value?.toString()}
-                        >
-                          {item.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-              {isAdmin && (
-                <form.Field
-                  name="entity_id"
-                  validators={{
-                    onSubmit: ({ value }) =>
-                      !value ? t("required_field") : null,
-                  }}
-                  children={(field) => (
-                    <Select
-                      id="entity_id"
-                      name="entity_id"
-                      value={field.state.value?.toString() || ""}
-                      onValueChange={(e) => field.handleChange(e)}
-                    >
-                      <SelectTrigger
-                        label={t("entity")}
-                        hasValue={!!field.state.value}
-                        error={
-                          field.state.meta.errors.length > 0 ? true : false
-                        }
-                        errorMessage={field.state.meta.errors[0]}
-                        onClear={() => field.handleChange(null)}
-                      >
-                        <SelectValue placeholder={t("select_entity")} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {data?.entities?.map((item: any) => (
-                          <SelectItem
-                            key={`sector-${item.value}`}
-                            value={item.value?.toString()}
-                          >
-                            {item.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
-                />
-              )}
-            </div>
-
             <form.Field
               name="title"
               validators={{
@@ -1078,7 +1057,113 @@ function AddModal({ data }: { data: any }) {
                 />
               )}
             />
-            <div className="inline-flex gap-2 text-[var(--textColor)] text-[1.2rem]">
+            <form.Field
+              name="classification_id"
+              validators={{
+                onSubmit: ({ value }) => (!value ? t("required_field") : null),
+              }}
+              children={(field) => (
+                <Select
+                  id="classification_id"
+                  name="classification_id"
+                  value={field.state.value?.toString() || ""}
+                  onValueChange={(e) => field.handleChange(e)}
+                >
+                  <SelectTrigger
+                    label={t("classification")}
+                    hasValue={!!field.state.value}
+                    error={field.state.meta.errors.length > 0 ? true : false}
+                    errorMessage={field.state.meta.errors[0]}
+                    onClear={() => field.handleChange(null)}
+                  >
+                    <SelectValue placeholder={t("select_classification")} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {data?.classificationList?.map((item: any) => (
+                      <SelectItem
+                        key={`classification-${item.value}`}
+                        value={item.value?.toString()}
+                      >
+                        {item.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            <form.Field
+              name="sector_id"
+              validators={{
+                onSubmit: ({ value }) => (!value ? t("required_field") : null),
+              }}
+              children={(field) => (
+                <Select
+                  id="sector_id"
+                  name="sector_id"
+                  value={field.state.value?.toString() || ""}
+                  onValueChange={(e) => field.handleChange(e)}
+                >
+                  <SelectTrigger
+                    label={t("sector")}
+                    hasValue={!!field.state.value}
+                    error={field.state.meta.errors.length > 0 ? true : false}
+                    errorMessage={field.state.meta.errors[0]}
+                    onClear={() => field.handleChange(null)}
+                  >
+                    <SelectValue placeholder={t("select_sector")} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {data?.sectorList?.map((item: any) => (
+                      <SelectItem
+                        key={`sector-${item.value}`}
+                        value={item.value?.toString()}
+                      >
+                        {item.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            {isAdmin && (
+              <form.Field
+                name="entity_id"
+                validators={{
+                  onSubmit: ({ value }) =>
+                    !value ? t("required_field") : null,
+                }}
+                children={(field) => (
+                  <Select
+                    id="entity_id"
+                    name="entity_id"
+                    value={field.state.value?.toString() || ""}
+                    onValueChange={(e) => field.handleChange(e)}
+                  >
+                    <SelectTrigger
+                      label={t("entity")}
+                      hasValue={!!field.state.value}
+                      error={field.state.meta.errors.length > 0 ? true : false}
+                      errorMessage={field.state.meta.errors[0]}
+                      onClear={() => field.handleChange(null)}
+                    >
+                      <SelectValue placeholder={t("select_entity")} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {data?.entities?.map((item: any) => (
+                        <SelectItem
+                          key={`sector-${item.value}`}
+                          value={item.value?.toString()}
+                        >
+                          {item.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            )}
+
+            <div className="inline-flex gap-2 text-[var(--textColor)] text-[1.2rem] col-span-full">
               <label
                 className="text-muted-foreground"
                 aria-describedby={undefined}
