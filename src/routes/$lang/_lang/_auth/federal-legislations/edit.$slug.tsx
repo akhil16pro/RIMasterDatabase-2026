@@ -78,185 +78,183 @@ function RouteComponent() {
     },
   });
 
-  console.log(data, "data");
+  // const form = useForm({
+  //   defaultValues: {
+  //     lm_has_english_version: "2",
+  //     lm_law_type_id: "",
+  //     lm_sector_id: "",
+  //     lm_title: "",
+  //     lm_title_arabic: "",
+  //     lm_short_title: "",
+  //     lm_short_title_arabic: "",
+  //     lm_description: "",
+  //     lm_description_arabic: "",
+  //     lm_year: "",
+  //     lm_has_modified: "2",
+  //     lm_number: "",
+  //     lm_issue_date: "",
+  //     lm_effective_date: "",
+  //     lm_gazette_number: "",
+  //     lm_gazette_number_arabic: "",
+  //     lm_official_gazette_issue_date: "",
+  //     lm_gazzette_date_string: "",
+  //     lm_gazette_title: "",
+  //     lm_gazette_title_arabic: "",
+  //     lm_pdf_file: null,
+  //     lm_pdf_file_arabic: null,
+  //   },
+  //   onSubmit: async ({ value }) => {
+  //     setIsSubmitting(true);
 
-  const form = useForm({
-    defaultValues: {
-      lm_has_english_version: "2",
-      lm_law_type_id: "",
-      lm_sector_id: "",
-      lm_title: "",
-      lm_title_arabic: "",
-      lm_short_title: "",
-      lm_short_title_arabic: "",
-      lm_description: "",
-      lm_description_arabic: "",
-      lm_year: "",
-      lm_has_modified: "2",
-      lm_number: "",
-      lm_issue_date: "",
-      lm_effective_date: "",
-      lm_gazette_number: "",
-      lm_gazette_number_arabic: "",
-      lm_official_gazette_issue_date: "",
-      lm_gazzette_date_string: "",
-      lm_gazette_title: "",
-      lm_gazette_title_arabic: "",
-      lm_pdf_file: null,
-      lm_pdf_file_arabic: null,
-    },
-    onSubmit: async ({ value }) => {
-      setIsSubmitting(true);
+  //     try {
+  //       const formData = new FormData();
 
-      try {
-        const formData = new FormData();
+  //       formData.append("lm_created_by", userSession?.user?.id || "");
+  //       formData.append("lm_has_english_version", value.lm_has_english_version);
 
-        formData.append("lm_created_by", userSession?.user?.id || "");
-        formData.append("lm_has_english_version", value.lm_has_english_version);
+  //       formData.append("lm_sector_id", value.lm_sector_id.toString());
+  //       formData.append("lm_law_type_id", value.lm_law_type_id.toString());
+  //       formData.append("lm_title", value.lm_title);
+  //       formData.append("lm_title_arabic", value.lm_title_arabic);
+  //       formData.append("lm_short_title", value.lm_short_title);
+  //       formData.append("lm_short_title_arabic", value.lm_short_title_arabic);
+  //       formData.append("lm_description", value.lm_description);
+  //       formData.append("lm_description_arabic", value.lm_description_arabic);
+  //       formData.append("lm_year", value.lm_year.toString());
+  //       formData.append("lm_has_modified", value.lm_has_modified);
+  //       formData.append("lm_number", value.lm_number);
+  //       formData.append("lm_issue_date", value.lm_issue_date);
+  //       formData.append("lm_effective_date", value.lm_effective_date);
+  //       formData.append("lm_gazette_number", value.lm_gazette_number);
+  //       formData.append(
+  //         "lm_gazette_number_arabic",
+  //         value.lm_gazette_number_arabic,
+  //       );
+  //       formData.append(
+  //         "lm_official_gazette_issue_date",
+  //         value.lm_official_gazette_issue_date,
+  //       );
+  //       formData.append(
+  //         "lm_gazzette_date_string",
+  //         value.lm_gazzette_date_string,
+  //       );
+  //       formData.append("lm_gazette_title", value.lm_gazette_title);
+  //       formData.append(
+  //         "lm_gazette_title_arabic",
+  //         value.lm_gazette_title_arabic,
+  //       );
 
-        formData.append("lm_sector_id", value.lm_sector_id.toString());
-        formData.append("lm_law_type_id", value.lm_law_type_id.toString());
-        formData.append("lm_title", value.lm_title);
-        formData.append("lm_title_arabic", value.lm_title_arabic);
-        formData.append("lm_short_title", value.lm_short_title);
-        formData.append("lm_short_title_arabic", value.lm_short_title_arabic);
-        formData.append("lm_description", value.lm_description);
-        formData.append("lm_description_arabic", value.lm_description_arabic);
-        formData.append("lm_year", value.lm_year.toString());
-        formData.append("lm_has_modified", value.lm_has_modified);
-        formData.append("lm_number", value.lm_number);
-        formData.append("lm_issue_date", value.lm_issue_date);
-        formData.append("lm_effective_date", value.lm_effective_date);
-        formData.append("lm_gazette_number", value.lm_gazette_number);
-        formData.append(
-          "lm_gazette_number_arabic",
-          value.lm_gazette_number_arabic,
-        );
-        formData.append(
-          "lm_official_gazette_issue_date",
-          value.lm_official_gazette_issue_date,
-        );
-        formData.append(
-          "lm_gazzette_date_string",
-          value.lm_gazzette_date_string,
-        );
-        formData.append("lm_gazette_title", value.lm_gazette_title);
-        formData.append(
-          "lm_gazette_title_arabic",
-          value.lm_gazette_title_arabic,
-        );
+  //       if (value.lm_pdf_file) {
+  //         formData.append("lm_pdf_file", value.lm_pdf_file);
+  //       }
+  //       if (value.lm_pdf_file_arabic) {
+  //         formData.append("lm_pdf_file_arabic", value.lm_pdf_file_arabic);
+  //       }
 
-        if (value.lm_pdf_file) {
-          formData.append("lm_pdf_file", value.lm_pdf_file);
-        }
-        if (value.lm_pdf_file_arabic) {
-          formData.append("lm_pdf_file_arabic", value.lm_pdf_file_arabic);
-        }
+  //       const res = await apiClient
+  //         .post(i18n.language + `/federal-legislation/update/${slug}`, {
+  //           headers: {
+  //             "Content-Type": undefined,
+  //           },
+  //           body: formData,
+  //         })
+  //         .json<any>();
 
-        const res = await apiClient
-          .post(i18n.language + `/federal-legislation/update/${slug}`, {
-            headers: {
-              "Content-Type": undefined,
-            },
-            body: formData,
-          })
-          .json<any>();
+  //       // console.log(res, "local_legislation_update_res");
+  //       if (res?.status) {
+  //         // form.reset();
+  //         toast.success(res?.message || t("success"));
 
-        // console.log(res, "local_legislation_update_res");
-        if (res?.status) {
-          // form.reset();
-          toast.success(res?.message || t("success"));
+  //         setTimeout(() => {
+  //           setThankYouPopup(true);
+  //         }, 150);
+  //       }
+  //     } catch (error) {
+  //       console.error("Add request failed:", error);
+  //     } finally {
+  //       setIsSubmitting(false);
+  //     }
+  //   },
+  // });
 
-          setTimeout(() => {
-            setThankYouPopup(true);
-          }, 150);
-        }
-      } catch (error) {
-        console.error("Add request failed:", error);
-      } finally {
-        setIsSubmitting(false);
-      }
-    },
-  });
+  // useEffect(() => {
+  //   if (data?.lawData) {
+  //     form.setFieldValue(
+  //       "lm_has_english_version",
+  //       data.lawData?.lm_has_english_version.toString() || "2",
+  //     );
+  //     form.setFieldValue(
+  //       "local_government",
+  //       userSession?.user?.userEmirateName || "",
+  //     );
+  //     form.setFieldValue(
+  //       "lm_law_type_id",
+  //       data?.lawData?.lm_law_type_id.toString() || "",
+  //     );
+  //     form.setFieldValue(
+  //       "lm_sector_id",
+  //       data?.lawData?.lm_sector_id.toString() || "",
+  //     );
+  //     form.setFieldValue("lm_title", data?.lawData?.lm_title || "");
+  //     form.setFieldValue(
+  //       "lm_title_arabic",
+  //       data?.lawData?.lm_title_arabic || "",
+  //     );
+  //     form.setFieldValue("lm_short_title", data?.lawData?.lm_short_title || "");
+  //     form.setFieldValue(
+  //       "lm_short_title_arabic",
+  //       data?.lawData?.lm_short_title_arabic || "",
+  //     );
+  //     form.setFieldValue("lm_description", data?.lawData?.lm_description || "");
+  //     form.setFieldValue(
+  //       "lm_description_arabic",
+  //       data?.lawData?.lm_description_arabic || "",
+  //     );
+  //     form.setFieldValue("lm_year", data?.lawData?.lm_year.toString() || "");
+  //     form.setFieldValue(
+  //       "lm_has_modified",
+  //       data?.lawData?.lm_has_modified?.toString() || "2",
+  //     );
+  //     form.setFieldValue("lm_number", data?.lawData?.lm_number || "");
+  //     form.setFieldValue("lm_issue_date", data?.lawData?.lm_issue_date || "");
+  //     form.setFieldValue(
+  //       "lm_effective_date",
+  //       data?.lawData?.lm_effective_date || "",
+  //     );
+  //     form.setFieldValue("lm_pdf_file", "");
+  //     form.setFieldValue("lm_pdf_file_arabic", "");
+  //     form.setFieldValue(
+  //       "lm_gazette_number",
+  //       data?.lawData?.lm_gazette_number || "",
+  //     );
+  //     form.setFieldValue(
+  //       "lm_gazette_number_arabic",
+  //       data?.lawData?.lm_gazette_number_arabic || "",
+  //     );
+  //     form.setFieldValue(
+  //       "lm_official_gazette_issue_date",
+  //       data?.lawData?.lm_official_gazette_issue_date || "",
+  //     );
+  //     form.setFieldValue(
+  //       "lm_gazzette_date_string",
+  //       data?.lawData?.lm_gazzette_date_string || "",
+  //     );
+  //     form.setFieldValue(
+  //       "lm_gazette_title",
+  //       data?.lawData?.lm_gazette_title || "",
+  //     );
+  //     form.setFieldValue(
+  //       "lm_gazette_title_arabic",
+  //       data?.lawData?.lm_gazette_title_arabic || "",
+  //     );
+  //   }
+  // }, [data, form, userSession]);
 
-  useEffect(() => {
-    if (data?.lawData) {
-      form.setFieldValue(
-        "lm_has_english_version",
-        data.lawData?.lm_has_english_version.toString() || "2",
-      );
-      form.setFieldValue(
-        "local_government",
-        userSession?.user?.userEmirateName || "",
-      );
-      form.setFieldValue(
-        "lm_law_type_id",
-        data?.lawData?.lm_law_type_id.toString() || "",
-      );
-      form.setFieldValue(
-        "lm_sector_id",
-        data?.lawData?.lm_sector_id.toString() || "",
-      );
-      form.setFieldValue("lm_title", data?.lawData?.lm_title || "");
-      form.setFieldValue(
-        "lm_title_arabic",
-        data?.lawData?.lm_title_arabic || "",
-      );
-      form.setFieldValue("lm_short_title", data?.lawData?.lm_short_title || "");
-      form.setFieldValue(
-        "lm_short_title_arabic",
-        data?.lawData?.lm_short_title_arabic || "",
-      );
-      form.setFieldValue("lm_description", data?.lawData?.lm_description || "");
-      form.setFieldValue(
-        "lm_description_arabic",
-        data?.lawData?.lm_description_arabic || "",
-      );
-      form.setFieldValue("lm_year", data?.lawData?.lm_year.toString() || "");
-      form.setFieldValue(
-        "lm_has_modified",
-        data?.lawData?.lm_has_modified?.toString() || "2",
-      );
-      form.setFieldValue("lm_number", data?.lawData?.lm_number || "");
-      form.setFieldValue("lm_issue_date", data?.lawData?.lm_issue_date || "");
-      form.setFieldValue(
-        "lm_effective_date",
-        data?.lawData?.lm_effective_date || "",
-      );
-      form.setFieldValue("lm_pdf_file", "");
-      form.setFieldValue("lm_pdf_file_arabic", "");
-      form.setFieldValue(
-        "lm_gazette_number",
-        data?.lawData?.lm_gazette_number || "",
-      );
-      form.setFieldValue(
-        "lm_gazette_number_arabic",
-        data?.lawData?.lm_gazette_number_arabic || "",
-      );
-      form.setFieldValue(
-        "lm_official_gazette_issue_date",
-        data?.lawData?.lm_official_gazette_issue_date || "",
-      );
-      form.setFieldValue(
-        "lm_gazzette_date_string",
-        data?.lawData?.lm_gazzette_date_string || "",
-      );
-      form.setFieldValue(
-        "lm_gazette_title",
-        data?.lawData?.lm_gazette_title || "",
-      );
-      form.setFieldValue(
-        "lm_gazette_title_arabic",
-        data?.lawData?.lm_gazette_title_arabic || "",
-      );
-    }
-  }, [data, form, userSession]);
+  // const handleClearFile = (fieldName: string, previewKey: string) => {
+  //   form.setFieldValue(fieldName as any, null);
 
-  const handleClearFile = (fieldName: string, previewKey: string) => {
-    form.setFieldValue(fieldName as any, null);
-
-    setDeletedFiles((prev) => [...prev, previewKey]);
-  };
+  //   setDeletedFiles((prev) => [...prev, previewKey]);
+  // };
 
   const { preview: previewEN, isLoading: isLoadingEN } = usePDFPreview(
     data?.lawData?.lm_slug,
@@ -369,6 +367,33 @@ function RouteComponent() {
 
   return (
     <DashboardLayout isLoading={isLoading} title={t("edit_legislation")}>
+      <LegislationForm
+        mode="edit"
+        initialValues={initialValues}
+        data={data}
+        onSubmit={handleStore}
+        isSubmitting={isSubmitting}
+        previewEN={previewEN}
+        previewAR={previewAR}
+        isLoadingEN={isLoadingEN}
+        isLoadingAR={isLoadingAR}
+      />
+      <ThankYouPopup
+        type="success"
+        open={thankYouPopup}
+        setOpen={setThankYouPopup}
+        title={t("updated_successfully")}
+        description={t("law_updated_success_message")}
+        onConfirm={() => {
+          queryClient.invalidateQueries({
+            queryKey: ["federalLegislationFormData"],
+          });
+          queryClient.invalidateQueries({
+            queryKey: ["federalLegislationTable"],
+          });
+        }}
+      />
+
       {/* <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -1099,33 +1124,6 @@ function RouteComponent() {
           </div>
         </div>
       </form> */}
-
-      <LegislationForm
-        mode="edit"
-        initialValues={initialValues}
-        data={data}
-        onSubmit={handleStore}
-        isSubmitting={isSubmitting}
-        previewEN={previewEN}
-        previewAR={previewAR}
-        isLoadingEN={isLoadingEN}
-        isLoadingAR={isLoadingAR}
-      />
-      <ThankYouPopup
-        type="success"
-        open={thankYouPopup}
-        setOpen={setThankYouPopup}
-        title={t("updated_successfully")}
-        description={t("law_updated_success_message")}
-        onConfirm={() => {
-          queryClient.invalidateQueries({
-            queryKey: ["federalLegislationFormData"],
-          });
-          queryClient.invalidateQueries({
-            queryKey: ["federalLegislationTable"],
-          });
-        }}
-      />
     </DashboardLayout>
   );
 }

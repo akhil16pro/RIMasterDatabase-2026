@@ -185,11 +185,11 @@ function RouteComponent() {
   //   }
   // }, [data, form, userSession]);
 
-  const handleClearFile = (fieldName: string, previewKey: string) => {
-    form.setFieldValue(fieldName as any, null);
+  // const handleClearFile = (fieldName: string, previewKey: string) => {
+  //   form.setFieldValue(fieldName as any, null);
 
-    setDeletedFiles((prev) => [...prev, previewKey]);
-  };
+  //   setDeletedFiles((prev) => [...prev, previewKey]);
+  // };
 
   const { preview: previewEN, isLoading: isLoadingEN } = usePDFPreview(
     data?.treatyData?.it_slug,

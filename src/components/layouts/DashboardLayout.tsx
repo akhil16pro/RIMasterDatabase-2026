@@ -22,10 +22,10 @@ export default function DashboardLayout({
   lastLogin = false,
   campaign = [],
 }: {
-  isLoading: boolean;
-  isRefetching: boolean;
-  error: any;
-  title: string;
+  isLoading?: boolean;
+  isRefetching?: boolean;
+  error?: any;
+  title?: string;
   lastLogin?: boolean;
   campaign?: string[];
   children: React.ReactNode;

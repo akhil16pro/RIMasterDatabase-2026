@@ -250,7 +250,6 @@ function RouteComponent() {
         fields={fields}
         defaultValues={initialValues}
         data={data}
-        t={t}
         mode="view"
       />
     </DashboardLayout>

@@ -330,7 +330,6 @@ function RouteComponent() {
         defaultValues={initialValues}
         onSubmit={handleStore}
         data={data}
-        t={t}
         mode="add"
         isSubmitting={isSubmitting}
       />

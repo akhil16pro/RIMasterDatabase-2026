@@ -28,8 +28,8 @@ interface LegislationFormProps {
   data: any;
   isSubmitting: boolean;
   mode: "add" | "edit" | "view";
-  previewEN?: string;
-  previewAR?: string;
+  previewEN?: () => Promise<string>;
+  previewAR?: () => Promise<string>;
   isLoadingEN?: boolean;
   isLoadingAR?: boolean;
 }
