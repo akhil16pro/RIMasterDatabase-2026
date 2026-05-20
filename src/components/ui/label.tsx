@@ -8,11 +8,13 @@ function Label({
   normalLabel = false,
   errorLabel = false,
   floating = false,
+  error = false,
   ...props
 }: React.ComponentProps<typeof LabelPrimitive.Root> & {
   normalLabel?: boolean;
   errorLabel?: boolean;
   floating?: boolean;
+  error?: boolean;
 }) {
   return (
     <LabelPrimitive.Root
@@ -24,6 +26,8 @@ function Label({
           "absolute bottom-[-1px] ltr:right-0 rtl:left-0  translate-y-full",
         errorLabel &&
           " bg-[var(--brandRed)] text-[.85rem] inline-flex leading-[100%] px-2 py-[2px] rounded-[3px] font-secondary  text-white self-center [&:empty]:hidden",
+        error === true &&
+          "text-[var(--brandRed)] peer-focus:text-[var(--brandRed)] peer-placeholder-shown:text-[var(--brandRed)]",
         className,
       )}
       {...props}

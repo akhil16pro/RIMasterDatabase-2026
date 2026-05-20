@@ -6,7 +6,6 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useForm } from "@tanstack/react-form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { toast } from "@/lib/toast";
 import {
   Select,
   SelectContent,
@@ -15,9 +14,8 @@ import {
   SelectValue,
 } from "@/components/ui/Select";
 import { Label } from "@/components/ui/label";
-import { ThankYouPopup } from "@/components/ui/thankYouPopup";
 import { FileUpload } from "@/components/ui/FileUpload";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence } from "motion/react";
 import CKEditorCustom from "@/components/ui/CKEditor";
 
 interface CustomFormProps {
@@ -35,7 +33,6 @@ export function CustomForm({
   onSubmit,
   data,
   isSubmitting,
-
   mode,
 }: CustomFormProps) {
   const form = useForm({
@@ -43,6 +40,7 @@ export function CustomForm({
     onSubmit: async ({ value }) => await onSubmit(value),
   });
   const { t } = useTranslation();
+
   return (
     <form
       onSubmit={(e) => {
@@ -52,9 +50,9 @@ export function CustomForm({
       }}
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10 items-start">
-        {fields.map((cfg) => (
-          <>
-            {cfg.type === "radio" ? (
+        {fields.map((cfg) => {
+          if (cfg.type === "radio") {
+            return (
               <RadioButtonComponent
                 form={form}
                 cfg={cfg}
@@ -62,7 +60,11 @@ export function CustomForm({
                 mode={mode}
                 key={`${cfg.name}-radio`}
               />
-            ) : cfg.condition ? (
+            );
+          }
+
+          if (cfg.condition) {
+            return (
               <form.Subscribe
                 key={`${cfg.name}-condition`}
                 selector={(state) => state.values[cfg?.condition.key]}
@@ -79,17 +81,19 @@ export function CustomForm({
                   </AnimatePresence>
                 )}
               />
-            ) : (
-              <InputComponent
-                form={form}
-                cfg={cfg}
-                data={data}
-                mode={mode}
-                key={`${cfg.name}-inputNormal`}
-              />
-            )}
-          </>
-        ))}
+            );
+          }
+
+          return (
+            <InputComponent
+              form={form}
+              cfg={cfg}
+              data={data}
+              mode={mode}
+              key={`${cfg.name}-inputNormal`}
+            />
+          );
+        })}
 
         {mode !== "view" && (
           <div className="col-span-full" key="submit-button">
@@ -126,6 +130,7 @@ const InputComponent = ({
   mode: any;
 }) => {
   const { t } = useTranslation();
+
   return (
     <form.Field
       key={cfg.name}
@@ -137,7 +142,6 @@ const InputComponent = ({
           return (
             <div className={cn(cfg?.className)} key={`${field.name}-select`}>
               <Select
-                key={`${cfg.name}-${field.state.value}`}
                 value={field.state.value?.toString()}
                 onValueChange={field.handleChange}
               >
@@ -152,7 +156,7 @@ const InputComponent = ({
                 <SelectContent>
                   {data?.[cfg.optionsKey!]?.map((item: any) => (
                     <SelectItem
-                      key={`${cfg.name}-${item.value}`}
+                      key={`${field.name}-opt-${item.value}`}
                       value={item.value.toString()}
                     >
                       {item.label}
@@ -171,7 +175,9 @@ const InputComponent = ({
               className={cn("space-y-2 relative", cfg?.className)}
               key={`${field.name}-editor`}
             >
-              <Label>{cfg.label}</Label>
+              <Label error={field.state.meta.errors.length > 0 ? true : false}>
+                {cfg.label}
+              </Label>
               <CKEditorCustom
                 dir={cfg.dir}
                 value={field.state.value}
@@ -187,6 +193,7 @@ const InputComponent = ({
           );
         }
 
+        // 3. Handle File Upload
         if (cfg.type === "upload") {
           return (
             <div
@@ -208,6 +215,7 @@ const InputComponent = ({
           );
         }
 
+        // 4. Handle Value Effect
         if (cfg.valueEffect) {
           return (
             <div
@@ -218,15 +226,13 @@ const InputComponent = ({
                 field={field}
                 form={form}
                 cfg={cfg}
-                data={data}
                 mode={mode}
-                t={t}
               />
             </div>
           );
         }
 
-        // 3. Handle Standard Inputs (Text, Date, File)
+        // 5. Handle Standard Inputs
         return (
           <div className={cn(cfg?.className)} key={`${field.name}-input`}>
             <Input
@@ -260,7 +266,7 @@ const InputComponent = ({
   );
 };
 
-const ValueEffectComponent = ({ field, form, cfg, data, mode, t }: any) => {
+const ValueEffectComponent = ({ field, form, cfg, mode }: any) => {
   return (
     <form.Subscribe selector={(state) => state.values[cfg?.valueEffect.key]}>
       {(value) => (
@@ -296,58 +302,64 @@ const ValueEffectComponent = ({ field, form, cfg, data, mode, t }: any) => {
 
 const RadioButtonComponent = ({ form, cfg, data, mode }: any) => {
   return (
-    <>
-      <div className="flex gap-5 text-black  text-[1.2rem] col-span-full w-full">
-        <Label className="text-black/70">{cfg.label}</Label>
+    <div className="flex gap-5 text-black text-[1.2rem] col-span-full w-full">
+      <Label className="text-black/70">{cfg.label}</Label>
 
-        <form.Field
-          key={cfg.name}
-          name={cfg.name as any}
-          validators={cfg.validators}
-          children={(field) => {
-            return (
-              <div
-                className={cn(cfg?.className)}
-                key={`${field.name}-radioItem`}
+      <form.Field
+        key={cfg.name}
+        name={cfg.name as any}
+        validators={cfg.validators}
+        children={(field) => {
+          return (
+            <div
+              className={cn(cfg?.className)}
+              key={`${field.name}-radioGroupContainer`}
+            >
+              <RadioGroup
+                className="flex gap-col-4 gap-row-1 flex-wrap"
+                value={field.state.value?.toString()}
+                onValueChange={field.handleChange}
               >
-                <RadioGroup
-                  className="flex gap-col-4 gap-row-1 flex-wrap"
-                  value={field.state.value?.toString()}
-                  onValueChange={field.handleChange}
-                >
-                  {data?.[cfg.optionsKey!]?.map((item: any) => (
-                    <div
-                      key={`${field.name}-radioItem-${item.value}`}
-                      className="flex items-center space-x-2"
-                    >
-                      <RadioGroupItem
-                        value={item.value.toString()}
-                        id={item.value.toString()}
-                      />
-                      <Label htmlFor={item.value.toString()}>
-                        {item.label}
-                      </Label>
-                    </div>
-                  ))}
-                </RadioGroup>
-                {field.state.meta.errors ? (
-                  <Label errorLabel={true} floating={true}>
-                    {field.state.meta.errors.join(", ")}
-                  </Label>
-                ) : null}
-              </div>
-            );
-          }}
-        />
-      </div>
-    </>
+                {data?.[cfg.optionsKey!]?.map((item: any) => (
+                  <div
+                    key={`${field.name}-radioItem-${item.value}`}
+                    className="flex items-center space-x-2"
+                  >
+                    <RadioGroupItem
+                      value={item.value.toString()}
+                      id={item.value.toString()}
+                    />
+                    <Label htmlFor={item.value.toString()}>{item.label}</Label>
+                  </div>
+                ))}
+              </RadioGroup>
+              {field.state.meta.errors ? (
+                <Label errorLabel={true} floating={true}>
+                  {field.state.meta.errors.join(", ")}
+                </Label>
+              ) : null}
+            </div>
+          );
+        }}
+      />
+    </div>
   );
 };
 
 export interface FieldConfig {
   name: string;
   label: string;
-  type: "text" | "date" | "file" | "select" | "editor" | "radio" | "custom";
+  type:
+    | "text"
+    | "password"
+    | "number"
+    | "textarea"
+    | "date"
+    | "file"
+    | "select"
+    | "editor"
+    | "radio"
+    | "custom";
   optionsKey?: string;
   validators?: any;
   colSpan?: number;
@@ -359,4 +371,14 @@ export interface FieldConfig {
   isLoading?: boolean;
   onClick?: () => void;
   onClearPreview?: () => void;
+  condition?: {
+    key: string;
+    value: any;
+  };
+  valueEffect?: {
+    key: string;
+  };
+  className?: string;
+  multiple?: boolean;
+  onChange?: (field: any) => void;
 }

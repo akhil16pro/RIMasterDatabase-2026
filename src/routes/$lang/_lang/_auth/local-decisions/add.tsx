@@ -73,7 +73,7 @@ function RouteComponent() {
         const res = await apiClient
           .get(i18n.language + `/local-decision/create`)
           .json<any>();
-        // console.log("local_decision_form_data", res?.data);
+        console.log("local_decision_form_data", res?.data);
 
         return res?.data;
       } catch (error) {
@@ -136,32 +136,7 @@ function RouteComponent() {
         onSubmit: ({ value }) => (!value ? t("required_field") : null),
       },
     },
-    // {
-    //   name: "dm_year",
-    //   label: t("decision_year"),
-    //   type: "select",
-    //   optionsKey: "yearList",
-    //   validators: {
-    //     onSubmit: ({ value }) => (!value ? t("required_field") : null),
-    //   },
-    // },
-    // {
-    //   name: "dm_authority_title",
-    //   label: t("authority_title"),
-    //   type: "text",
-    //   validators: {
-    //     onSubmit: ({ value }) => (!value ? t("required_field") : null),
-    //   },
-    // },
-    // {
-    //   name: "dm_authority_title_arabic",
-    //   label: t("authority_title_arabic"),
-    //   type: "text",
-    //   dir: "rtl",
-    //   validators: {
-    //     onSubmit: ({ value }) => (!value ? t("required_field") : null),
-    //   },
-    // },
+
     {
       name: "dm_details",
       label: t("court_decision_details_english"),
@@ -240,6 +215,33 @@ function RouteComponent() {
         },
       },
     },
+
+    // {
+    //   name: "dm_year",
+    //   label: t("decision_year"),
+    //   type: "select",
+    //   optionsKey: "yearList",
+    //   validators: {
+    //     onSubmit: ({ value }) => (!value ? t("required_field") : null),
+    //   },
+    // },
+    // {
+    //   name: "dm_authority_title",
+    //   label: t("authority_title"),
+    //   type: "text",
+    //   validators: {
+    //     onSubmit: ({ value }) => (!value ? t("required_field") : null),
+    //   },
+    // },
+    // {
+    //   name: "dm_authority_title_arabic",
+    //   label: t("authority_title_arabic"),
+    //   type: "text",
+    //   dir: "rtl",
+    //   validators: {
+    //     onSubmit: ({ value }) => (!value ? t("required_field") : null),
+    //   },
+    // },
   ];
 
   const handleStore = async (values) => {
