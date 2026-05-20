@@ -182,7 +182,7 @@ function RouteComponent() {
     lm_official_gazette_issue_date: "",
     lm_gazette_title: "",
     lm_gazette_title_arabic: "",
-    lm_official_gazette_publish_date: "",
+    lm_gazzette_date_string: "",
   });
 
   const handleStore = async (values) => {
@@ -195,25 +195,29 @@ function RouteComponent() {
       }
     });
     console.log("FormData content:", Object.fromEntries(formData.entries()));
-    const res = await apiClient
-      .post(i18n.language + `/modifications/store/` + slug, {
-        headers: {
-          "Content-Type": undefined,
-        },
-        body: formData,
-      })
-      .json<any>();
+    try {
+      const res = await apiClient
+        .post(i18n.language + `/modifications/store/` + slug, {
+          headers: {
+            "Content-Type": undefined,
+          },
+          body: formData,
+        })
+        .json<any>();
 
-    if (res?.status) {
+      if (res?.status) {
+        toast.success(res?.message || t("success"));
+        queryClient.invalidateQueries({
+          queryKey: ["federal_legislations_modifications_table", slug],
+        });
+        setTimeout(() => {
+          setThankYouPopup(true);
+        }, 150);
+      }
+    } catch (error) {
+      console.error("Submission failed:", error);
+    } finally {
       setIsSubmitting(false);
-
-      toast.success(res?.message || t("success"));
-      queryClient.invalidateQueries({
-        queryKey: ["federal_legislations_modifications_table", slug],
-      });
-      setTimeout(() => {
-        setThankYouPopup(true);
-      }, 150);
     }
   };
 

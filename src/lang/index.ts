@@ -17,6 +17,7 @@ i18n
     resources,
     fallbackLng: 'en',
     supportedLngs: ['en', 'ar'],
+    showSupportNotice: false,
     detection: {
       order: ['navigator', 'querystring', 'localStorage', 'htmlTag'],
       caches: ['localStorage'],

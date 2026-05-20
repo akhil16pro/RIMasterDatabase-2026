@@ -180,7 +180,7 @@ function RouteComponent() {
     lm_description: "",
     lm_description_arabic: "",
     lm_year: "",
-    lm_has_modifications: "2",
+    lm_has_modified: "2",
     lm_number: "",
     lm_issue_date: "",
     lm_effective_date: "",
@@ -189,7 +189,7 @@ function RouteComponent() {
     lm_gazette_number: "",
     lm_gazette_number_arabic: "",
     lm_official_gazette_issue_date: "",
-    lm_official_gazette_publish_date: "",
+    lm_gazzette_date_string: "",
     lm_gazette_title: "",
     lm_gazette_title_arabic: "",
   });
@@ -204,25 +204,31 @@ function RouteComponent() {
       }
     });
     console.log("FormData content:", Object.fromEntries(formData.entries()));
-    const res = await apiClient
-      .post(i18n.language + `/local-legislation/store`, {
-        headers: {
-          "Content-Type": undefined,
-        },
-        body: formData,
-      })
-      .json<any>();
+    try {
+      const res = await apiClient
+        .post(i18n.language + `/local-legislation/store`, {
+          headers: {
+            "Content-Type": undefined,
+          },
+          body: formData,
+        })
+        .json<any>();
 
-    if (res?.status) {
+      if (res?.status) {
+        setIsSubmitting(false);
+
+        toast.success(res?.message || t("success"));
+        queryClient.invalidateQueries({
+          queryKey: ["localLegislationTable"],
+        });
+        setTimeout(() => {
+          setThankYouPopup(true);
+        }, 150);
+      }
+    } catch (error) {
+      console.error("Submission failed:", error);
+    } finally {
       setIsSubmitting(false);
-
-      toast.success(res?.message || t("success"));
-      queryClient.invalidateQueries({
-        queryKey: ["localLegislationTable"],
-      });
-      setTimeout(() => {
-        setThankYouPopup(true);
-      }, 150);
     }
   };
 

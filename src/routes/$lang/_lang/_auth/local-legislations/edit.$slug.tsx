@@ -92,14 +92,14 @@ function RouteComponent() {
       lm_description: "",
       lm_description_arabic: "",
       lm_year: "",
-      lm_has_modifications: "2",
+      lm_has_modified: "2",
       lm_number: "",
       lm_issue_date: "",
       lm_effective_date: "",
       lm_gazette_number: "",
       lm_gazette_number_arabic: "",
       lm_official_gazette_issue_date: "",
-      lm_official_gazette_publish_date: "",
+      lm_gazzette_date_string: "",
       lm_gazette_title: "",
       lm_gazette_title_arabic: "",
       lm_pdf_file: null,
@@ -127,7 +127,7 @@ function RouteComponent() {
         formData.append("lm_description_arabic", value.lm_description_arabic);
         formData.append("lm_year", value.lm_year.toString());
         formData.append("lm_number", value.lm_number);
-        formData.append("lm_has_modifications", value.lm_has_modifications);
+        formData.append("lm_has_modified", value.lm_has_modified);
         formData.append("lm_issue_date", value.lm_issue_date);
         formData.append("lm_effective_date", value.lm_effective_date);
         formData.append("lm_gazette_number", value.lm_gazette_number);
@@ -140,8 +140,8 @@ function RouteComponent() {
           value.lm_official_gazette_issue_date,
         );
         formData.append(
-          "lm_official_gazette_publish_date",
-          value.lm_official_gazette_publish_date,
+          "lm_gazzette_date_string",
+          value.lm_gazzette_date_string,
         );
         formData.append("lm_gazette_title", value.lm_gazette_title);
         formData.append(
@@ -214,8 +214,8 @@ function RouteComponent() {
       );
       form.setFieldValue("lm_year", data?.lawData?.lm_year.toString() || "");
       form.setFieldValue(
-        "lm_has_modifications",
-        data?.lawData?.lm_has_modifications?.toString() || "2",
+        "lm_has_modified",
+        data?.lawData?.lm_has_modified?.toString() || "2",
       );
       form.setFieldValue("lm_number", data?.lawData?.lm_number || "");
       form.setFieldValue("lm_issue_date", data?.lawData?.lm_issue_date || "");
@@ -238,8 +238,8 @@ function RouteComponent() {
         data?.lawData?.lm_official_gazette_issue_date || "",
       );
       form.setFieldValue(
-        "lm_official_gazette_publish_date",
-        data?.lawData?.lm_official_gazette_publish_date || "",
+        "lm_gazzette_date_string",
+        data?.lawData?.lm_gazzette_date_string || "",
       );
       form.setFieldValue(
         "lm_gazette_title",
@@ -279,7 +279,7 @@ function RouteComponent() {
     lm_description: "",
     lm_description_arabic: "",
     lm_year: "",
-    lm_has_modifications: "2",
+    lm_has_modified: "2",
     lm_number: "",
     lm_issue_date: "",
     lm_effective_date: "",
@@ -288,7 +288,7 @@ function RouteComponent() {
     lm_gazette_number: "",
     lm_gazette_number_arabic: "",
     lm_official_gazette_issue_date: "",
-    lm_official_gazette_publish_date: "",
+    lm_gazzette_date_string: "",
     lm_gazette_title: "",
     lm_gazette_title_arabic: "",
   });
@@ -315,8 +315,7 @@ function RouteComponent() {
         lm_description: data?.lawData?.lm_description,
         lm_description_arabic: data?.lawData?.lm_description_arabic,
         lm_year: data?.lawData?.lm_year?.toString() || "",
-        lm_has_modifications:
-          data?.lawData?.lm_has_modifications?.toString() || "2",
+        lm_has_modified: data?.lawData?.lm_has_modified?.toString() || "2",
         lm_number: data?.lawData?.lm_number,
         lm_issue_date: data?.lawData?.lm_issue_date,
         lm_effective_date: data?.lawData?.lm_effective_date,
@@ -326,8 +325,7 @@ function RouteComponent() {
         lm_gazette_number_arabic: data?.lawData?.lm_gazette_number_arabic,
         lm_official_gazette_issue_date:
           data?.lawData?.lm_official_gazette_issue_date,
-        lm_official_gazette_publish_date:
-          data?.lawData?.lm_official_gazette_publish_date,
+        lm_gazzette_date_string: data?.lawData?.lm_gazzette_date_string,
         lm_gazette_title: data?.lawData?.lm_gazette_title,
         lm_gazette_title_arabic: data?.lawData?.lm_gazette_title_arabic,
       });
@@ -344,23 +342,27 @@ function RouteComponent() {
       }
     });
     console.log("FormData content:", Object.fromEntries(formData.entries()));
-    const res = await apiClient
-      .post(i18n.language + `/local-legislation/update/${slug}`, {
-        headers: {
-          "Content-Type": undefined,
-        },
-        body: formData,
-      })
-      .json<any>();
+    try {
+      const res = await apiClient
+        .post(i18n.language + `/local-legislation/update/${slug}`, {
+          headers: {
+            "Content-Type": undefined,
+          },
+          body: formData,
+        })
+        .json<any>();
 
-    if (res?.status) {
+      if (res?.status) {
+        toast.success(res?.message || t("success"));
+
+        setTimeout(() => {
+          setThankYouPopup(true);
+        }, 150);
+      }
+    } catch (error) {
+      console.error("Submission failed:", error);
+    } finally {
       setIsSubmitting(false);
-
-      toast.success(res?.message || t("success"));
-
-      setTimeout(() => {
-        setThankYouPopup(true);
-      }, 150);
     }
   };
   return (
@@ -672,7 +674,7 @@ function RouteComponent() {
               {t("legislation_modifications")}
             </Label>
             <form.Field
-              name="lm_has_modifications"
+              name="lm_has_modified"
               validators={{
                 onChange: ({ value }) =>
                   !value ? t("required_field") : undefined,
@@ -688,12 +690,12 @@ function RouteComponent() {
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem
                         value="1"
-                        id="lm_has_modifications_yes"
+                        id="lm_has_modified_yes"
                         error={field.state.meta.errors.length > 0}
                       />
                       <Label
                         normalLabel={true}
-                        htmlFor="lm_has_modifications_yes"
+                        htmlFor="lm_has_modified_yes"
                         className="cursor-pointer"
                       >
                         {t("yes")}
@@ -702,12 +704,12 @@ function RouteComponent() {
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem
                         value="2"
-                        id="lm_has_modifications_no"
+                        id="lm_has_modified_no"
                         error={field.state.meta.errors.length > 0}
                       />
                       <Label
                         normalLabel={true}
-                        htmlFor="lm_has_modifications_no"
+                        htmlFor="lm_has_modified_no"
                         className="cursor-pointer"
                       >
                         {t("no")}
@@ -1060,15 +1062,15 @@ function RouteComponent() {
             )}
           />
           <form.Field
-            name="lm_official_gazette_publish_date"
+            name="lm_gazzette_date_string"
             validators={{
               onSubmit: ({ value }) => (!value ? t("required_field") : null),
             }}
             children={(field) => (
               <Input
                 type="date"
-                id="lm_official_gazette_publish_date"
-                name="lm_official_gazette_publish_date"
+                id="lm_gazzette_date_string"
+                name="lm_gazzette_date_string"
                 value={field.state.value}
                 onChange={(e) => field.handleChange(e.target.value)}
                 label={t("official_gazette_publish_date")}

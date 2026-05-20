@@ -92,7 +92,7 @@ function RouteComponent() {
     lm_description: "",
     lm_description_arabic: "",
     lm_year: "",
-    lm_has_modifications: "2",
+    lm_has_modified: "2",
     lm_number: "",
     lm_issue_date: "",
     lm_effective_date: "",
@@ -101,7 +101,7 @@ function RouteComponent() {
     lm_gazette_number: "",
     lm_gazette_number_arabic: "",
     lm_official_gazette_issue_date: "",
-    lm_official_gazette_publish_date: "",
+    lm_gazzette_date_string: "",
     lm_gazette_title: "",
     lm_gazette_title_arabic: "",
   });
@@ -127,8 +127,7 @@ function RouteComponent() {
         lm_description: data?.lawData?.lm_description,
         lm_description_arabic: data?.lawData?.lm_description_arabic,
         lm_year: data?.lawData?.lm_year?.toString() || "",
-        lm_has_modifications:
-          data?.lawData?.lm_has_modifications?.toString() || "2",
+        lm_has_modified: data?.lawData?.lm_has_modified?.toString() || "2",
         lm_number: data?.lawData?.lm_number,
         lm_issue_date: data?.lawData?.lm_issue_date,
         lm_effective_date: data?.lawData?.lm_effective_date,
@@ -138,8 +137,7 @@ function RouteComponent() {
         lm_gazette_number_arabic: data?.lawData?.lm_gazette_number_arabic,
         lm_official_gazette_issue_date:
           data?.lawData?.lm_official_gazette_issue_date,
-        lm_official_gazette_publish_date:
-          data?.lawData?.lm_official_gazette_publish_date,
+        lm_gazzette_date_string: data?.lawData?.lm_gazzette_date_string,
         lm_gazette_title: data?.lawData?.lm_gazette_title,
         lm_gazette_title_arabic: data?.lawData?.lm_gazette_title_arabic,
       });
@@ -283,25 +281,25 @@ function RouteComponent() {
           </Label>
           <RadioGroup
             className="flex gap-4"
-            value={data?.lawData?.lm_has_modifications?.toString()}
-            defaultValue={data?.lawData?.lm_has_modifications?.toString()}
+            value={data?.lawData?.lm_has_modified?.toString()}
+            defaultValue={data?.lawData?.lm_has_modified?.toString()}
             disabled={true}
           >
             <div className="flex items-center space-x-2">
-              <RadioGroupItem value="1" id="lm_has_modifications_yes" />
+              <RadioGroupItem value="1" id="lm_has_modified_yes" />
               <Label
                 normalLabel={true}
-                htmlFor="lm_has_modifications_yes"
+                htmlFor="lm_has_modified_yes"
                 className="cursor-pointer"
               >
                 {t("yes")}
               </Label>
             </div>
             <div className="flex items-center space-x-2">
-              <RadioGroupItem value="2" id="lm_has_modifications_no" />
+              <RadioGroupItem value="2" id="lm_has_modified_no" />
               <Label
                 normalLabel={true}
-                htmlFor="lm_has_modifications_no"
+                htmlFor="lm_has_modified_no"
                 className="cursor-pointer"
               >
                 {t("no")}
@@ -417,7 +415,7 @@ function RouteComponent() {
 
         <Input
           type="date"
-          value={data?.lawData?.lm_official_gazette_publish_date}
+          value={data?.lawData?.lm_gazzette_date_string}
           label={t("official_gazette_publish_date")}
           readOnly={true}
         />

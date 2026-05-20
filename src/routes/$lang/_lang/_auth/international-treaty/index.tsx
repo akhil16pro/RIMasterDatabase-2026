@@ -141,7 +141,7 @@ function PageTable({ search }: { search: string }) {
             body: formData,
           })
           .json<any>();
-        console.log("INTERNATIONAL_TREATIES_TABLE_DATA", res?.data);
+        // console.log("INTERNATIONAL_TREATIES_TABLE_DATA", res?.data);
         return res?.data;
       } catch (error) {
         console.log("INTERNATIONAL_TREATIES_TABLE_DATA_ERROR", error);

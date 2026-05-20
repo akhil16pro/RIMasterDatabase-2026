@@ -252,25 +252,29 @@ function RouteComponent() {
       }
     });
     console.log("FormData content:", Object.fromEntries(formData.entries()));
-    const res = await apiClient
-      .post(i18n.language + `/local-decision/store`, {
-        headers: {
-          "Content-Type": undefined,
-        },
-        body: formData,
-      })
-      .json<any>();
+    try {
+      const res = await apiClient
+        .post(i18n.language + `/local-decision/store`, {
+          headers: {
+            "Content-Type": undefined,
+          },
+          body: formData,
+        })
+        .json<any>();
 
-    if (res?.status) {
+      if (res?.status) {
+        toast.success(res?.message || t("success"));
+        queryClient.invalidateQueries({
+          queryKey: ["localDecisionTable"],
+        });
+        setTimeout(() => {
+          setThankYouPopup(true);
+        }, 150);
+      }
+    } catch (error) {
+      console.error("Submission failed:", error);
+    } finally {
       setIsSubmitting(false);
-
-      toast.success(res?.message || t("success"));
-      queryClient.invalidateQueries({
-        queryKey: ["localDecisionTable"],
-      });
-      setTimeout(() => {
-        setThankYouPopup(true);
-      }, 150);
     }
   };
 

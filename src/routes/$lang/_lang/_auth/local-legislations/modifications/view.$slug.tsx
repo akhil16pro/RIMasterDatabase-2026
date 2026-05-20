@@ -103,7 +103,7 @@ function RouteComponent() {
     lm_gazette_title_arabic: "",
     lm_pdf_file: null,
     lm_pdf_file_arabic: null,
-    lm_official_gazette_publish_date: "",
+    lm_gazzette_date_string: "",
   });
   useEffect(() => {
     if (userSession?.user) {
@@ -135,8 +135,7 @@ function RouteComponent() {
         lm_gazette_title_arabic: data.lawData?.lm_gazette_title_arabic || "",
         lm_pdf_file: null,
         lm_pdf_file_arabic: null,
-        lm_official_gazette_publish_date:
-          data.lawData?.lm_official_gazette_publish_date || "",
+        lm_gazzette_date_string: data.lawData?.lm_gazzette_date_string || "",
       });
     }
   }, [data]);

@@ -381,7 +381,7 @@ export function LegislationForm({
               {t("legislation_modifications")}
             </Label>
             <form.Field
-              name="lm_has_modifications"
+              name="lm_has_modified"
               validators={{
                 onChange: ({ value }) =>
                   !value ? t("required_field") : undefined,
@@ -398,12 +398,12 @@ export function LegislationForm({
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem
                         value="1"
-                        id="lm_has_modifications_yes"
+                        id="lm_has_modified_yes"
                         error={field.state.meta.errors.length > 0}
                       />
                       <Label
                         normalLabel={true}
-                        htmlFor="lm_has_modifications_yes"
+                        htmlFor="lm_has_modified_yes"
                         className="cursor-pointer"
                       >
                         {t("yes")}
@@ -412,12 +412,12 @@ export function LegislationForm({
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem
                         value="2"
-                        id="lm_has_modifications_no"
+                        id="lm_has_modified_no"
                         error={field.state.meta.errors.length > 0}
                       />
                       <Label
                         normalLabel={true}
-                        htmlFor="lm_has_modifications_no"
+                        htmlFor="lm_has_modified_no"
                         className="cursor-pointer"
                       >
                         {t("no")}
@@ -473,10 +473,17 @@ export function LegislationForm({
             name="lm_number"
             validators={{
               onSubmit: ({ value }) => (!value ? t("required_field") : null),
+              // onChange: ({ value }) => {
+              //   const valueWithoutNonDigits = value.replace(/\D/g, "");
+              //   if (!valueWithoutNonDigits) {
+              //     return t("number_only_allowed");
+              //   }
+              //   return null;
+              // },
             }}
             children={(field) => (
               <Input
-                type="text"
+                type="number"
                 id="lm_number"
                 name="lm_number"
                 value={field.state.value}
@@ -801,15 +808,15 @@ export function LegislationForm({
             )}
           />
           <form.Field
-            name="lm_official_gazette_publish_date"
+            name="lm_gazzette_date_string"
             validators={{
               onSubmit: ({ value }) => (!value ? t("required_field") : null),
             }}
             children={(field) => (
               <Input
                 type="date"
-                id="lm_official_gazette_publish_date"
-                name="lm_official_gazette_publish_date"
+                id="lm_gazzette_date_string"
+                name="lm_gazzette_date_string"
                 value={field.state.value}
                 onChange={(e) => field.handleChange(e.target.value)}
                 label={t("official_gazette_publish_date")}

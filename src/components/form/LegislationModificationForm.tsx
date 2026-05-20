@@ -403,15 +403,15 @@ export function LegislationModificationForm({
             )}
           />
           <form.Field
-            name="lm_official_gazette_publish_date"
+            name="lm_gazzette_date_string"
             validators={{
               onSubmit: ({ value }) => (!value ? t("required_field") : null),
             }}
             children={(field) => (
               <Input
                 type="date"
-                id="lm_official_gazette_publish_date"
-                name="lm_official_gazette_publish_date"
+                id="lm_gazzette_date_string"
+                name="lm_gazzette_date_string"
                 value={field.state.value}
                 onChange={(e) => field.handleChange(e.target.value)}
                 label={t("official_gazette_publish_date")}

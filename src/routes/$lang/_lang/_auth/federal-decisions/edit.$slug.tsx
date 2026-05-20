@@ -437,26 +437,30 @@ function RouteComponent() {
         formData.append(key, value as string | Blob);
       }
     });
-    // console.log("FormData content:", Object.fromEntries(formData.entries()));
-    const res = await apiClient
-      .post(i18n.language + `/federal-decision/update/${slug}`, {
-        headers: {
-          "Content-Type": undefined,
-        },
-        body: formData,
-      })
-      .json<any>();
+    console.log("FormData content:", Object.fromEntries(formData.entries()));
+    try {
+      const res = await apiClient
+        .post(i18n.language + `/federal-decision/update/${slug}`, {
+          headers: {
+            "Content-Type": undefined,
+          },
+          body: formData,
+        })
+        .json<any>();
 
-    if (res?.status) {
+      if (res?.status) {
+        toast.success(res?.message || t("success"));
+        queryClient.invalidateQueries({
+          queryKey: ["federalDecisionTable"],
+        });
+        setTimeout(() => {
+          setThankYouPopup(true);
+        }, 150);
+      }
+    } catch (error) {
+      console.error("Submission failed:", error);
+    } finally {
       setIsSubmitting(false);
-
-      toast.success(res?.message || t("success"));
-      queryClient.invalidateQueries({
-        queryKey: ["federalDecisionTable"],
-      });
-      setTimeout(() => {
-        setThankYouPopup(true);
-      }, 150);
     }
   };
 
