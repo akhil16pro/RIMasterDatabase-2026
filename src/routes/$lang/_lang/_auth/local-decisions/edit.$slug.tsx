@@ -77,7 +77,7 @@ function RouteComponent() {
     dm_details_arabic: "",
     dm_file: "",
     dm_file_arabic: "",
-    dm_decision_number: "",
+    dm_number: "",
   });
 
   useEffect(() => {
@@ -159,12 +159,18 @@ function RouteComponent() {
       name: "dm_title",
       label: t("court_decision_title_english"),
       type: "text",
+      validators: {
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
+      },
     },
     {
       name: "dm_title_arabic",
       label: t("court_decision_title_arabic"),
       type: "text",
       dir: "rtl",
+      validators: {
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
+      },
     },
     {
       name: "dm_decision_date",
@@ -175,9 +181,9 @@ function RouteComponent() {
       },
     },
     {
-      name: "dm_decision_number",
+      name: "dm_number",
       label: t("court_decision_number"),
-      type: "text",
+      type: "number",
       validators: {
         onSubmit: ({ value }) => (!value ? t("required_field") : null),
       },
@@ -325,7 +331,7 @@ function RouteComponent() {
           ? data?.decisionData?.dm_emirates[0]
           : data?.decisionData?.dm_emirate_id,
         dm_court_id: data?.decisionData?.dm_court_id,
-        dm_decision_number: data?.decisionData?.dm_decision_number,
+        dm_number: data?.decisionData?.dm_number,
 
         dm_decision_type_id: data?.decisionData?.dm_decision_type_id,
         dm_title: data?.decisionData?.dm_title,

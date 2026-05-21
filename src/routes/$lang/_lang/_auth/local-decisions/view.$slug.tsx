@@ -148,7 +148,7 @@ function RouteComponent() {
       },
     },
     {
-      name: "dm_decision_number",
+      name: "dm_number",
       label: t("court_decision_number"),
       type: "text",
       validators: {
@@ -225,7 +225,7 @@ function RouteComponent() {
     if (data?.decisionData) {
       setInitialValues({
         dm_court_id: data?.decisionData?.dm_court_id,
-        dm_decision_number: data?.decisionData?.dm_decision_number,
+        dm_number: data?.decisionData?.dm_number,
 
         // local_government: userSession?.user?.userEmirateName || "",
         dm_decision_type_id: data?.decisionData?.dm_decision_type_id,

@@ -53,7 +53,7 @@ function RouteComponent() {
     dm_title: "",
     dm_title_arabic: "",
     dm_decision_date: "",
-    dm_decision_number: "",
+    dm_number: "",
 
     // dm_year: "",
     // dm_authority_title: "",
@@ -203,7 +203,7 @@ function RouteComponent() {
       },
     },
     {
-      name: "dm_decision_number",
+      name: "dm_number",
       label: t("court_decision_number"),
       type: "number",
       validators: {

@@ -227,6 +227,7 @@ function RouteComponent() {
       name: "it_expiry_date",
       label: t("treaty_expiry_date"),
       type: "date",
+      accept: ".pdf",
       validators: {
         onChange: ({ value, fieldApi }) => {
           if (!value) return null;
@@ -251,6 +252,7 @@ function RouteComponent() {
       name: "it_attachment",
       label: t("treaty_file_english"),
       type: "file",
+      accept: ".pdf",
       validators: {
         onSubmit: ({ value }) => (!value ? t("required_field") : null),
         onChange: ({ value }) => {

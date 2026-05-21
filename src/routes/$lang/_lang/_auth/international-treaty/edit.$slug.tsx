@@ -317,6 +317,7 @@ function RouteComponent() {
       name: "it_attachment",
       label: t("treaty_file_english"),
       type: "file",
+      accept: ".pdf",
       validators: {
         onSubmit: ({ value }) => {
           return data?.treatyData?.it_attachment
@@ -359,6 +360,7 @@ function RouteComponent() {
       name: "it_attachment_arabic",
       label: t("treaty_file_arabic"),
       type: "file",
+      accept: ".pdf",
       validators: {
         onSubmit: ({ value }) => {
           return data?.treatyData?.it_attachment_arabic
