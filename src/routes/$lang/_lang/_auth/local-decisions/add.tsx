@@ -10,13 +10,14 @@ import { useState } from "react";
 import { toast } from "@/lib/toast";
 
 import { ThankYouPopup } from "@/components/ui/thankYouPopup";
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 
 import CKEditorCustom from "@/components/ui/CKEditor";
 import { useAtomValue } from "jotai";
 import { userSessionAtom } from "@/store/atoms";
 import { useNavigate } from "@tanstack/react-router";
 import { CustomForm } from "@/components/form/CustomForm";
+import { useMemo } from "react";
 
 export const Route = createFileRoute("/$lang/_lang/_auth/local-decisions/add")({
   component: RouteComponent,
@@ -38,10 +39,16 @@ function RouteComponent() {
   const queryClient = useQueryClient();
   const [thankYouPopup, setThankYouPopup] = useState(false);
 
+  const [emirateID, setEmirateID] = useState<number>(null);
+
+  const [decisionTypeByEmirate, setDecisionTypeByEmirate] = useState([]);
+  const isAdmin = userSession?.user?.roles?.includes("admin");
+
   const [initialValues, setInitialValues] = useState({
     // local_government: userSession?.user?.userEmirateName || "",
     dm_decision_type_id: "",
     dm_court_id: "",
+    dm_emirate_id: "",
     dm_title: "",
     dm_title_arabic: "",
     dm_decision_date: "",
@@ -67,7 +74,7 @@ function RouteComponent() {
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["localDecisionFormData", i18n.language],
-    enabled: !!userSession?.accessToken,
+    enabled: true,
     queryFn: async () => {
       try {
         const res = await apiClient
@@ -83,18 +90,72 @@ function RouteComponent() {
     },
   });
 
+  const { data: emirateListChange } = useQuery({
+    queryKey: ["emirateListChnage", emirateID, i18n.language],
+    queryFn: async () => {
+      const res = await apiClient
+        .get(
+          i18n.language +
+            `/local-decision/get-decision-type-by-emirate/${emirateID}`,
+        )
+        .json<any>();
+
+      return res?.data;
+    },
+    enabled: !!emirateID,
+  });
+
+  useEffect(() => {
+    if (emirateID && emirateListChange?.decisionTypeList) {
+      queryClient.setQueryData(
+        ["localDecisionFormData", i18n.language],
+        (oldData: any) => {
+          if (!oldData) return oldData;
+
+          return {
+            ...oldData,
+            decisionTypeList: emirateListChange.decisionTypeList,
+          };
+        },
+      );
+    } else if (emirateID === null) {
+      queryClient.setQueryData(
+        ["localDecisionFormData", i18n.language],
+        (oldData: any) => {
+          if (!oldData) return oldData;
+
+          return {
+            ...oldData,
+            decisionTypeList: [],
+          };
+        },
+      );
+    }
+  }, [emirateListChange, emirateID, i18n.language, queryClient]);
+
+  const emirateChange = useCallback((value: any) => {
+    setEmirateID(value);
+  }, []);
+
   const fields: FieldConfig[] = [
-    // {
-    //   name: "local_government",
-    //   label: t("local_government"),
-    //   type: "text",
-    //   disabled: true,
-    // },
+    {
+      name: "dm_emirate_id",
+      label: t("local_government "),
+      type: "select",
+      optionsKey: "emirateList",
+      validators: {
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
+      },
+      onValueChange: (val) => {
+        emirateChange(val);
+      },
+      disabled: isAdmin ? false : true,
+    },
     {
       name: "dm_court_id",
       label: t("local_court"),
       type: "select",
-      optionsKey: "decisionTypeList",
+      optionsKey: "decisionCourtList",
       validators: {
         onSubmit: ({ value }) => (!value ? t("required_field") : null),
       },

@@ -143,13 +143,28 @@ const InputComponent = ({
             <div className={cn(cfg?.className)} key={`${field.name}-select`}>
               <Select
                 value={field.state.value?.toString()}
-                onValueChange={field.handleChange}
+                onValueChange={(val) => {
+                  field.handleChange(val);
+                  if (cfg.onValueChange) {
+                    cfg.onValueChange(val);
+                  }
+                }}
               >
                 <SelectTrigger
                   label={cfg.label}
                   error={field.state.meta.errors.length > 0}
                   errorMessage={field.state.meta.errors[0]}
-                  readOnly={mode === "view"}
+                  readOnly={mode === "view" || cfg?.disabled}
+                  hasValue={field.state.value}
+                  onClear={() => {
+                    field.handleChange(null);
+                    if (cfg.onClear) {
+                      cfg.onClear();
+                    }
+                    if (cfg.onValueChange) {
+                      cfg.onValueChange(null);
+                    }
+                  }}
                 >
                   <SelectValue placeholder={t("select_option")} />
                 </SelectTrigger>
