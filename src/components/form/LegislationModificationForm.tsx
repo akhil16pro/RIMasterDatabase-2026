@@ -17,6 +17,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { AnimatePresence, motion } from "motion/react";
 import { useTranslation } from "react-i18next";
+import CKEditorCustom from "@/components/ui/CKEditor";
 interface LegislationModificationFormProps {
   initialValues: any;
   onSubmit: (values: any) => Promise<void>;
@@ -223,7 +224,81 @@ export function LegislationModificationForm({
               )}
             />
           </div>
+          <form.Subscribe
+            selector={(state) => state.values.lm_has_english_version}
+            children={(hasEnglish) => (
+              <AnimatePresence>
+                {hasEnglish === "1" && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="col-span-full "
+                  >
+                    <form.Field
+                      name="lm_description"
+                      validators={{
+                        onSubmit: ({ value }) =>
+                          !value ? t("required_field") : null,
+                      }}
+                      children={(field) => (
+                        <div className="space-y-2 relative">
+                          <Label htmlFor="lm_description">
+                            {t("legislation_details_english")}
+                          </Label>
+                          <CKEditorCustom
+                            value={field.state.value}
+                            onChange={(data) => field.handleChange(data)}
+                            readOnly={mode === "view" && true}
+                          />
+                          {field.state.meta.errors ? (
+                            <Label
+                              htmlFor="lm_description"
+                              errorLabel={true}
+                              floating={true}
+                            >
+                              {field.state.meta.errors.join(", ")}
+                            </Label>
+                          ) : null}
+                        </div>
+                      )}
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            )}
+          />
 
+          <div className="col-span-full">
+            <form.Field
+              name="lm_description_arabic"
+              validators={{
+                onSubmit: ({ value }) => (!value ? t("required_field") : null),
+              }}
+              children={(field) => (
+                <div className="space-y-2 relative">
+                  <Label htmlFor="lm_description_arabic">
+                    {t("legislation_details_arabic")}
+                  </Label>
+                  <CKEditorCustom
+                    dir="rtl"
+                    value={field.state.value}
+                    onChange={(data) => field.handleChange(data)}
+                    readOnly={mode === "view" && true}
+                  />
+                  {field.state.meta.errors ? (
+                    <Label
+                      htmlFor="lm_description_arabic"
+                      errorLabel={true}
+                      floating={true}
+                    >
+                      {field.state.meta.errors.join(", ")}
+                    </Label>
+                  ) : null}
+                </div>
+              )}
+            />
+          </div>
           <form.Field
             name="lm_year"
             validators={{

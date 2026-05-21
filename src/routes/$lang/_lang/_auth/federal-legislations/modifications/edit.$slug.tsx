@@ -269,6 +269,8 @@ function RouteComponent() {
     lm_pdf_file: null,
     lm_pdf_file_arabic: null,
     lm_gazzette_date_string: "",
+    lm_description: "",
+    lm_description_arabic: "",
   });
   useEffect(() => {
     if (userSession?.user) {
@@ -301,6 +303,8 @@ function RouteComponent() {
         lm_pdf_file: null,
         lm_pdf_file_arabic: null,
         lm_gazzette_date_string: data.lawData?.lm_gazzette_date_string || "",
+        lm_description: data.lawData?.lm_description || "",
+        lm_description_arabic: data.lawData?.lm_description_arabic || "",
       });
     }
   }, [data]);
