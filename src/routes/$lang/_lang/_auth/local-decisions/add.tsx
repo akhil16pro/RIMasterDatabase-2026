@@ -69,6 +69,10 @@ function RouteComponent() {
         ...prev,
         // local_government: userSession?.user?.userEmirateName || "",
       }));
+
+      if (!isAdmin) {
+        setEmirateID(userSession?.user?.userEmirateId);
+      }
     }
   }, [userSession]);
 
@@ -106,6 +110,7 @@ function RouteComponent() {
   });
 
   useEffect(() => {
+    console.log(emirateID, "emirateID");
     if (emirateID && emirateListChange?.decisionTypeList) {
       queryClient.setQueryData(
         ["localDecisionFormData", i18n.language],
@@ -119,6 +124,7 @@ function RouteComponent() {
         },
       );
     } else if (emirateID === null) {
+      console.log("emirateID is null");
       queryClient.setQueryData(
         ["localDecisionFormData", i18n.language],
         (oldData: any) => {
@@ -150,6 +156,7 @@ function RouteComponent() {
         emirateChange(val);
       },
       disabled: isAdmin ? false : true,
+      defaultValue: emirateID,
     },
     {
       name: "dm_court_id",
@@ -340,6 +347,13 @@ function RouteComponent() {
       setIsSubmitting(false);
     }
   };
+
+  useEffect(() => {
+    setInitialValues({
+      ...initialValues,
+      dm_emirate_id: emirateID || "",
+    });
+  }, [emirateID]);
 
   return (
     <DashboardLayout isLoading={isLoading} title={t("add_decision")}>
