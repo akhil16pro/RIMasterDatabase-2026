@@ -143,6 +143,7 @@ const InputComponent = ({
             <div className={cn(cfg?.className)} key={`${field.name}-select`}>
               <Select
                 value={field.state.value?.toString()}
+                disabled={cfg?.disabled ? cfg?.disabled : false}
                 onValueChange={(val) => {
                   field.handleChange(val);
                   if (cfg.onValueChange) {
@@ -157,6 +158,9 @@ const InputComponent = ({
                   readOnly={mode === "view" || cfg?.disabled}
                   hasValue={field.state.value}
                   onClear={() => {
+                    if (cfg?.disabled) {
+                      return;
+                    }
                     field.handleChange(null);
                     if (cfg.onClear) {
                       cfg.onClear();
