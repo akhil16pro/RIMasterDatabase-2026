@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/Select";
 import { Label } from "@/components/ui/label";
 import { ThankYouPopup } from "@/components/ui/thankYouPopup";
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 
 import CKEditorCustom from "@/components/ui/CKEditor";
 import { useAtomValue } from "jotai";
@@ -32,6 +32,8 @@ import { useNavigate } from "@tanstack/react-router";
 import { usePDFPreview } from "@/lib/usePDFPreview";
 import { CustomForm } from "@/components/form/CustomForm";
 import { useRouter } from "@tanstack/react-router";
+
+import { type FieldConfig } from "@/components/form/CustomForm";
 
 export const Route = createFileRoute(
   "/$lang/_lang/_auth/local-decisions/edit/$slug",
@@ -53,6 +55,10 @@ function RouteComponent() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [thankYouPopup, setThankYouPopup] = useState(false);
+  const [emirateID, setEmirateID] = useState<number>(null);
+
+  const [decisionTypeByEmirate, setDecisionTypeByEmirate] = useState([]);
+  const isAdmin = userSession?.user?.roles?.includes("admin");
 
   const [deletedFiles, setDeletedFiles] = useState<string[]>([]);
 
@@ -92,7 +98,7 @@ function RouteComponent() {
         const res = await apiClient
           .get(i18n.language + `/local-decision/edit/${slug}`)
           .json<any>();
-        // console.log("local_decision_edit_form_data", res?.data);
+        console.log("local_decision_edit_form_data", res?.data);
         return res?.data;
       } catch (error) {
         console.log("local_decision_form_data_error", error);
@@ -111,19 +117,30 @@ function RouteComponent() {
     "ar",
     "decision",
   );
+  const emirateChange = useCallback((value: any) => {
+    setEmirateID(value);
+  }, []);
 
   const fields: FieldConfig[] = [
-    // {
-    //   name: "local_government",
-    //   label: t("local_government"),
-    //   type: "text",
-    //   disabled: true,
-    // },
+    {
+      name: "dm_emirate_id",
+      label: t("local_government"),
+      type: "select",
+      optionsKey: "emiratesList",
+      validators: {
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
+      },
+      onValueChange: (val) => {
+        emirateChange(val);
+      },
+      disabled: isAdmin ? false : true,
+      // disabled: true,
+    },
     {
       name: "dm_court_id",
       label: t("local_court"),
       type: "select",
-      optionsKey: "decisionTypeList",
+      optionsKey: "decisionCourtList",
       validators: {
         onSubmit: ({ value }) => (!value ? t("required_field") : null),
       },
@@ -301,8 +318,12 @@ function RouteComponent() {
 
   useEffect(() => {
     if (data?.decisionData) {
+      console.log(data?.decisionData?.dm_decision_type_id, "test");
       setInitialValues({
         // local_government: userSession?.user?.userEmirateName || "",
+        dm_emirate_id: Array.isArray(data?.decisionData?.dm_emirates)
+          ? data?.decisionData?.dm_emirates[0]
+          : data?.decisionData?.dm_emirate_id,
         dm_court_id: data?.decisionData?.dm_court_id,
         dm_decision_number: data?.decisionData?.dm_decision_number,
 

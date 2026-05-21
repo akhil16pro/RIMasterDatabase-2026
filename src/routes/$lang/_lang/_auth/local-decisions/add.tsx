@@ -18,6 +18,7 @@ import { userSessionAtom } from "@/store/atoms";
 import { useNavigate } from "@tanstack/react-router";
 import { CustomForm } from "@/components/form/CustomForm";
 import { useMemo } from "react";
+import { type FieldConfig } from "@/components/form/CustomForm";
 
 export const Route = createFileRoute("/$lang/_lang/_auth/local-decisions/add")({
   component: RouteComponent,
@@ -45,22 +46,22 @@ function RouteComponent() {
   const isAdmin = userSession?.user?.roles?.includes("admin");
 
   const [initialValues, setInitialValues] = useState({
-    // local_government: userSession?.user?.userEmirateName || "",
+    dm_emirate_id: !isAdmin ? userSession?.user?.userEmirateName : "",
     dm_decision_type_id: "",
     dm_court_id: "",
-    dm_emirate_id: "",
+
     dm_title: "",
     dm_title_arabic: "",
     dm_decision_date: "",
+    dm_decision_number: "",
 
-    dm_year: "",
-    dm_authority_title: "",
-    dm_authority_title_arabic: "",
+    // dm_year: "",
+    // dm_authority_title: "",
+    // dm_authority_title_arabic: "",
     dm_details: "",
     dm_details_arabic: "",
     dm_file: "",
     dm_file_arabic: "",
-    dm_decision_number: "",
   });
 
   useEffect(() => {
@@ -146,7 +147,7 @@ function RouteComponent() {
   const fields: FieldConfig[] = [
     {
       name: "dm_emirate_id",
-      label: t("local_government "),
+      label: t("local_government"),
       type: "select",
       optionsKey: "emirateList",
       validators: {
@@ -156,8 +157,6 @@ function RouteComponent() {
         emirateChange(val);
       },
       disabled: isAdmin ? false : true,
-      // disabled: true,
-      defaultValue: emirateID,
     },
     {
       name: "dm_court_id",
@@ -182,12 +181,18 @@ function RouteComponent() {
       name: "dm_title",
       label: t("court_decision_title_english"),
       type: "text",
+      validators: {
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
+      },
     },
     {
       name: "dm_title_arabic",
       label: t("court_decision_title_arabic"),
       type: "text",
       dir: "rtl",
+      validators: {
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
+      },
     },
     {
       name: "dm_decision_date",
@@ -200,7 +205,7 @@ function RouteComponent() {
     {
       name: "dm_decision_number",
       label: t("court_decision_number"),
-      type: "text",
+      type: "number",
       validators: {
         onSubmit: ({ value }) => (!value ? t("required_field") : null),
       },

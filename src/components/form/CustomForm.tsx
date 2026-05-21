@@ -40,7 +40,7 @@ export function CustomForm({
     onSubmit: async ({ value }) => await onSubmit(value),
   });
   const { t } = useTranslation();
-
+  console.log(defaultValues, "adasd");
   return (
     <form
       onSubmit={(e) => {
@@ -142,6 +142,7 @@ const InputComponent = ({
           return (
             <div className={cn(cfg?.className)} key={`${field.name}-select`}>
               <Select
+                key={`${field.name}-select-value-${field.state.value}`}
                 value={field.state.value?.toString()}
                 disabled={cfg?.disabled ? cfg?.disabled : false}
                 onValueChange={(val) => {
@@ -156,7 +157,7 @@ const InputComponent = ({
                   error={field.state.meta.errors.length > 0}
                   errorMessage={field.state.meta.errors[0]}
                   readOnly={mode === "view" || cfg?.disabled}
-                  hasValue={field.state.value}
+                  hasValue={!!field.state.value}
                   onClear={() => {
                     if (cfg?.disabled) {
                       return;
@@ -400,4 +401,5 @@ export interface FieldConfig {
   className?: string;
   multiple?: boolean;
   onChange?: (field: any) => void;
+  onValueChange?: (value: any) => void;
 }
