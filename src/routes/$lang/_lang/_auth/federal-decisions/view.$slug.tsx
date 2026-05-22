@@ -95,14 +95,8 @@ function RouteComponent() {
   );
 
   const fields: FieldConfig[] = [
-    // {
-    //   name: "local_government",
-    //   label: t("local_government"),
-    //   type: "text",
-    //   disabled: true,
-    // },
     {
-      name: "dm_federal_court_id",
+      name: "dm_court_id",
       label: t("federal_court"),
       type: "select",
       optionsKey: "decisionTypeList",
@@ -140,9 +134,9 @@ function RouteComponent() {
       },
     },
     {
-      name: "dm_decision_number",
+      name: "dm_number",
       label: t("court_decision_number"),
-      type: "text",
+      type: "number",
       validators: {
         onSubmit: ({ value }) => (!value ? t("required_field") : null),
       },
@@ -156,23 +150,7 @@ function RouteComponent() {
         onSubmit: ({ value }) => (!value ? t("required_field") : null),
       },
     },
-    // {
-    //   name: "dm_authority_title",
-    //   label: t("authority_title"),
-    //   type: "text",
-    //   validators: {
-    //     onSubmit: ({ value }) => (!value ? t("required_field") : null),
-    //   },
-    // },
-    // {
-    //   name: "dm_authority_title_arabic",
-    //   label: t("authority_title_arabic"),
-    //   type: "text",
-    //   dir: "rtl",
-    //   validators: {
-    //     onSubmit: ({ value }) => (!value ? t("required_field") : null),
-    //   },
-    // },
+
     {
       name: "dm_details",
       label: t("court_decision_details_english"),
@@ -212,26 +190,44 @@ function RouteComponent() {
       isLoading: isLoadingAR,
     },
     {
-      name: "dm_emirate_id",
+      name: "dm_location_emirate",
       label: t("location"),
-      type: "select",
-      optionsKey: "decisionTypeList",
+      type: "multiSelect",
+      optionsKey: "emirateList",
       validators: {
         onSubmit: ({ value }) => (!value ? t("required_field") : null),
       },
     },
+    // {
+    //   name: "dm_authority_title",
+    //   label: t("authority_title"),
+    //   type: "text",
+    //   validators: {
+    //     onSubmit: ({ value }) => (!value ? t("required_field") : null),
+    //   },
+    // },
+    // {
+    //   name: "dm_authority_title_arabic",
+    //   label: t("authority_title_arabic"),
+    //   type: "text",
+    //   dir: "rtl",
+    //   validators: {
+    //     onSubmit: ({ value }) => (!value ? t("required_field") : null),
+    //   },
+    // },
   ];
 
   useEffect(() => {
     if (data?.decisionData) {
       setInitialValues({
-        // local_government: userSession?.user?.userEmirateName || "",
+        dm_court_id: data?.decisionData?.dm_court_id,
         dm_decision_type_id: data?.decisionData?.dm_decision_type_id,
         dm_title: data?.decisionData?.dm_title,
         dm_title_arabic: data?.decisionData?.dm_title_arabic,
         dm_decision_date: data?.decisionData?.dm_decision_date,
 
         dm_year: data?.decisionData?.dm_year,
+        dm_number: data?.decisionData?.dm_number,
         dm_authority_title: data?.decisionData?.dm_authority_title,
         dm_authority_title_arabic:
           data?.decisionData?.dm_authority_title_arabic,
@@ -239,6 +235,7 @@ function RouteComponent() {
         dm_details_arabic: data?.decisionData?.dm_details_arabic,
         dm_file: null,
         dm_file_arabic: null,
+        dm_location_emirate: data?.decisionData?.dm_location_emirate,
       });
     }
   }, [data]);

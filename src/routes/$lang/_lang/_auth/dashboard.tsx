@@ -245,7 +245,6 @@ function PerformingEntitiesCard({ delay, data }: { delay: number; data: any }) {
         })
         .json<any>();
 
-      // console.log(res?.data, "Graph Data");
       return res?.data;
     },
   });

@@ -17,7 +17,7 @@ import { Label } from "@/components/ui/label";
 import { FileUpload } from "@/components/ui/FileUpload";
 import { AnimatePresence } from "motion/react";
 import CKEditorCustom from "@/components/ui/CKEditor";
-
+import { MultiSelect } from "@/components/ui/multi-select";
 interface CustomFormProps {
   defaultValues: any;
   fields: FieldConfig[];
@@ -40,7 +40,7 @@ export function CustomForm({
     onSubmit: async ({ value }) => await onSubmit(value),
   });
   const { t } = useTranslation();
-  console.log(defaultValues, "adasd");
+  // console.log(defaultValues, "defaultValues");
   return (
     <form
       onSubmit={(e) => {
@@ -184,6 +184,37 @@ const InputComponent = ({
                   ))}
                 </SelectContent>
               </Select>
+            </div>
+          );
+        }
+
+        // 1.1 Handle Multi Selects
+        if (cfg.type === "multiSelect") {
+          return (
+            <div
+              className={cn("relative", cfg?.className)}
+              key={`${field.name}-multiSelect`}
+            >
+              <MultiSelect
+                options={data?.[cfg.optionsKey!]?.map((item: any) => ({
+                  value: item.value,
+                  label: item.label,
+                }))}
+                onValueChange={field.handleChange}
+                defaultValue={field.state.value}
+                responsive={{
+                  mobile: { maxCount: 2, compactMode: true },
+                  tablet: { maxCount: 2, compactMode: true },
+                  desktop: { maxCount: 3, compactMode: true },
+                }}
+                placeholder={t("select_option")}
+                searchPlaceholder={t("search_option")}
+                hideSelectAll={true}
+                error={field.state.meta.errors.length > 0}
+                errorMessage={field.state.meta.errors[0]}
+                label={cfg.label}
+                readOnly={mode === "view"}
+              />
             </div>
           );
         }

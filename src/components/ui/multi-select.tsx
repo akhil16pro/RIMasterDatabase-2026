@@ -135,6 +135,12 @@ interface MultiSelectProps
   placeholder?: string;
 
   /**
+   * Placeholder text for the search input inside the popover.
+   * Optional, defaults to "Search options...".
+   */
+  searchPlaceholder?: string;
+
+  /**
    * Animation duration in seconds for the visual effects (e.g., bouncing badges).
    * Optional, defaults to 0 (no animation).
    */
@@ -217,6 +223,12 @@ interface MultiSelectProps
   disabled?: boolean;
 
   /**
+   * If true, disables the component completely.
+   * Optional, defaults to false.
+   */
+  readOnly?: boolean;
+
+  /**
    * Responsive configuration for different screen sizes.
    * Allows customizing maxCount and other properties based on viewport.
    * Can be boolean true for default responsive behavior or an object for custom configuration.
@@ -277,6 +289,22 @@ interface MultiSelectProps
    * Optional, defaults to false.
    */
   closeOnSelect?: boolean;
+
+  /**
+   * Whether the input is in an error state.
+   * Optional, defaults to false.
+   */
+  error?: boolean;
+
+  /**
+   * Error message to display when the input is in an error state.
+   * Optional.
+   */
+  errorMessage?: string;
+  /**
+   * Label for the component
+   */
+  label?: string;
 }
 
 /**
@@ -327,12 +355,16 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
       singleLine = false,
       popoverClassName,
       disabled = false,
+      readOnly = false,
       responsive,
       minWidth,
       maxWidth,
       deduplicateOptions = false,
       resetOnDefaultValueChange = true,
       closeOnSelect = false,
+      error,
+      errorMessage,
+      label,
       ...props
     },
     ref,
@@ -628,7 +660,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
     };
 
     const toggleOption = (optionValue: string) => {
-      if (disabled) return;
+      if (disabled || readOnly) return;
       const option = getOptionByValue(optionValue);
       if (option?.disabled) return;
       const newSelectedValues = selectedValues.includes(optionValue)
@@ -642,18 +674,18 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
     };
 
     const handleClear = () => {
-      if (disabled) return;
+      if (disabled || readOnly) return;
       setSelectedValues([]);
       onValueChange([]);
     };
 
     const handleTogglePopover = () => {
-      if (disabled) return;
+      if (disabled || readOnly) return;
       setIsPopoverOpen((prev) => !prev);
     };
 
     const clearExtraOptions = () => {
-      if (disabled) return;
+      if (disabled || readOnly) return;
       const newSelectedValues = selectedValues.slice(
         0,
         responsiveSettings.maxCount,
@@ -663,7 +695,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
     };
 
     const toggleAll = () => {
-      if (disabled) return;
+      if (disabled || readOnly) return;
       const allOptions = getAllOptions().filter((option) => !option.disabled);
       if (selectedValues.length === allOptions.length) {
         handleClear();
@@ -820,11 +852,13 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                 getAllOptions().length
               } options selected. ${placeholder}`}
               className={cn(
-                "flex p-1 rounded-none border-b min-h-10 h-auto items-center justify-between bg-inherit hover:bg-inherit [&_svg]:pointer-events-auto bg-[linear-gradient(0deg,transparent_0%,transparent_100%)] ",
+                "flex px-0 py-1 rounded-none border-b min-h-10 h-auto items-center justify-between bg-inherit hover:bg-inherit [&_svg]:pointer-events-auto bg-[linear-gradient(0deg,transparent_0%,transparent_100%)] font-secondary font-light text-[1.2rem] text-black ",
                 autoSize ? "w-auto" : "w-full",
-                responsiveSettings.compactMode && "min-h-8 text-sm",
-                screenSize === "mobile" && "min-h-12 text-base",
+                responsiveSettings.compactMode && "min-h-8 ",
+                screenSize === "mobile" && "min-h-12 ",
                 disabled && "opacity-50 cursor-not-allowed",
+                readOnly && "pointer-events-none",
+                error && "border-[var(--brandRed)]",
                 className,
               )}
               style={{
@@ -878,12 +912,11 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                               customStyle?.gradient &&
                                 "text-white border-transparent",
                               responsiveSettings.compactMode &&
-                                "text-xs px-1.5 py-0.5",
+                                "text-sm px-1.5 py-0.5 ",
                               screenSize === "mobile" &&
                                 "max-w-[120px] truncate",
                               singleLine && "flex-shrink-0 whitespace-nowrap",
                               "[&>svg]:pointer-events-auto",
-                              "text-md",
                             )}
                             style={{
                               ...badgeStyle,
@@ -913,34 +946,36 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                             >
                               {option.label}
                             </span>
-                            <div
-                              role="button"
-                              tabIndex={0}
-                              onClick={(event) => {
-                                event.stopPropagation();
-                                toggleOption(value);
-                              }}
-                              onKeyDown={(event) => {
-                                if (
-                                  event.key === "Enter" ||
-                                  event.key === " "
-                                ) {
-                                  event.preventDefault();
+                            {!disabled && !readOnly && (
+                              <div
+                                role="button"
+                                tabIndex={0}
+                                onClick={(event) => {
                                   event.stopPropagation();
                                   toggleOption(value);
-                                }
-                              }}
-                              aria-label={`Remove ${option.label} from selection`}
-                              className="ms-2 h-4 w-4 cursor-pointer hover:bg-white/20 rounded-sm p-0.5 -m-0.5 focus:outline-none focus:ring-1 focus:ring-white/50"
-                            >
-                              <XCircle
-                                className={cn(
-                                  "h-3 w-3",
-                                  responsiveSettings.compactMode &&
-                                    "h-2.5 w-2.5",
-                                )}
-                              />
-                            </div>
+                                }}
+                                onKeyDown={(event) => {
+                                  if (
+                                    event.key === "Enter" ||
+                                    event.key === " "
+                                  ) {
+                                    event.preventDefault();
+                                    event.stopPropagation();
+                                    toggleOption(value);
+                                  }
+                                }}
+                                aria-label={`Remove ${option.label} from selection`}
+                                className="ms-2 h-4 w-4 cursor-pointer hover:bg-white/20 rounded-sm p-0.5 -m-0.5 focus:outline-none focus:ring-1 focus:ring-white/50"
+                              >
+                                <XCircle
+                                  className={cn(
+                                    "h-3 w-3",
+                                    responsiveSettings.compactMode &&
+                                      "h-2.5 w-2.5",
+                                  )}
+                                />
+                              </div>
+                            )}
                           </Badge>
                         );
                       })
@@ -979,43 +1014,39 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                       </Badge>
                     )}
                   </div>
-                  <div className="flex items-center justify-between">
-                    <div
-                      role="button"
-                      tabIndex={0}
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        handleClear();
-                      }}
-                      onKeyDown={(event) => {
-                        if (event.key === "Enter" || event.key === " ") {
-                          event.preventDefault();
+                  {!disabled && !readOnly && (
+                    <div className="flex items-center justify-between">
+                      <div
+                        role="button"
+                        tabIndex={0}
+                        onClick={(event) => {
                           event.stopPropagation();
                           handleClear();
-                        }
-                      }}
-                      aria-label={`Clear all ${selectedValues.length} selected options`}
-                      // className="flex items-center justify-center h-4 w-4 mx-2 cursor-pointer text-muted-foreground hover:text-[var(--textColor)] focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1 rounded-sm"
-                      className="hover:bg-black/5 rounded-full p-1 cursor-pointer outline-none pointer-events-auto text-[var(--textColor)] ms-1"
-                    >
-                      <X className="h-3 w-3 opacity-50 hover:opacity-100" />
+                        }}
+                        onKeyDown={(event) => {
+                          if (event.key === "Enter" || event.key === " ") {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            handleClear();
+                          }
+                        }}
+                        aria-label={`Clear all ${selectedValues.length} selected options`}
+                        className="hover:bg-black/5 rounded-full p-1 cursor-pointer outline-none pointer-events-auto text-[var(--textColor)] ms-1"
+                      >
+                        <X className="h-3 w-3 opacity-50 hover:opacity-100" />
+                      </div>
+
+                      <ChevronDown
+                        className="h-4 w-4  cursor-pointer text-[var(--textColor)] opacity-50"
+                        aria-hidden="true"
+                      />
                     </div>
-                    {/* <Separator
-                      orientation="vertical"
-                      className="flex min-h-6 h-full"
-                    /> */}
-                    <ChevronDown
-                      className="h-4 w-4  cursor-pointer text-[var(--textColor)] opacity-50"
-                      aria-hidden="true"
-                    />
-                  </div>
+                  )}
                 </div>
               ) : (
                 <div className="flex items-center justify-between w-full mx-auto">
-                  <span className="text-[1.2rem] text-muted-foreground ">
-                    {placeholder}
-                  </span>
-                  <ChevronDown className="h-4 w-4 cursor-pointer text-[var(--textColor)] opacity-50 me-2" />
+                  <span>{placeholder}</span>
+                  <ChevronDown className="h-4 w-4 opacity-50 shrink-0" />
                 </div>
               )}
             </Button>
@@ -1026,7 +1057,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
             aria-multiselectable="true"
             aria-label="Available options"
             className={cn(
-              "w-auto p-0",
+              "w-auto p-0 font-secondary ",
               getPopoverAnimationClass(),
               screenSize === "mobile" && "w-[85vw] max-w-[280px]",
               screenSize === "tablet" && "w-[70vw] max-w-md",
@@ -1238,6 +1269,32 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
             />
           )}
         </Popover>
+        {label && (
+          <label
+            className={cn(
+              "absolute transition-all pointer-events-none leading-[100%] font-secondary",
+              "ltr:left-0 rtl:right-0",
+              "top-[.25rem] -translate-y-full text-[0.85rem]",
+              "peer-focus:top-[.25rem] peer-focus:-translate-y-full peer-focus:text-[0.85rem]",
+              "text-black/70",
+              error &&
+                "text-[var(--brandRed)] peer-focus:text-[var(--brandRed)]",
+            )}
+          >
+            {label}
+          </label>
+        )}
+        {error && (
+          <span
+            role="alert"
+            className={cn(
+              "absolute bottom-[-1px] bg-[var(--brandRed)] text-[.85rem] inline-flex leading-[100%] px-2 py-[2px] rounded-[3px] font-secondary translate-y-full text-white",
+              "ltr:right-0 rtl:left-0",
+            )}
+          >
+            {errorMessage || t("invalid_selection")}
+          </span>
+        )}
       </>
     );
   },

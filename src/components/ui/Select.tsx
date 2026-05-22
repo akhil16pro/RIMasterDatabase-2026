@@ -3,7 +3,7 @@ import * as SelectPrimitive from "@radix-ui/react-select";
 import { Check, ChevronDown, ChevronUp, Loader2, X } from "lucide-react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-
+import { useTranslation } from "react-i18next";
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -45,6 +45,7 @@ export const SelectTrigger = React.forwardRef<
     },
     ref,
   ) => {
+    const { t } = useTranslation();
     const errorId = React.useId();
     const handleClear = (
       e: React.MouseEvent | React.PointerEvent | React.KeyboardEvent,
@@ -127,7 +128,7 @@ export const SelectTrigger = React.forwardRef<
               "ltr:right-0 rtl:left-0",
             )}
           >
-            {errorMessage || "Invalid selection"}
+            {errorMessage || t("invalid_selection")}
           </span>
         )}
 

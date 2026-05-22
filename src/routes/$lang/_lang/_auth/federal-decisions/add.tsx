@@ -53,21 +53,20 @@ function RouteComponent() {
   const [initialValues, setInitialValues] = useState({
     // local_government: userSession?.user?.userEmirateName || "",
     dm_decision_type_id: "",
-    dm_federal_court_id: "",
+    dm_court_id: "",
 
     dm_title: "",
     dm_title_arabic: "",
     dm_decision_date: "",
-
+    dm_number: "",
     dm_year: "",
-    dm_authority_title: "",
-    dm_authority_title_arabic: "",
+    // dm_authority_title: "",
+    // dm_authority_title_arabic: "",
     dm_details: "",
     dm_details_arabic: "",
     dm_file: "",
     dm_file_arabic: "",
-    dm_emirate_id: "",
-    dm_decision_number: "",
+    dm_location_emirate: "",
   });
 
   useEffect(() => {
@@ -87,7 +86,7 @@ function RouteComponent() {
         const res = await apiClient
           .get(i18n.language + `/federal-decision/create`)
           .json<any>();
-        // console.log("federal_decision_form_data", res?.data);
+        console.log("federal_decision_form_data", res?.data);
 
         return res?.data;
       } catch (error) {
@@ -105,10 +104,10 @@ function RouteComponent() {
     //   disabled: true,
     // },
     {
-      name: "dm_federal_court_id",
+      name: "dm_court_id",
       label: t("federal_court"),
       type: "select",
-      optionsKey: "decisionTypeList",
+      optionsKey: "decisionCourtList",
       validators: {
         onSubmit: ({ value }) => (!value ? t("required_field") : null),
       },
@@ -127,12 +126,18 @@ function RouteComponent() {
       name: "dm_title",
       label: t("court_decision_title_english"),
       type: "text",
+      validators: {
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
+      },
     },
     {
       name: "dm_title_arabic",
       label: t("court_decision_title_arabic"),
       type: "text",
       dir: "rtl",
+      validators: {
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
+      },
     },
     {
       name: "dm_decision_date",
@@ -143,9 +148,9 @@ function RouteComponent() {
       },
     },
     {
-      name: "dm_decision_number",
+      name: "dm_number",
       label: t("court_decision_number"),
-      type: "text",
+      type: "number",
       validators: {
         onSubmit: ({ value }) => (!value ? t("required_field") : null),
       },
@@ -238,12 +243,15 @@ function RouteComponent() {
       },
     },
     {
-      name: "dm_emirate_id",
+      name: "dm_location_emirate",
       label: t("location"),
-      type: "select",
-      optionsKey: "decisionTypeList",
+      type: "multiSelect",
+      optionsKey: "emirateList",
       validators: {
-        onSubmit: ({ value }) => (!value ? t("required_field") : null),
+        onSubmit: ({ value }) => {
+          if (!value || value.length === 0) return t("required_field");
+          return null;
+        },
       },
     },
     // {
@@ -271,7 +279,13 @@ function RouteComponent() {
 
     Object.entries(values).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
-        formData.append(key, value as string | Blob);
+        if (Array.isArray(value)) {
+          value.forEach((item) => {
+            formData.append(`${key}[]`, item as string);
+          });
+        } else {
+          formData.append(key, value as string | Blob);
+        }
       }
     });
     console.log("FormData content:", Object.fromEntries(formData.entries()));
