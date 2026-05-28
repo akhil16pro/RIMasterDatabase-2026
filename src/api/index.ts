@@ -36,7 +36,6 @@ const apiClient = ky.create({
         if (request.url.includes("/refresh")) {
           if (response.status === 401) {
             store.set(userSessionAtom, null);
-            window.location.href = `/${i18n.language}/login`;
           }
           return;
         }
