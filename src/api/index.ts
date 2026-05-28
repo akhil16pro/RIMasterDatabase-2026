@@ -6,7 +6,7 @@ import { getDefaultStore } from "jotai";
 import { userSessionAtom } from "@/store/atoms";
 
 let refreshPromise: Promise<any> | null = null;
-
+let isRefreshing = false;
 const apiClient = ky.create({
   prefixUrl: import.meta.env.VITE_API_URL,
   timeout: 10000,
@@ -31,52 +31,57 @@ const apiClient = ky.create({
     ],
     afterResponse: [
       async (request, options, response) => {
-        // ── 401 Handling ──────────────────────────────────────────
-        if (response.status === 401) {
-          // Prevent infinite loop if refresh itself returns 401
-          if (request.url.includes("/refresh")) {
-            const store = getDefaultStore();
+        const store = getDefaultStore();
+
+        if (request.url.includes("/refresh")) {
+          if (response.status === 401) {
             store.set(userSessionAtom, null);
-            return;
+            window.location.href = `/${i18n.language}/login`;
           }
+          return;
+        }
 
+        //  401 Handling
+        if (response.status === 401) {
           try {
-            const store = getDefaultStore();
             const userSession = store.get(userSessionAtom);
-            const lang = userSession?.lang || i18n.language || "en";
 
-            // Deduplicate concurrent refresh calls
-            if (!refreshPromise) {
+            // Prevent multiple refresh calls
+            if (!isRefreshing) {
+              isRefreshing = true;
+
               refreshPromise = apiClient
-                .post(`${lang}/refresh`, { credentials: "include" })
+                .post(`${i18n.language}/refresh`)
                 .json<any>()
                 .finally(() => {
                   refreshPromise = null;
+                  isRefreshing = false;
                 });
             }
 
             const refreshResponse = await refreshPromise;
 
             if (refreshResponse?.access_token) {
-              const updatedSession = {
-                ...(userSession ?? {}),
+              store.set(userSessionAtom, {
+                ...userSession,
                 accessToken: refreshResponse.access_token,
                 lastVerified: Date.now(),
                 user: refreshResponse.user || userSession?.user,
-              };
-              store.set(userSessionAtom, updatedSession);
+              });
 
-              // Retry original request with new token
               const newRequest = request.clone();
+
               newRequest.headers.set(
                 "Authorization",
                 `Bearer ${refreshResponse.access_token}`,
               );
+
               return apiClient(newRequest);
             }
-          } catch (refreshError) {
-            console.error("Token refresh failed", refreshError);
-            const store = getDefaultStore();
+
+            throw new Error("Invalid refresh response");
+          } catch (err) {
+            console.error("Refresh failed", err);
             store.set(userSessionAtom, null);
             window.location.href = `/${i18n.language}/login`;
             return;
@@ -120,9 +125,9 @@ const apiClient = ky.create({
     ],
   },
   retry: {
-    limit: 3,
-    methods: ["get"],
-    statusCodes: [408, 500, 502, 503, 504],
+    limit: 0,
+    // methods: ["get"],
+    // statusCodes: [408, 500, 502, 503, 504],
   },
 });
 
