@@ -4,7 +4,6 @@ import { userSessionAtom } from "@/store/atoms";
 import { apiClient } from "@/api";
 import { NAV_CONFIG, APP_ROLES } from "@/lib/navigation";
 import { toast } from "@/lib/toast";
-import Cookies from "js-cookie";
 
 // const store = getDefaultStore();
 
@@ -15,31 +14,48 @@ export const Route = createFileRoute("/$lang/_lang/_auth")({
 
     let userSession = store.get(userSessionAtom);
 
+    // console.log(userSession, "userSession");
+
     const now = Date.now();
-    const TOKEN_LIMIT = 2 * 60 * 60 * 1000;
+    // 15 minutes * 60 seconds * 1000 milliseconds
+    const TOKEN_LIMIT = 15 * 60 * 1000;
 
-    const token = Cookies.get("auth_token");
-
-    if (!token) {
-      store.set(userSessionAtom, null);
-      sessionStorage.removeItem("auth-session");
-      throw redirect({
-        to: "/$lang/login",
-        params: { lang: params.lang },
-      });
-    }
-
+    // Silent refresh on every page load to guarantee safety & session freshness
     if (
-      userSession?.lastVerified &&
-      now - userSession.lastVerified > TOKEN_LIMIT
+      !userSession?.accessToken ||
+      now - (userSession?.lastVerified || 0) > TOKEN_LIMIT
     ) {
-      store.set(userSessionAtom, null);
-      Cookies.remove("auth_token");
-      sessionStorage.removeItem("auth-session");
-      throw redirect({
-        to: "/$lang/login",
-        params: { lang: params.lang },
-      });
+      try {
+        console.log(
+          "No in-memory session or session expired, attempting token refresh...",
+        );
+        const refreshResponse = await apiClient
+          .post(`${params.lang}/refresh`, {
+            credentials: "include",
+          })
+          .json<any>();
+
+        console.log(refreshResponse, "refreshResponse");
+        if (refreshResponse?.access_token) {
+          const updatedSession = {
+            ...refreshResponse,
+            accessToken: refreshResponse.access_token,
+            lang: params.lang,
+            lastVerified: Date.now(),
+          };
+          store.set(userSessionAtom, updatedSession);
+          userSession = updatedSession;
+        } else {
+          throw new Error("Invalid refresh response structure");
+        }
+      } catch (e) {
+        console.error("Token refresh during auth guard failed:", e);
+        store.set(userSessionAtom, null);
+        throw redirect({
+          to: "/$lang/login",
+          params: { lang: params.lang },
+        });
+      }
     }
 
     try {
@@ -52,18 +68,11 @@ export const Route = createFileRoute("/$lang/_lang/_auth")({
       const apiUserData = response?.data;
 
       if (apiUserData) {
-        const stored =
-          typeof window !== "undefined"
-            ? sessionStorage.getItem("auth-session")
-            : null;
-        const parsedSession = stored ? JSON.parse(stored) : {};
-
         const updatedSession = {
-          ...parsedSession,
+          ...userSession,
           ...apiUserData,
-          accessToken: token,
           lang: params.lang,
-          lastVerified: Date.now(),
+          // lastVerified: Date.now(),
         };
 
         if (JSON.stringify(userSession) !== JSON.stringify(updatedSession)) {
@@ -84,8 +93,6 @@ export const Route = createFileRoute("/$lang/_lang/_auth")({
 
     if (!userSession?.accessToken || !checkRole) {
       store.set(userSessionAtom, null);
-      Cookies.remove("auth_token");
-      sessionStorage.removeItem("auth-session");
       throw redirect({
         to: "/$lang/login",
         params: { lang: params.lang },

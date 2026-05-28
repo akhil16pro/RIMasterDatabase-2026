@@ -12,9 +12,6 @@ import { Input } from "@/components/ui/input";
 import { AnimatePresence, motion } from "motion/react";
 
 import { Link } from "@tanstack/react-router";
-import { toast } from "@/lib/toast";
-import Cookies from "js-cookie";
-
 import { useSetAtom, useAtomValue, getDefaultStore } from "jotai";
 import { userSessionAtom, settingsAtom } from "@/store/atoms";
 
@@ -28,10 +25,33 @@ const store = getDefaultStore();
 export const Route = createFileRoute("/$lang/_lang/login")({
   component: RouteComponent,
 
-  beforeLoad: async ({ location, params }) => {
+  beforeLoad: async ({ params }) => {
     let userSession = store.get(userSessionAtom);
-    const token = Cookies.get("auth_token");
-    if (token || userSession?.accessToken) {
+
+    if (!userSession?.accessToken) {
+      try {
+        console.log("Checking if active session exists via token refresh...");
+        const refreshResponse = await apiClient
+          .post(`${params.lang}/refresh`)
+          .json<any>();
+
+        if (refreshResponse?.access_token) {
+          const updatedSession = {
+            ...refreshResponse,
+            accessToken: refreshResponse.access_token,
+            lang: params.lang,
+            lastVerified: Date.now(),
+          };
+          store.set(userSessionAtom, updatedSession);
+          userSession = updatedSession;
+        }
+      } catch (e) {
+        // Silently catch error; user has no valid session cookie, let them view the login page
+        console.log("No active session cookie found.");
+      }
+    }
+
+    if (userSession?.accessToken) {
       throw redirect({
         to: `/${params.lang}/dashboard`,
       });
@@ -92,14 +112,10 @@ function RouteComponent() {
   });
 
   const loginDir = (res: any) => {
-    Cookies.set("auth_token", res?.access_token, {
-      secure: true,
-      sameSite: "strict",
-      expires: 1,
-    });
     setUserSession({
       accessToken: res?.access_token,
       user: res?.user,
+      lastVerified: Date.now(),
     });
     // Navigate to the protected route
     navigate({
