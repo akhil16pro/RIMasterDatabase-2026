@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
 
@@ -20,6 +20,10 @@ export const ToggleButton = ({
   const { t } = useTranslation();
 
   const [currentStatus, setCurrentStatus] = useState(initialStatus);
+
+  useEffect(() => {
+    setCurrentStatus(initialStatus);
+  }, [initialStatus]);
 
   const handleToggle = () => {
     const newStatus = !currentStatus;

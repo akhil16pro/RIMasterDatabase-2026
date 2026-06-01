@@ -69,68 +69,6 @@ export const Table = ({
               <span className="font-medium">{stat?.title}</span>
             </motion.div>
           ))}
-
-          {/* 
-          {statistics?.approved != "0" && (
-            <motion.div
-              initial={{ opacity: 0, x: i18n.language === "ar" ? -40 : 40 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: i18n.language === "ar" ? 40 : -40 }}
-              transition={{
-                delay: 0,
-                duration: 0.5,
-                ease: "easeInOut",
-              }}
-              className={cn("flex px-2 gap-1 items-center")}
-            >
-              <div
-                className={cn(
-                  "px-[8px] py-[2px] rounded-[5px] text-[14px] leading-[100%]",
-                  "font-bold text-white",
-                  "bg-[linear-gradient(80deg,var(--color-success-100)_0%,var(--color-success-600)_100%)] ",
-                )}
-              >
-                {statistics?.approved}
-              </div>
-              <span className="font-medium">{t("approved")}</span>
-            </motion.div>
-          )}
-          {statistics?.draft && (
-            <motion.div
-              initial={{ opacity: 0, x: i18n.language === "ar" ? -40 : 40 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: i18n.language === "ar" ? 40 : -40 }}
-              transition={{
-                delay: 0.1,
-                duration: 0.5,
-                ease: "easeInOut",
-              }}
-              className="flex  px-2 gap-1 items-center"
-            >
-              <div className="font-bold text-white bg-[linear-gradient(80deg,var(--color-danger-100)_0%,var(--color-danger)_100%)] px-[8px] py-[2px] rounded-[5px] text-[14px] leading-[100%]">
-                {statistics?.draft}
-              </div>
-              <span className="font-medium">{t("draft")}</span>
-            </motion.div>
-          )}
-          {statistics?.total != "0" && (
-            <motion.div
-              initial={{ opacity: 0, x: i18n.language === "ar" ? -40 : 40 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: i18n.language === "ar" ? 40 : -40 }}
-              transition={{
-                delay: 0.2,
-                duration: 0.5,
-                ease: "easeInOut",
-              }}
-              className="flex  px-2 gap-1 items-center"
-            >
-              <div className="font-bold text-white bg-[linear-gradient(80deg,var(--color-secondary)_0%,var(--color-primary)_100%)] px-[8px] py-[2px] rounded-[5px] text-[14px] leading-[100%]">
-                {statistics?.total}
-              </div>
-              <span className="font-medium">{t("total")}</span>
-            </motion.div>
-          )} */}
         </div>
       )}
       <table
