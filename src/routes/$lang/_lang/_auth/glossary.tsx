@@ -1288,6 +1288,7 @@ function UploadExcelModal() {
                 type="file"
                 error={field.state.meta.errors.length > 0 ? true : false}
                 errorMessage={field.state.meta.errors[0]}
+                accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
               />
             )}
             className="w-full"
