@@ -332,7 +332,7 @@ function DeleteAction({
       setIsSubmitting(true);
       try {
         const res = await apiClient
-          .get(i18n.language + "/federal-legislation/delete/" + value.slug)
+          .delete(i18n.language + "/federal-legislation/" + value.slug)
           .json<any>();
 
         if (res?.status) {

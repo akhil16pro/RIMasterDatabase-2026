@@ -306,7 +306,7 @@ function DeleteAction({
       setIsSubmitting(true);
       try {
         const res = await apiClient
-          .get(i18n.language + "/international-treaty/delete/" + value.slug)
+          .delete(i18n.language + "/international-treaty/" + value.slug)
           .json<any>();
 
         if (res?.status) {

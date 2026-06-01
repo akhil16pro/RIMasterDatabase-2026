@@ -307,7 +307,7 @@ function DeleteAction({
       setIsSubmitting(true);
       try {
         const res = await apiClient
-          .get(i18n.language + "/modifications/delete/" + value.slug)
+          .delete(i18n.language + "/modifications/" + value.slug)
           .json<any>();
 
         if (res?.status) {
