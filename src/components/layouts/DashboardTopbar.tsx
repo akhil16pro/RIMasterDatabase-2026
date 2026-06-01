@@ -225,7 +225,7 @@ function LoginAvatar() {
   const setUserSession = useSetAtom(userSessionAtom);
 
   const { mutate: handleLogout, isPending: isLoggingOut } = useMutation({
-    mutationFn: () => apiClient.get(`${i18n.language}/logout`).json(),
+    mutationFn: () => apiClient.post(`${i18n.language}/logout`).json(),
     onSettled: () => {
       setUserSession(null);
       queryClient.clear();
