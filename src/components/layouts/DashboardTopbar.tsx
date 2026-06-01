@@ -27,6 +27,8 @@ import { toast } from "@/lib/toast";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 import { DefaultButton } from "@/components/ui/buttons";
+import { formatDistanceToNow, parseISO } from "date-fns";
+import { enUS, ar } from "date-fns/locale";
 
 export default function DashboardTopbar({
   delay,
@@ -191,8 +193,35 @@ function CampaignInfo({ campaign }: { campaign: any }) {
   );
 }
 
+const localeMap: Record<string, any> = {
+  en: enUS,
+  ar: ar,
+};
+export const getLastLoggedInHuman = (
+  lastLoggedIn: string | null | undefined,
+  currentLanguage = "en",
+) => {
+  if (!lastLoggedIn) {
+    return null;
+  }
+
+  try {
+    const date = parseISO(lastLoggedIn);
+
+    const primaryLang = currentLanguage.split("-")[0];
+    const selectedLocale = localeMap[primaryLang] || enUS;
+
+    return formatDistanceToNow(date, {
+      // addSuffix: false,
+      locale: selectedLocale,
+    });
+  } catch (error) {
+    console.error("Invalid date string provided:", error);
+    return null;
+  }
+};
 function LastLoginInfo() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const userSession = useAtomValue(userSessionAtom);
 
   return (
@@ -207,7 +236,11 @@ function LastLoginInfo() {
             {t("last-login")}
           </span>
           <span className="text-[.9rem] md:text-[1.1rem] font-semibold text-[var(--textColor)] leading-[110%]">
-            {userSession?.user?.last_logged_in}
+            {/* {userSession?.user?.last_logged_in} */}
+            {getLastLoggedInHuman(
+              userSession?.user?.last_logged_in,
+              i18n.language,
+            )}
           </span>
         </div>
       </div>

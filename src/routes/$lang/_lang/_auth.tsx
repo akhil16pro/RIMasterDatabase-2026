@@ -21,48 +21,70 @@ export const Route = createFileRoute("/$lang/_lang/_auth")({
     const TOKEN_LIMIT = 15 * 60 * 1000;
 
     // Silent refresh on every page load to guarantee safety & session freshness
-    if (
-      !userSession?.accessToken ||
-      now - (userSession?.lastVerified || 0) > TOKEN_LIMIT
-    ) {
-      try {
-        console.log(
-          "No in-memory session or session expired, attempting token refresh...",
-        );
-        const refreshResponse = await apiClient
-          .post(`${params.lang}/refresh`, {
-            credentials: "include",
-          })
-          .json<any>();
+    // if (
+    //   !userSession?.accessToken ||
+    //   now - (userSession?.lastVerified || 0) > TOKEN_LIMIT
+    // ) {
+    //   try {
+    //     console.log(
+    //       "No in-memory session or session expired, attempting token refresh...",
+    //     );
+    //     const refreshResponse = await apiClient
+    //       .post(`${params.lang}/refresh`, {
+    //         credentials: "include",
+    //       })
+    //       .json<any>();
 
-        console.log(refreshResponse, "refreshResponse");
-        if (refreshResponse?.access_token) {
-          const updatedSession = {
-            ...refreshResponse,
-            accessToken: refreshResponse.access_token,
-            lang: params.lang,
-            lastVerified: Date.now(),
-          };
-          store.set(userSessionAtom, updatedSession);
-          userSession = updatedSession;
-        } else {
-          throw new Error("Invalid refresh response structure");
-        }
-      } catch (e) {
-        console.error("Token refresh during auth guard failed:", e);
-        store.set(userSessionAtom, null);
-        throw redirect({
-          to: "/$lang/login",
-          params: { lang: params.lang },
-        });
+    //     if (refreshResponse?.access_token) {
+    //       const updatedSession = {
+    //         ...refreshResponse,
+    //         accessToken: refreshResponse.access_token,
+    //         lang: params.lang,
+    //         lastVerified: Date.now(),
+    //       };
+    //       store.set(userSessionAtom, updatedSession);
+    //       userSession = updatedSession;
+    //     } else {
+    //       throw new Error("Invalid refresh response structure");
+    //     }
+    //   } catch (e) {
+    //     console.error("Token refresh during auth guard failed:", e);
+    //     store.set(userSessionAtom, null);
+    //     throw redirect({
+    //       to: "/$lang/login",
+    //       params: { lang: params.lang },
+    //     });
+    //   }
+    // }
+
+    try {
+      const refreshTokenResponse = await queryClient.fetchQuery({
+        queryKey: ["refreshToken", params.lang],
+        queryFn: () => apiClient.post(`${params.lang}/refresh`).json<any>(),
+        staleTime: TOKEN_LIMIT,
+      });
+      if (refreshTokenResponse?.access_token) {
+        const updatedSession = {
+          ...refreshTokenResponse,
+          accessToken: refreshTokenResponse.access_token,
+          lang: params.lang,
+          lastVerified: Date.now(),
+        };
+        store.set(userSessionAtom, updatedSession);
+        userSession = updatedSession;
+      } else {
+        throw new Error("Invalid refresh response structure");
       }
+    } catch (e) {
+      console.error("Token refresh during auth guard failed", e);
+      userSession = null;
     }
 
     try {
       const response = await queryClient.fetchQuery({
         queryKey: ["userInfo", params.lang],
         queryFn: () => apiClient.get(`${params.lang}/get_userinfo`).json<any>(),
-        staleTime: 0, // Force a fetch to ensure data is fresh
+        staleTime: Infinity,
       });
 
       const apiUserData = response?.data;
