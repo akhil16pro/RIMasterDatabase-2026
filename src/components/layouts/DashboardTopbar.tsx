@@ -27,7 +27,7 @@ import { toast } from "@/lib/toast";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 import { DefaultButton } from "@/components/ui/buttons";
-import { formatDistanceToNow, parseISO } from "date-fns";
+import { formatDistanceToNowStrict, parseISO } from "date-fns";
 import { enUS, ar } from "date-fns/locale";
 
 export default function DashboardTopbar({
@@ -211,7 +211,7 @@ export const getLastLoggedInHuman = (
     const primaryLang = currentLanguage.split("-")[0];
     const selectedLocale = localeMap[primaryLang] || enUS;
 
-    return formatDistanceToNow(date, {
+    return formatDistanceToNowStrict(date, {
       // addSuffix: false,
       locale: selectedLocale,
     });
