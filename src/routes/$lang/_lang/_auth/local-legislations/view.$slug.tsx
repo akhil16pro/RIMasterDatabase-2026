@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { AnimatePresence, motion } from "motion/react";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
 import DashboardTopbar from "@/components/layouts/DashboardTopbar";
-import { Pencil } from "lucide-react";
+
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useForm } from "@tanstack/react-form";
@@ -31,6 +31,7 @@ import { userSessionAtom } from "@/store/atoms";
 import { useNavigate } from "@tanstack/react-router";
 import { usePDFPreview } from "@/lib/usePDFPreview";
 import { LegislationForm } from "@/components/form/LegislationForm";
+import EditBadge from "@/components/ui/EditBadge";
 export const Route = createFileRoute(
   "/$lang/_lang/_auth/local-legislations/view/$slug",
 )({
@@ -142,290 +143,12 @@ function RouteComponent() {
         lm_gazette_title_arabic: data?.lawData?.lm_gazette_title_arabic,
       });
     }
+
+    console.log(data?.lawData);
   }, [data]);
 
   return (
     <DashboardLayout isLoading={isLoading} title={t("view_legislation")}>
-      {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10 items-start">
-        <div className="inline-flex gap-5 text-black  text-[1.2rem] col-span-full">
-          <Label className="text-black/70">{t("has_english")}</Label>
-          <RadioGroup
-            className="flex gap-4"
-            value={data?.lawData?.lm_has_english_version.toString()}
-            defaultValue={data?.lawData?.lm_has_english_version.toString()}
-            disabled={true}
-          >
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="1" id="yes" />
-              <Label
-                normalLabel={true}
-                htmlFor="yes"
-                className="cursor-pointer"
-              >
-                {t("yes")}
-              </Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="2" id="no" />
-              <Label normalLabel={true} htmlFor="no" className="cursor-pointer">
-                {t("no")}
-              </Label>
-            </div>
-          </RadioGroup>
-        </div>
-
- 
-        <Select
-          key={data?.lawData?.lm_sector_id}
-          value={data?.lawData?.lm_sector_id?.toString() || ""}
-        >
-          <SelectTrigger
-            label={t("sector")}
-            hasValue={!!data?.lawData?.lm_sector_id}
-            readOnly={true}
-          >
-            <SelectValue placeholder={t("select_sector")} />
-          </SelectTrigger>
-          <SelectContent>
-            {data?.sectorList?.map((item: any) => (
-              <SelectItem
-                key={`sector-${item.value}`}
-                value={item.value.toString()}
-              >
-                {item.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
-        <Select
-          key={data?.lawData?.lm_law_type_id}
-          value={data?.lawData?.lm_law_type_id?.toString() || ""}
-        >
-          <SelectTrigger
-            label={t("legislation_type")}
-            hasValue={!!data?.lawData?.lm_law_type_id}
-            readOnly={true}
-          >
-            <SelectValue placeholder={t("select_legislation_type")} />
-          </SelectTrigger>
-          <SelectContent>
-            {data?.lawTypeList?.map((item: any) => (
-              <SelectItem
-                key={`lawType-${item.value}`}
-                value={item.value.toString()}
-              >
-                {item.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        {data?.lawData?.lm_has_english_version === 1 && (
-          <div className="col-span-full grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10 items-start">
-            <Input
-              type="text"
-              value={data?.lawData?.lm_title}
-              label={t("legislation_full_title_english")}
-              readOnly={true}
-            />
-            <Input
-              type="text"
-              value={data?.lawData?.lm_short_title}
-              label={t("legislation_short_title_english")}
-              readOnly={true}
-            />
-          </div>
-        )}
-        <div className="col-span-full grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10 items-start">
-          <Input
-            type="text"
-            value={data?.lawData?.lm_title_arabic}
-            label={t("legislation_full_title_arabic")}
-            dir="rtl"
-            readOnly={true}
-          />
-          <Input
-            type="text"
-            value={data?.lawData?.lm_short_title_arabic}
-            label={t("legislation_short_title_arabic")}
-            dir="rtl"
-            readOnly={true}
-          />
-        </div>
-
-        {data?.lawData?.lm_has_english_version === 1 && (
-          <div className="col-span-full space-y-2 relative">
-            <Label htmlFor="lm_description">
-              {t("legislation_details_english")}
-            </Label>
-            <CKEditorCustom
-              value={data?.lawData?.lm_description}
-              readOnly={true}
-            />
-          </div>
-        )}
-
-        <div className="col-span-full space-y-2 relative">
-          <Label htmlFor="lm_description_arabic">
-            {t("legislation_details_arabic")}
-          </Label>
-          <CKEditorCustom
-            dir="rtl"
-            value={data?.lawData?.lm_description_arabic}
-            readOnly={true}
-          />
-        </div>
-        <div className="inline-flex gap-5 text-black  text-[1.2rem] col-span-full">
-          <Label className="text-black/70">
-            {t("legislation_modifications")}
-          </Label>
-          <RadioGroup
-            className="flex gap-4"
-            value={data?.lawData?.lm_has_modified?.toString()}
-            defaultValue={data?.lawData?.lm_has_modified?.toString()}
-            disabled={true}
-          >
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="1" id="lm_has_modified_yes" />
-              <Label
-                normalLabel={true}
-                htmlFor="lm_has_modified_yes"
-                className="cursor-pointer"
-              >
-                {t("yes")}
-              </Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="2" id="lm_has_modified_no" />
-              <Label
-                normalLabel={true}
-                htmlFor="lm_has_modified_no"
-                className="cursor-pointer"
-              >
-                {t("no")}
-              </Label>
-            </div>
-          </RadioGroup>
-        </div>
-        <Select
-          key={data?.lawData?.lm_year}
-          value={data?.lawData?.lm_year?.toString()}
-        >
-          <SelectTrigger
-            label={t("legislation_year")}
-            hasValue={!!data?.lawData?.lm_year}
-            readOnly={true}
-          >
-            <SelectValue placeholder={t("select_legislation_year")} />
-          </SelectTrigger>
-          <SelectContent>
-            {data?.yearList?.map((item: any) => (
-              <SelectItem
-                key={`year-${item.value}`}
-                value={item.value.toString()}
-              >
-                {item.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Input
-          type="text"
-          value={data?.lawData?.lm_number}
-          label={t("legislation_number")}
-          readOnly={true}
-        />
-        <div className="col-span-full grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10 items-start">
-          <Input
-            type="date"
-            value={data?.lawData?.lm_issue_date}
-            label={t("issued_date")}
-            readOnly={true}
-          />
-
-          <Input
-            type="date"
-            value={data?.lawData?.lm_effective_date}
-            label={t("effective_date")}
-            readOnly={true}
-          />
-        </div>
-        {data?.lawData?.lm_has_english_version === 1 && (
-          <Input
-            type="file"
-            accept=".pdf"
-            label={t("legislation_file_english")}
-            preview={data?.lawData?.lm_pdf_file}
-            readOnly={true}
-            onClick={previewEN}
-            isLoading={isLoadingEN}
-          />
-        )}
-
-        <Input
-          type="file"
-          accept=".pdf"
-          label={t("legislation_file_arabic")}
-          preview={data?.lawData?.lm_pdf_file_arabic}
-          readOnly={true}
-          onClick={previewAR}
-          isLoading={isLoadingAR}
-        />
-
-        {data?.lawData?.lm_has_english_version === 1 && (
-          <>
-            <Input
-              type="text"
-              value={data?.lawData?.lm_gazette_number}
-              label={t("official_gazette_number")}
-              readOnly={true}
-            />
-
-            <Input
-              type="text"
-              value={data?.lawData?.lm_gazette_title}
-              label={t("official_gazette_title_english")}
-              readOnly={true}
-            />
-          </>
-        )}
-
-        <Input
-          type="text"
-          value={data?.lawData?.lm_gazette_number_arabic}
-          label={t("official_gazette_number_arabic")}
-          readOnly={true}
-          dir="rtl"
-        />
-
-        <Input
-          type="text"
-          value={data?.lawData?.lm_gazette_title_arabic}
-          label={t("official_gazette_title_arabic")}
-          readOnly={true}
-          dir="rtl"
-        />
-
-        <Input
-          type="date"
-          value={data?.lawData?.lm_official_gazette_issue_date}
-          label={t("official_gazette_issue_date")}
-          readOnly={true}
-        />
-
-        <Input
-          type="date"
-          value={data?.lawData?.lm_gazzette_date_string}
-          label={t("official_gazette_publish_date")}
-          readOnly={true}
-        />
-        <Input
-          type="text"
-          value={data?.lawData?.user_info?.name}
-          label={t("submitted_by")}
-          readOnly={true}
-        />
-      </div> */}
       <LegislationForm
         mode="view"
         initialValues={initialValues}
@@ -435,6 +158,7 @@ function RouteComponent() {
         isLoadingEN={isLoadingEN}
         isLoadingAR={isLoadingAR}
       />
+      <EditBadge data={data?.lawData} />
     </DashboardLayout>
   );
 }

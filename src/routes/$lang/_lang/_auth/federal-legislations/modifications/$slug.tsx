@@ -139,11 +139,16 @@ function PageTable({ search, slug }: { search: string; slug: string }) {
     staleTime: 1000 * 60 * 5,
     queryFn: async () => {
       try {
+        const formData = new FormData();
+        formData.append("search", search || "");
+        formData.append("page", pagination?.currentPage.toString() || "");
         const res = await apiClient
-          .get(
-            i18n.language +
-              `/modifications/table/${slug}?page=${pagination.currentPage}`,
-          )
+          .post(i18n.language + `/modifications/table/${slug}`, {
+            headers: {
+              "Content-Type": undefined,
+            },
+            body: formData,
+          })
           .json<any>();
         // console.log("FEDERAL_LEGISLATION_TABLE_DATA", res?.data);
         return res?.data;

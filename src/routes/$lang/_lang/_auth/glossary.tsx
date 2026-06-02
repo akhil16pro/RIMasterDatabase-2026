@@ -45,6 +45,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/Select";
+import EditBadge from "@/components/ui/EditBadge";
 export const Route = createFileRoute("/$lang/_lang/_auth/glossary")({
   component: RouteComponent,
   staticData: {
@@ -421,7 +422,7 @@ function ViewAction({ slug }: { slug: string }) {
                 </SelectContent>
               </Select>
             )}
-            <Input
+            {/* <Input
               id="created_by"
               name="created_by"
               value={data?.glossaryData?.user_info?.name}
@@ -429,7 +430,7 @@ function ViewAction({ slug }: { slug: string }) {
               type="text"
               isLoading={isLoading}
               readOnly
-            />
+            /> */}
             {/* <Input
               id="entity_name"
               name="entity_name"
@@ -439,8 +440,7 @@ function ViewAction({ slug }: { slug: string }) {
               isLoading={isLoading}
               readOnly
             /> */}
-
-            <div className="inline-flex gap-2 text-[var(--textColor)] text-[1.2rem] col-span-2">
+            <div className="inline-flex gap-2 text-[var(--textColor)] text-[1.2rem] col-span-full">
               <label
                 className="text-muted-foreground"
                 aria-describedby={undefined}
@@ -472,6 +472,7 @@ function ViewAction({ slug }: { slug: string }) {
                 />
               </div>
             </div>
+            <EditBadge data={data?.glossaryData} className="col-span-full" />
           </div>
         </DialogContent>
       </form>
@@ -777,7 +778,7 @@ function EditAction({ slug }: { slug: string }) {
                 )}
               />
             )}
-            <div className="inline-flex gap-2 text-[var(--textColor)] text-[1.2rem]">
+            <div className="inline-flex gap-2 text-[var(--textColor)] text-[1.2rem] col-span-full">
               <label className="text-muted-foreground">{t("status")}</label>
               <div className="flex gap-1 items-center">
                 <label className="font-bold">{t("draft")}</label>

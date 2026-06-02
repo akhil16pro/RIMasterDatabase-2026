@@ -30,6 +30,7 @@ import { userSessionAtom } from "@/store/atoms";
 import { useNavigate } from "@tanstack/react-router";
 import { CustomForm } from "@/components/form/CustomForm";
 import { usePDFPreview } from "@/lib/usePDFPreview";
+import EditBadge from "@/components/ui/EditBadge";
 
 export const Route = createFileRoute(
   "/$lang/_lang/_auth/local-decisions/view/$slug",
@@ -252,6 +253,7 @@ function RouteComponent() {
         data={data}
         mode="view"
       />
+      <EditBadge data={data?.decisionData} />
     </DashboardLayout>
   );
 }

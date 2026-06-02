@@ -20,6 +20,7 @@ import { userSessionAtom } from "@/store/atoms";
 import { usePDFPreview } from "@/lib/usePDFPreview";
 import { useState, useEffect } from "react";
 import { CustomForm } from "@/components/form/CustomForm";
+import EditBadge from "@/components/ui/EditBadge";
 
 export const Route = createFileRoute(
   "/$lang/_lang/_auth/federal-decisions/view/$slug",
@@ -248,6 +249,7 @@ function RouteComponent() {
         data={data}
         mode="view"
       />
+      <EditBadge data={data?.decisionData} />
     </DashboardLayout>
   );
 }
