@@ -21,16 +21,16 @@ export default function EditBadge({
           <div className="flex w-10 min-h-10  md:w-8 md:min-h-8 h-full items-center justify-center  bg-primary text-white ">
             <User size={17} strokeWidth={2} />
           </div>
-          <div className="flex flex-col md:flex-row md:items-center gap-1 flex-wrap py-1">
-            <span className="text-[1.1rem] md:text-md leading-none font-secondary whitespace-nowrap">
+          <div className="flex flex-col md:flex-row md:items-center gap-1 flex-wrap py-1 text-[1.1rem] md:text-base">
+            <span className=" leading-none font-secondary whitespace-nowrap">
               {t("created_by")} :
             </span>
             <div className="flex gap-1 flex-wrap items-center ">
-              <span className="font-medium leading-none text-[1.1rem] md:text-md font-secondary">
+              <span className="font-medium leading-none font-secondary">
                 {data.user_info?.name}
               </span>
               {data?.user_info?.created_at && (
-                <small className=" text-sm leading-none font-secondary opacity-60">
+                <small className="text-sm leading-none font-secondary opacity-60">
                   ({data?.user_info?.created_at})
                 </small>
               )}
@@ -43,12 +43,12 @@ export default function EditBadge({
           <div className="flex w-10 min-h-10 md:w-8 md:min-h-8 h-full items-center justify-center  bg-success text-white ">
             <Pencil size={17} strokeWidth={2} />
           </div>
-          <div className="flex flex-col md:flex-row md:items-center gap-1 flex-wrap py-1">
-            <span className="text-[1.1rem] md:text-md leading-none font-secondary whitespace-nowrap">
+          <div className="flex flex-col md:flex-row md:items-center gap-1 flex-wrap py-1 text-[1.1rem] md:text-base">
+            <span className=" leading-none font-secondary whitespace-nowrap">
               {t("last_edited_by")} :
             </span>
             <div className="flex gap-1 flex-wrap items-center ">
-              <span className="font-medium leading-none text-[1.1rem] md:text-md font-secondary">
+              <span className="font-medium leading-none font-secondary">
                 {data.user_info?.name}
               </span>
               {data?.modified_info?.updated_at && (
