@@ -4,6 +4,7 @@ import { userSessionAtom } from "@/store/atoms";
 import { apiClient } from "@/api";
 import { NAV_CONFIG, APP_ROLES } from "@/lib/navigation";
 import { toast } from "@/lib/toast";
+import Cookies from "js-cookie";
 
 // const store = getDefaultStore();
 
@@ -14,6 +15,21 @@ export const Route = createFileRoute("/$lang/_lang/_auth")({
 
     let userSession = store.get(userSessionAtom);
 
+    const triggerAuthFailure = (message?: string) => {
+      if (message) toast.error(message);
+
+      // 1. Clean up what we can synchronously outside React context
+      Cookies.remove("loggedin");
+      store.set(userSessionAtom, null);
+      queryClient.clear(); // Safe to do because queryClient is passed via route context!
+
+      // 2. Halt the routing execution immediately and redirect
+      throw redirect({
+        to: "/$lang/login",
+        params: { lang: params.lang },
+      });
+    };
+
     // console.log(userSession, "userSession");
 
     const now = Date.now();
@@ -21,42 +37,6 @@ export const Route = createFileRoute("/$lang/_lang/_auth")({
     const TOKEN_LIMIT = 15 * 60 * 1000;
 
     // Silent refresh on every page load to guarantee safety & session freshness
-    // if (
-    //   !userSession?.accessToken ||
-    //   now - (userSession?.lastVerified || 0) > TOKEN_LIMIT
-    // ) {
-    //   try {
-    //     console.log(
-    //       "No in-memory session or session expired, attempting token refresh...",
-    //     );
-    //     const refreshResponse = await apiClient
-    //       .post(`${params.lang}/refresh`, {
-    //         credentials: "include",
-    //       })
-    //       .json<any>();
-
-    //     if (refreshResponse?.access_token) {
-    //       const updatedSession = {
-    //         ...refreshResponse,
-    //         accessToken: refreshResponse.access_token,
-    //         lang: params.lang,
-    //         lastVerified: Date.now(),
-    //       };
-    //       store.set(userSessionAtom, updatedSession);
-    //       userSession = updatedSession;
-    //     } else {
-    //       throw new Error("Invalid refresh response structure");
-    //     }
-    //   } catch (e) {
-    //     console.error("Token refresh during auth guard failed:", e);
-    //     store.set(userSessionAtom, null);
-    //     throw redirect({
-    //       to: "/$lang/login",
-    //       params: { lang: params.lang },
-    //     });
-    //   }
-    // }
-
     try {
       const refreshTokenResponse = await queryClient.fetchQuery({
         queryKey: ["refreshToken", params.lang],
@@ -73,11 +53,11 @@ export const Route = createFileRoute("/$lang/_lang/_auth")({
         store.set(userSessionAtom, updatedSession);
         userSession = updatedSession;
       } else {
-        throw new Error("Invalid refresh response structure");
+        triggerAuthFailure("Invalid refresh response structure");
       }
     } catch (e) {
       console.error("Token refresh during auth guard failed", e);
-      userSession = null;
+      triggerAuthFailure();
     }
 
     try {
@@ -104,27 +84,21 @@ export const Route = createFileRoute("/$lang/_lang/_auth")({
       }
     } catch (e) {
       console.error("Auth hydration error", e);
-      userSession = null;
+      triggerAuthFailure("Session expired. Please log in again.");
     }
 
     const checkRole = APP_ROLES.includes(userSession?.user?.roles);
 
-    if (!checkRole) {
-      toast.error("Unauthorized or Invalid user role");
-    }
-
     if (!userSession?.accessToken || !checkRole) {
-      store.set(userSessionAtom, null);
-      throw redirect({
-        to: "/$lang/login",
-        params: { lang: params.lang },
-      });
+      // store.set(userSessionAtom, null);
+      // Cookies.remove("loggedin");
+      // throw redirect({
+      //   to: "/$lang/login",
+      //   params: { lang: params.lang },
+      // });
+      triggerAuthFailure("Unauthorized or Invalid user role");
     }
 
-    /**
-     * Map your URL segments to the keys in APP_PERMISSIONS.
-     * This logic checks if the current URL contains a restricted keyword.
-     */
     const userRole = userSession?.user?.roles;
     const pathname = location.pathname;
 
@@ -146,10 +120,7 @@ export const Route = createFileRoute("/$lang/_lang/_auth")({
           `Access Denied: ${roleToVerify} cannot access ${pathname}`,
         );
 
-        throw redirect({
-          to: "/$lang/login",
-          params: { lang: params.lang },
-        });
+        triggerAuthFailure("You do not have permission to view this page.");
       }
     }
 

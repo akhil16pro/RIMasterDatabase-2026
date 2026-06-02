@@ -17,45 +17,16 @@ import { userSessionAtom, settingsAtom } from "@/store/atoms";
 
 import { useForm } from "@tanstack/react-form";
 import AppFooter from "@/components/layouts/AppFooter";
-import { cn } from "@/lib/utils";
+import { cn, checkActiveSession } from "@/lib/utils";
 // const RECAPTCHA_SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
-// Get the store instance
-const store = getDefaultStore();
+
+import Cookies from "js-cookie";
 
 export const Route = createFileRoute("/$lang/_lang/login")({
   component: RouteComponent,
 
   beforeLoad: async ({ params }) => {
-    let userSession = store.get(userSessionAtom);
-
-    if (!userSession?.accessToken) {
-      try {
-        console.log("Checking if active session exists via token refresh...");
-        const refreshResponse = await apiClient
-          .post(`${params.lang}/refresh`)
-          .json<any>();
-
-        if (refreshResponse?.access_token) {
-          const updatedSession = {
-            ...refreshResponse,
-            accessToken: refreshResponse.access_token,
-            lang: params.lang,
-            lastVerified: Date.now(),
-          };
-          store.set(userSessionAtom, updatedSession);
-          userSession = updatedSession;
-        }
-      } catch (e) {
-        // Silently catch error; user has no valid session cookie, let them view the login page
-        console.log("No active session cookie found.");
-      }
-    }
-
-    if (userSession?.accessToken) {
-      throw redirect({
-        to: `/${params.lang}/dashboard`,
-      });
-    }
+    await checkActiveSession(params);
   },
 });
 
@@ -112,6 +83,12 @@ function RouteComponent() {
   });
 
   const loginDir = (res: any) => {
+    Cookies.set("loggedin", "true", {
+      expires: 30,
+      secure: true,
+      sameSite: "strict",
+    });
+
     setUserSession({
       accessToken: res?.access_token,
       user: res?.user,

@@ -1,7 +1,7 @@
 import { Clock, ChevronDown, User, LogOut, Languages } from "lucide-react";
 import { motion } from "motion/react";
 
-import { cn } from "@/lib/utils";
+import { cn, useLogoutUser } from "@/lib/utils";
 import { SectionTitle } from "@/components/ui/sectionTitle";
 import { useEffect, useState } from "react";
 
@@ -29,6 +29,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { DefaultButton } from "@/components/ui/buttons";
 import { formatDistanceToNowStrict, parseISO } from "date-fns";
 import { enUS, ar } from "date-fns/locale";
+import Cookies from "js-cookie";
 
 export default function DashboardTopbar({
   delay,
@@ -220,6 +221,7 @@ export const getLastLoggedInHuman = (
     return null;
   }
 };
+
 function LastLoginInfo() {
   const { t, i18n } = useTranslation();
   const userSession = useAtomValue(userSessionAtom);
@@ -257,15 +259,19 @@ function LoginAvatar() {
   const userSession = useAtomValue(userSessionAtom);
   const setUserSession = useSetAtom(userSessionAtom);
 
+  const logoutUser = useLogoutUser();
+
   const { mutate: handleLogout, isPending: isLoggingOut } = useMutation({
     mutationFn: () => apiClient.post(`${i18n.language}/logout`).json(),
-    onSettled: () => {
-      setUserSession(null);
-      queryClient.clear();
-      router.navigate({
-        to: "/$lang/login",
-        params: { lang: i18n.language },
-      });
+    onSettled: async () => {
+      await logoutUser();
+      // Cookies.remove("loggedin");
+      // setUserSession(null);
+      // queryClient.clear();
+      // router.navigate({
+      //   to: "/$lang/login",
+      //   params: { lang: i18n.language },
+      // });
     },
   });
 

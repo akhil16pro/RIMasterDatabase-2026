@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, redirect } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { apiClient } from "@/api";
@@ -7,18 +7,52 @@ import RoteError from "@/components/layouts/RoteError";
 import { DefaultButton } from "@/components/ui/buttons";
 import { Input } from "@/components/ui/input";
 import { AnimatePresence, motion } from "motion/react";
-
 import { Link } from "@tanstack/react-router";
-
-import { useAtomValue } from "jotai";
+import { useSetAtom, useAtomValue, getDefaultStore } from "jotai";
 import { useForm } from "@tanstack/react-form";
 import { useState } from "react";
 import { toast } from "@/lib/toast";
 import { settingsAtom } from "@/store/atoms";
 import AppFooter from "@/components/layouts/AppFooter";
-import { cn } from "@/lib/utils";
+import { cn, checkActiveSession } from "@/lib/utils";
+
 export const Route = createFileRoute("/$lang/_lang/forgot-password")({
   component: RouteComponent,
+  beforeLoad: async ({ params }) => {
+    await checkActiveSession(params);
+
+    // let userSession = store.get(userSessionAtom);
+    // const isLoggedIn = Cookies.get("loggedin") === "true";
+
+    // if (!userSession?.accessToken && isLoggedIn) {
+    //   try {
+    //     console.log("Checking if active session exists via token refresh...");
+    //     const refreshResponse = await apiClient
+    //       .post(`${params.lang}/refresh`)
+    //       .json<any>();
+
+    //     if (refreshResponse?.access_token) {
+    //       const updatedSession = {
+    //         ...refreshResponse,
+    //         accessToken: refreshResponse.access_token,
+    //         lang: params.lang,
+    //         lastVerified: Date.now(),
+    //       };
+    //       store.set(userSessionAtom, updatedSession);
+    //       userSession = updatedSession;
+    //     }
+    //   } catch (e) {
+    //     Cookies.remove("loggedin");
+    //     console.log("No active session cookie found.");
+    //   }
+    // }
+
+    // if (userSession?.accessToken) {
+    //   throw redirect({
+    //     to: `/${params.lang}/dashboard`,
+    //   });
+    // }
+  },
 });
 
 function RouteComponent() {

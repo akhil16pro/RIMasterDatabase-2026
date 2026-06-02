@@ -10,7 +10,7 @@ import { AnimatePresence, motion } from "motion/react";
 
 import { Link } from "@tanstack/react-router";
 // import { settingsAtom } from "@/routes/__root";
-import { useAtomValue } from "jotai";
+import { useAtomValue, getDefaultStore } from "jotai";
 import { useForm } from "@tanstack/react-form";
 import { toast } from "@/lib/toast";
 import { useState } from "react";
@@ -19,10 +19,11 @@ import { redirect } from "@tanstack/react-router";
 import { zxcvbn, zxcvbnOptions } from "@zxcvbn-ts/core";
 import * as zxcvbnCommonPackage from "@zxcvbn-ts/language-common";
 
-import { settingsAtom } from "@/store/atoms";
+import { settingsAtom, userSessionAtom } from "@/store/atoms";
 
 import AppFooter from "@/components/layouts/AppFooter";
-import { cn } from "@/lib/utils";
+import { cn, checkActiveSession } from "@/lib/utils";
+
 type PasswordResetSearch = {
   code?: string;
 };
@@ -50,6 +51,8 @@ export const Route = createFileRoute("/$lang/_lang/reset-password")({
         params: { lang: params.lang },
       });
     }
+
+    await checkActiveSession(params);
   },
   component: RouteComponent,
 });
