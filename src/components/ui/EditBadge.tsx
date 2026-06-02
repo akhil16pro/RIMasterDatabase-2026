@@ -1,6 +1,6 @@
 import { Pencil, User } from "lucide-react";
 import { cn } from "@/lib/utils";
-// import { useTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 
 export default function EditBadge({
   data,
@@ -13,27 +13,51 @@ export default function EditBadge({
   className?: string;
 }) {
   console.log(data, "badge data");
-  //   const {t} = useTranslation()
+  const { t } = useTranslation();
   return (
-    <div className={cn("flex gap-2 flex-wrap w-full", className)}>
+    <div className={cn("flex gap-1 md:gap-2 flex-wrap w-full", className)}>
       {data?.user_info?.name && (
-        <div className="flex  items-center border border-primary rounded-md  overflow-hidden opacity-70 ">
-          <div className="flex size-8 items-center justify-center  bg-primary text-white ">
+        <div className="flex gap-3 pe-3 items-center border border-primary rounded-md  overflow-hidden opacity-70 ">
+          <div className="flex w-10 min-h-10  md:w-8 md:min-h-8 h-full items-center justify-center  bg-primary text-white ">
             <User size={17} strokeWidth={2} />
           </div>
-          <span className=" text-md font-secondary  px-3 ">
-            {data.user_info?.name}
-          </span>
+          <div className="flex flex-col md:flex-row md:items-center gap-1 flex-wrap py-1">
+            <span className="text-[1.1rem] md:text-md leading-none font-secondary whitespace-nowrap">
+              {t("created_by")} :
+            </span>
+            <div className="flex gap-1 flex-wrap items-center ">
+              <span className="font-medium leading-none text-[1.1rem] md:text-md font-secondary">
+                {data.user_info?.name}
+              </span>
+              {data?.user_info?.created_at && (
+                <small className=" text-sm leading-none font-secondary opacity-60">
+                  ({data?.user_info?.created_at})
+                </small>
+              )}
+            </div>
+          </div>
         </div>
       )}
-      {data?.user_info?.name && (
-        <div className="flex  items-center border border-success rounded-md  overflow-hidden opacity-70 ">
-          <div className="flex size-8 items-center justify-center  bg-success text-white ">
+      {data?.modified_info?.name && (
+        <div className="flex gap-3 pe-3 items-center border border-success rounded-md  overflow-hidden opacity-70 ">
+          <div className="flex w-10 min-h-10 md:w-8 md:min-h-8 h-full items-center justify-center  bg-success text-white ">
             <Pencil size={17} strokeWidth={2} />
           </div>
-          <span className=" text-md font-secondary  px-3 ">
-            {data?.user_info?.name}
-          </span>
+          <div className="flex flex-col md:flex-row md:items-center gap-1 flex-wrap py-1">
+            <span className="text-[1.1rem] md:text-md leading-none font-secondary whitespace-nowrap">
+              {t("last_edited_by")} :
+            </span>
+            <div className="flex gap-1 flex-wrap items-center ">
+              <span className="font-medium leading-none text-[1.1rem] md:text-md font-secondary">
+                {data.user_info?.name}
+              </span>
+              {data?.modified_info?.updated_at && (
+                <small className=" text-sm leading-none font-secondary opacity-60">
+                  ({data?.modified_info?.updated_at})
+                </small>
+              )}
+            </div>
+          </div>
         </div>
       )}
     </div>
