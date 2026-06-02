@@ -52,6 +52,22 @@ body {
   background-color: var(--color-primary);
 }
 
+input[type="file"]::file-selector-button {
+  // display: none;
+  // border: 1px solid red;
+  padding: 0.1rem 0.8rem;
+  border-radius: 6px;
+  background: var(--color-primary);
+  color: var(--color-white);
+  font-size: 16px;
+  background: linear-gradient(
+    80deg,
+    var(--color-primary) -10%,
+    var(--color-secondary)
+  );
+  font-weight: 400;
+}
+
 html[dir="rtl"] {
   body {
     line-height: 130%;
