@@ -2,24 +2,16 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "@/api";
-
 import DashboardLayout from "@/components/layouts/DashboardLayout";
-
 import { useState } from "react";
-
 import { toast } from "@/lib/toast";
-
 import { ThankYouPopup } from "@/components/ui/thankYouPopup";
 import { useEffect, useCallback } from "react";
-
-import CKEditorCustom from "@/components/ui/CKEditor";
 import { useAtomValue } from "jotai";
 import { userSessionAtom } from "@/store/atoms";
 import { useNavigate } from "@tanstack/react-router";
-import { CustomForm } from "@/components/form/CustomForm";
-import { useMemo } from "react";
-import { type FieldConfig } from "@/components/form/CustomForm";
-
+import { CustomForm, type FieldConfig } from "@/components/form/CustomForm";
+import { FILE_ACCEPT_STRING, validateDocumentFile } from "@/lib/fileFormats";
 export const Route = createFileRoute("/$lang/_lang/_auth/local-decisions/add")({
   component: RouteComponent,
   staticData: {
@@ -237,58 +229,20 @@ function RouteComponent() {
       name: "dm_file",
       label: t("court_decision_file_english"),
       type: "file",
-      accept: ".pdf",
+      accept: FILE_ACCEPT_STRING,
       validators: {
         onSubmit: ({ value }) => (!value ? t("required_field") : null),
-        onChange: ({ value }) => {
-          if (!value) return null;
-
-          // Ensure we have a File object
-          const file = value instanceof FileList ? value[0] : value;
-          if (!file || !(file instanceof File)) return null;
-
-          const fileName = file.name.toLowerCase(); // Use file.name
-          const allowedExtensions = [".pdf"];
-          const isValid = allowedExtensions.some((ext) =>
-            fileName.endsWith(ext),
-          );
-
-          if (!isValid) return t("file_must_be_pdf");
-
-          const maxSize = 5 * 1024 * 1024; // 5MB
-          if (file.size > maxSize) return t("file_too_large");
-
-          return null;
-        },
+        onChange: ({ value }) => validateDocumentFile(value, t),
       },
     },
     {
       name: "dm_file_arabic",
       label: t("court_decision_file_arabic"),
       type: "file",
-      accept: ".pdf",
+      accept: FILE_ACCEPT_STRING,
       validators: {
         onSubmit: ({ value }) => (!value ? t("required_field") : null),
-        onChange: ({ value }) => {
-          if (!value) return null;
-
-          // Ensure we have a File object
-          const file = value instanceof FileList ? value[0] : value;
-          if (!file || !(file instanceof File)) return null;
-
-          const fileName = file.name.toLowerCase(); // Use file.name
-          const allowedExtensions = [".pdf"];
-          const isValid = allowedExtensions.some((ext) =>
-            fileName.endsWith(ext),
-          );
-
-          if (!isValid) return t("file_must_be_pdf");
-
-          const maxSize = 5 * 1024 * 1024; // 5MB
-          if (file.size > maxSize) return t("file_too_large");
-
-          return null;
-        },
+        onChange: ({ value }) => validateDocumentFile(value, t),
       },
     },
 
@@ -332,7 +286,7 @@ function RouteComponent() {
     });
   }
 
-  const handleStore = async (values) => {
+  const handleStore = async (values: any) => {
     setIsSubmitting(true);
     const formData = new FormData();
 

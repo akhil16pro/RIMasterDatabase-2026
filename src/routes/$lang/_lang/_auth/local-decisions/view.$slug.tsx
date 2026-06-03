@@ -2,37 +2,15 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { apiClient } from "@/api";
-
-import { DefaultButton } from "@/components/ui/buttons";
-import { Input } from "@/components/ui/input";
-import { AnimatePresence, motion } from "motion/react";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
-import DashboardTopbar from "@/components/layouts/DashboardTopbar";
-import { Pencil } from "lucide-react";
 import { useState, useEffect } from "react";
-import { cn } from "@/lib/utils";
-import { useForm } from "@tanstack/react-form";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { toast } from "@/lib/toast";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/Select";
-import { Label } from "@/components/ui/label";
-import { ThankYouPopup } from "@/components/ui/thankYouPopup";
-
-import CKEditorCustom from "@/components/ui/CKEditor";
 import { useAtomValue } from "jotai";
 import { userSessionAtom } from "@/store/atoms";
-import { useNavigate } from "@tanstack/react-router";
-import { CustomForm } from "@/components/form/CustomForm";
+import { CustomForm, type FieldConfig } from "@/components/form/CustomForm";
 import { usePDFPreview } from "@/lib/usePDFPreview";
 import EditBadge from "@/components/ui/EditBadge";
 import { useCallback } from "react";
-
+import { FILE_ACCEPT_STRING } from "@/lib/fileFormats";
 export const Route = createFileRoute(
   "/$lang/_lang/_auth/local-decisions/view/$slug",
 )({
@@ -274,7 +252,7 @@ function RouteComponent() {
       name: "dm_file",
       label: t("court_decision_file_english"),
       type: "file",
-      accept: ".pdf",
+      accept: FILE_ACCEPT_STRING,
       preview: data?.decisionData?.dm_file,
       onClick: () => previewEN(),
       isLoading: isLoadingEN,
@@ -283,7 +261,7 @@ function RouteComponent() {
       name: "dm_file_arabic",
       label: t("court_decision_file_arabic"),
       type: "file",
-      accept: ".pdf",
+      accept: FILE_ACCEPT_STRING,
       preview: data?.decisionData?.dm_file_arabic,
       onClick: () => previewAR(),
       isLoading: isLoadingAR,

@@ -6,11 +6,8 @@ import { useAtomValue } from "jotai";
 import { userSessionAtom } from "@/store/atoms";
 import DashboardTopbar from "@/components/layouts/DashboardTopbar";
 import { useTranslation } from "react-i18next";
-
 import Lottie from "lottie-react";
 import docLoading from "@/assets/animations/loading2.json";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useRouter, useLocation } from "@tanstack/react-router";
 import { useMatches, useParams, useSearch } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
 export default function DashboardLayout({

@@ -1,34 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
-import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { apiClient } from "@/api";
-
-import { DefaultButton } from "@/components/ui/buttons";
-import { Input } from "@/components/ui/input";
-import { AnimatePresence, motion } from "motion/react";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
-import DashboardTopbar from "@/components/layouts/DashboardTopbar";
-
 import { useState } from "react";
-import { cn } from "@/lib/utils";
-import { useForm } from "@tanstack/react-form";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { toast } from "@/lib/toast";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/Select";
-import { Label } from "@/components/ui/label";
-import { ThankYouPopup } from "@/components/ui/thankYouPopup";
 import { useEffect } from "react";
-
-import CKEditorCustom from "@/components/ui/CKEditor";
 import { useAtomValue } from "jotai";
 import { userSessionAtom } from "@/store/atoms";
-import { useNavigate } from "@tanstack/react-router";
 import { usePDFPreview } from "@/lib/usePDFPreview";
 import { LegislationForm } from "@/components/form/LegislationForm";
 import EditBadge from "@/components/ui/EditBadge";

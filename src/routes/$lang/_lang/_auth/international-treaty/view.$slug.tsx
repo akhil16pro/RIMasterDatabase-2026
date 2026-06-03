@@ -2,29 +2,14 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { apiClient } from "@/api";
-import { Input } from "@/components/ui/input";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/Select";
-import { Label } from "@/components/ui/label";
-
-import CKEditorCustom from "@/components/ui/CKEditor";
 import { useAtomValue } from "jotai";
 import { userSessionAtom } from "@/store/atoms";
-
 import { usePDFPreview } from "@/lib/usePDFPreview";
 import { useState, useEffect } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { useForm } from "@tanstack/react-form";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { AnimatePresence, motion } from "motion/react";
-import { CustomForm } from "@/components/form/CustomForm";
+import { CustomForm, type FieldConfig } from "@/components/form/CustomForm";
 import EditBadge from "@/components/ui/EditBadge";
 export const Route = createFileRoute(
   "/$lang/_lang/_auth/international-treaty/view/$slug",
@@ -197,34 +182,7 @@ function RouteComponent() {
       name: "it_attachment",
       label: t("treaty_file_english"),
       type: "file",
-      validators: {
-        onSubmit: ({ value }) => {
-          return data?.treatyData?.it_attachment
-            ? deletedFiles.includes("it_attachment") &&
-                !value &&
-                t("required_field")
-            : !value && t("required_field");
-        },
-        onChange: ({ value }) => {
-          if (!value) return null;
-          const file = value instanceof FileList ? value[0] : value;
 
-          if (!(file instanceof File)) return null;
-
-          const fileName = file.name.toLowerCase();
-          const allowedExtensions = [".pdf"];
-          const isValid = allowedExtensions.some((ext) =>
-            fileName.endsWith(ext),
-          );
-
-          if (!isValid) return t("file_must_be_pdf");
-
-          const maxSize = 5 * 1024 * 1024; // 5MB
-          if (file.size > maxSize) return t("file_too_large");
-
-          return null;
-        },
-      },
       preview: deletedFiles.includes("it_attachment")
         ? undefined
         : data?.treatyData?.it_attachment,
@@ -239,34 +197,7 @@ function RouteComponent() {
       name: "it_attachment_arabic",
       label: t("treaty_file_arabic"),
       type: "file",
-      validators: {
-        onSubmit: ({ value }) => {
-          return data?.treatyData?.it_attachment_arabic
-            ? deletedFiles.includes("it_attachment_arabic") &&
-                !value &&
-                t("required_field")
-            : !value && t("required_field");
-        },
-        onChange: ({ value }) => {
-          if (!value) return null;
-          const file = value instanceof FileList ? value[0] : value;
 
-          if (!(file instanceof File)) return null;
-
-          const fileName = file.name.toLowerCase();
-          const allowedExtensions = [".pdf"];
-          const isValid = allowedExtensions.some((ext) =>
-            fileName.endsWith(ext),
-          );
-
-          if (!isValid) return t("file_must_be_pdf");
-
-          const maxSize = 5 * 1024 * 1024; // 5MB
-          if (file.size > maxSize) return t("file_too_large");
-
-          return null;
-        },
-      },
       preview: deletedFiles.includes("it_attachment_arabic")
         ? undefined
         : data?.treatyData?.it_attachment_arabic,

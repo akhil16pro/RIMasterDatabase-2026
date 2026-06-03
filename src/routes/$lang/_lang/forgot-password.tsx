@@ -75,7 +75,7 @@ function RouteComponent() {
             },
           })
           .json<any>();
-        console.log(res, "sdf");
+
         if (res?.status) {
           form.reset();
           toast.success(res?.message || t("success"));

@@ -6,7 +6,6 @@ import { apiClient } from "@/api";
 import { DefaultButton } from "@/components/ui/buttons";
 import { Input } from "@/components/ui/input";
 import { motion } from "motion/react";
-import DashboardTopbar from "@/components/layouts/DashboardTopbar";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
 import {
   BookOpenText,

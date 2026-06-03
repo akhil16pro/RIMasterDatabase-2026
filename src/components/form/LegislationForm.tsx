@@ -24,6 +24,7 @@ import { useTranslation } from "react-i18next";
 import { usePDFPreview } from "@/lib/usePDFPreview";
 import { useAtomValue } from "jotai";
 import { userSessionAtom } from "@/store/atoms";
+import { FILE_ACCEPT_STRING, validateDocumentFile } from "@/lib/fileFormats";
 interface LegislationFormProps {
   initialValues: any;
   onSubmit: (values: any) => Promise<void>;
@@ -604,34 +605,14 @@ export function LegislationForm({
                             return !value ? t("required_field") : null;
                           }
                         },
-                        onChange: ({ value }) => {
-                          if (!value) return null;
-
-                          // Ensure we have a File object
-                          const file =
-                            value instanceof FileList ? value[0] : value;
-                          if (!file || !(file instanceof File)) return null;
-
-                          const fileName = file.name.toLowerCase(); // Use file.name
-                          const allowedExtensions = [".pdf"];
-                          const isValid = allowedExtensions.some((ext) =>
-                            fileName.endsWith(ext),
-                          );
-
-                          if (!isValid) return t("file_must_be_pdf");
-
-                          const maxSize = 5 * 1024 * 1024; // 5MB
-                          if (file.size > maxSize) return t("file_too_large");
-
-                          return null;
-                        },
+                        onChange: ({ value }) => validateDocumentFile(value, t),
                       }}
                       children={(field) => (
                         <Input
                           type="file"
                           id="lm_pdf_file"
                           name="lm_pdf_file"
-                          accept=".pdf"
+                          accept={FILE_ACCEPT_STRING}
                           onChange={(e) => {
                             const file = e.target.files?.[0];
                             field.handleChange(file);
@@ -677,33 +658,14 @@ export function LegislationForm({
                   return !value ? t("required_field") : null;
                 }
               },
-              onChange: ({ value }) => {
-                if (!value) return null;
-
-                // Ensure we have a File object
-                const file = value instanceof FileList ? value[0] : value;
-                if (!file || !(file instanceof File)) return null;
-
-                const fileName = file.name.toLowerCase(); // Use file.name
-                const allowedExtensions = [".pdf"];
-                const isValid = allowedExtensions.some((ext) =>
-                  fileName.endsWith(ext),
-                );
-
-                if (!isValid) return t("file_must_be_pdf");
-
-                const maxSize = 5 * 1024 * 1024; // 5MB
-                if (file.size > maxSize) return t("file_too_large");
-
-                return null;
-              },
+              onChange: ({ value }) => validateDocumentFile(value, t),
             }}
             children={(field) => (
               <Input
                 type="file"
                 id="lm_pdf_file_arabic"
                 name="lm_pdf_file_arabic"
-                accept=".pdf"
+                accept={FILE_ACCEPT_STRING}
                 onChange={(e) => {
                   const file = e.target.files?.[0];
                   field.handleChange(file);

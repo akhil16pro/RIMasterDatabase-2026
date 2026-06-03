@@ -23,7 +23,7 @@ import { settingsAtom, userSessionAtom } from "@/store/atoms";
 
 import AppFooter from "@/components/layouts/AppFooter";
 import { cn, checkActiveSession } from "@/lib/utils";
-
+import { PASSWORD_MIN_LENGTH } from "@/lib/fileFormats";
 type PasswordResetSearch = {
   code?: string;
 };
@@ -165,12 +165,9 @@ function RouteComponent() {
                       name="password"
                       validators={{
                         onChange: ({ value }) => {
-                          if (
-                            value.length <
-                            Number(import.meta.env?.PASSWORDLIMITE || 8)
-                          )
+                          if (value.length < Number(PASSWORD_MIN_LENGTH))
                             return t(
-                              `password_must_be_at_least_${Number(import.meta.env?.PASSWORDLIMITE || 8)}_characters`,
+                              `password_must_be_at_least_${Number(PASSWORD_MIN_LENGTH)}_characters`,
                             );
                           if (!/[a-z]/.test(value) || !/[A-Z]/.test(value))
                             return t("password_must_include_mixed_case");
@@ -181,12 +178,9 @@ function RouteComponent() {
                         },
                         onSubmit: ({ value }) => {
                           if (!value) return t("password_required");
-                          if (
-                            value.length <
-                            Number(import.meta.env?.PASSWORDLIMITE || 8)
-                          )
+                          if (value.length < Number(PASSWORD_MIN_LENGTH))
                             return t(
-                              `password_must_be_at_least_${Number(import.meta.env?.PASSWORDLIMITE || 8)}_characters`,
+                              `password_must_be_at_least_${Number(PASSWORD_MIN_LENGTH)}_characters`,
                             );
                           if (!/[a-z]/.test(value) || !/[A-Z]/.test(value))
                             return t("password_must_include_mixed_case");

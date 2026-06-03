@@ -2,26 +2,14 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { apiClient } from "@/api";
-import { Input } from "@/components/ui/input";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/Select";
-import { Label } from "@/components/ui/label";
-
-import CKEditorCustom from "@/components/ui/CKEditor";
 import { useAtomValue } from "jotai";
 import { userSessionAtom } from "@/store/atoms";
-
 import { usePDFPreview } from "@/lib/usePDFPreview";
 import { useState, useEffect } from "react";
-import { CustomForm } from "@/components/form/CustomForm";
+import { CustomForm, type FieldConfig } from "@/components/form/CustomForm";
 import EditBadge from "@/components/ui/EditBadge";
-
+import { FILE_ACCEPT_STRING } from "@/lib/fileFormats";
 export const Route = createFileRoute(
   "/$lang/_lang/_auth/federal-decisions/view/$slug",
 )({
@@ -178,7 +166,7 @@ function RouteComponent() {
       name: "dm_file",
       label: t("court_decision_file_english"),
       type: "file",
-      accept: ".pdf",
+      accept: FILE_ACCEPT_STRING,
       preview: data?.decisionData?.dm_file,
       onClick: () => previewEN(),
       isLoading: isLoadingEN,
@@ -187,7 +175,7 @@ function RouteComponent() {
       name: "dm_file_arabic",
       label: t("court_decision_file_arabic"),
       type: "file",
-      accept: ".pdf",
+      accept: FILE_ACCEPT_STRING,
       preview: data?.decisionData?.dm_file_arabic,
       onClick: () => previewAR(),
       isLoading: isLoadingAR,
