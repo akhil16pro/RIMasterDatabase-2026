@@ -917,6 +917,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                                 "max-w-[120px] truncate",
                               singleLine && "flex-shrink-0 whitespace-nowrap",
                               "[&>svg]:pointer-events-auto",
+                              (disabled || readOnly) && "px-3",
                             )}
                             style={{
                               ...badgeStyle,
@@ -965,7 +966,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                                   }
                                 }}
                                 aria-label={`Remove ${option.label} from selection`}
-                                className="ms-2 h-4 w-4 cursor-pointer hover:bg-white/20 rounded-sm p-0.5 -m-0.5 focus:outline-none focus:ring-1 focus:ring-white/50"
+                                className="ms-0.5 h-4 w-4 flex items-center justify-center cursor-pointer hover:text-destructive hover:bg-white/40 rounded-[5px] p-0.5 -m-0.5 focus:outline-none "
                               >
                                 <XCircle
                                   className={cn(

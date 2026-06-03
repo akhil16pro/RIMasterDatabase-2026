@@ -370,6 +370,7 @@ const RadioButtonComponent = ({ form, cfg, data, mode }: any) => {
                 className="flex gap-col-4 gap-row-1 flex-wrap"
                 value={field.state.value?.toString()}
                 onValueChange={field.handleChange}
+                disabled={mode === "view" && true}
               >
                 {data?.[cfg.optionsKey!]?.map((item: any) => (
                   <div

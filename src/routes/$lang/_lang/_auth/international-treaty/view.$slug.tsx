@@ -48,7 +48,7 @@ function RouteComponent() {
   const [thankYouPopup, setThankYouPopup] = useState(false);
 
   const [deletedFiles, setDeletedFiles] = useState<string[]>([]);
-
+  const isAdmin = userSession?.user?.roles?.includes("admin");
   const { data, isLoading, error } = useQuery({
     queryKey: ["internationalTreatiesFormData", slug, i18n.language],
     enabled: true,
@@ -86,7 +86,7 @@ function RouteComponent() {
     it_treaty_type: "1",
     it_sector_id: "",
     it_country_id: "",
-
+    it_entity_id: "",
     it_title: "",
     it_title_arabic: "",
     it_treaty_date: "",
@@ -279,9 +279,21 @@ function RouteComponent() {
     },
   ];
 
+  if (isAdmin) {
+    fields.splice(1, 0, {
+      name: "it_entity_id",
+      label: t("entity"),
+      type: "select",
+      optionsKey: "entityList",
+      validators: {
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
+      },
+    });
+  }
   useEffect(() => {
     if (data?.treatyData) {
       setInitialValues({
+        it_entity_id: data?.treatyData?.it_entity_id?.toString() || "",
         it_treaty_type: data?.treatyData?.it_treaty_type?.toString() || "1",
         it_sector_id: data?.treatyData?.it_sector_id?.toString() || "",
         it_country_id: data?.treatyData?.it_country_id?.toString() || "",

@@ -141,8 +141,7 @@ export function LegislationForm({
                   name="lm_entity_id"
                   value={field.state.value?.toString() || ""}
                   onValueChange={(e) => field.handleChange(e)}
-                  readOnly={mode === "view" && true}
-                  disabled={mode === "view" && true}
+                  // disabled={mode === "view" && true}
                 >
                   <SelectTrigger
                     label={t("entity")}
@@ -150,6 +149,7 @@ export function LegislationForm({
                     error={field.state.meta.errors.length > 0 ? true : false}
                     errorMessage={field.state.meta.errors[0]}
                     onClear={() => field.handleChange(null)}
+                    readOnly={mode === "view" && true}
                   >
                     <SelectValue placeholder={t("select_entity")} />
                   </SelectTrigger>
@@ -180,14 +180,13 @@ export function LegislationForm({
                 name="lm_sector_id"
                 value={field.state.value?.toString() || ""}
                 onValueChange={(e) => field.handleChange(e)}
-                readOnly={mode === "view" && true}
-                disabled={mode === "view" && true}
               >
                 <SelectTrigger
                   label={t("sector")}
                   hasValue={!!field.state.value}
                   error={field.state.meta.errors.length > 0 ? true : false}
                   errorMessage={field.state.meta.errors[0]}
+                  readOnly={mode === "view" && true}
                 >
                   <SelectValue placeholder={t("select_sector")} />
                 </SelectTrigger>
@@ -223,7 +222,6 @@ export function LegislationForm({
                   error={field.state.meta.errors.length > 0 ? true : false}
                   errorMessage={field.state.meta.errors[0]}
                   readOnly={mode === "view" && true}
-                  disabled={mode === "view" && true}
                 >
                   <SelectValue placeholder={t("select_legislation_type")} />
                 </SelectTrigger>
@@ -497,7 +495,6 @@ export function LegislationForm({
                   error={field.state.meta.errors.length > 0 ? true : false}
                   errorMessage={field.state.meta.errors[0]}
                   readOnly={mode === "view" && true}
-                  disabled={mode === "view" && true}
                 >
                   <SelectValue placeholder={t("select_legislation_year")} />
                 </SelectTrigger>

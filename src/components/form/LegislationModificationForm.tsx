@@ -318,7 +318,6 @@ export function LegislationModificationForm({
                   error={field.state.meta.errors.length > 0 ? true : false}
                   errorMessage={field.state.meta.errors[0]}
                   readOnly={mode === "view" && true}
-                  disabled={mode === "view" && true}
                 >
                   <SelectValue placeholder={t("select_legislation_year")} />
                 </SelectTrigger>

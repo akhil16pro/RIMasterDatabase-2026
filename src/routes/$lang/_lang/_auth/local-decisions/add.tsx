@@ -49,6 +49,7 @@ function RouteComponent() {
     dm_emirate_id: !isAdmin ? userSession?.user?.userEmirateName : "",
     dm_decision_type_id: "",
     dm_court_id: "",
+    dm_entity_id: "",
 
     dm_title: "",
     dm_title_arabic: "",

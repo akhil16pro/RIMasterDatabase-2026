@@ -38,11 +38,13 @@ function RouteComponent() {
   const { slug } = Route.useParams();
   const { t, i18n } = useTranslation();
   const userSession = useAtomValue(userSessionAtom);
-
+  const isAdmin = userSession?.user?.roles?.includes("admin");
   const [initialValues, setInitialValues] = useState({
     // local_government: userSession?.user?.userEmirateName || "",
     dm_decision_type_id: "",
     dm_federal_court_id: "",
+    dm_entity_id: "",
+
     dm_title: "",
     dm_title_arabic: "",
     dm_decision_date: "",
@@ -217,12 +219,25 @@ function RouteComponent() {
     //   },
     // },
   ];
+  if (isAdmin) {
+    fields.unshift({
+      name: "dm_entity_id",
+      label: t("entity"),
+      type: "select",
+      optionsKey: "entityList",
+      validators: {
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
+      },
+    });
+  }
 
   useEffect(() => {
     if (data?.decisionData) {
       setInitialValues({
-        dm_court_id: data?.decisionData?.dm_court_id,
-        dm_decision_type_id: data?.decisionData?.dm_decision_type_id,
+        dm_court_id: data?.decisionData?.dm_court_id?.toString() || "",
+        dm_entity_id: data?.decisionData?.dm_entity_id?.toString() || "",
+        dm_decision_type_id:
+          data?.decisionData?.dm_decision_type_id?.toString() || "",
         dm_title: data?.decisionData?.dm_title,
         dm_title_arabic: data?.decisionData?.dm_title_arabic,
         dm_decision_date: data?.decisionData?.dm_decision_date,

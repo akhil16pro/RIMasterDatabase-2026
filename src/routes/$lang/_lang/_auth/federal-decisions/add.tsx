@@ -49,11 +49,12 @@ function RouteComponent() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [thankYouPopup, setThankYouPopup] = useState(false);
-
+  const isAdmin = userSession?.user?.roles?.includes("admin");
   const [initialValues, setInitialValues] = useState({
     // local_government: userSession?.user?.userEmirateName || "",
     dm_decision_type_id: "",
     dm_court_id: "",
+    dm_entity_id: "",
 
     dm_title: "",
     dm_title_arabic: "",
@@ -97,12 +98,6 @@ function RouteComponent() {
   });
 
   const fields: FieldConfig[] = [
-    // {
-    //   name: "local_government",
-    //   label: t("local_government"),
-    //   type: "text",
-    //   disabled: true,
-    // },
     {
       name: "dm_court_id",
       label: t("federal_court"),
@@ -272,6 +267,18 @@ function RouteComponent() {
     //   },
     // },
   ];
+
+  if (isAdmin) {
+    fields.unshift({
+      name: "dm_entity_id",
+      label: t("entity"),
+      type: "select",
+      optionsKey: "entityList",
+      validators: {
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
+      },
+    });
+  }
 
   const handleStore = async (values) => {
     setIsSubmitting(true);
