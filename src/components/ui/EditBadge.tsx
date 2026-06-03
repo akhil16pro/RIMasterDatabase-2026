@@ -4,15 +4,20 @@ import { useTranslation } from "react-i18next";
 
 export default function EditBadge({
   data,
-
   className,
 }: {
   data: {
-    user_info: {};
+    user_info: {
+      name: string;
+      created_at: string;
+    };
+    modified_info: {
+      name: string;
+      updated_at: string;
+    };
   };
   className?: string;
 }) {
-  console.log(data, "badge data");
   const { t } = useTranslation();
   return (
     <div className={cn("flex gap-1 md:gap-2 flex-wrap w-full", className)}>

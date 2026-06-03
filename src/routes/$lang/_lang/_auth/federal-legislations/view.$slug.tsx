@@ -84,6 +84,7 @@ function RouteComponent() {
   );
 
   const [initialValues, setInitialValues] = useState({
+    lm_entity_id: "",
     lm_has_english_version: "2",
     lm_law_type_id: "",
     lm_sector_id: "",
@@ -118,6 +119,7 @@ function RouteComponent() {
   useEffect(() => {
     if (data?.lawData) {
       setInitialValues({
+        lm_entity_id: data?.lawData?.lm_entity_id?.toString() || "",
         lm_has_english_version:
           data.lawData?.lm_has_english_version?.toString() || "2",
         lm_law_type_id: data?.lawData?.lm_law_type_id?.toString() || "",

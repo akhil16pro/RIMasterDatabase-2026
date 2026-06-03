@@ -22,6 +22,8 @@ import { AnimatePresence, motion } from "motion/react";
 import CKEditorCustom from "@/components/ui/CKEditor";
 import { useTranslation } from "react-i18next";
 import { usePDFPreview } from "@/lib/usePDFPreview";
+import { useAtomValue } from "jotai";
+import { userSessionAtom } from "@/store/atoms";
 interface LegislationFormProps {
   initialValues: any;
   onSubmit: (values: any) => Promise<void>;
@@ -56,6 +58,10 @@ export function LegislationForm({
 
     setDeletedFiles((prev) => [...prev, previewKey]);
   };
+
+  const userSession = useAtomValue(userSessionAtom);
+
+  const isAdmin = userSession?.user?.roles?.includes("admin");
 
   return (
     <>
@@ -122,6 +128,45 @@ export function LegislationForm({
               )}
             />
           </div>
+          {isAdmin && (
+            <form.Field
+              name="lm_entity_id"
+              validators={{
+                onSubmit: ({ value }) => (!value ? t("required_field") : null),
+              }}
+              children={(field) => (
+                <Select
+                  key={`lm_entity_id-${field.state.value}`}
+                  id="lm_entity_id"
+                  name="lm_entity_id"
+                  value={field.state.value?.toString() || ""}
+                  onValueChange={(e) => field.handleChange(e)}
+                  readOnly={mode === "view" && true}
+                  disabled={mode === "view" && true}
+                >
+                  <SelectTrigger
+                    label={t("entity")}
+                    hasValue={!!field.state.value}
+                    error={field.state.meta.errors.length > 0 ? true : false}
+                    errorMessage={field.state.meta.errors[0]}
+                    onClear={() => field.handleChange(null)}
+                  >
+                    <SelectValue placeholder={t("select_entity")} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {data?.entityList?.map((item: any) => (
+                      <SelectItem
+                        key={`sector-entity-${item.value}`}
+                        value={item.value?.toString()}
+                      >
+                        {item.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+          )}
 
           <form.Field
             name="lm_sector_id"
