@@ -148,7 +148,7 @@ const InputComponent = ({
                 onValueChange={(val) => {
                   field.handleChange(val);
                   if (cfg.onValueChange) {
-                    cfg.onValueChange(val);
+                    cfg.onValueChange(val, form);
                   }
                 }}
               >
@@ -432,5 +432,5 @@ export interface FieldConfig {
   className?: string;
   multiple?: boolean;
   onChange?: (field: any) => void;
-  onValueChange?: (value: any) => void;
+  onValueChange?: (value: any, form?: any) => void;
 }

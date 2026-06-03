@@ -175,8 +175,11 @@ function RouteComponent() {
       validators: {
         onSubmit: ({ value }) => (!value ? t("required_field") : null),
       },
-      onValueChange: (val) => {
+      onValueChange: (val, form) => {
         emirateChange(val);
+        if (form) {
+          form.setFieldValue("dm_decision_type_id", "");
+        }
       },
       disabled: isAdmin ? false : true,
       // disabled: true,
