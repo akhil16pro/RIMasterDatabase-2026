@@ -31,6 +31,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { CustomForm } from "@/components/form/CustomForm";
 import { usePDFPreview } from "@/lib/usePDFPreview";
 import EditBadge from "@/components/ui/EditBadge";
+import { useCallback } from "react";
 
 export const Route = createFileRoute(
   "/$lang/_lang/_auth/local-decisions/view/$slug",
@@ -48,17 +49,20 @@ function RouteComponent() {
   const { slug } = Route.useParams();
   const { t, i18n } = useTranslation();
   const userSession = useAtomValue(userSessionAtom);
+  const [emirateID, setEmirateID] = useState<number>(null);
+  const queryClient = useQueryClient();
+  const [decisionTypeByEmirate, setDecisionTypeByEmirate] = useState([]);
 
+  const isAdmin = userSession?.user?.roles?.includes("admin");
   const [initialValues, setInitialValues] = useState({
-    // local_government: userSession?.user?.userEmirateName || "",
+    dm_emirate_id: !isAdmin ? userSession?.user?.userEmirateName : "",
     dm_decision_type_id: "",
+    dm_court_id: "",
     dm_title: "",
     dm_title_arabic: "",
     dm_decision_date: "",
+    dm_number: "",
 
-    dm_year: "",
-    dm_authority_title: "",
-    dm_authority_title_arabic: "",
     dm_details: "",
     dm_details_arabic: "",
     dm_file: "",
@@ -71,6 +75,9 @@ function RouteComponent() {
         ...prev,
         // local_government: userSession?.user?.userEmirateName || "",
       }));
+      if (!isAdmin) {
+        setEmirateID(userSession?.user?.userEmirateId);
+      }
     }
   }, [userSession]);
 
@@ -103,18 +110,73 @@ function RouteComponent() {
     "decision",
   );
 
+  const { data: emirateListChange } = useQuery({
+    queryKey: ["emirateListChnage", emirateID, i18n.language],
+    queryFn: async () => {
+      const res = await apiClient
+        .get(
+          i18n.language +
+            `/local-decision/get-decision-type-by-emirate/${emirateID}`,
+        )
+        .json<any>();
+
+      return res?.data;
+    },
+    enabled: !!emirateID,
+  });
+
+  useEffect(() => {
+    if (emirateID && emirateListChange?.decisionTypeList) {
+      queryClient.setQueryData(
+        ["localViewDecisionFormData", slug, i18n.language],
+        (oldData: any) => {
+          if (!oldData) return oldData;
+
+          return {
+            ...oldData,
+            decisionTypeList: emirateListChange.decisionTypeList,
+          };
+        },
+      );
+    } else if (emirateID === null) {
+      queryClient.setQueryData(
+        ["localViewDecisionFormData", slug, i18n.language],
+        (oldData: any) => {
+          if (!oldData) return oldData;
+
+          return {
+            ...oldData,
+            decisionTypeList: [],
+          };
+        },
+      );
+    }
+  }, [emirateListChange, emirateID, slug, i18n.language, queryClient]);
+
+  const emirateChange = useCallback((value: any) => {
+    setEmirateID(value);
+  }, []);
+
   const fields: FieldConfig[] = [
-    // {
-    //   name: "local_government",
-    //   label: t("local_government"),
-    //   type: "text",
-    //   disabled: true,
-    // },
+    {
+      name: "dm_emirate_id",
+      label: t("local_government"),
+      type: "select",
+      optionsKey: "emirateList",
+      validators: {
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
+      },
+      onValueChange: (val) => {
+        emirateChange(val);
+      },
+      disabled: isAdmin ? false : true,
+      // disabled: true,
+    },
     {
       name: "dm_court_id",
       label: t("local_court"),
       type: "select",
-      optionsKey: "decisionTypeList",
+      optionsKey: "decisionCourtList",
       validators: {
         onSubmit: ({ value }) => (!value ? t("required_field") : null),
       },
@@ -133,12 +195,18 @@ function RouteComponent() {
       name: "dm_title",
       label: t("court_decision_title_english"),
       type: "text",
+      validators: {
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
+      },
     },
     {
       name: "dm_title_arabic",
       label: t("court_decision_title_arabic"),
       type: "text",
       dir: "rtl",
+      validators: {
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
+      },
     },
     {
       name: "dm_decision_date",
@@ -151,7 +219,7 @@ function RouteComponent() {
     {
       name: "dm_number",
       label: t("court_decision_number"),
-      type: "text",
+      type: "number",
       validators: {
         onSubmit: ({ value }) => (!value ? t("required_field") : null),
       },
@@ -222,9 +290,23 @@ function RouteComponent() {
     },
   ];
 
+  if (isAdmin) {
+    fields.unshift({
+      name: "dm_entity_id",
+      label: t("entity"),
+      type: "select",
+      optionsKey: "entityList",
+      validators: {
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
+      },
+    });
+  }
+
   useEffect(() => {
     if (data?.decisionData) {
       setInitialValues({
+        dm_emirate_id: data?.decisionData?.dm_emirate_id?.toString() || "",
+        dm_entity_id: data?.decisionData?.dm_entity_id?.toString() || "",
         dm_court_id: data?.decisionData?.dm_court_id,
         dm_number: data?.decisionData?.dm_number,
 

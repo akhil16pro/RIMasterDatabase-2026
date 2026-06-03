@@ -111,7 +111,6 @@ function RouteComponent() {
   });
 
   useEffect(() => {
-    console.log(emirateID, "emirateID");
     if (emirateID && emirateListChange?.decisionTypeList) {
       queryClient.setQueryData(
         ["localDecisionFormData", i18n.language],
@@ -125,7 +124,6 @@ function RouteComponent() {
         },
       );
     } else if (emirateID === null) {
-      console.log("emirateID is null");
       queryClient.setQueryData(
         ["localDecisionFormData", i18n.language],
         (oldData: any) => {
@@ -317,6 +315,18 @@ function RouteComponent() {
     //   },
     // },
   ];
+
+  if (isAdmin) {
+    fields.unshift({
+      name: "dm_entity_id",
+      label: t("entity"),
+      type: "select",
+      optionsKey: "entityList",
+      validators: {
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
+      },
+    });
+  }
 
   const handleStore = async (values) => {
     setIsSubmitting(true);

@@ -64,20 +64,18 @@ function RouteComponent() {
 
   const [initialValues, setInitialValues] = useState({
     // local_government: userSession?.user?.userEmirateName || "",
+    dm_emirate_id: !isAdmin ? userSession?.user?.userEmirateName : "",
     dm_decision_type_id: "",
     dm_court_id: "",
     dm_title: "",
     dm_title_arabic: "",
     dm_decision_date: "",
+    dm_number: "",
 
-    dm_year: "",
-    dm_authority_title: "",
-    dm_authority_title_arabic: "",
     dm_details: "",
     dm_details_arabic: "",
     dm_file: "",
     dm_file_arabic: "",
-    dm_number: "",
   });
 
   useEffect(() => {
@@ -86,11 +84,14 @@ function RouteComponent() {
         ...prev,
         // local_government: userSession?.user?.userEmirateName || "",
       }));
+      if (!isAdmin) {
+        setEmirateID(userSession?.user?.userEmirateId);
+      }
     }
   }, [userSession]);
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["localEditDecisionFormData", slug, i18n.language],
+    queryKey: ["localEditDecisionFormData", i18n.language],
     enabled: true,
     staleTime: 0,
     queryFn: async () => {
@@ -117,6 +118,50 @@ function RouteComponent() {
     "ar",
     "decision",
   );
+
+  const { data: emirateListChange } = useQuery({
+    queryKey: ["emirateListChnage", emirateID, i18n.language],
+    queryFn: async () => {
+      const res = await apiClient
+        .get(
+          i18n.language +
+            `/local-decision/get-decision-type-by-emirate/${emirateID}`,
+        )
+        .json<any>();
+
+      return res?.data;
+    },
+    enabled: !!emirateID,
+  });
+
+  useEffect(() => {
+    if (emirateID && emirateListChange?.decisionTypeList) {
+      queryClient.setQueryData(
+        ["localEditDecisionFormData", i18n.language],
+        (oldData: any) => {
+          if (!oldData) return oldData;
+
+          return {
+            ...oldData,
+            decisionTypeList: emirateListChange.decisionTypeList,
+          };
+        },
+      );
+    } else if (emirateID === null) {
+      queryClient.setQueryData(
+        ["localEditDecisionFormData", i18n.language],
+        (oldData: any) => {
+          if (!oldData) return oldData;
+
+          return {
+            ...oldData,
+            decisionTypeList: [],
+          };
+        },
+      );
+    }
+  }, [emirateListChange, emirateID, i18n.language, queryClient]);
+
   const emirateChange = useCallback((value: any) => {
     setEmirateID(value);
   }, []);
@@ -126,7 +171,7 @@ function RouteComponent() {
       name: "dm_emirate_id",
       label: t("local_government"),
       type: "select",
-      optionsKey: "emiratesList",
+      optionsKey: "emirateList",
       validators: {
         onSubmit: ({ value }) => (!value ? t("required_field") : null),
       },
@@ -188,32 +233,7 @@ function RouteComponent() {
         onSubmit: ({ value }) => (!value ? t("required_field") : null),
       },
     },
-    // {
-    //   name: "dm_year",
-    //   label: t("court_decision_year"),
-    //   type: "select",
-    //   optionsKey: "yearList",
-    //   validators: {
-    //     onSubmit: ({ value }) => (!value ? t("required_field") : null),
-    //   },
-    // },
-    // {
-    //   name: "dm_authority_title",
-    //   label: t("authority_title"),
-    //   type: "text",
-    //   validators: {
-    //     onSubmit: ({ value }) => (!value ? t("required_field") : null),
-    //   },
-    // },
-    // {
-    //   name: "dm_authority_title_arabic",
-    //   label: t("authority_title_arabic"),
-    //   type: "text",
-    //   dir: "rtl",
-    //   validators: {
-    //     onSubmit: ({ value }) => (!value ? t("required_field") : null),
-    //   },
-    // },
+
     {
       name: "dm_details",
       label: t("court_decision_details_english"),
@@ -322,10 +342,22 @@ function RouteComponent() {
     },
   ];
 
+  if (isAdmin) {
+    fields.unshift({
+      name: "dm_entity_id",
+      label: t("entity"),
+      type: "select",
+      optionsKey: "entityList",
+      validators: {
+        onSubmit: ({ value }) => (!value ? t("required_field") : null),
+      },
+    });
+  }
+
   useEffect(() => {
     if (data?.decisionData) {
-      console.log(data?.decisionData?.dm_decision_type_id, "test");
       setInitialValues({
+        dm_entity_id: data?.decisionData?.dm_entity_id?.toString() || "",
         // local_government: userSession?.user?.userEmirateName || "",
         dm_emirate_id: Array.isArray(data?.decisionData?.dm_emirates)
           ? data?.decisionData?.dm_emirates[0]
