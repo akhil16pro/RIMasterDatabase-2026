@@ -410,7 +410,7 @@ function ViewAction({ slug }: { slug: string }) {
                   <SelectValue placeholder={t("select_entity")} />
                 </SelectTrigger>
                 <SelectContent>
-                  {data?.entities?.map((item: any) => (
+                  {data?.entityList?.map((item: any) => (
                     <SelectItem
                       key={`sector-${item.value}`}
                       value={item.value?.toString()}
@@ -764,7 +764,7 @@ function EditAction({ slug }: { slug: string }) {
                       <SelectValue placeholder={t("select_entity")} />
                     </SelectTrigger>
                     <SelectContent>
-                      {data?.entities?.map((item: any) => (
+                      {data?.entityList?.map((item: any) => (
                         <SelectItem
                           key={`sector-${item.value}`}
                           value={item.value?.toString()}
@@ -959,6 +959,8 @@ function AddModal({ data }: { data: any }) {
     },
   });
 
+  console.log(data);
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <form
@@ -1149,7 +1151,7 @@ function AddModal({ data }: { data: any }) {
                       <SelectValue placeholder={t("select_entity")} />
                     </SelectTrigger>
                     <SelectContent>
-                      {data?.entities?.map((item: any) => (
+                      {data?.entityList?.map((item: any) => (
                         <SelectItem
                           key={`sector-${item.value}`}
                           value={item.value?.toString()}
