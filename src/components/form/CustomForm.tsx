@@ -167,7 +167,7 @@ const InputComponent = ({
                       cfg.onClear();
                     }
                     if (cfg.onValueChange) {
-                      cfg.onValueChange(null);
+                      cfg.onValueChange(null, form);
                     }
                   }}
                 >

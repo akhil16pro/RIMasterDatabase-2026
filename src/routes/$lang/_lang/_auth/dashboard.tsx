@@ -117,6 +117,7 @@ function MinistryCard({
   const { t, i18n } = useTranslation();
   const userSession = useAtomValue(userSessionAtom);
 
+  console.log(data);
   return (
     // lg:bg-[linear-gradient(50deg,#022EE4_0%,#FFC99D_50%,#022EE4_108%)]
     <motion.div
@@ -128,7 +129,7 @@ function MinistryCard({
     >
       {userSession?.user?.roles?.includes("admin") ? (
         <div className="flex-1 grid grid-cols-1 md:flex gap-2 md:gap-3">
-          {data?.adminData?.map((item, index) => (
+          {data?.glossaryData?.leftdata?.map((item, index) => (
             <div
               key={index}
               className="flex flex-1 items-center justify-start md:flex-col flex-row gap-3 md:gap-0 text-center md:justify-center md:px-2 md:py-8 px-4 py-3 relative [&:before]:content-[''] [&:before]:absolute [&:before]:inset-0 [&:before]:bg-white/10 [&:before]:overflow-hidden [&:before]:rounded-[calc(0.75rem-1px)]"
@@ -148,7 +149,7 @@ function MinistryCard({
       )}
 
       <div className="flex-1 grid grid-cols-2 md:flex gap-2 md:gap-1">
-        {data?.glossaryData?.map((item, index) =>
+        {data?.glossaryData?.rightdata?.map((item, index) =>
           item.link ? (
             <Link
               key={index}
