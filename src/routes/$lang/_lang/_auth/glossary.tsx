@@ -438,7 +438,10 @@ function ViewAction({ slug }: { slug: string }) {
               type="text"
               isLoading={isLoading}
               readOnly
-            /> */}
+            /> 
+            
+            
+            */}
             <div className="inline-flex gap-2 text-[var(--textColor)] text-[1.2rem] col-span-full">
               <label
                 className="text-muted-foreground"
