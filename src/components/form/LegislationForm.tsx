@@ -753,9 +753,9 @@ export function LegislationForm({
 
           <form.Field
             name="lm_gazette_number_arabic"
-            validators={{
-              onSubmit: ({ value }) => (!value ? t("required_field") : null),
-            }}
+            // validators={{
+            //   onSubmit: ({ value }) => (!value ? t("required_field") : null),
+            // }}
             children={(field) => (
               <Input
                 type="text"
@@ -774,9 +774,9 @@ export function LegislationForm({
 
           <form.Field
             name="lm_gazette_title_arabic"
-            validators={{
-              onSubmit: ({ value }) => (!value ? t("required_field") : null),
-            }}
+            // validators={{
+            //   onSubmit: ({ value }) => (!value ? t("required_field") : null),
+            // }}
             children={(field) => (
               <Input
                 type="text"
@@ -794,9 +794,9 @@ export function LegislationForm({
           />
           <form.Field
             name="lm_official_gazette_issue_date"
-            validators={{
-              onSubmit: ({ value }) => (!value ? t("required_field") : null),
-            }}
+            // validators={{
+            //   onSubmit: ({ value }) => (!value ? t("required_field") : null),
+            // }}
             children={(field) => (
               <Input
                 type="date"
@@ -813,9 +813,9 @@ export function LegislationForm({
           />
           <form.Field
             name="lm_gazzette_date_string"
-            validators={{
-              onSubmit: ({ value }) => (!value ? t("required_field") : null),
-            }}
+            // validators={{
+            //   onSubmit: ({ value }) => (!value ? t("required_field") : null),
+            // }}
             children={(field) => (
               <Input
                 type="date"

@@ -162,22 +162,22 @@ function RouteComponent() {
       name: "it_expiry_date",
       label: t("treaty_expiry_date"),
       type: "date",
-      validators: {
-        onChange: ({ value, fieldApi }) => {
-          if (!value) return null;
-          const selectedDate = new Date(value);
-          const treatyDate = new Date(
-            fieldApi.form.getFieldValue("it_treaty_date"),
-          );
-          if (treatyDate >= selectedDate) {
-            return t(
-              "the_expiry_date_must_be_after_or_equal_to_the_treaty_date",
-            );
-          }
-          return null;
-        },
-        onSubmit: ({ value }) => (!value ? t("required_field") : null),
-      },
+      // validators: {
+      //   onChange: ({ value, fieldApi }) => {
+      //     if (!value) return null;
+      //     const selectedDate = new Date(value);
+      //     const treatyDate = new Date(
+      //       fieldApi.form.getFieldValue("it_treaty_date"),
+      //     );
+      //     if (treatyDate >= selectedDate) {
+      //       return t(
+      //         "the_expiry_date_must_be_after_or_equal_to_the_treaty_date",
+      //       );
+      //     }
+      //     return null;
+      //   },
+      //   onSubmit: ({ value }) => (!value ? t("required_field") : null),
+      // },
       valueEffect: {
         key: "it_treaty_date",
       },
